@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "737792334349",
+    "project_id": "nutrium-app",
+    "storage_bucket": "nutrium-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737792334349:android:19803dbe18ee6747411344",
+        "android_client_info": {
+          "package_name": "com.nutrium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737792334349-nj0efjel00uqcuni6ni5sa34np557j09.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nutrium",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "737792334349-eefln2o4gd1ovb2vs0kdct1hgfg5raf9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-Gxy3Q3gNC7epdR8ndoU77PeXplskAMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737792334349-eefln2o4gd1ovb2vs0kdct1hgfg5raf9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "737792334349-qeadje2231rg3g49s78vo7mh8rsq613j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Nutrium"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -124,13 +124,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Color.txt,
     marginHorizontal: scale(16),
-    marginVertical: verticalScale(10),
+    marginTop: verticalScale(10),
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: verticalScale(10),
+    marginTop: verticalScale(10),
   },
   buttonContainer: {
     flexDirection: 'row',

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -132,29 +133,6 @@ const Measurements = () => {
     return measurementData.currentValue + ' ' + (getUnitForType(type) || '');
   };
 
-  // const getUnitForType = type => {
-  //   if (!type) return '';
-
-  //   switch (type.toLowerCase()) {
-  //     case 'weight':
-  //       return ' kg';
-  //     case 'height':
-  //       return ' cm';
-  //     case 'waist circumference':
-  //       return ' cm';
-  //     case 'hip circumference':
-  //       return ' cm';
-  //     case 'body fat percentage':
-  //       return ' %';
-  //     case 'muscle mass':
-  //       return ' kg';
-  //     case 'bmi':
-  //       return ' %';
-  //     default:
-  //       return '';
-  //   }
-  // };
-
   const getUnitForType = type => {
     if (!type) return '';
 
@@ -265,7 +243,7 @@ const Measurements = () => {
     }
 
     return (
-      <TouchableOpacity
+      <Pressable
         key={item?.id}
         style={styles.cardcontainer}
         onPress={() => navigateToDetail(item?.key)}
@@ -273,7 +251,7 @@ const Measurements = () => {
         accessibilityRole="button">
         <Text style={styles.cardTxt}>{item?.label}</Text>
         <Text style={styles.cardTxt}>{getLatestValue(item?.key)}</Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

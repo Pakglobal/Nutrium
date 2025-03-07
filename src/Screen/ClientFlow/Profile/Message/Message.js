@@ -38,7 +38,10 @@ const MessageScreen = ({route}) => {
   const otherUserId = route?.params?.data?._id;
   const navigation = useNavigation();
   const userName = route?.params?.data?.fullName;
-  const userImage = route?.params?.data?.image;
+  const image = route?.params?.data?.image;
+  const userImage = image
+  ? {uri: image}
+  : require('../../../../assets/Images/profile.jpg');
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -416,12 +419,8 @@ const MessageScreen = ({route}) => {
             />
           </TouchableOpacity>
           <Image
-            style={{
-              padding: 15,
-              borderRadius: scaleSize(20),
-              marginLeft: scaleSize(5),
-            }}
-            source={{uri: userImage}}
+            style={styles.profileImage}
+            source={userImage}
           />
           <Text style={styles.backTxt}>{userName}</Text>
         </View>
@@ -736,5 +735,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleSize(15),
     paddingVertical: verticalScale(8),
     borderRadius: scaleSize(10),
+  },
+  profileImage: {
+    width: scaleSize(35),
+    height: scaleSize(35),
+    borderRadius: scaleSize(20),
+    backgroundColor: Color.primary,
   },
 });

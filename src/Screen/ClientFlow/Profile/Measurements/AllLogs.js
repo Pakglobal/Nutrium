@@ -1,4 +1,4 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {format} from 'date-fns';
@@ -15,22 +15,13 @@ const AllLogs = () => {
 
   const renderItem = ({item}) => {
     return (
-      <View
-        style={{
-          borderBottomColor: '#DDD',
-          borderBottomWidth: 1,
-          paddingVertical: verticalScale(10),
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.logContainer}>
         <View>
           <Text>You</Text>
           <Text style={{color: Color.black, fontSize: scale(14)}}>
             {item?.value || 'N/A'} {item?.unit || 'N/A'}
           </Text>
         </View>
-
         <Text style={{color: Color.black, fontSize: scale(13)}}>
           {item?.date ? format(new Date(item?.date), 'MMMM dd, yyyy') : 'N/A'}
         </Text>
@@ -40,29 +31,28 @@ const AllLogs = () => {
 
   const renderEmptyList = () => {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No data available</Text>
+      <View style={styles.noDataContainer}>
+        <Text style={styles.noDataText}>No data available</Text>
       </View>
     );
   };
 
   return (
-    <View>
+    <View style={{flex: 1, backgroundColor: Color.primary}}>
       <BackHeader
         titleName={'All logs'}
         showRightButton={false}
         backText={measurementType}
         onPressBack={() => navigation.goBack()}
       />
-      <View style={{marginHorizontal: scale(16)}}>
-        <FlatList
-          data={displaydata?.entries}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          ListEmptyComponent={renderEmptyList}
-          contentContainerStyle={styles.listContainer}
-        />
-      </View>
+
+      <FlatList
+        data={displaydata?.entries}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        ListEmptyComponent={renderEmptyList}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -70,17 +60,22 @@ const AllLogs = () => {
 export default AllLogs;
 
 const styles = StyleSheet.create({
-  listContainer: {
-    flexGrow: 1,
-  },
-  emptyContainer: {
-    flex: 1,
+  noDataContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: verticalScale(50),
   },
-  emptyText: {
-    fontSize: scale(16),
+  noDataText: {
     color: Color.gray,
+    fontSize: scale(14),
+    padding: verticalScale(20)
+  },
+  logContainer: {
+    borderBottomColor: '#DDD',
+    borderBottomWidth: 1,
+    paddingVertical: verticalScale(10),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: scale(16),
   },
 });

@@ -23,15 +23,21 @@ import Toast from 'react-native-simple-toast';
 
 const WaterIntakeLog = ({route}) => {
   const routeData = route?.params?.intake;
-  const plusDate = route?.params?.plusData?.date || new Date();
+  // const plusDate = route?.params?.plusData?.date || new Date();
 
   const plus = route?.params?.plusData?.press === 'plus';
   const clientId = route?.params?.plusData?.clientId;
   const token = route?.params?.plusData?.token;
 
   const navigation = useNavigation();
+  // const [date, setDate] = useState(
+  //   plus ? new Date(plusDate) : new Date(routeData?.date),
+  // );
+
+  const plusDate = route?.params?.plusData?.date || new Date().toISOString();
+
   const [date, setDate] = useState(
-    plus ? new Date(plusDate) : new Date(routeData?.date),
+    plus ? new Date(plusDate) : new Date(routeData?.date || plusDate),
   );
 
   const showToast = message => {

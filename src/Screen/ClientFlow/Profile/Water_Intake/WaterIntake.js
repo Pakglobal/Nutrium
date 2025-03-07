@@ -101,9 +101,6 @@ const WaterIntake = () => {
       const response = await GetWaterIntakeDetails(token, id);
       if (response?.success === true) {
         setWaterIntake(response);
-      } else {
-        showToast(response?.message);
-        setLoading(false);
       }
 
       if (selectedDate) {
@@ -133,12 +130,9 @@ const WaterIntake = () => {
         });
 
         setSelectedIntake(matchingRecords);
-      } else {
-        showToast(response?.message);
-        setLoading(false);
       }
     } catch (error) {
-      showToast(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -194,29 +188,55 @@ const WaterIntake = () => {
     handleDate(today);
   }, []);
 
+  // const handleEdit = async () => {
+  //   if (selectedEntry) {
+  //     setLoading(true);
+
+  //     try {
+  //       const entryDate = new Date(selectedEntry?.date);
+
+  //       navigation.navigate('waterIntakeLog', {
+  //         intake: {
+  //           waterIntakeId: selectedEntry?.waterIntakeId,
+  //           waterRecordId: selectedEntry?.waterRecordId,
+  //           waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+  //           date: entryDate,
+  //           amount: selectedEntry?.amount,
+  //           time: selectedEntry?.time,
+  //           token: token,
+  //         },
+  //         isEditing: true,
+  //       });
+
+  //       setModalVisible(false);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
   const handleEdit = async () => {
     if (selectedEntry) {
       setLoading(true);
-
+  
       try {
-        const entryDate = new Date(selectedEntry?.date);
-
         navigation.navigate('waterIntakeLog', {
           intake: {
             waterIntakeId: selectedEntry?.waterIntakeId,
             waterRecordId: selectedEntry?.waterRecordId,
             waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-            date: entryDate,
+            date: selectedEntry?.date, 
             amount: selectedEntry?.amount,
             time: selectedEntry?.time,
             token: token,
           },
           isEditing: true,
         });
-
+  
         setModalVisible(false);
       } catch (error) {
-        showToast(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -309,7 +329,7 @@ const WaterIntake = () => {
         }
       />
 
-      <ScrollView
+      {/* <ScrollView
         horizontal
         ref={scrollRef}
         scrollEventThrottle={16}
@@ -317,7 +337,7 @@ const WaterIntake = () => {
         style={styles.scrollContainer}>
         <View style={styles.chartWithDates}>
           {dateLabels.map((date, index) => {
-            const formattedDate = date.fullDate.toISOString().split('T')[0];
+            const formattedDate = date?.fullDate?.toISOString()?.split('T')[0];
             const isSelected = selectedDate === formattedDate;
 
             return (
@@ -368,8 +388,7 @@ const WaterIntake = () => {
 
         {selectedIntake?.length > 0 ? (
           <ScrollView
-            style={styles.entriesContainer}
-            showsVerticalScrollIndicator={false}>
+            style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
               renderItem={({item: record, index: recordIndex}) => (
@@ -431,6 +450,131 @@ const WaterIntake = () => {
             </Text>
           </View>
         )}
+      </View> */}
+
+
+<ScrollView
+        horizontal
+        ref={scrollRef}
+        scrollEventThrottle={16}
+        showsHorizontalScrollIndicator={false}
+        style={styles.scrollContainer}>
+        <View style={styles.chartWithDates}>
+          {dateLabels.map((date, index) => {
+            const formattedDate = date.fullDate.toISOString().split('T')[0];
+            const isSelected = selectedDate === formattedDate;
+
+            return (
+              <TouchableOpacity
+                key={index}
+                style={styles.singleDateChart}
+                onPress={() => handleDate(date)}>
+                <BarChart
+                  data={[{value: formatChartData()[index]?.value || 0}]}
+                  width={40}
+                  height={150}
+                  barWidth={20}
+                  spacing={0}
+                  hideRules
+                  hideAxesAndRules
+                  xAxisThickness={0}
+                  yAxisThickness={0}
+                  hideYAxisText
+                  maxValue={Math.max(
+                    dailyGoal,
+                    ...formatChartData().map(item => item.value),
+                  )}
+                  frontColor={isSelected ? '#1976D2' : '#75BFFF'}
+                />
+                <View style={styles.dateBox}>
+                  <Text style={styles.dateText}>{date.day}</Text>
+                  <Text style={styles.monthText}>
+                    {date.month.toUpperCase()}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
+
+      <View style={styles.bottomContentContainer}>
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
+            <Text style={styles.statLabel}>Water intake</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{dailyGoal} mL</Text>
+            <Text style={styles.statLabel}>Daily goal</Text>
+          </View>
+        </View>
+
+        {selectedIntake?.length > 0 ? (
+          <FlatList
+            data={selectedIntake}
+            style={styles.entriesContainer}
+            renderItem={({item: record}) => (
+              <FlatList
+                data={record?.waterIntakeAmount}
+                renderItem={({item: intake}) => (
+                  <View style={styles.entryItem}>
+                    <View style={styles.entryLeft}>
+                      <Icon
+                        name="water-outline"
+                        size={24}
+                        color="#2196F3"
+                      />
+                      <Text style={styles.entryAmount}>
+                        {intake?.amount}
+                      </Text>
+                    </View>
+
+                    <View style={styles.entryRight}>
+                      <Text style={styles.entryTime}>
+                        {formatTime(intake?.time)}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedEntry({
+                            waterIntakeId:
+                              waterIntake?.waterIntakeData?._id,
+                            waterRecordId: record?._id,
+                            waterIntakeAmountId: intake?._id,
+                            date: record?.date,
+                            amount: intake?.amount,
+                            time: intake?.time,
+                          });
+                          setModalVisible(true);
+                        }}>
+                        <Icon
+                          name="dots-vertical"
+                          size={20}
+                          color={Color.gray}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+                keyExtractor={(item, index) => `intake-${index}`}
+              />
+            )}
+            keyExtractor={(item, index) => `record-${index}`}
+            ListEmptyComponent={
+              <View style={[styles.entriesContainer, {alignItems: 'center'}]}>
+                <Text style={{textAlign: 'center'}}>
+                  There are no records of water intake
+                </Text>
+              </View>
+            }
+          />
+        ) : (
+          <View style={[styles.entriesContainer, {alignItems: 'center'}]}>
+            <Text style={{textAlign: 'center'}}>
+              There are no records of water intake
+            </Text>
+          </View>
+        )}
       </View>
 
       <Modal
@@ -457,8 +601,6 @@ const WaterIntake = () => {
     </SafeAreaView>
   );
 };
-
-const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -515,10 +657,10 @@ const styles = StyleSheet.create({
   },
   entriesContainer: {
     flex: 1,
-    marginHorizontal: scale(16),
     marginVertical: verticalScale(5),
   },
   entryItem: {
+    marginHorizontal: scale(16),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -568,3 +710,7 @@ const styles = StyleSheet.create({
 });
 
 export default WaterIntake;
+
+
+
+

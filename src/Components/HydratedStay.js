@@ -125,18 +125,18 @@ const HydratedStay = () => {
     press: 'plus',
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //       }}>
+  //       <ActivityIndicator size="large" color={Color.primaryGreen} />
+  //     </View>
+  //   );
+  // }
 
   return (
     <SafeAreaView>
@@ -188,16 +188,7 @@ const HydratedStay = () => {
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.logButton}
-          onPress={() => navigation.navigate('waterIntake')}>
-          <Text style={styles.logText}>See all water logs</Text>
-          <AntDesign
-            name="arrowright"
-            size={verticalScale(15)}
-            color={Color.txt}
-          />
-        </TouchableOpacity>
+        
       </View>
     </SafeAreaView>
   );

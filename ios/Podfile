@@ -42,6 +42,11 @@ pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 pod 'GoogleSignIn'
 pod 'Firebase/Auth'
 pod 'FirebaseCoreInternal'
+# permissions_path = '../node_modules/react-native-permissions/ios'
+# pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+# pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+
+
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -97,4 +102,3 @@ end
 
 # Use it to require both react-native's and this package's scripts:
 node_require('react-native/scripts/react_native_pods.rb')
-node_require('react-native-permissions/scripts/setup.rb')

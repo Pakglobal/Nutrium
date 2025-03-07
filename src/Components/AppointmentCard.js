@@ -21,19 +21,44 @@ import {
   GetAppointmentByClientId,
   UpdateAppointmentStatus,
 } from '../Apis/ClientApis/ClientAppointmentApi';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
-const AppointmentCard = ({activeAppointments, selectedAppointment, setSelectedAppointment}) => {
+const AppointmentCard = () => {
   const userInfo = useSelector(state => state?.user?.userInfo);
   const token = userInfo?.token;
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeAppointments, setActiveAppointments] = useState([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   const formatDate = isoString =>
     isoString ? moment(isoString).format('dddd, D MMMM') : '';
   const formatTime = isoString =>
     isoString ? moment(isoString).format('h:mm A') : '';
+
+  useEffect(() => {
+    FetchAppointmentData();
+  }, []);
+
+  const FetchAppointmentData = async () => {
+    try {
+      setLoading(true);
+      const response = await GetAppointmentByClientId(token, id);
+
+      const active = response
+        ?.filter(app => app?.status !== 'canceled')
+        ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
+
+      setActiveAppointments(active);
+      if (active.length > 0) setSelectedAppointment(active[0]);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleConfirm = async appointment => {
     try {

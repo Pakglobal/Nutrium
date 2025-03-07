@@ -70,7 +70,7 @@ const PhysicalActivityy = () => {
         setPhysicalActivity(response?.data);
       }
     } catch (error) {
-      showToast(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -121,7 +121,7 @@ const PhysicalActivityy = () => {
 
       setModalVisible(false);
     } catch (error) {
-      showToast(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -227,9 +227,7 @@ const PhysicalActivityy = () => {
       <OnOffFunctionality title={'Your workouts'} />
 
       {physicalActivityData && physicalActivityData?.length > 0 ? (
-        <ScrollView
-          style={styles.entriesContainer}
-          showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.entriesContainer}>
           <FlatList
             data={physicalActivityData}
             renderItem={({item}) => (

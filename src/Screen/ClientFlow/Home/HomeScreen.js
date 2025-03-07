@@ -33,16 +33,12 @@ const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [receivedMessage, setReceivedMessage] = useState(null);
 
-  const [activeAppointments, setActiveAppointments] = useState([]);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
-
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
   const id = getToken?.userData?._id || getToken?.user?._id;
 
   useEffect(() => {
     GetUserApiData();
-    FetchAppointmentData();
   }, []);
 
   const GetUserApiData = async () => {
@@ -51,25 +47,6 @@ const HomeScreen = () => {
       setUserData(response?.data);
     } catch (error) {
       console.error('Error fetching user data', error);
-    }
-  };
-
-  const FetchAppointmentData = async () => {
-    try {
-      setLoading(true);
-      const response = await GetAppointmentByClientId(token, userId);
-
-      const active = response
-        ?.filter(app => app?.status !== 'canceled')
-        ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
-
-      setActiveAppointments(active);
-      if (active.length > 0) setSelectedAppointment(active[0]);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -130,11 +107,7 @@ const HomeScreen = () => {
       <ScrollView
         style={{flex: 1, backgroundColor: Color.primary}}
         showsVerticalScrollIndicator={false}>
-        <AppointmentCard
-          selectedAppointment={selectedAppointment}
-          setSelectedAppointment={setSelectedAppointment}
-          activeAppointments={activeAppointments}
-        />
+        <AppointmentCard />
 
         <Text style={styles.title}>What were your meals like?</Text>
         <MealsLikeInHome />
@@ -143,11 +116,21 @@ const HomeScreen = () => {
 
         <HydratedStay />
 
+        <Pressable
+          style={styles.waterView}
+          onPress={() => navigation.navigate('waterIntake')}>
+          <Text style={styles.waterText}>See all water logs</Text>
+          <AntDesign
+            name="arrowright"
+            size={verticalScale(15)}
+            color={Color.txt}
+          />
+        </Pressable>
         <OnOffFunctionality title={'Your physical activity'} />
 
         <PhysicalActivity />
 
-        <TouchableOpacity
+        <Pressable
           style={styles.logButton}
           onPress={() => navigation.navigate('physicalActivity')}>
           <Text style={styles.logText}>See all physical activity stats</Text>
@@ -156,7 +139,7 @@ const HomeScreen = () => {
             size={verticalScale(15)}
             color={Color.txt}
           />
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
 
       <Modal
@@ -255,7 +238,18 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
     marginRight: 5,
   },
-  emoji: {
-    fontSize: 16,
+  waterText: {
+    marginLeft: scale(15),
+    fontSize: verticalScale(12),
+    color: Color.txt,
+    fontWeight: '500',
+    marginRight: scale(10),
+    marginVertical: verticalScale(10),
+  },
+  waterView: {
+    backgroundColor: '#d3e5ff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: verticalScale(-1),
   },
 });

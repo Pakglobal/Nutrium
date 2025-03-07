@@ -85,6 +85,7 @@ const WorkOutDetails = ({route}) => {
       };
 
       const response = await SetPhysicalActivityDetails(payload);
+
       if (
         response.message ===
           'Activity added successfully and updated in quick access' ||
@@ -113,12 +114,13 @@ const WorkOutDetails = ({route}) => {
         timeunit: 'minutes',
         byactivity: calories + ' kcal',
         date: date,
+        activity: activity,
       };
 
       const response = await UpdatePhysicalActivity(payload);
       if (
         response?.message === 'Activity updated successfully' ||
-        response?.status === true
+        response?.success === true
       ) {
         navigation.navigate('physicalActivity');
       } else {
@@ -131,6 +133,7 @@ const WorkOutDetails = ({route}) => {
       setLoading(false);
     }
   };
+
   const handleSave = () => {
     plus ? handleAddActivity() : handleUpdateActivity();
   };

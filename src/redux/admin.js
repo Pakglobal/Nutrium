@@ -9,7 +9,7 @@ const adminSlice = createSlice({
   name: 'admin',
   initialState,
   reducers: {
-    clientData: (state, action) => {
+    clientInfoData: (state, action) => {
       state.clientInfo = action.payload;
     },
     appointmentData: (state, action) => {
@@ -18,6 +18,6 @@ const adminSlice = createSlice({
   },
 });
 
-export const {appointmentData, clientData} = adminSlice.actions;
+export const {appointmentData, clientInfoData} = adminSlice.actions;
 
 export default adminSlice.reducer;

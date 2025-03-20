@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -13,13 +13,14 @@ import {
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Header from '../../../Components/Header';
 import Color from '../../../assets/colors/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginData} from '../../../redux/user';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import Toast from 'react-native-simple-toast';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileMenuScreen = () => {
   const navigation = useNavigation();
@@ -28,14 +29,31 @@ const ProfileMenuScreen = () => {
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
   const profileData = getToken?.user || getToken?.userData;
-  const profileImage = require('../../../assets/Images/profile.jpg');
 
   const [loading, setLoading] = useState(false);
   const [asyncLoading, setAsyncLoading] = useState(false);
   const [userData, setUserData] = useState([]);
+  const [profileImage, setProfileImage] = useState(null);
   const userImage = userData?.image
     ? {uri: userData.image}
     : require('../../../assets/Images/profile.jpg');
+
+  const loadImage = async () => {
+    try {
+      const storedImage = await AsyncStorage.getItem('profileImage');
+      if (storedImage) {
+        setProfileImage(storedImage);
+      }
+    } catch (error) {
+      console.error('Failed to load image:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadImage();
+    }, []),
+  );
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -183,7 +201,17 @@ const ProfileMenuScreen = () => {
               onPress={() =>
                 navigation.navigate(item?.route, {data: profileData})
               }>
-              <Image source={profileImage} style={styles.profileImage} />
+              {profileImage ? (
+                <Image
+                  source={{uri: profileImage}}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <Image
+                  source={require('../../../assets/Images/profile.jpg')}
+                  style={styles.profileImage}
+                />
+              )}
               <Text style={styles.profileName}>{item?.label}</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -266,25 +294,23 @@ const ProfileMenuScreen = () => {
     GetUserApiData();
   }, []);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <Header />
-      <View style={styles.scrollView}>
-        {menuItems.map(item => renderMenuItem(item))}
-      </View>
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        </View>
+      ) : (
+        <View style={styles.scrollView}>
+          {menuItems.map(item => renderMenuItem(item))}
+        </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import {
   useFocusEffect,
@@ -16,14 +17,19 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import {LineChart} from 'react-native-chart-kit';
+import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
+import {useDispatch, useSelector} from 'react-redux';
 
 const MeasurementDetail = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const route = useRoute();
   const {measurementType, data} = route.params;
   const unit = route?.params?.unit;
-  
 
+  const measurementId = route?.params?.data?._id;
+
+  const [currentData, setCurrentData] = useState(route?.params?.data || {});
   const periods = ['Week', 'Month', 'Year'];
   const [loading, setLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState('Week');
@@ -36,15 +42,58 @@ const MeasurementDetail = () => {
     totalVariation: '-',
   });
 
-  const measurementEntries =
-    data && data.entries ? data.entries : Array.isArray(data) ? data : [];
+  const getToken = useSelector(state => state?.user?.userInfo);
+  const token = getToken?.token;
+  const id = getToken?.userData?._id || getToken?.user?._id;
+
+  const fetchLatestData = useCallback(async () => {
+    if (!token || !id) return;
+
+    try {
+      setLoading(true);
+      const response = await GetMeasurementData(token, id);
+
+      if (response?.success === true) {
+        const measurementList = response?.measurement?.measurements || [];
+        const targetMeasurement = measurementList.find(
+          item => item.measurementtype === measurementType,
+        );
+
+        if (targetMeasurement) {
+          const entries = targetMeasurement.entries || [];
+          const stats = calculateStats(entries);
+
+          setCurrentData({
+            entries: entries,
+            _id: targetMeasurement._id,
+            ...stats,
+          });
+
+          filterDataByPeriod(selectedPeriod, entries);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [token, id, measurementType, selectedPeriod]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchLatestData();
+    }, [fetchLatestData]),
+  );
 
   const routeData = {
     measurementType,
-    measurementId: data?._id,
-    data: data,
+    measurementId: currentData?._id,
+    data: currentData,
     unit: unit,
   };
+
+  const measurementEntries =
+    data && data.entries ? data.entries : Array.isArray(data) ? data : [];
 
   const handleAddNewMeasurement = () => {
     navigation.navigate('addMeasurement', {
@@ -115,19 +164,6 @@ const MeasurementDetail = () => {
     };
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
-
   useEffect(() => {
     filterDataByPeriod(selectedPeriod);
   }, [selectedPeriod, data]);
@@ -139,8 +175,9 @@ const MeasurementDetail = () => {
     }, [filteredData]),
   );
 
-  const filterDataByPeriod = period => {
+  const filterDataByPeriod = (period, entries = currentData.entries) => {
     setLoading(true);
+    const measurementEntries = entries || [];
 
     if (!measurementEntries || !measurementEntries.length) {
       setFilteredData([]);
@@ -376,112 +413,124 @@ const MeasurementDetail = () => {
 
         <Text style={styles.dateRangeText}>{dateRange}</Text>
 
-        {filteredData.length > 0 ? (
-          <LineChart
-            data={{
-              labels: formattedDates,
-              datasets: [
-                {
-                  data: values.length ? values : [0],
-                  color: (opacity = 1) => '#31B393',
-                  strokeWidth: 2,
+        <View style={{height: '30%'}}>
+          {filteredData.length > 0 ? (
+            <LineChart
+              data={{
+                labels: formattedDates,
+                datasets: [
+                  {
+                    data: values.length ? values : [0],
+                    color: (opacity = 1) => Color.primaryGreen,
+                    strokeWidth: 2,
+                  },
+                ],
+              }}
+              width={Dimensions.get('window').width}
+              height={220}
+              yAxisSide="left"
+              chartConfig={{
+                backgroundColor: Color.primary,
+                backgroundGradientFrom: Color.primary,
+                backgroundGradientTo: Color.primary,
+                decimalPlaces: 1,
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                propsForDots: {
+                  r: '6',
+                  stroke: Color.primaryGreen,
+                  strokeWidth: '2',
+                  fill: Color.primary,
                 },
-              ],
-            }}
-            width={Dimensions.get('window').width}
-            height={220}
-            yAxisSide="left"
-            chartConfig={{
-              backgroundColor: Color.primary,
-              backgroundGradientFrom: Color.primary,
-              backgroundGradientTo: Color.primary,
-              decimalPlaces: 1,
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              propsForDots: {
-                r: '6',
-                stroke: Color.primaryGreen,
-                strokeWidth: '2',
-                fill: Color.primary,
-              },
-              propsForVerticalLabels: {
-                fontSize: 10,
-                rotation: 0,
-              },
-            }}
-            style={{
-              marginVertical: verticalScale(15),
-            }}
-          />
-        ) : (
-          <View style={styles.noDataContainer}>
-            <Text style={styles.noDataText}>
-              No data available for this period
-            </Text>
-          </View>
-        )}
-      </View>
-
-      <View style={{marginHorizontal: scale(16)}}>
-        <View style={{marginVertical: verticalScale(15)}}>
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Current</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.value}>
-                {stats.current.value !== '-'
-                  ? `${stats.current.value} ${unit}`
-                  : '-'}
+                propsForVerticalLabels: {
+                  fontSize: 10,
+                  rotation: 0,
+                },
+              }}
+              style={{
+                marginVertical: verticalScale(15),
+              }}
+            />
+          ) : (
+            <View style={styles.noDataContainer}>
+              <Text style={styles.noDataText}>
+                No data available for this period
               </Text>
             </View>
-          </View>
-
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Total variation</Text>
-            <Text
-              style={[
-                styles.value,
-                stats.totalVariation && stats.totalVariation.charAt(0) === '+'
-                  ? styles.positiveValue
-                  : stats.totalVariation &&
-                    stats.totalVariation.charAt(0) === '-'
-                  ? styles.negativeValue
-                  : null,
-              ]}>
-              {stats.totalVariation !== '-'
-                ? `${stats.totalVariation} ${unit}`
-                : '-'}
-            </Text>
-          </View>
-
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Highest</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.value}>
-                {stats.highest.value !== '-'
-                  ? `${stats.highest.value} ${unit}`
-                  : '-'}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Lowest</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.value}>
-                {stats.lowest.value !== '-'
-                  ? `${stats.lowest.value} ${unit}`
-                  : '-'}
-              </Text>
-            </View>
-          </View>
+          )}
         </View>
-
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate('allLogs', {data: routeData})}>
-          <Text style={styles.buttonText}>See logs</Text>
-        </TouchableOpacity>
       </View>
+
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        </View>
+      ) : (
+        <View style={{marginHorizontal: scale(16)}}>
+          <View style={{marginVertical: verticalScale(15)}}>
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Current</Text>
+              <View style={styles.valueContainer}>
+                <Text style={styles.value}>
+                  {stats.current.value !== '-'
+                    ? `${stats.current.value} ${unit}`
+                    : '-'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Total variation</Text>
+              <Text
+                style={[
+                  styles.value,
+                  stats.totalVariation && stats.totalVariation.charAt(0) === '+'
+                    ? styles.positiveValue
+                    : stats.totalVariation &&
+                      stats.totalVariation.charAt(0) === '-'
+                    ? styles.negativeValue
+                    : null,
+                ]}>
+                {stats.totalVariation !== '-'
+                  ? `${stats.totalVariation} ${unit}`
+                  : '-'}
+              </Text>
+            </View>
+
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Highest</Text>
+              <View style={styles.valueContainer}>
+                <Text style={styles.value}>
+                  {stats.highest.value !== '-'
+                    ? `${stats.highest.value} ${unit}`
+                    : '-'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Lowest</Text>
+              <View style={styles.valueContainer}>
+                <Text style={styles.value}>
+                  {stats.lowest.value !== '-'
+                    ? `${stats.lowest.value} ${unit}`
+                    : '-'}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate('allLogs', {data: routeData})}>
+            <Text style={styles.buttonText}>See logs</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };

@@ -20,16 +20,11 @@ import {
   GetPhysicalActivities,
   GetQuickAccess,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import Toast from 'react-native-simple-toast';
 
 const LogPhysicalActivity = ({route}) => {
   const token = route?.params?.plusData?.token;
   const id = route?.params?.plusData?.id;
   const plus = route?.params?.plusData?.press === 'plus';
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
 
   const navigation = useNavigation();
   const [searchActivity, setSearchActivity] = useState('');
@@ -39,9 +34,10 @@ const LogPhysicalActivity = ({route}) => {
   const [loading, setLoading] = useState(false);
   const [quickAccessData, setQuickAccessData] = useState([]);
 
-  const handlePressItem = async name => {
+  const handlePressItem = async (name, time) => {
     navigation.navigate('workOutDetails', {
       name: name,
+      time: time,
       plus: plus,
     });
   };
@@ -98,25 +94,10 @@ const LogPhysicalActivity = ({route}) => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      FetchQuickAccessData();
-      FetchActivityData();
-    }, []),
-  );
-
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
+  useEffect(() => {
+    FetchQuickAccessData();
+    FetchActivityData();
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
@@ -127,63 +108,80 @@ const LogPhysicalActivity = ({route}) => {
         showRightButton={false}
       />
 
-      <FlatList
-        data={filteredData}
-        ListHeaderComponent={
-          <View style={{marginHorizontal: scale(16)}}>
-            <View style={styles.searchContainer}>
-              <TextInput
-                placeholder="Search for an activity..."
-                placeholderTextColor={Color.gray}
-                value={searchActivity}
-                onChangeText={handleSearch}
-                style={styles.inputView}
-              />
-              <Pressable style={styles.clearButton} onPress={clearSearch}>
-                <AntDesign
-                  name="closecircle"
-                  size={verticalScale(22)}
-                  color={Color.primaryGreen}
-                />
-              </Pressable>
+      <View style={{marginHorizontal: scale(16)}}>
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="Search for an activity..."
+            placeholderTextColor={Color.gray}
+            value={searchActivity}
+            onChangeText={handleSearch}
+            style={styles.inputView}
+          />
+          <Pressable style={styles.clearButton} onPress={clearSearch}>
+            <AntDesign
+              name="closecircle"
+              size={verticalScale(22)}
+              color={Color.primaryGreen}
+            />
+          </Pressable>
+        </View>
+      </View>
+
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        </View>
+      ) : filteredData?.length > 0 ? (
+        <FlatList
+          data={filteredData}
+          ListHeaderComponent={
+            <View style={{marginHorizontal: scale(16)}}>
+              {quickAccessData?.length > 0 && (
+                <View>
+                  <Text style={styles.title}>Quick access</Text>
+                  {quickAccessData?.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        handlePressItem(item?.activity, item?.time)
+                      }>
+                      <Text style={styles.activity}>{item?.activity}</Text>
+                      <Text style={styles.time}>
+                        {item?.time} {item?.timeunit}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+
+              <Text style={styles.title}>All physical activities</Text>
             </View>
-
-            {quickAccessData?.length > 0 && (
-              <>
-                <Text style={styles.title}>Quick access</Text>
-                {quickAccessData?.map((item, index) => (
-                  <View key={index}>
-                    <Text style={styles.activity}>{item?.activity}</Text>
-                    <Text style={styles.time}>
-                      {item?.time} {item?.timeunit}
-                    </Text>
-                  </View>
-                ))}
-              </>
-            )}
-
-            <Text style={styles.title}>All physical activities</Text>
-          </View>
-        }
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => handlePressItem(item?.activity)}
-            style={{marginHorizontal: scale(16)}}>
-            <Text style={styles.name}>{item?.activity}</Text>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item, index) => item?._id || index.toString()}
-        ListEmptyComponent={() => (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              {searchActivity.trim()
-                ? 'No matching activities found'
-                : 'No activities available'}
-            </Text>
-          </View>
-        )}
-        showsVerticalScrollIndicator={false}
-      />
+          }
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => handlePressItem(item?.activity)}
+              style={{marginHorizontal: scale(16)}}>
+              <Text style={styles.name}>{item?.activity}</Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => item?._id || index.toString()}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>
+                {searchActivity.trim()
+                  ? 'No matching activities found'
+                  : 'No activities available'}
+              </Text>
+            </View>
+          )}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -217,8 +215,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: verticalScale(20),
-    marginBottom: verticalScale(15),
-    fontSize: scale(15),
+    fontSize: scale(14),
     color: Color.gray,
   },
   name: {

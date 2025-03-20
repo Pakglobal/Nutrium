@@ -944,7 +944,7 @@ const SettingsScreen = () => {
                         index !== unitOptions[selectedUnit]?.length - 1 ? 1 : 0,
                       borderColor: '#ddd',
                     }}>
-                    <Text style={{fontSize: 14}}>{unit}</Text>
+                    <Text style={{fontSize: 14, color: Color.black}}>{unit}</Text>
                   </TouchableOpacity>
                 ))}
               </View>

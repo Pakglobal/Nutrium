@@ -41,27 +41,6 @@ const AddMeasurement = () => {
 
   const formattedDate = new Date(date).toISOString().split('T')[0];
 
-  const getUnitForType = type => {
-    switch (type.toLowerCase()) {
-      case 'weight':
-        return 'kg';
-      case 'height':
-        return 'cm';
-      case 'waist circumference':
-        return 'cm';
-      case 'hip circumference':
-        return 'cm';
-      case 'body fat percentage':
-        return '%';
-      case 'muscle mass':
-        return 'kg';
-      case 'bmi':
-        return '%';
-      default:
-        return '';
-    }
-  };
-
   const validateInput = () => {
     if (!value || value <= 0) {
       setErrorMessage('Please enter a valid weight value');
@@ -96,7 +75,7 @@ const AddMeasurement = () => {
         response?.message === 'Measurement updated successfully' ||
         response?.success === true
       ) {
-        navigation.navigate('measurements');
+        navigation.goBack();
       } else {
         showToast(response?.message);
         setLoading(false);
@@ -116,6 +95,7 @@ const AddMeasurement = () => {
         onSave={true}
         onPress={() => handleSave()}
         backText={measurementType}
+        loading={loading}
       />
 
       <View style={styles.content}>
@@ -181,7 +161,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginHorizontal: scale(16),
-    marginTop: verticalScale(20),
+    marginTop: verticalScale(10),
   },
   label: {
     fontSize: scale(14),

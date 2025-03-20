@@ -168,12 +168,12 @@ export default BottomNavigation;
 const styles = StyleSheet.create({
   tabBarStyle: {
     flexDirection: 'row',
-    height: verticalScale(70),
+    height: verticalScale(55),
     backgroundColor: Color.primary,
   },
   plusBtn: {
     position: 'absolute',
-    bottom: scale(22),
+    bottom: scale(7),
     alignSelf: 'center',
     backgroundColor: 'rgba(232, 150, 106, 0.3)',
     padding: scale(10),

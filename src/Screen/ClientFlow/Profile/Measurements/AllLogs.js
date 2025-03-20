@@ -1,5 +1,5 @@
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {format} from 'date-fns';
 import BackHeader from '../../../../Components/BackHeader';
@@ -13,16 +13,26 @@ const AllLogs = () => {
   const displaydata = route?.params?.data?.data;
   const measurementType = route?.params?.data?.measurementType;
 
+  const sortedEntries = useMemo(() => {
+    if (!displaydata?.entries || !Array.isArray(displaydata.entries)) {
+      return [];
+    }
+
+    return [...displaydata.entries].sort((a, b) => {
+      return new Date(b?.date) - new Date(a?.date);
+    });
+  }, [displaydata?.entries]);
+
   const renderItem = ({item}) => {
     return (
       <View style={styles.logContainer}>
         <View>
-          <Text>You</Text>
-          <Text style={{color: Color.black, fontSize: scale(14)}}>
+          <Text style={{color: Color.gray}}>You</Text>
+          <Text style={{color: Color.black, fontSize: scale(13)}}>
             {item?.value || 'N/A'} {item?.unit || 'N/A'}
           </Text>
         </View>
-        <Text style={{color: Color.black, fontSize: scale(13)}}>
+        <Text style={{color: Color.black, fontSize: scale(12)}}>
           {item?.date ? format(new Date(item?.date), 'MMMM dd, yyyy') : 'N/A'}
         </Text>
       </View>
@@ -47,7 +57,7 @@ const AllLogs = () => {
       />
 
       <FlatList
-        data={displaydata?.entries}
+        data={sortedEntries}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={renderEmptyList}
@@ -67,12 +77,12 @@ const styles = StyleSheet.create({
   noDataText: {
     color: Color.gray,
     fontSize: scale(14),
-    padding: verticalScale(20)
+    padding: verticalScale(20),
   },
   logContainer: {
     borderBottomColor: '#DDD',
     borderBottomWidth: 1,
-    paddingVertical: verticalScale(10),
+    paddingVertical: verticalScale(8),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

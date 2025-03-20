@@ -3,17 +3,20 @@ import {
   ActivityIndicator,
   Alert,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   ToastAndroid,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
-import NTextInput from '../../Components/NTextInput';
 import Color from '../../assets/colors/Colors';
 import {useDispatch} from 'react-redux';
 import {GoogleLogin, Login} from '../../Apis/Login/AuthApis';
@@ -21,42 +24,29 @@ import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
-import CustomButton from '../../Components/Button';
-import Spinner from 'react-native-loading-spinner-overlay';
 import {loginData, profileData} from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
 import Toast from 'react-native-simple-toast';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
-  // const [email, setEmail] = useState('val.globalia@gmail.com');
-  // const [email, setEmail] = useState('vatsal.r.lakhani2626+88@gmail.com');
-  // const [password, setPassword] = useState('password123#');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
+  const handlePassword = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
   const validateEmail = value => {
     setEmail(value);
@@ -166,107 +156,132 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{marginHorizontal: verticalScale(20)}}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.logoContainer}>
-          <NutriumLogo height={scale(71)} width={scale(290)} />
+          <NutriumLogo
+            style={styles.logo}
+            width={scale(280)}
+            height={verticalScale(50)}
+          />
         </View>
 
-        <View>
-          <NTextInput
+        <Text style={styles.inputLabel}>Email</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            value={email}
+            placeholder="Enter email"
             onChangeText={validateEmail}
-            values={email}
-            placeholder={'Email'}
-            errorMessage={emailError}
-            inputPlaceHolder={'Enter email'}
-            textInputStyle={{
-              borderColor: emailError ? 'red' : Color.borderColor,
-            }}
+            placeholderTextColor={Color.gray}
+            style={styles.input}
           />
-          <NTextInput
+        </View>
+        {emailError ? (
+          <Text style={styles.errorMessage}>{emailError}</Text>
+        ) : null}
+
+        <Text style={styles.inputLabel}>Password</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            value={password}
+            placeholder="Enter password"
             onChangeText={validatePassword}
-            placeholder={'Password'}
-            values={password}
-            eyeIcon={true}
-            textContainerStyle={{marginTop: verticalScale(15)}}
-            errorMessage={passwordError}
-            inputPlaceHolder={'Enter password'}
-            textInputStyle={{
-              borderColor: passwordError ? 'red' : Color.borderColor,
-            }}
+            placeholderTextColor={Color.gray}
+            style={styles.input}
+            secureTextEntry={!passwordVisible}
           />
+          <TouchableOpacity
+            onPress={handlePassword}
+            style={styles.eyeIconContainer}>
+            <Ionicons
+              name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+              color="#777"
+              size={24}
+            />
+          </TouchableOpacity>
+        </View>
+        {passwordError ? (
+          <Text style={styles.errorMessage}>{passwordError}</Text>
+        ) : null}
+
+        <TouchableOpacity>
+          <Text style={styles.forgotText}>Forgot your password?</Text>
+        </TouchableOpacity>
+
+        <View style={styles.termsContainer}>
+          <TouchableOpacity
+            style={[
+              styles.checkbox,
+              {borderColor: isAgree ? Color.secondary : '#D3D3D3'},
+              {backgroundColor: isAgree ? '#FFFFFF' : '#FFFFFF'},
+            ]}
+            onPress={() => setIsAgree(!isAgree)}>
+            {isAgree && (
+              <View style={styles.checkedBox}>
+                <AntDesign name="check" color={Color.secondary} size={16} />
+              </View>
+            )}
+          </TouchableOpacity>
+          <Text style={styles.termsText}>
+            I accept the{' '}
+            <Text style={styles.highlightedText}>
+              Terms and Conditions of Use
+            </Text>{' '}
+            and the <Text style={styles.highlightedText}>Privacy Policy</Text>{' '}
+            of Nutrium.
+          </Text>
         </View>
 
-        <View>
-          <Text style={styles.forgotText}>Forgot your Password?</Text>
-          <View style={styles.privacyView}>
-            <TouchableOpacity
-              style={[
-                styles.checBoxView,
-                {borderColor: isAgree ? Color.secondary : 'grey'},
-              ]}
-              onPress={() => setIsAgree(!isAgree)}>
-              {isAgree ? (
-                <FontAwesome
-                  name="check"
-                  color={Color.secondary}
-                  size={verticalScale(16)}
-                />
-              ) : null}
-            </TouchableOpacity>
-            <Text style={styles.privacyText}>
-              I accept the{' '}
-              <Text
-                onPress={() => console.log('Conditions')}
-                style={{color: Color.secondary}}>
-                Terms and Conditions of Use
-              </Text>{' '}
-              and the{' '}
-              <Text
-                onPress={() => console.log('Privacy')}
-                style={{color: Color.secondary}}>
-                Privacy Policy
-              </Text>{' '}
-              of Nutrium
-            </Text>
-            <View />
-          </View>
-        </View>
-
-        <CustomButton
+        <TouchableOpacity
           onPress={handleLogin}
-          disabled={!isAgree}
-          backgroundColor={isAgree ? Color.secondary : Color.borderColor}
-          txtColor={isAgree ? Color.primary : Color.txt}
-          text="Sign In"
-          marginTop={verticalScale(40)}
-          iconColor={isAgree ? Color.primary : Color.txt}
-        />
+          style={[
+            styles.signInButton,
+            {backgroundColor: isAgree ? Color.secondary : '#E0E0E0'},
+          ]}>
+          {loading ? (
+            <ActivityIndicator size="large" color={Color.primary} />
+          ) : (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text
+                style={[
+                  styles.signInText,
+                  {color: isAgree ? '#FFFFFF' : '#9E9E9E'},
+                ]}>
+                Sign in
+              </Text>
+              <AntDesign
+                name="arrowright"
+                color={isAgree ? '#FFFFFF' : '#9E9E9E'}
+                size={16}
+                style={{marginLeft: scale(8)}}
+              />
+            </View>
+          )}
+        </TouchableOpacity>
 
-        <View>
-          {/* <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
+        {/* <TouchableOpacity onPress={() => {
               navigation.navigate('registrationType');
             }}>
-            <Text style={styles.accountTxt}>I don't have an account</Text>
-          </TouchableOpacity> */}
-          <View style={styles.orContainer}>
-            <View style={styles.devider}></View>
-            <Text style={styles.textStyle}> or </Text>
-            <View style={styles.devider}></View>
-          </View>
+          <Text style={styles.noAccountText}>I don't have an account</Text>
+        </TouchableOpacity> */}
+
+        <View style={styles.orContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.orText}>or</Text>
+          <View style={styles.divider} />
         </View>
 
-        <View style={{alignItems: 'center', marginTop: verticalScale(10)}}>
-          <GoogleSigninButton
-            size={GoogleSigninButton.Size.Wide}
-            color={GoogleSigninButton.Color.Dark}
-            onPress={signInWithGoogle}
-            disabled={false}
-            style={styles.signInButton}
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={signInWithGoogle}>
+          <Image
+            source={require('../../assets/Icon/google.png')}
+            style={styles.googleIcon}
           />
-        </View>
-      </View>
+          <Text style={styles.googleText}>Sign in with Google</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -274,64 +289,132 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Color.primary,
+  },
+  scrollView: {
+    paddingHorizontal: scale(16),
   },
   logoContainer: {
-    marginVertical: verticalScale(50),
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: verticalScale(48),
+  },
+  inputLabel: {
+    fontSize: scale(14),
+    color: '#757575',
+    marginBottom: verticalScale(7),
+    marginTop: verticalScale(15),
+  },
+  inputContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  input: {
+    height: verticalScale(35),
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: scale(12),
+    paddingHorizontal: scale(16),
+    fontSize: scale(14),
+    color: Color.black,
+    width: '100%',
+  },
+  eyeIconContainer: {
+    position: 'absolute',
+    right: scale(16),
+    top: scale(8),
+  },
+  errorMessage: {
+    color: '#F44336',
+    fontSize: scale(13),
+    marginTop: verticalScale(4),
   },
   forgotText: {
-    marginTop: verticalScale(25),
-    fontSize: verticalScale(12),
-    fontWeight: '700',
-    color: Color.txt,
+    color: '#757575',
+    fontSize: scale(13),
+    fontWeight: '600',
+    marginTop: verticalScale(22),
   },
-  privacyView: {
+  termsContainer: {
     flexDirection: 'row',
-    marginTop: verticalScale(15),
     alignItems: 'center',
+    marginTop: verticalScale(22),
   },
-  checBoxView: {
-    width: 25,
-    height: 25,
-    borderWidth: 3,
-    borderRadius: 5,
-    marginRight: verticalScale(6),
+  checkbox: {
+    width: scale(22),
+    height: scale(22),
+    borderWidth: 2,
+    borderRadius: scale(4),
+    marginRight: scale(11),
     alignItems: 'center',
     justifyContent: 'center',
   },
-  privacyText: {
-    color: Color.txt,
+  checkedBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  termsText: {
+    flex: 1,
+    color: '#757575',
+    fontSize: scale(13),
+    lineHeight: verticalScale(18),
+  },
+  highlightedText: {
+    color: Color.secondary,
+  },
+  signInButton: {
+    flexDirection: 'row',
+    height: verticalScale(38),
+    borderRadius: scale(24),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: verticalScale(38),
+  },
+  signInText: {
+    fontSize: scale(15),
     fontWeight: '600',
-    width: '95%',
   },
-  devider: {
-    borderWidth: 1,
-    width: '40%',
-    borderColor: Color.borderColor,
-  },
-  textStyle: {
-    fontWeight: '700',
-    color: Color.txt,
-    fontSize: verticalScale(12),
+  noAccountText: {
+    color: Color.secondary,
+    fontSize: scale(13),
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: verticalScale(22),
   },
   orContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'center',
-    marginTop: verticalScale(25),
+    marginVertical: verticalScale(22),
   },
-  accountTxt: {
-    marginTop: verticalScale(25),
-    fontSize: verticalScale(12),
-    fontWeight: '700',
-    color: Color.secondary,
-    alignSelf: 'center',
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E0E0E0',
   },
-  signInButton: {
-    // height: scale(60),
-    alignItems: 'center',
+  orText: {
+    color: '#757575',
+    paddingHorizontal: scale(15),
+    fontWeight: '600',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    height: verticalScale(38),
+    borderRadius: scale(24),
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
     justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: verticalScale(48),
+  },
+  googleIcon: {
+    width: scale(22),
+    height: scale(22),
+    marginRight: 8,
+  },
+  googleText: {
+    color: '#757575',
+    fontSize: scale(14),
+    fontWeight: '600',
   },
 });
 

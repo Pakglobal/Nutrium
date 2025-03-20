@@ -40,6 +40,7 @@ import AllLogs from '../Screen/ClientFlow/Profile/Measurements/AllLogs';
 import ShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/ShoppingList';
 import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShoppingList';
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
+import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
 
 
 const Stack = createNativeStackNavigator();
@@ -85,6 +86,7 @@ const AdminFlowStack = () => (
     <Stack.Screen name="ClientProfile" component={ClientProfileScreen} />
     <Stack.Screen name="Chat" component={ClientChatScreen} />
     <Stack.Screen name="Settings" component={SettingScreen} />
+    <Stack.Screen name="Messages" component={MessageClient} />
   </Stack.Navigator>
 );
 

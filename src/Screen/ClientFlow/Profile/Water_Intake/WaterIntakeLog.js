@@ -22,60 +22,84 @@ import Color from '../../../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
 
 const WaterIntakeLog = ({route}) => {
-  const routeData = route?.params?.intake;
-  // const plusDate = route?.params?.plusData?.date || new Date();
-
-  const plus = route?.params?.plusData?.press === 'plus';
-  const clientId = route?.params?.plusData?.clientId;
-  const token = route?.params?.plusData?.token;
-
   const navigation = useNavigation();
-  // const [date, setDate] = useState(
-  //   plus ? new Date(plusDate) : new Date(routeData?.date),
-  // );
+  const routeData = route?.params?.intake;
+  const plusData = route?.params?.plusData;
+  const plus = plusData?.press === 'plus';
+  const clientId = plusData?.clientId;
+  const token = plusData?.token || routeData?.token;
 
-  const plusDate = route?.params?.plusData?.date || new Date().toISOString();
-
-  const [date, setDate] = useState(
-    plus ? new Date(plusDate) : new Date(routeData?.date || plusDate),
-  );
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
+  const initialDate = () => {
+    try {
+      if (plus && plusData?.date) {
+        return new Date(plusData.date);
+      } else if (routeData?.date) {
+        return new Date(routeData.date);
+      }
+      return new Date();
+    } catch (error) {
+      console.error('Error initializing date:', error);
+      return new Date();
+    }
   };
 
+  const [date, setDate] = useState(initialDate());
   const [dateOpen, setDateOpen] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const amount = parseInt(routeData?.amount?.split('ml')[0]);
-  const [num, setNum] = useState(amount ? amount : 0);
+  const amount = routeData?.amount
+    ? parseInt(routeData.amount.replace(/\D/g, ''))
+    : 0;
+  const [num, setNum] = useState(amount || 0);
+
+  const parseTimeStringToDate = timeString => {
+    try {
+      if (!timeString) return new Date();
+
+      const [hours, minutes, seconds = '0'] = timeString.split(':').map(Number);
+
+      if (
+        isNaN(hours) ||
+        hours < 0 ||
+        hours > 23 ||
+        isNaN(minutes) ||
+        minutes < 0 ||
+        minutes > 59 ||
+        isNaN(seconds) ||
+        seconds < 0 ||
+        seconds > 59
+      ) {
+        console.warn('Invalid time components:', hours, minutes, seconds);
+        return new Date();
+      }
+
+      const newDate = new Date();
+      newDate.setHours(hours, minutes, seconds);
+      return newDate;
+    } catch (error) {
+      console.error('Error parsing time:', error, timeString);
+      return new Date();
+    }
+  };
 
   const backendTime = plus
     ? new Date().toTimeString().split(' ')[0]
     : routeData?.time;
+  const [time, setTime] = useState(parseTimeStringToDate(backendTime));
 
-  const parseTimeStringToDate = timeString => {
-    const [hours, minutes, seconds] = timeString?.split(':').map(Number);
-    const date = new Date();
-
-    date.setUTCHours(hours, minutes, seconds);
-    return date;
+  const showToast = message => {
+    Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
-
-  const [time, setTime] = useState(
-    plus ? new Date() : parseTimeStringToDate(backendTime),
-  );
 
   const setAmount = valuee => {
     setNum(prevNum => Number(prevNum) + Number(valuee));
   };
 
-  const formattedTime = `${String(time.getUTCHours()).padStart(
-    2,
-    '0',
-  )}:${String(time.getUTCMinutes()).padStart(2, '0')}`;
+  const formattedTime = `${String(time.getHours()).padStart(2, '0')}:${String(
+    time.getMinutes(),
+  ).padStart(2, '0')}`;
 
   const validateInput = () => {
     if (!num || num <= 0) {
@@ -91,6 +115,8 @@ const WaterIntakeLog = ({route}) => {
   };
 
   const handleUpdateWaterIntake = async () => {
+    if (!validateInput()) return;
+
     setLoading(true);
     try {
       const payload = {
@@ -99,7 +125,7 @@ const WaterIntakeLog = ({route}) => {
         waterIntakeAmountId: routeData?.waterIntakeAmountId,
         amount: num,
         time: formattedTime,
-        token: routeData?.token,
+        token: token,
         date: date,
       };
 
@@ -110,17 +136,19 @@ const WaterIntakeLog = ({route}) => {
       ) {
         navigation.goBack();
       } else {
-        showToast(response?.message);
-        setLoading(false);
+        showToast(response?.message || 'Error updating water intake');
       }
     } catch (error) {
-      showToast(error);
+      console.error(error);
+      showToast('An error occurred');
     } finally {
       setLoading(false);
     }
   };
 
   const handleAddWaterIntake = async () => {
+    if (!validateInput()) return;
+
     setLoading(true);
     try {
       const payload = {
@@ -138,11 +166,11 @@ const WaterIntakeLog = ({route}) => {
       ) {
         navigation.goBack();
       } else {
-        showToast(response?.message);
-        setLoading(false);
+        showToast(response?.message || 'Error adding water intake');
       }
     } catch (error) {
-      showToast(error);
+      console.error(error);
+      showToast('An error occurred');
     } finally {
       setLoading(false);
     }
@@ -152,19 +180,6 @@ const WaterIntakeLog = ({route}) => {
     plus ? handleAddWaterIntake() : handleUpdateWaterIntake();
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <BackHeader
@@ -172,6 +187,7 @@ const WaterIntakeLog = ({route}) => {
         titleName="Water intake log"
         onSave={true}
         onPress={() => handleSave()}
+        loading={loading}
       />
 
       <ScrollView style={styles.scrollView}>

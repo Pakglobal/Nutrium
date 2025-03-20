@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Color from '../../assets/colors/Colors';
 import SighnUpHeader from '../../Components/SighnUpHeader';
 import { useNavigation } from '@react-navigation/native';
 import { scale, verticalScale } from 'react-native-size-matters';
-import Button from '../../Components/Button';
+
 
 const GetAccess = () => {
   const navigation = useNavigation();

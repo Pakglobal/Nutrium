@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../../assets/colors/Colors';
 import NutriumLogo from '../../../assets/Icon/logo.svg';
@@ -17,13 +17,10 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 
 const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
-  const dispatch = useDispatch();
   const navigation = useNavigation();
-
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
+  const token = useSelector(state => state?.user?.userInfo?.token);
 
   const options = [
     {id: 0, label: 'MESSAGES'},
@@ -31,19 +28,26 @@ const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
     {id: 2, label: 'APPOINTMENTS'},
   ];
 
-  const handleSelectedOption = label => {
-    if (!token) {
-      console.error('Token is missing');
-      return;
-    }
+  const handleSelectedOption = useCallback(
+    label => {
+      if (!token) {
+        console.error('Token is missing');
+        return;
+      }
 
-    onSelectScreen(label);
-    navigation.navigate(label, {label});
-  };
+      setSelectedTab(0);
+      onSelectScreen(label);
 
-  const handleDrawerNavigation = () => {
+      requestAnimationFrame(() => {
+        navigation.navigate(label, {label});
+      });
+    },
+    [token, navigation, onSelectScreen],
+  );
+
+  const handleDrawerNavigation = useCallback(() => {
     navigation.openDrawer();
-  };
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,26 +58,28 @@ const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
             onPress={handleDrawerNavigation}>
             <Ionicons name="menu" size={scale(24)} color={Color.primary} />
           </TouchableOpacity>
+
           <View style={styles.logoContainer}>
             <NutriumLogo height={scale(60)} width={scale(60)} />
           </View>
+
           <View style={styles.optionContainer}>
             {options.map(item => (
               <TouchableOpacity
-                key={item.id}
-                onPress={() => handleSelectedOption(item.label)}>
+                key={item?.id}
+                onPress={() => handleSelectedOption(item?.label)}>
                 <Text
                   style={[
                     styles.text,
                     {
                       borderBottomColor:
-                        item.label === selectedScreen
+                        item?.label === selectedScreen
                           ? Color.primary
-                          : Color.black,
-                      borderBottomWidth: item.label === selectedScreen ? 2 : 0,
+                          : 'transparent',
+                      borderBottomWidth: item?.label === selectedScreen ? 2 : 0,
                     },
                   ]}>
-                  {item.label}
+                  {item?.label}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -82,13 +88,8 @@ const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
       </View>
 
       <View style={styles.bodyContainer}>
-        <View style={{marginTop: scale(10), marginHorizontal: scale(8)}}>
-          {selectedScreen === 'MESSAGES' && (
-            <MessageScreen
-              selected={selectedTab}
-              setSelected={setSelectedTab}
-            />
-          )}
+        <View style={{marginTop: scale(10), marginHorizontal: scale(16)}}>
+          {selectedScreen === 'MESSAGES' && <MessageScreen />}
           {selectedScreen === 'CLIENTS' && <ClientScreen />}
           {selectedScreen === 'APPOINTMENTS' && (
             <AppointmentScreen
@@ -102,7 +103,7 @@ const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
   );
 };
 
-export default AdminHomeScreen;
+export default React.memo(AdminHomeScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     height: verticalScale(170),
   },
   header: {
-    marginHorizontal: scale(8),
+    marginHorizontal: scale(16),
   },
   optionContainer: {
     flexDirection: 'row',

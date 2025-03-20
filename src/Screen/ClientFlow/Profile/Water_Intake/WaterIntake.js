@@ -44,49 +44,77 @@ const WaterIntake = () => {
   const id = getToken?.userData?._id || getToken?.user?._id;
 
   const handleDate = selectedDate => {
-    const formattedDate = selectedDate.fullDate.toISOString().split('T')[0];
+    try {
+      if (!selectedDate || !selectedDate.fullDate) {
+        console.warn('Invalid date selected');
+        return;
+      }
 
-    let matchingRecords =
-      waterIntake?.waterIntakeData?.waterIntakeRecords?.filter(record => {
-        const recordFormattedDate = new Date(record.date)
-          .toISOString()
-          .split('T')[0];
-        return recordFormattedDate === formattedDate;
-      }) || [];
+      const formattedDate = selectedDate.fullDate.toISOString().split('T')[0];
 
-    matchingRecords = matchingRecords.map(record => {
-      const sortedIntake = [...(record.waterIntakeAmount || [])].sort(
-        (a, b) => {
-          const timeA = a.time ? a.time.split(':').map(Number) : [0, 0];
-          const timeB = b.time ? b.time.split(':').map(Number) : [0, 0];
+      let matchingRecords =
+        waterIntake?.waterIntakeData?.waterIntakeRecords?.filter(record => {
+          if (!record || !record.date) return false;
 
-          if (timeA[0] !== timeB[0]) return timeB[0] - timeA[0];
-          return timeB[1] - timeA[1];
-        },
-      );
+          try {
+            const recordFormattedDate = new Date(record.date)
+              .toISOString()
+              .split('T')[0];
+            return recordFormattedDate === formattedDate;
+          } catch (error) {
+            console.error('Error processing record date:', error);
+            return false;
+          }
+        }) || [];
 
-      return {
-        ...record,
-        waterIntakeAmount: sortedIntake,
-      };
-    });
+      matchingRecords = matchingRecords.map(record => {
+        try {
+          const sortedIntake = [...(record.waterIntakeAmount || [])].sort(
+            (a, b) => {
+              if (!a.time || !b.time) return 0;
 
-    setSelectedDate(formattedDate);
-    setSelectedIntake(matchingRecords);
+              const timeA = a.time ? a.time.split(':').map(Number) : [0, 0];
+              const timeB = b.time ? b.time.split(':').map(Number) : [0, 0];
+
+              if (timeA[0] !== timeB[0]) return timeB[0] - timeA[0];
+              return timeB[1] - timeA[1];
+            },
+          );
+
+          return {
+            ...record,
+            waterIntakeAmount: sortedIntake,
+          };
+        } catch (error) {
+          console.error('Error sorting intake data:', error);
+          return record;
+        }
+      });
+
+      setSelectedDate(formattedDate);
+      setSelectedIntake(matchingRecords);
+    } catch (error) {
+      console.error('Error in handleDate:', error);
+    }
   };
 
   const getLast10Days = () => {
-    const dates = [];
-    for (let i = 9; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      dates.push({
-        fullDate: date,
-        day: date.getDate(),
-        month: date.toLocaleString('default', {month: 'short'}),
-      });
+    try {
+      const dates = [];
+      for (let i = 9; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push({
+          fullDate: date,
+          day: date.getDate(),
+          month: date.toLocaleString('default', {month: 'short'}),
+        });
+      }
+      return dates;
+    } catch (error) {
+      console.error('Error in getLast10Days:', error);
+      return [];
     }
-    return dates;
   };
 
   useEffect(() => {
@@ -106,34 +134,54 @@ const WaterIntake = () => {
       if (selectedDate) {
         let matchingRecords =
           response?.waterIntakeData?.waterIntakeRecords?.filter(record => {
-            const recordFormattedDate = new Date(record?.date)
-              .toISOString()
-              .split('T')[0];
-            return recordFormattedDate === selectedDate;
+            if (!record || !record.date) return false;
+
+            try {
+              const recordFormattedDate = new Date(record.date)
+                .toISOString()
+                .split('T')[0];
+              return recordFormattedDate === selectedDate;
+            } catch (error) {
+              console.error(
+                'Error processing record date in getWaterIntakeData:',
+                error,
+              );
+              return false;
+            }
           }) || [];
 
         matchingRecords = matchingRecords.map(record => {
-          const sortedIntake = [...(record.waterIntakeAmount || [])].sort(
-            (a, b) => {
-              const timeA = a.time ? a.time.split(':').map(Number) : [0, 0];
-              const timeB = b.time ? b.time.split(':').map(Number) : [0, 0];
+          try {
+            const sortedIntake = [...(record.waterIntakeAmount || [])].sort(
+              (a, b) => {
+                if (!a.time || !b.time) return 0;
 
-              if (timeA[0] !== timeB[0]) return timeB[0] - timeA[0];
-              return timeB[1] - timeA[1];
-            },
-          );
+                const timeA = a.time ? a.time.split(':').map(Number) : [0, 0];
+                const timeB = b.time ? b.time.split(':').map(Number) : [0, 0];
 
-          return {
-            ...record,
-            waterIntakeAmount: sortedIntake,
-          };
+                if (timeA[0] !== timeB[0]) return timeB[0] - timeA[0];
+                return timeB[1] - timeA[1];
+              },
+            );
+
+            return {
+              ...record,
+              waterIntakeAmount: sortedIntake,
+            };
+          } catch (error) {
+            console.error(
+              'Error sorting intake data in getWaterIntakeData:',
+              error,
+            );
+            return record;
+          }
         });
 
         setSelectedIntake(matchingRecords);
       }
+      setLoading(false);
     } catch (error) {
-      console.error(error);
-    } finally {
+      console.error('Error in getWaterIntakeData:', error);
       setLoading(false);
     }
   };
@@ -145,99 +193,93 @@ const WaterIntake = () => {
   );
 
   const dailyGoal =
-    waterIntake?.waterIntakeData?.waterIntakeRecords[0]?.DailyGoal || 2000;
+    waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
 
   const calculateDailyIntake = (date, records) => {
     if (!records || !date) return 0;
 
-    const dayRecord = records.find(record => record?.date?.startsWith(date));
+    try {
+      const dayRecord = records.find(record => {
+        if (!record?.date) return false;
+        return record.date.startsWith(date);
+      });
 
-    if (!dayRecord?.waterIntakeAmount) return 0;
+      if (!dayRecord?.waterIntakeAmount) return 0;
 
-    return dayRecord.waterIntakeAmount.reduce((total, entry) => {
-      const amount = parseInt(entry?.amount) || 0;
-      return total + amount;
-    }, 0);
+      return dayRecord.waterIntakeAmount.reduce((total, entry) => {
+        const amount = parseInt(entry?.amount) || 0;
+        return total + amount;
+      }, 0);
+    } catch (error) {
+      console.error('Error in calculateDailyIntake:', error);
+      return 0;
+    }
   };
 
   const formatChartData = useCallback(() => {
-    if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
+    try {
+      if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
 
-    return dateLabels.map(dateObj => {
-      const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
-      const dailyIntake = calculateDailyIntake(
-        formattedDate,
-        waterIntake.waterIntakeData.waterIntakeRecords,
-      );
+      return dateLabels.map(dateObj => {
+        if (!dateObj?.fullDate) return {value: 0, frontColor: '#2196F3'};
 
-      const isSelected = selectedDate === formattedDate;
+        const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
+        const dailyIntake = calculateDailyIntake(
+          formattedDate,
+          waterIntake.waterIntakeData.waterIntakeRecords,
+        );
 
-      return {
-        value: dailyIntake,
-        frontColor: isSelected ? '#FF0000' : '#2196F3',
-        date: formattedDate,
-      };
-    });
+        const isSelected = selectedDate === formattedDate;
+
+        return {
+          value: dailyIntake,
+          frontColor: isSelected ? '#1976D2' : '#75BFFF',
+          date: formattedDate,
+        };
+      });
+    } catch (error) {
+      console.error('Error in formatChartData:', error);
+      return [];
+    }
   }, [waterIntake, dateLabels, selectedDate]);
 
   useEffect(() => {
-    const dates = getLast10Days();
-    setDateLabels(dates);
+    try {
+      const dates = getLast10Days();
+      setDateLabels(dates);
 
-    const today = dates[dates.length - 1];
-    handleDate(today);
+      if (dates.length > 0) {
+        const today = dates[dates.length - 1];
+        handleDate(today);
+      }
+    } catch (error) {
+      console.error('Error in initial date setup:', error);
+    }
   }, []);
 
-  // const handleEdit = async () => {
-  //   if (selectedEntry) {
-  //     setLoading(true);
-
-  //     try {
-  //       const entryDate = new Date(selectedEntry?.date);
-
-  //       navigation.navigate('waterIntakeLog', {
-  //         intake: {
-  //           waterIntakeId: selectedEntry?.waterIntakeId,
-  //           waterRecordId: selectedEntry?.waterRecordId,
-  //           waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-  //           date: entryDate,
-  //           amount: selectedEntry?.amount,
-  //           time: selectedEntry?.time,
-  //           token: token,
-  //         },
-  //         isEditing: true,
-  //       });
-
-  //       setModalVisible(false);
-  //     } catch (error) {
-  //       console.error(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
   const handleEdit = async () => {
     if (selectedEntry) {
-      setLoading(true);
-  
       try {
+        setLoading(true);
+        const entryDate = new Date(selectedEntry?.date);
+
         navigation.navigate('waterIntakeLog', {
           intake: {
             waterIntakeId: selectedEntry?.waterIntakeId,
             waterRecordId: selectedEntry?.waterRecordId,
             waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-            date: selectedEntry?.date, 
+            date: entryDate,
             amount: selectedEntry?.amount,
             time: selectedEntry?.time,
             token: token,
           },
           isEditing: true,
         });
-  
+
         setModalVisible(false);
+        setLoading(false);
       } catch (error) {
-        console.error(error);
-      } finally {
+        console.error('Error in handleEdit:', error);
         setLoading(false);
       }
     }
@@ -246,7 +288,6 @@ const WaterIntake = () => {
   const handleDelete = async () => {
     try {
       setLoading(true);
-
       const payload = {
         waterIntakeId: selectedEntry?.waterIntakeId,
         waterRecordId: selectedEntry?.waterRecordId,
@@ -262,13 +303,12 @@ const WaterIntake = () => {
       ) {
         getWaterIntakeData();
       } else {
-        showToast(response?.message);
-        setLoading(false);
+        showToast(response?.message || 'Failed to delete entry');
       }
       setModalVisible(false);
+      setLoading(false);
     } catch (error) {
-      showToast(error);
-    } finally {
+      showToast('An error occurred while deleting');
       setLoading(false);
     }
   };
@@ -277,7 +317,9 @@ const WaterIntake = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      scrollRef.current?.scrollToEnd({animated: true});
+      if (scrollRef.current) {
+        scrollRef.current.scrollToEnd({animated: true});
+      }
     }, 100);
   }, []);
 
@@ -299,25 +341,12 @@ const WaterIntake = () => {
     if (!timeString) return '';
 
     try {
-      return moment.utc(timeString, 'HH:mm').local().format('h:mm A');
+      return moment(timeString, 'HH:mm').format('h:mm A');
     } catch (error) {
       console.error('Error formatting time:', error);
       return timeString;
     }
   };
-
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -329,7 +358,7 @@ const WaterIntake = () => {
         }
       />
 
-      {/* <ScrollView
+      <ScrollView
         horizontal
         ref={scrollRef}
         scrollEventThrottle={16}
@@ -337,7 +366,9 @@ const WaterIntake = () => {
         style={styles.scrollContainer}>
         <View style={styles.chartWithDates}>
           {dateLabels.map((date, index) => {
-            const formattedDate = date?.fullDate?.toISOString()?.split('T')[0];
+            if (!date?.fullDate) return null;
+
+            const formattedDate = date.fullDate.toISOString().split('T')[0];
             const isSelected = selectedDate === formattedDate;
 
             return (
@@ -358,14 +389,14 @@ const WaterIntake = () => {
                   hideYAxisText
                   maxValue={Math.max(
                     dailyGoal,
-                    ...formatChartData().map(item => item.value),
+                    ...formatChartData().map(item => item.value || 0),
                   )}
                   frontColor={isSelected ? '#1976D2' : '#75BFFF'}
                 />
                 <View style={styles.dateBox}>
                   <Text style={styles.dateText}>{date.day}</Text>
                   <Text style={styles.monthText}>
-                    {date.month.toUpperCase()}
+                    {date.month?.toUpperCase()}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -386,9 +417,13 @@ const WaterIntake = () => {
           </View>
         </View>
 
-        {selectedIntake?.length > 0 ? (
-          <ScrollView
-            style={styles.entriesContainer}>
+        {loading ? (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator size="large" color={Color.primaryGreen} />
+          </View>
+        ) : selectedIntake && selectedIntake?.length > 0 ? (
+          <View style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
               renderItem={({item: record, index: recordIndex}) => (
@@ -435,142 +470,19 @@ const WaterIntake = () => {
                       </View>
                     )}
                     keyExtractor={(item, index) =>
-                      `intake-${recordIndex}-${index}`
+                      `intake-${recordIndex}-${index}-${item?._id || index}`
                     }
                   />
                 </View>
               )}
-              keyExtractor={(item, index) => `record-${index}`}
+              keyExtractor={(item, index) =>
+                `record-${index}-${item?._id || index}`
+              }
             />
-          </ScrollView>
+          </View>
         ) : (
-          <View style={[styles.entriesContainer, {alignItems: 'center'}]}>
-            <Text style={{textAlign: 'center'}}>
-              There are no records of water intake
-            </Text>
-          </View>
-        )}
-      </View> */}
-
-
-<ScrollView
-        horizontal
-        ref={scrollRef}
-        scrollEventThrottle={16}
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollContainer}>
-        <View style={styles.chartWithDates}>
-          {dateLabels.map((date, index) => {
-            const formattedDate = date.fullDate.toISOString().split('T')[0];
-            const isSelected = selectedDate === formattedDate;
-
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.singleDateChart}
-                onPress={() => handleDate(date)}>
-                <BarChart
-                  data={[{value: formatChartData()[index]?.value || 0}]}
-                  width={40}
-                  height={150}
-                  barWidth={20}
-                  spacing={0}
-                  hideRules
-                  hideAxesAndRules
-                  xAxisThickness={0}
-                  yAxisThickness={0}
-                  hideYAxisText
-                  maxValue={Math.max(
-                    dailyGoal,
-                    ...formatChartData().map(item => item.value),
-                  )}
-                  frontColor={isSelected ? '#1976D2' : '#75BFFF'}
-                />
-                <View style={styles.dateBox}>
-                  <Text style={styles.dateText}>{date.day}</Text>
-                  <Text style={styles.monthText}>
-                    {date.month.toUpperCase()}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </ScrollView>
-
-      <View style={styles.bottomContentContainer}>
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
-            <Text style={styles.statLabel}>Water intake</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{dailyGoal} mL</Text>
-            <Text style={styles.statLabel}>Daily goal</Text>
-          </View>
-        </View>
-
-        {selectedIntake?.length > 0 ? (
-          <FlatList
-            data={selectedIntake}
-            style={styles.entriesContainer}
-            renderItem={({item: record}) => (
-              <FlatList
-                data={record?.waterIntakeAmount}
-                renderItem={({item: intake}) => (
-                  <View style={styles.entryItem}>
-                    <View style={styles.entryLeft}>
-                      <Icon
-                        name="water-outline"
-                        size={24}
-                        color="#2196F3"
-                      />
-                      <Text style={styles.entryAmount}>
-                        {intake?.amount}
-                      </Text>
-                    </View>
-
-                    <View style={styles.entryRight}>
-                      <Text style={styles.entryTime}>
-                        {formatTime(intake?.time)}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedEntry({
-                            waterIntakeId:
-                              waterIntake?.waterIntakeData?._id,
-                            waterRecordId: record?._id,
-                            waterIntakeAmountId: intake?._id,
-                            date: record?.date,
-                            amount: intake?.amount,
-                            time: intake?.time,
-                          });
-                          setModalVisible(true);
-                        }}>
-                        <Icon
-                          name="dots-vertical"
-                          size={20}
-                          color={Color.gray}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                )}
-                keyExtractor={(item, index) => `intake-${index}`}
-              />
-            )}
-            keyExtractor={(item, index) => `record-${index}`}
-            ListEmptyComponent={
-              <View style={[styles.entriesContainer, {alignItems: 'center'}]}>
-                <Text style={{textAlign: 'center'}}>
-                  There are no records of water intake
-                </Text>
-              </View>
-            }
-          />
-        ) : (
-          <View style={[styles.entriesContainer, {alignItems: 'center'}]}>
-            <Text style={{textAlign: 'center'}}>
+          <View style={{padding: verticalScale(16)}}>
+            <Text style={{textAlign: 'center', color: Color.gray}}>
               There are no records of water intake
             </Text>
           </View>
@@ -650,6 +562,7 @@ const styles = StyleSheet.create({
     fontSize: scale(17),
     fontWeight: 'bold',
     marginBottom: verticalScale(4),
+    color: Color.black,
   },
   statLabel: {
     fontSize: scale(13),
@@ -675,6 +588,7 @@ const styles = StyleSheet.create({
   },
   entryAmount: {
     fontSize: scale(15),
+    color: Color.black,
   },
   entryRight: {
     flexDirection: 'row',
@@ -706,11 +620,8 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: scale(15),
     textAlign: 'center',
+    color: Color.black,
   },
 });
 
 export default WaterIntake;
-
-
-
-

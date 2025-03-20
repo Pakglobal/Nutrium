@@ -41,7 +41,7 @@ const Practitioner = ({route}) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={{marginTop: verticalScale(20)}}>
-            <AntDesign name="arrowleft" size={verticalScale(20)} />
+            <AntDesign name="arrowleft" size={verticalScale(20)} color={Color.black} />
           </TouchableOpacity>
           <View style={styles.imgIconView}>
             <Image

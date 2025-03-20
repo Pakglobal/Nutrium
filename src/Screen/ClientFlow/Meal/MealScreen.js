@@ -53,8 +53,8 @@ const MealScreen = () => {
         const today = new Date().getDay();
         const currentDay = daysOfWeek[today];
 
-        const todayTemplate = response.template[0].mealTemplate.find(
-          template => template.days.includes(currentDay),
+        const todayTemplate = response.template[0].mealTemplate.find(template =>
+          template.days.includes(currentDay),
         );
 
         setSelectedDays(
@@ -91,7 +91,7 @@ const MealScreen = () => {
 
   const formatDays = days => {
     if (!days || !Array.isArray(days)) return '';
-    
+
     return days
       .map(day => {
         if (typeof day !== 'string') return '';
@@ -100,7 +100,7 @@ const MealScreen = () => {
           day.substring(1, 3).toLowerCase()
         );
       })
-      .filter(day => day) 
+      .filter(day => day)
       .join(', ');
   };
 
@@ -134,22 +134,10 @@ const MealScreen = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <Header showIcon={true} headerText="Meal plan" />
+
       {plan && mealPlan?.length > 0 && (
         <View
           style={{
@@ -172,10 +160,13 @@ const MealScreen = () => {
                 style={[
                   styles.dayContainer,
                   {
-                    borderBottomWidth: 
-                      Array.isArray(selectedDays) && 
-                      Array.isArray(template?.days) && 
-                      JSON.stringify(selectedDays) === JSON.stringify(template.days) ? 2 : 0,
+                    borderBottomWidth:
+                      Array.isArray(selectedDays) &&
+                      Array.isArray(template?.days) &&
+                      JSON.stringify(selectedDays) ===
+                        JSON.stringify(template.days)
+                        ? 2
+                        : 0,
                   },
                 ]}>
                 <Text
@@ -183,9 +174,10 @@ const MealScreen = () => {
                     styles.day,
                     {
                       color:
-                        Array.isArray(selectedDays) && 
-                        Array.isArray(template?.days) && 
-                        JSON.stringify(selectedDays) === JSON.stringify(template.days)
+                        Array.isArray(selectedDays) &&
+                        Array.isArray(template?.days) &&
+                        JSON.stringify(selectedDays) ===
+                          JSON.stringify(template.days)
                           ? Color.primaryGreen
                           : Color.black,
                     },
@@ -197,8 +189,17 @@ const MealScreen = () => {
           </ScrollView>
         </View>
       )}
-
-      {plan ? (
+      
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        </View>
+      ) : plan ? (
         <ScrollView
           style={styles.contentContainer}
           showsVerticalScrollIndicator={false}>
@@ -219,14 +220,18 @@ const MealScreen = () => {
                   <View style={styles.card}>
                     <View style={styles.cardHeader}>
                       <View>
-                        <Text style={styles.mealType}>{item?.mealType || 'Meal'}</Text>
+                        <Text style={styles.mealType}>
+                          {item?.mealType || 'Meal'}
+                        </Text>
                         <View style={styles.timeContainer}>
                           <AntDesign
                             name="clockcircleo"
                             color={Color.black}
                             size={scale(16)}
                           />
-                          <Text style={styles.timeText}>{item?.time || 'No time specified'}</Text>
+                          <Text style={styles.timeText}>
+                            {item?.time || 'No time specified'}
+                          </Text>
                         </View>
                       </View>
                       <TouchableOpacity onPress={() => handleOpen(index)}>
@@ -313,8 +318,12 @@ const MealScreen = () => {
         }}>
         <View style={styles.bottomContainer}>
           <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>{selectedMeal?.mealType || 'Meal'}</Text>
-            <Text style={styles.headerText}>{selectedMeal?.time || 'No time specified'}</Text>
+            <Text style={styles.headerText}>
+              {selectedMeal?.mealType || 'Meal'}
+            </Text>
+            <Text style={styles.headerText}>
+              {selectedMeal?.time || 'No time specified'}
+            </Text>
           </View>
 
           <View style={styles.bottomContentContainer}>
@@ -461,6 +470,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: scale(14),
     fontWeight: '500',
+    color: Color.gray,
   },
   noDetailText: {
     color: Color.gray,

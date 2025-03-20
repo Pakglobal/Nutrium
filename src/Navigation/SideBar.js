@@ -7,14 +7,16 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginData} from '../redux/user';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const SideBar = ({onSelectScreen}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const getUserInfo = useSelector(state => state?.user?.profileInfo);
-  const imageUrl = getUserInfo?.image ? { uri: getUserInfo.image } : require('../assets/Images/profile.jpg');
+  const imageUrl = getUserInfo?.image
+    ? {uri: getUserInfo.image}
+    : require('../assets/Images/profile.jpg');
 
   const handleLogOut = async () => {
     dispatch(loginData());
@@ -84,12 +86,24 @@ const SideBar = ({onSelectScreen}) => {
       </View>
 
       <View style={{marginVertical: verticalScale(8)}}>
-        <Text style={{marginHorizontal: scale(8)}}>Recent</Text>
+        <Text
+          style={{
+            marginHorizontal: scale(8),
+            marginVertical: verticalScale(8),
+            color: Color.black
+          }}>
+          Recent
+        </Text>
         <FlatList data={listArrayItem} renderItem={renderItem} />
       </View>
 
       <View style={{marginVertical: verticalScale(8)}}>
-        <Text style={{marginHorizontal: scale(8)}}>
+        <Text
+          style={{
+            marginHorizontal: scale(8),
+            marginVertical: verticalScale(8),
+            color: Color.black
+          }}>
           Settings and support
         </Text>
         <FlatList data={bottomListItems} renderItem={renderItem} />
@@ -102,8 +116,7 @@ export default SideBar;
 
 const styles = StyleSheet.create({
   item: {
-    paddingVertical: verticalScale(5),
-    marginVertical: verticalScale(0),
+    paddingVertical: verticalScale(8),
     marginHorizontal: scale(10),
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -113,6 +126,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     marginLeft: scale(20),
     fontWeight: '600',
+    color: Color.gray,
   },
   text: {
     color: Color.primary,

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
+  ActivityIndicator,
+  ScrollView,
+  FlatList,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../../assets/colors/Colors';
@@ -18,130 +21,84 @@ import moment from 'moment';
 const AppointmentScreen = ({selected, setSelected}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const [loading, setLoading] = useState(false);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
+  const token = useSelector(state => state?.user?.userInfo?.token);
+  const getAllAppointmentData = useSelector(
+    state => state?.admin?.appointmentInfo,
+  );  
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!token) return;
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await GetAppointmentData(token);
+        const response = await GetAppointmentData(token);        
         dispatch(appointmentData(response));
-        setLoading(false);
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error('Error fetching appointments:', error);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
+  const currentDate = useMemo(() => new Date(), []);
 
-  const getAllAppointmentData = useSelector(
-    state => state?.admin?.appointmentInfo,
+  const formatDate = useCallback(
+    dateString => moment(dateString).format('MMMM DD, YYYY'),
+    [],
+  );
+  const formatTime = useCallback(
+    isoString => moment(isoString).format('h:mm A'),
+    [],
   );
 
-  const currentDate = new Date();
-
-  // const formatTime = dateString => {
-  //   const date = new Date(dateString);
-  //   let hours = date.getHours();
-  //   const minutes = String(date.getMinutes()).padStart(2, '0');
-  //   const amPm = hours >= 12 ? 'PM' : 'AM';
-  //   hours = hours % 12 || 12;
-
-  //   return `${hours}:${minutes} ${amPm}`;
-  // };
-
-  // const formatDate = dateString => {
-  //   const date = new Date(dateString);
-  //   const monthNames = [
-  //     'January',
-  //     'February',
-  //     'March',
-  //     'April',
-  //     'May',
-  //     'June',
-  //     'July',
-  //     'August',
-  //     'September',
-  //     'October',
-  //     'November',
-  //     'December',
-  //   ];
-  //   const month = monthNames[date.getMonth()];
-  //   const day = String(date.getDate()).padStart(2, '0');
-
-  //   return `${month} ${day}`;
-  // };
-
-  const formatDate = dateString => {
-    return moment(dateString).format('MMMM DD');
-  };
-
-  const formatTime = isoString => {
-    return moment(isoString).format('h.mm A');
-  };
-
-  const groupAppointmentsByDate = appointments => {
-    if (!appointments) return {};
-
-    return appointments.reduce((acc, item) => {
-      const dateKey = formatDate(item?.start);
-      if (!acc[dateKey]) acc[dateKey] = [];
-      acc[dateKey].push(item);
-      return acc;
-    }, {});
-  };
-
-  const previousAppointments = groupAppointmentsByDate(
-    getAllAppointmentData?.getallappointments?.filter(
-      item => new Date(item?.start) < currentDate,
-    ),
+  const groupAppointmentsByDate = useCallback(
+    appointments => {
+      if (!appointments) return {};
+      return appointments.reduce((acc, item) => {
+        const dateKey = formatDate(item?.start);
+        if (!acc[dateKey]) acc[dateKey] = [];
+        acc[dateKey].push(item);
+        return acc;
+      }, {});
+    },
+    [formatDate],
   );
 
-  const nextAppointments = groupAppointmentsByDate(
-    getAllAppointmentData?.getallappointments?.filter(
-      item => new Date(item?.start) >= currentDate,
-    ),
+  const groupedAppointments = useMemo(() => {
+    const filteredAppointments =
+      getAllAppointmentData?.getallappointments?.filter(item =>
+        selected === 0
+          ? new Date(item?.start) < currentDate
+          : new Date(item?.start) >= currentDate,
+      ) || []; 
+    return groupAppointmentsByDate(filteredAppointments);
+  }, [getAllAppointmentData, selected, currentDate, groupAppointmentsByDate]);
+
+  const handleSelectedOption = useCallback(
+    id => setSelected(id),
+    [setSelected],
+  );
+  const handleMessageCard = useCallback(
+    () => navigation.navigate('Chat'),
+    [navigation],
   );
 
-  const options = [
-    {id: 0, label: 'PREVIOUS'},
-    {id: 1, label: 'NEXT'},
-  ];
-
-  const handleSelectedOption = id => {
-    setSelected(id);
-  };
-
-  const handleMessageCard = () => {
-    navigation.navigate('Chat');
-  };
-
+  
+  
   return (
     <SafeAreaView>
       <View style={styles.optionContainer}>
-        {options.map(item => (
+        {[
+          {id: 0, label: 'PREVIOUS'},
+          {id: 1, label: 'NEXT'},
+        ].map(item => (
           <TouchableOpacity
-            key={item?.id}
-            onPress={() => handleSelectedOption(item?.id)}
+            key={item.id}
+            onPress={() => handleSelectedOption(item.id)}
             style={{
               flex: 1,
               justifyContent: 'center',
@@ -159,81 +116,57 @@ const AppointmentScreen = ({selected, setSelected}) => {
           </TouchableOpacity>
         ))}
       </View>
-
-      {selected === 0 && (
-        <View>
-          {Object.keys(previousAppointments).length > 0 ? (
-            Object.entries(previousAppointments).map(([date, items]) => (
-              <View key={date}>
-                <Text style={styles.dateHeader}>{date}</Text>
-                {items.map(item => (
-                  <TouchableOpacity
-                    style={styles.messageCard}
-                    onPress={handleMessageCard}
-                    key={item?._id}>
-                    <View style={styles.messageCardContainer}>
-                      <View style={styles.avatar} />
-                      <View>
-                        <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
-                          <Text style={styles.time}>
-                            {formatTime(item?.start)}
-                          </Text>
-                          <Text> {item?.workplace}</Text>
-                        </View>
-                        <Text style={styles.clientName}>
-                          {item?.clientName}
-                        </Text>
+      {loading ? (
+  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+    <ActivityIndicator size="large" color={Color.primaryGreen} />
+  </View>
+) : (
+  <View style={{ height: '89%', marginTop: verticalScale(10) }}>
+    {groupedAppointments && Object.keys(groupedAppointments).length > 0 ? (
+      <FlatList
+        data={Object.entries(groupedAppointments)}
+        keyExtractor={([date]) => date}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => {
+          const [date, appointments] = item;
+          return (
+            <View>
+              <Text style={styles.dateHeader}>{date}</Text>
+              {appointments.map((appt) => (
+                <TouchableOpacity
+                  key={appt?._id}
+                  style={styles.messageCard}
+                  onPress={handleMessageCard}
+                >
+                  <View style={styles.messageCardContainer}>
+                    <View style={styles.avatar} />
+                    <View>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={styles.time}>{formatTime(appt?.start)}</Text>
+                        <Text style={{ color: Color.black }}> {appt?.workplace}</Text>
                       </View>
+                      <Text style={styles.clientName}>{appt?.clientName}</Text>
                     </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            ))
-          ) : (
-            <Text style={styles.noDataText}>No Previous Appointments</Text>
-          )}
-        </View>
-      )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          );
+        }}
+      />
+    ) : (
+      <View>
+        <Text style={{ color: Color.gray, textAlign: 'center' }}>No Appointments Available</Text>
+      </View>
+    )}
+  </View>
+)}
 
-      {selected === 1 && (
-        <View>
-          {Object.keys(nextAppointments).length > 0 ? (
-            Object.entries(nextAppointments).map(([date, items]) => (
-              <View key={date}>
-                <Text style={styles.dateHeader}>{date}</Text>
-                {items.map(item => (
-                  <TouchableOpacity
-                    style={styles.messageCard}
-                    onPress={handleMessageCard}
-                    key={item?._id}>
-                    <View style={styles.messageCardContainer}>
-                      <View style={styles.avatar} />
-                      <View>
-                        <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
-                          <Text style={styles.time}>
-                            {formatTime(item?.start)}
-                          </Text>
-                          <Text> {item?.workplace}</Text>
-                        </View>
-                        <Text style={styles.clientName}>
-                          {item?.clientName}
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            ))
-          ) : (
-            <Text style={styles.noDataText}>No Upcoming Appointments</Text>
-          )}
-        </View>
-      )}
     </SafeAreaView>
   );
 };
+
+export default React.memo(AppointmentScreen);
 
 const styles = StyleSheet.create({
   optionContainer: {
@@ -243,7 +176,7 @@ const styles = StyleSheet.create({
   },
   dateHeader: {
     fontSize: scale(13),
-    marginTop: verticalScale(10),
+    marginTop: verticalScale(5),
     fontWeight: '600',
     color: Color.gray,
   },
@@ -274,6 +207,7 @@ const styles = StyleSheet.create({
   time: {
     fontWeight: 'bold',
     fontSize: scale(13),
+    color: Color.black
   },
   noDataText: {
     textAlign: 'center',
@@ -282,5 +216,3 @@ const styles = StyleSheet.create({
     color: Color.gray,
   },
 });
-
-export default AppointmentScreen;

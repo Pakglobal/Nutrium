@@ -35,6 +35,7 @@ const PhysicalActivityy = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
@@ -128,7 +129,7 @@ const PhysicalActivityy = () => {
   };
 
   const handleDelete = async () => {
-    setLoading(true);
+    setDeleteLoading(true);
     try {
       const payload = {
         token: token,
@@ -143,13 +144,13 @@ const PhysicalActivityy = () => {
         FetchPhysicalActivityData();
       } else {
         showToast(response?.message);
-        setLoading(false);
+        setDeleteLoading(false);
       }
       setModalVisible(false);
     } catch (error) {
       showToast(error);
     } finally {
-      setLoading(false);
+      setDeleteLoading(false);
     }
   };
 
@@ -193,18 +194,18 @@ const PhysicalActivityy = () => {
     id: id,
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //       }}>
+  //       <ActivityIndicator size="large" color={Color.primaryGreen} />
+  //     </View>
+  //   );
+  // }
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
@@ -226,10 +227,15 @@ const PhysicalActivityy = () => {
       <PhysicalActivity />
       <OnOffFunctionality title={'Your workouts'} />
 
-      {physicalActivityData && physicalActivityData?.length > 0 ? (
-        <ScrollView style={styles.entriesContainer}>
+      {loading ? (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        </View>
+      ) : physicalActivityData && physicalActivityData?.length > 0 ? (
+        <View style={styles.entriesContainer}>
           <FlatList
             data={physicalActivityData}
+            showsVerticalScrollIndicator={false}
             renderItem={({item}) => (
               <View style={styles.entryItem}>
                 <View style={{width: '65%'}}>
@@ -265,10 +271,10 @@ const PhysicalActivityy = () => {
             )}
             keyExtractor={(item, index) => `activity-${index}`}
           />
-        </ScrollView>
+        </View>
       ) : (
         <View style={{padding: verticalScale(16)}}>
-          <Text style={{textAlign: 'center'}}>
+          <Text style={{textAlign: 'center', color: Color.gray}}>
             There are no records of physical activity
           </Text>
         </View>
@@ -372,6 +378,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: scale(15),
     textAlign: 'center',
+    color: Color.black,
   },
   title: {
     fontSize: verticalScale(14),
@@ -427,6 +434,7 @@ const styles = StyleSheet.create({
   },
   rightEntryText: {
     fontSize: scale(12),
+    color: Color.black,
   },
   date: {
     color: Color.gray,

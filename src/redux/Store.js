@@ -12,6 +12,8 @@ const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   whitleList: ['user', 'stepTracker'],
+  timeout: 0,
+
 };
 
 const rootReducer = combineReducers({
@@ -20,7 +22,7 @@ const rootReducer = combineReducers({
   admin: admin,
   client: client,
   stepTracker: stepTracker,
-  units: unit
+  unit: unit
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -29,9 +31,10 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['persist/PERSIST'],
-      },
+      // serializableCheck: {
+      //   ignoredActions: ['persist/PERSIST'],
+      // },
+      serializableCheck: false, 
     }),
 });
 

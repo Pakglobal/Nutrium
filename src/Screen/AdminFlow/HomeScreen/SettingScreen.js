@@ -85,13 +85,13 @@ const SettingScreen = () => {
             alignItems: 'center',
           }}>
           <View>
-            <Text style={{fontSize: scale(16), fontWeight: '500'}}>
+            <Text style={{fontSize: scale(16), fontWeight: '500', color: Color.black}}>
               Notifications
             </Text>
             {isEnabled ? (
-              <Text>You want to receive notifications</Text>
+              <Text style={{color: Color.gray}}>You want to receive notifications</Text>
             ) : (
-              <Text>Don't want to receive notifications</Text>
+              <Text style={{color: Color.gray}}>Don't want to receive notifications</Text>
             )}
           </View>
 

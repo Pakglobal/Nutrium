@@ -7,13 +7,13 @@ import {
   ScrollView,
   LogBox,
   StyleSheet,
+  Button,
 } from 'react-native';
 import React, { useState } from 'react';
 import { scale, verticalScale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import TypesCard from './TypesCard';
-import Button from '../../Components/Button';
 import Color from '../../assets/colors/Colors';
 import SighnUpHeader from '../../Components/SighnUpHeader';
 LogBox.ignoreAllLogs();

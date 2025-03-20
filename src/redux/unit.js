@@ -11,7 +11,7 @@ const initialState = {
 };
 
 export const unitSlice = createSlice({
-  name: 'units',
+  name: 'unit',
   initialState,
   reducers: {
     updateUnits: (state, action) => {

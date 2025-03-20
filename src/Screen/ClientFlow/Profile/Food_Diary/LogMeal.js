@@ -7,27 +7,49 @@ import {
   Modal,
   Pressable,
   Image,
-  ScrollView,
   StyleSheet,
   PermissionsAndroid,
+  FlatList,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Color from '../../../../assets/colors/Colors';
-import PickerModal from '../../../../Components/PickerModal';
 import BackHeader from '../../../../Components/BackHeader';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  AddMealInFoodDiary,
+  DeleteMealInFoodDiary,
+  DeleteSpecificMealInFoodDiary,
+} from '../../../../Apis/ClientApis/FoodDiaryApi';
+import {ScrollView} from 'react-native-virtualized-view';
+import Toast from 'react-native-simple-toast';
 
-const LogMeal = ({route}) => {
-  console.log(route?.params?.data);
-  const data = route?.params?.data;
+const LogMeal = () => {
+  const dispatch = useDispatch();
+  const userInfo = useSelector(state => state?.user?.userInfo);
+  const token = userInfo?.token;
+  const meal = useSelector(state => state?.client?.addInfo);
+  const plus = meal?.press === 'plus';
+
+  const mealType = meal?.meal || meal?.type;
+  const mealTime = meal?.time;
+  const mealName = meal?.name;
+  const foodId = meal?.foodId;
+  const foodIndex = meal?.foodIndex;
+  const scheduleId = meal?.id;
+  const registrationDate = '2025-02-21T18:30:00.023Z'  
+
+  const showToast = message => {
+    Toast.show(message, Toast.LONG, Toast.BOTTOM);
+  };
 
   const navigation = useNavigation();
   const [showAction, setShowAction] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [amPm, setAmPm] = useState('');
+  const [comments, setComments] = useState('');
   const [showImgaePicker, setShowImgaePicker] = useState(false);
   const [filePath, setFilePath] = useState({});
 
@@ -128,8 +150,62 @@ const LogMeal = ({route}) => {
     });
   };
 
-  const handleSave = () => {
-    console.log('swapMeal');
+  const handleSave = async () => {
+    const payload = {
+      token: token,
+      registrationDate: registrationDate,
+      mealType: mealType,
+      time: mealTime,
+      foodId: foodId,
+      comments: comments,
+    };
+    const response = await AddMealInFoodDiary(payload);
+    if (
+      response?.success === true ||
+      response?.message === 'Food diary fetched successfully'
+    ) {
+      navigation.navigate('foodDiary');
+    }
+  };
+
+  const handleNavigateSwapFood = name => {
+    navigation.navigate('swapMeal', {
+      name: name,
+      time: mealTime,
+      type: mealType,
+      mealId: scheduleId,
+    });
+  };
+
+  const handleDeleteMeal = async () => {
+    const payload = {
+      token: token,
+      registrationDate: registrationDate,
+      scheduleId: scheduleId,
+    };
+    console.log(payload);
+
+    const response = await DeleteMealInFoodDiary(payload);
+    if (
+      response?.message === 'Food item deleted successfully' ||
+      response?.success === true
+    ) {
+      navigation.navigate('foodDiary');
+    } else {
+      showToast(response?.message);
+    }
+  }; 
+  
+  const handleDeleteSeparateMeal = async () => {
+    const payload = {
+      token: token,
+      registrationDate: registrationDate,
+      scheduleId: scheduleId,
+      foodIndex: foodIndex,
+    };
+
+    const response = await DeleteSpecificMealInFoodDiary(payload);
+    console.log(response);
   };
 
   return (
@@ -148,18 +224,18 @@ const LogMeal = ({route}) => {
         <View style={styles.cardContainer}>
           <View style={styles.cardContent}>
             <View style={{}}>
-              <Text style={styles.title}>{data?.meal}</Text>
+              <Text style={styles.title}>{mealType}</Text>
               <View style={styles.icon}>
                 <AntDesign
                   name="clockcircleo"
                   color={Color.black}
                   size={scale(16)}
                 />
-                <Text style={styles.time}>{data?.time}</Text>
+                <Text style={styles.time}>{mealTime}</Text>
               </View>
             </View>
             <View style={styles.row}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowAction(true)}>
                 <MaterialCommunityIcons
                   name="dots-horizontal-circle"
                   size={verticalScale(28)}
@@ -168,7 +244,13 @@ const LogMeal = ({route}) => {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigation.navigate('swapMeal')}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('swapMeal', {
+                    time: mealTime,
+                    type: mealType,
+                  })
+                }>
                 <MaterialCommunityIcons
                   name="plus-circle"
                   size={verticalScale(28)}
@@ -178,16 +260,42 @@ const LogMeal = ({route}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View
-            style={{
-              paddingHorizontal: scale(10),
-              paddingVertical: verticalScale(20),
-              alignItems: 'center',
-            }}>
-            <Text style={{fontSize: scale(13), color: Color.black}}>
-              You did not eat any foods in this meal
-            </Text>
-          </View>
+
+          {mealName ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: verticalScale(5),
+                paddingHorizontal: scale(16),
+              }}>
+              <Text style={{color: Color.black}}>{mealName}</Text>
+              <TouchableOpacity
+                onPress={() => handleNavigateSwapFood(mealName)}
+                style={{
+                  backgroundColor: Color.secondary,
+                  padding: scale(5),
+                  borderRadius: scale(20),
+                }}>
+                <Ionicons
+                  name="swap-horizontal"
+                  color={Color.primary}
+                  size={scale(14)}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
+              style={{
+                paddingVertical: verticalScale(10),
+                paddingHorizontal: scale(16),
+              }}>
+              <Text style={{fontSize: scale(13), color: Color.black, textAlign: 'center'}}>
+                You did not eat any foods in this meal
+              </Text>
+            </View>
+          )}
         </View>
 
         <View
@@ -198,7 +306,7 @@ const LogMeal = ({route}) => {
           <View style={styles.cardContent}>
             <View style={{}}>
               <Text style={styles.title}>Photo</Text>
-              <Text>Add a photo of your meal</Text>
+              <Text style={{color: Color.gray}}>Add a photo of your meal</Text>
             </View>
 
             <TouchableOpacity
@@ -224,14 +332,17 @@ const LogMeal = ({route}) => {
           </View>
         </View>
 
-        <View style={styles.commentContainer}>
+        <View
+          style={[styles.commentContainer, {marginBottom: verticalScale(10)}]}>
           <Text style={styles.title}>Comments</Text>
           <View style={styles.commentContent}>
             <TextInput
               placeholder="Anything you'd like to add about your meal?"
               placeholderTextColor={'#AAA'}
               multiline={true}
-              style={{fontSize: verticalScale(12)}}
+              style={{fontSize: verticalScale(12), color: '#AAA'}}
+              value={comments}
+              onChangeText={e => setComments(e)}
             />
           </View>
         </View>
@@ -247,15 +358,25 @@ const LogMeal = ({route}) => {
           style={styles.modalContainer}>
           <View style={styles.modalView}>
             <View style={{marginHorizontal: scale(20)}}>
-              <Text style={styles.modaltitle}>Food diary</Text>
               <Text style={styles.modalTxt}>choose an action</Text>
-              <TouchableOpacity style={{marginTop: verticalScale(20)}}>
+              {mealName && (
+                <TouchableOpacity
+                  style={{marginTop: verticalScale(20)}}
+                  onPress={() => handleDeleteSeparateMeal()}>
+                  <Text style={styles.modalOption}>
+                    I did not eat this food
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                style={{marginTop: verticalScale(20)}}
+                onPress={() => handleDeleteMeal()}>
                 <Text style={styles.modalOption}>Delete meal</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{marginTop: verticalScale(20)}}
                 onPress={() => {
-                  navigation.navigate('addFood');
+                  navigation.navigate('swapMeal');
                   setShowAction(false);
                 }}>
                 <Text style={styles.modalOption}>Add food</Text>
@@ -263,7 +384,6 @@ const LogMeal = ({route}) => {
               <TouchableOpacity
                 style={{marginTop: verticalScale(20)}}
                 onPress={() => {
-                  setShowTimePicker(true);
                   setShowAction(false);
                 }}>
                 <Text style={styles.modalOption}>
@@ -275,13 +395,28 @@ const LogMeal = ({route}) => {
         </Pressable>
       </Modal>
 
-      <PickerModal
+      <Modal
+        transparent={true}
+        animationType="slide"
         visible={showImgaePicker}
-        onRequestClose={() => setShowImgaePicker(false)}
-        pressableClose={() => setShowImgaePicker(false)}
-        captureImagePress={() => captureImage('photo')}
-        chooseFilePress={() => chooseFile('photo')}
-      />
+        onRequestClose={() => setShowImgaePicker(false)}>
+        <Pressable
+          onPress={() => setShowImgaePicker(false)}
+          style={styles.container}>
+          <View style={styles.whiteContainer}>
+            <Text style={styles.tittle}>Add profile photo</Text>
+            <View style={styles.border} />
+            <TouchableOpacity onPress={() => captureImage('photo')}>
+              <Text style={styles.btnTxt}>Take Photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => chooseFile('photo')}>
+              <Text style={[styles.btnTxt, {marginTop: verticalScale(15)}]}>
+                Choose Photo
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
@@ -307,7 +442,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: scale(10),
     borderTopRightRadius: scale(10),
   },
-  time: {marginLeft: scale(8), color: Color.black},
+  time: {
+    marginLeft: scale(8),
+    color: Color.black,
+    fontSize: scale(12),
+  },
   icon: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -385,7 +524,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(20),
   },
   title: {
-    fontSize: scale(16),
+    fontSize: scale(15),
     color: Color.black,
   },
   inputView: {
@@ -403,23 +542,47 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(100,100,100,0.5)',
   },
   modalView: {
-    width: '90%',
+    width: '80%',
     paddingVertical: verticalScale(20),
     backgroundColor: 'white',
     borderRadius: 10,
   },
-  modaltitle: {
-    fontSize: verticalScale(18),
-    color: Color.primaryGreen,
-    fontWeight: '600',
-  },
   modalTxt: {
-    fontSize: verticalScale(12),
+    fontSize: scale(16),
     color: Color.gray,
-    marginTop: verticalScale(10),
   },
   modalOption: {
-    fontSize: verticalScale(14),
+    fontSize: scale(13),
     color: Color.txt,
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(100,100,100,0.5)',
+  },
+  whiteContainer: {
+    width: '65%',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    borderRadius: scale(10),
+    paddingVertical: verticalScale(15),
+  },
+  tittle: {
+    fontSize: verticalScale(14),
+    fontWeight: '700',
+    color: Color.txt,
+    marginBottom: verticalScale(10),
+  },
+  border: {
+    borderBottomColor: Color.borderColor,
+    borderBottomWidth: 1,
+    width: '100%',
+    marginBottom: verticalScale(10),
+  },
+  btnTxt: {
+    fontSize: verticalScale(14),
+    fontWeight: '600',
+    color: Color.gray,
   },
 });

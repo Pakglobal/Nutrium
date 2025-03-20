@@ -45,7 +45,7 @@ const MoreFor = ({data}) => {
   const navigation = useNavigation();
 
   const getToken = useSelector(state => state?.user?.userInfo);
-  const profileData = getToken?.user;
+  const profileData = getToken?.user || getToken?.userData;  
 
   const handlePress = () => {
     if (data?.buttonText === 'Add profile photo') {
@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(12),
     fontWeight: '600',
     color: Color.primary,
-    marginTop: scale(8),
   },
   bgImage: {
     height: verticalScale(120),

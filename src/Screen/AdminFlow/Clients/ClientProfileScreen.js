@@ -1,21 +1,27 @@
 import {
   Animated,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import Color from '../../../assets/colors/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import MessageComponent from '../../../Components/useMessaging';
 import {useNavigation} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Color from '../../../assets/colors/Colors';
+import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
 
 const ClientProfileScreen = ({route}) => {
   const clientData = route?.params?.response[0];
+  const userName = clientData?.fullName;
+  const userImage = clientData?.image;
+  const userWorkspace = clientData?.workplace;
+  const otherUserId = clientData?._id;
+  const userId = clientData?.userId;
 
   const navigation = useNavigation();
   const [selected, setSelected] = useState(0);
@@ -101,30 +107,6 @@ const ClientProfileScreen = ({route}) => {
     {id: 7, icon: 'pin', label: 'Zip Code', value: clientData?.zipcode || '--'},
   ];
 
-  const messages = [
-    {
-      id: 0,
-      title: 'Appointment January 09, 2025',
-      time: '11:11 AM',
-      tag: 'Appointment',
-      icon: 'pricetag',
-      message: 'You: New appointment',
-    },
-    {
-      id: 1,
-      title: 'Example conversation',
-      time: '11:11 AM',
-      tag: 'Follow up',
-      icon: 'pricetag',
-      message:
-        'Hi Snk! You can check here all the messages sent by your clients between appointments.',
-    },
-  ];
-
-  const handleMessageCard = () => {
-    navigation.navigate('Chat');
-  };
-
   const handleSelctedOption = id => {
     setSelected(id);
   };
@@ -137,21 +119,39 @@ const ClientProfileScreen = ({route}) => {
             <Ionicons
               name="arrow-back"
               color={Color.primary}
-              size={scale(22)}
+              size={scaleSize(22)}
             />
           </TouchableOpacity>
           <Text style={styles.headerText}>Client profile</Text>
         </View>
-        <View style={styles.imageContainer}>
-          <View style={styles.image} />
-          <View style={{marginLeft: scale(10)}}>
-            <Text style={{color: Color.primary}}>
-              {clientData?.fullName || 'Example Client'}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: verticalScale(15),
+          }}>
+          {/* <Image style={styles.avatar} source={{uri: userImage}} /> */}
+          {clientData?.image ? (
+            <Image source={{uri: clientData?.image}} style={styles.avatar} />
+          ) : clientData?.gender === 'Female' ? (
+            <Image
+              source={require('../../../assets/Images/woman.png')}
+              style={styles.avatar}
+            />
+          ) : (
+            <Image
+              source={require('../../../assets/Images/man.png')}
+              style={styles.avatar}
+            />
+          )}
+          <View style={{marginLeft: scaleSize(5)}}>
+            <Text style={{color: Color.primary, fontSize: scaleSize(14)}}>
+              {userName}
             </Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Entypo name="location" color={Color.primary} size={16} />
-              <Text style={{marginLeft: scale(5), color: Color.primary}}>
-                {clientData?.workplace || '--'}
+              <Text style={{marginLeft: scaleSize(5), color: Color.primary}}>
+                {userWorkspace}
               </Text>
             </View>
           </View>
@@ -180,99 +180,87 @@ const ClientProfileScreen = ({route}) => {
       </View>
 
       {selected === 0 && (
-        <View style={styles.bothContainer}>
-          {information.map(item => (
-            <View style={styles.infoContainer} key={item?.id}>
-              <View style={styles.infoView}>
-                <Ionicons
-                  name={item?.icon}
-                  size={scale(20)}
-                  color={Color.primaryGreen}
-                />
+        <View>
+          <View style={styles.bothContainer}>
+            {information.map(item => (
+              <View style={styles.infoContainer} key={item?.id}>
+                <View style={styles.infoView}>
+                  <Ionicons
+                    name={item?.icon}
+                    size={scaleSize(20)}
+                    color={Color.primaryGreen}
+                  />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.label}>{item?.label}</Text>
+                  <Text style={styles.value}>{item?.value}</Text>
+                </View>
               </View>
-              <View style={styles.textContainer}>
-                <Text style={styles.label}>{item?.label}</Text>
-                <Text style={styles.value}>{item?.value}</Text>
-              </View>
-            </View>
-          ))}
+            ))}
+          </View>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: scaleSize(0),
+              right: scaleSize(16),
+              alignItems: 'flex-end',
+            }}>
+            {menuItems.map((item, index) => (
+              <Animated.View
+                key={index}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  opacity: animValues[index],
+                  transform: [
+                    {
+                      translateY: animValues[index].interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0],
+                      }),
+                    },
+                  ],
+                  marginBottom: verticalScale(8),
+                }}>
+                <Text style={styles.fabText}>{item.label}</Text>
+
+                <TouchableOpacity
+                  style={[styles.fabButton, {backgroundColor: item.color}]}>
+                  <Ionicons name={item.icon} size={24} color="#fff" />
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+
+            <TouchableOpacity
+              onPress={toggleMenu}
+              style={[
+                styles.bottomButton,
+                {
+                  transform: [{rotate: isOpen ? '45deg' : '0deg'}],
+                  backgroundColor: isOpen ? '#DC2626' : '#F97316',
+                },
+              ]}>
+              <Ionicons
+                name={isOpen ? 'close' : 'add'}
+                size={30}
+                color="#fff"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
       {selected === 1 && (
-        <View style={styles.bothContainer}>
-          {messages?.map(item => (
-            <TouchableOpacity
-              style={styles.messageCard}
-              key={item?.id}
-              onPress={handleMessageCard}>
-              <View style={styles.messContainer}>
-                <View style={styles.titleTime}>
-                  <Text style={styles.title}>{item?.title}</Text>
-                  <Text style={styles.time}>{item?.time}</Text>
-                </View>
-                <View style={styles.icon}>
-                  <Ionicons
-                    name={item?.icon}
-                    size={scale(18)}
-                    color={'lightgray'}
-                  />
-                  <Text style={styles.tag}>{item?.tag}</Text>
-                </View>
-              </View>
-              <View style={styles.messageContent}>
-                <Text style={styles.messageText}>{item?.message}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <MessageComponent
+          userId={userId}
+          otherUserId={otherUserId}
+          userName={userName}
+          image={userImage}
+          showHeader={false}
+          onBackPress={() => navigation.goBack()}
+          containerStyle={{backgroundColor: '#f9f9f9'}}
+        />
       )}
-
-      <View
-        style={{
-          position: 'absolute',
-          bottom: scale(16),
-          right: scale(16),
-          alignItems: 'flex-end',
-        }}>
-        {menuItems.map((item, index) => (
-          <Animated.View
-            key={index}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              opacity: animValues[index],
-              transform: [
-                {
-                  translateY: animValues[index].interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [20, 0],
-                  }),
-                },
-              ],
-              marginBottom: scale(8),
-            }}>
-            <Text style={styles.fabText}>{item.label}</Text>
-
-            <TouchableOpacity
-              style={[styles.fabButton, {backgroundColor: item.color}]}>
-              <Ionicons name={item.icon} size={24} color="#fff" />
-            </TouchableOpacity>
-          </Animated.View>
-        ))}
-
-        <TouchableOpacity
-          onPress={toggleMenu}
-          style={[
-            styles.bottomButton,
-            {
-              transform: [{rotate: isOpen ? '45deg' : '0deg'}],
-              backgroundColor: isOpen ? '#DC2626' : '#F97316',
-            },
-          ]}>
-          <Ionicons name={isOpen ? 'close' : 'add'} size={30} color="#fff" />
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
@@ -285,46 +273,36 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   header: {
-    padding: scale(10),
     backgroundColor: Color.primaryGreen,
-    height: scale(130),
+    paddingVertical: verticalScale(20),
+    paddingHorizontal: scaleSize(16),
   },
   leftSection: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   headerText: {
-    fontSize: scale(16),
+    fontSize: scaleSize(16),
     fontWeight: '600',
     color: Color.primary,
-    marginLeft: scale(10),
-  },
-  imageContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: scale(10),
-  },
-  image: {
-    width: scale(50),
-    height: scale(50),
-    borderRadius: scale(25),
-    backgroundColor: Color.primary,
+    marginLeft: scaleSize(10),
   },
   optionText: {
-    paddingVertical: scale(10),
-    paddingHorizontal: scale(15),
-    fontSize: scale(14),
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scaleSize(15),
+    fontSize: scaleSize(14),
     fontWeight: '600',
   },
   optionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: Color.primary,
-    padding: scale(8),
+    padding: scaleSize(8),
   },
   bothContainer: {
-    marginHorizontal: scale(8),
-    marginTop: scale(5),
+    marginHorizontal: scaleSize(16),
+    marginTop: verticalScale(5),
+    height: '72%',
   },
   infoContainer: {
     flexDirection: 'row',
@@ -332,75 +310,29 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(8),
   },
   infoView: {
-    height: scale(35),
-    width: scale(35),
+    height: scaleSize(35),
+    width: scaleSize(35),
     backgroundColor: Color.lightGreen,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: scale(20),
+    borderRadius: scaleSize(20),
   },
   label: {
-    fontSize: scale(12),
+    fontSize: scaleSize(13),
+    color: Color.black,
   },
   value: {
-    fontSize: scale(14),
-    fontWeight: '700',
+    fontSize: scaleSize(14),
+    fontWeight: '600',
+    color: Color.black,
   },
   textContainer: {
-    marginLeft: scale(10),
-  },
-  messContainer: {
-    padding: scale(10),
-    backgroundColor: Color.primary,
-  },
-  title: {
-    fontSize: scale(14),
-    fontWeight: '600',
-  },
-  time: {
-    fontSize: scale(13),
-    fontWeight: '600',
-  },
-  titleTime: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  tag: {
-    marginLeft: scale(5),
-    color: Color.gray,
-  },
-  icon: {
-    flexDirection: 'row',
-    marginVertical: verticalScale(5),
-    alignItems: 'center',
-  },
-  messageText: {
-    fontWeight: '500',
-  },
-  messageContent: {
-    padding: scale(10),
-    backgroundColor: Color.lightGreen,
-    marginBottom: scale(10),
-    borderLeftColor: Color.primaryGreen,
-    borderLeftWidth: 2,
-  },
-  messageCard: {
-    backgroundColor: '#fff',
-    marginTop: scale(10),
-    borderRadius: scale(5),
-  },
-  bottomContainer: {
-    flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-    paddingVertical: verticalScale(5),
-    right: 20,
-    bottom: 0,
+    marginLeft: scaleSize(10),
   },
   fabButton: {
-    width: scale(45),
-    height: scale(45),
-    borderRadius: scale(30),
+    width: scaleSize(45),
+    height: scaleSize(45),
+    borderRadius: scaleSize(30),
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -411,19 +343,19 @@ const styles = StyleSheet.create({
   },
   fabText: {
     backgroundColor: '#222',
-    padding: scale(5),
-    fontSize: scale(13),
+    padding: scaleSize(5),
+    fontSize: scaleSize(13),
     color: '#fff',
-    borderRadius: scale(4),
-    marginRight: scale(8),
+    borderRadius: scaleSize(4),
+    marginRight: scaleSize(8),
     fontWeight: '500',
     textAlign: 'left',
     width: '45%',
   },
   bottomButton: {
-    width: scale(50),
-    height: scale(50),
-    borderRadius: scale(30),
+    width: scaleSize(50),
+    height: scaleSize(50),
+    borderRadius: scaleSize(30),
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -431,5 +363,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+  },
+  avatar: {
+    width: scaleSize(40),
+    height: scaleSize(40),
+    borderRadius: 25,
+    marginRight: 10,
+    backgroundColor: Color.primaryGreen,
+  },
+  image: {
+    width: scaleSize(200),
+    height: scaleSize(200),
+    borderRadius: scaleSize(8),
   },
 });

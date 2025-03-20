@@ -7,6 +7,8 @@ import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import moment from "moment";
+import { useDispatch } from 'react-redux';
+import { addData } from '../../../../redux/client';
 
 const allMeal = [
   {id: '1', label: 'Breakfast', value: 'Breakfast'},
@@ -22,6 +24,7 @@ const allMeal = [
 
 const AddMeal = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [selectedMeal, setSelectedMeal] = useState('Breakfast');
   const [showDropDown, setShowDropDown] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
@@ -34,13 +37,13 @@ const AddMeal = () => {
   const addMeal = {
     time: formatTime(time),
     meal: selectedMeal,
+    press: 'plus',
   };
 
   const handleSave = () => {
-    navigation.navigate('logMeal', {
-      data: addMeal,
-    });
-  };
+    navigation.navigate('logMeal')
+    dispatch(addData(addMeal))
+  }
 
   const handleSelect = value => {
     setSelectedMeal(value);
@@ -98,7 +101,7 @@ const AddMeal = () => {
         <TouchableOpacity
           style={styles.pickerButton}
           onPress={() => setTimeOpen(true)}>
-          <Text>
+          <Text style={{color: Color.black}}>
             {time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
           </Text>
         </TouchableOpacity>

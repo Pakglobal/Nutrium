@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  FlatList,
   Pressable,
   StyleSheet,
   Text,
@@ -12,23 +13,44 @@ import {useNavigation} from '@react-navigation/native';
 import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {SearchFoodApi} from '../../../../Apis/ClientApis/FoodDiaryApi';
+import {useSelector} from 'react-redux';
 
 const FoodSearch = () => {
   const navigation = useNavigation();
-  const [searchFood, setSeachFood] = useState('');
-  const [input, setInput] = useState(false);
+  const [searchFood, setSearchFood] = useState('');
+  const [searchFoodData, setSearchFoodData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
-  const handleSave = () => {
-    console.log('save');
+  const getToken = useSelector(state => state?.user?.userInfo);
+  const token = getToken?.token;
+
+  useEffect(() => {
+    const fetchFoodData = async () => {
+      const response = await SearchFoodApi(token);
+      if (response?.success === true) {
+        setSearchFoodData(response?.foods);
+        setFilteredData(response?.foods);
+      }
+    };
+    fetchFoodData();
+  }, []);
+
+  const handleSearch = text => {
+    setSearchFood(text);
+    if (text?.length > 0) {
+      const filtered = searchFoodData.filter(item =>
+        item?.name?.toLowerCase()?.includes(text?.toLowerCase()),
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(searchFoodData);
+    }
   };
 
-  const handleSearch = () => {
-    setInput(false)
-    console.log('search');
+  const handleSearchPress = name => {
+    navigation.navigate('swapMeal', {data: name});
   };
-
-  console.log(searchFood);
-  
 
   return (
     <View style={{flex: 1, backgroundColor: Color.primary}}>
@@ -36,8 +58,7 @@ const FoodSearch = () => {
         onPressBack={() => navigation.goBack()}
         titleName="Food search"
         backText="Swap a food"
-        onSave={true}
-        onPress={() => handleSave()}
+        showRightButton={false}
       />
       <View style={{marginHorizontal: scale(16)}}>
         <View style={styles.searchContainer}>
@@ -45,12 +66,12 @@ const FoodSearch = () => {
             placeholder="Search foods..."
             placeholderTextColor={Color.gray}
             value={searchFood}
-            onChangeText={txt => setSeachFood(txt)}
+            onChangeText={handleSearch}
             style={styles.inputView}
           />
           <Pressable
             style={{marginEnd: scale(10)}}
-            onPress={() => setSeachFood('')}>
+            onPress={() => handleSearch('')}>
             <AntDesign
               name="closecircle"
               size={verticalScale(22)}
@@ -59,22 +80,30 @@ const FoodSearch = () => {
           </Pressable>
         </View>
 
-        {searchFood && (
-            <TouchableOpacity
-            style={styles.displaySearchContainer}
-            activeOpacity={0.5}
-            onPress={() => handleSearch()}>
-            <Text
-              style={{
-                  color: Color.primary,
-                  fontSize: scale(14),
-                  fontWeight: '500',
-                  textAlign: 'center',
-                }}>
-              Click here to search for "{searchFood}"
-            </Text>
-          </TouchableOpacity>
-        )}
+        {searchFood ? (
+          <FlatList
+            data={filteredData}
+            keyExtractor={(item, index) =>
+              item?.id?.toString() || `food-item-${index}`
+            }
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.foodItem}
+                onPress={() => handleSearchPress(item?.name)}>
+                <Text style={{color: Color.black}}>{item?.name}</Text>
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={() => (
+              <View style={{padding: scale(20), alignItems: 'center'}}>
+                <Text style={{color: Color.black}}>
+                  {searchFood.trim()
+                    ? 'No matching food found'
+                    : 'No activities available'}
+                </Text>
+              </View>
+            )}
+          />
+        ) : null}
       </View>
     </View>
   );
@@ -98,14 +127,11 @@ const styles = StyleSheet.create({
     fontSize: scale(13),
     fontWeight: '600',
     color: Color.txt,
-    width: '85%'
+    width: '85%',
   },
-  displaySearchContainer: {
+  foodItem: {
     paddingVertical: verticalScale(10),
-    backgroundColor: Color.secondary,
-    borderRadius: scale(20),
-    marginTop: verticalScale(15),
-    alignItems: 'center',
-    width: '100%',
+    borderRadius: scale(10),
+    paddingHorizontal: scale(10),
   },
 });

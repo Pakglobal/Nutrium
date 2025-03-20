@@ -1,4 +1,6 @@
 import {
+  ActivityIndicator,
+  Image,
   Platform,
   SafeAreaView,
   StyleSheet,
@@ -18,45 +20,48 @@ import {
   GetAllClientData,
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
-import { clientData } from '../../../redux/admin';
-
+import {clientInfoData} from '../../../redux/admin';
 
 const ClientScreen = () => {
   const [search, setSearch] = useState('');
   const [filteredClients, setFilteredClients] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [clientData, setClientData] = useState([]);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
 
-  const getAllClientData =
-    useSelector(state => state?.admin?.clientInfo) || [];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await GetAllClientData(token);
-        dispatch(clientData(response));
+        setClientData(response);
+        dispatch(clientInfoData(response));
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching clients:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (search.trim() === '') {
-      setFilteredClients(getAllClientData);
+      setFilteredClients(clientData || []);
     } else {
-      const filteredData = getAllClientData.filter(
+      const filteredData = (clientData || []).filter(
         client =>
           client?.fullName?.toLowerCase().includes(search.toLowerCase()) ||
           client?.workplace?.toLowerCase().includes(search.toLowerCase()),
       );
       setFilteredClients(filteredData);
     }
-  }, [search, getAllClientData]);
+  }, [search, clientData]);
 
   const handleClientNavigate = async item => {
     const response = await GetClientData(token, item?._id);
@@ -72,41 +77,60 @@ const ClientScreen = () => {
             value={search}
             onChangeText={setSearch}
             placeholder="Search clients"
-            style={{marginLeft: scale(10)}}
+            style={{marginLeft: scale(10), color: Color.black}}
+            placeholderTextColor={Color.black}
           />
         </View>
       </View>
 
-      <View>
-        {filteredClients && filteredClients.length > 0 ? (
-          filteredClients.map(item => (
-            <TouchableOpacity
-              style={styles.messageCard}
-              onPress={() => handleClientNavigate(item)}
-              key={item?._id}>
-              <View style={styles.messageCardContainer}>
-                <View style={styles.avatar}></View>
-                <View>
-                  <Text style={styles.clientName}>{item?.fullName}</Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: verticalScale(3),
-                    }}>
-                    <View style={styles.locationIcon}>
-                      <Entypo name="location" color={Color.primaryGreen} />
+      {loading ? (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        </View>
+      ) : (
+        <View>
+          {filteredClients && filteredClients.length > 0 ? (
+            filteredClients.map(item => (
+              <TouchableOpacity
+                style={styles.messageCard}
+                onPress={() => handleClientNavigate(item)}
+                key={item?._id}>
+                <View style={styles.messageCardContainer}>
+                  {item?.image ? (
+                    <Image source={{uri: item?.image}} style={styles.avatar} />
+                  ) : item?.gender === 'Female' ? (
+                    <Image
+                      source={require('../../../assets/Images/woman.png')}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <Image
+                      source={require('../../../assets/Images/man.png')}
+                      style={styles.avatar}
+                    />
+                  )}
+                  <View>
+                    <Text style={styles.clientName}>{item?.fullName}</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginTop: verticalScale(3),
+                      }}>
+                      <View style={styles.locationIcon}>
+                        <Entypo name="location" color={Color.primaryGreen} />
+                      </View>
+                      <Text style={styles.type}> {item?.workplace}</Text>
                     </View>
-                    <Text style={styles.type}> {item?.workplace}</Text>
                   </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text style={styles.noDataText}>No client found</Text>
-        )}
-      </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>No client found</Text>
+          )}
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -128,7 +152,7 @@ const styles = StyleSheet.create({
   messageCardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: scale(5),
+    paddingHorizontal: scale(10),
     paddingVertical: verticalScale(8),
   },
   messageCard: {
@@ -144,8 +168,9 @@ const styles = StyleSheet.create({
     backgroundColor: Color.primaryGreen,
   },
   clientName: {
-    fontWeight: 'bold',
+    fontWeight: '500',
     fontSize: 16,
+    color: Color.black
   },
   noDataText: {
     textAlign: 'center',
@@ -161,4 +186,7 @@ const styles = StyleSheet.create({
     width: scale(20),
     borderRadius: scale(10),
   },
+  type: {
+    color: Color.gray
+  }
 });

@@ -3,6 +3,8 @@ import {createSlice} from '@reduxjs/toolkit';
 const initialState = {
   clientAppointmentInfo: {},
   measurementInfo: {},
+  mealInfo: {},
+  addInfo: {},
 };
 
 const clientSlice = createSlice({
@@ -14,6 +16,9 @@ const clientSlice = createSlice({
     },
     measurementData: (state, action) => {
       state.measurementInfo = action.payload;
+    },
+    addData: (state, action) => {
+      state.addInfo = action.payload;
     },
     updateAppointmentStatus: (state, action) => {
       const {appointmentId, status} = action.payload;
@@ -32,6 +37,7 @@ export const {
   clientAppointmentData,
   updateAppointmentStatus,
   waterIntakeData,
+  addData,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

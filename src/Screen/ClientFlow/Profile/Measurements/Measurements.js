@@ -26,7 +26,7 @@ const Measurements = () => {
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
   const id = getToken?.userData?._id || getToken?.user?._id;
-  const units = useSelector(state => state.units.units);
+  const units = useSelector(state => state?.unit?.units);
 
   useFocusEffect(
     useCallback(() => {
@@ -146,7 +146,7 @@ const Measurements = () => {
       case 'hip circumference':
         return units?.Height === 'Centimeter' ? 'cm' : 'in';
       case 'body fat percentage':
-        return ' %';
+        return '%';
       case 'muscle mass':
         return units?.Weight === 'Kilogram' ? 'kg' : 'lbs';
       case 'bmi':
@@ -220,18 +220,18 @@ const Measurements = () => {
     },
   ];
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  // <View
+  //   style={{
+  //     flex: 1,
+  //     justifyContent: 'center',
+  //     alignItems: 'center',
+  //   }}>
+  //       <ActivityIndicator size="large" color={Color.primaryGreen} />
+  //     </View>
+  //   );
+  // }
 
   const renderMenuItem = item => {
     if (item?.type === 'header') {
@@ -262,9 +262,20 @@ const Measurements = () => {
         titleName="Measurements"
         showRightButton={false}
       />
-      <View style={styles.contentContainer}>
-        {menuItems.map(item => renderMenuItem(item))}
-      </View>
+      {loading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        </View>
+      ) : (
+        <View style={styles.contentContainer}>
+          {menuItems.map(item => renderMenuItem(item))}
+        </View>
+      )}
     </View>
   );
 };
@@ -284,7 +295,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: Color.gray,
     fontWeight: '700',
-    marginTop: verticalScale(35),
+    marginTop: verticalScale(25),
   },
   cardcontainer: {
     paddingVertical: verticalScale(10),

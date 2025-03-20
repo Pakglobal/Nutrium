@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -6,131 +6,112 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
+  FlatList,
+  RefreshControl,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../../assets/colors/Colors';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {
+  GetAllClientData,
+  GetClientData,
+} from '../../../Apis/AdminScreenApi/ClientApi';
+import {clientInfoData} from '../../../redux/admin';
 
-const MessageScreen = ({selected, setSelected}) => {
+const MessageScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const options = [
-    {
-      id: 0,
-      label: 'OPEN',
-    },
-    {
-      id: 1,
-      label: 'ARCHIVED',
-    },
-  ];
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const messages = [
-    {
-      id: 0,
-      name: 'Example client',
-      conversation: 'Example conversation',
-      openMessage:
-        'Hi Snk! You can check here all the messages sent by your clients between appointments.',
-      time: '11:11 AM',
-      archivedMessage: 'You: New appointment',
-      avatar: 'https://via.placeholder.com/50',
-    },
-  ];
+  const getToken = useSelector(state => state?.user?.userInfo);
+  const token = getToken?.token;
+  const clientData = useSelector(state => state?.admin?.clientInfo);
 
-  const handleSelctedOption = id => {
-    setSelected(id);
+  const handleClientNavigate = async item => {
+    const response = await GetClientData(token, item?._id);
+    navigation.navigate('Messages', {response: response});
   };
 
-  const handleMessageCard = () => {
-    navigation.navigate('Chat');
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await GetAllClientData(token);
+      dispatch(clientInfoData(response));
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData().then(() => {
+      setRefreshing(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <ActivityIndicator size="large" color={Color.primaryGreen} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView>
-      <View style={styles.optionContainer}>
-        {options?.map(item => (
+      <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        data={clientData}
+        renderItem={({item}) => (
           <TouchableOpacity
-            key={item?.id}
-            onPress={() => handleSelctedOption(item?.id)}
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor:
-                item?.id === selected ? Color.primaryGreen : Color.primary,
-            }}>
-            <Text
-              style={{
-                color: item?.id === selected ? Color.primary : Color.black,
-                fontSize: scale(14),
-              }}>
-              {item?.label}
-            </Text>
+            style={styles.messageCard}
+            onPress={() => handleClientNavigate(item)}
+            key={item?._id}>
+            <View style={styles.messageCardContainer}>
+              {item?.image ? (
+                <Image source={{uri: item?.image}} style={styles.avatar} />
+              ) : item?.gender === 'Female' ? (
+                <Image
+                  source={require('../../../assets/Images/woman.png')}
+                  style={styles.avatar}
+                />
+              ) : (
+                <Image
+                  source={require('../../../assets/Images/man.png')}
+                  style={styles.avatar}
+                />
+              )}
+
+              <Text style={styles.clientName}>{item?.fullName}</Text>
+            </View>
           </TouchableOpacity>
-        ))}
-      </View>
-
-      {selected === 0 && (
-        <View>
-          {messages.map(item => (
-            <TouchableOpacity
-              style={styles.messageCard}
-              onPress={handleMessageCard}
-              key={item?.id}>
-              <View style={styles.messageCardContainer}>
-                <Image source={{uri: item?.avatar}} style={styles.avatar} />
-                <View>
-                  <Text style={styles.clientName}>{item?.name}</Text>
-                  <Text style={styles.conversation}>{item?.conversation}</Text>
-                </View>
-                <Text style={styles.time}>{item?.time}</Text>
-              </View>
-              <View style={styles.messageContent}>
-                <Text style={styles.messageText}>{item?.openMessage}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
-      {selected === 1 && (
-        <View>
-          {messages?.map(item => (
-            <TouchableOpacity
-              style={styles.messageCard}
-              key={item?.id}
-              onPress={handleMessageCard}>
-              <View style={styles.messageCardContainer}>
-                <Image source={{uri: item?.avatar}} style={styles.avatar} />
-                <View>
-                  <Text style={styles.clientName}>{item?.name}</Text>
-                  <Text style={styles.conversation}>{item?.conversation}</Text>
-                </View>
-                <Text style={styles.time}>{item?.time}</Text>
-              </View>
-              <View style={styles.messageContent}>
-                <Text style={styles.messageText}>{item?.archivedMessage}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
+        )}
+      />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  optionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: scale(45),
-  },
   messageCardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: scale(12),
-    paddingVertical: verticalScale(15),
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(8),
   },
   messageCard: {
     backgroundColor: '#fff',
@@ -141,36 +122,27 @@ const styles = StyleSheet.create({
     width: scale(40),
     height: scale(40),
     borderRadius: 25,
-    marginRight: scale(10),
+    marginRight: 10,
     backgroundColor: Color.primaryGreen,
   },
   clientName: {
-    fontWeight: 'bold',
+    fontWeight: '500',
+    fontSize: 16,
+    color: Color.black
+  },
+  noDataText: {
+    textAlign: 'center',
+    marginTop: scale(30),
     fontSize: scale(14),
+    color: Color.gray,
   },
-  conversation: {
-    fontSize: scale(12),
-    color: '#777',
-  },
-  messageText: {
-    fontSize: scale(14),
-    color: '#555',
-    paddingVertical: 5,
-  },
-  time: {
-    fontSize: scale(12),
-    color: '#888',
-    position: 'absolute',
-    right: scale(10),
-    top: scale(10),
-    fontWeight: '600',
-  },
-  messageContent: {
-    padding: scale(10),
+  locationIcon: {
     backgroundColor: Color.lightGreen,
-    marginBottom: scale(10),
-    borderLeftColor: Color.primaryGreen,
-    borderLeftWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: scale(20),
+    width: scale(20),
+    borderRadius: scale(10),
   },
 });
 

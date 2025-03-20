@@ -1,124 +1,47 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  PermissionsAndroid,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from '../../../assets/colors/Colors';
-import PickerModal from '../../../Components/PickerModal';
+import CameraPicker from '../../../Components/CameraPicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MainProfile = ({route}) => {
   const data = route?.params?.data;
 
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [filePath, setFilePath] = useState({});
+  const [filePath, setFilePath] = useState(null);
 
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
+  useEffect(() => {
+    const loadImage = async () => {
       try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs camera permission',
-          },
-        );
-        // If CAMERA Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } else return true;
-  };
-
-  const requestExternalWritePermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'External Storage Write Permission',
-            message: 'App needs write permission',
-          },
-        );
-        // If WRITE_EXTERNAL_STORAGE Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        alert('Write permission err', err);
-      }
-      return false;
-    } else return true;
-  };
-
-  const captureImage = async type => {
-    setModalVisible(false);
-    let options = {
-      mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-      videoQuality: 'low',
-      durationLimit: 30,
-      saveToPhotos: true,
-    };
-    let isCameraPermitted = await requestCameraPermission();
-    let isStoragePermitted = await requestExternalWritePermission();
-    if (isCameraPermitted && isStoragePermitted) {
-      launchCamera(options, response => {
-        if (response.didCancel) {
-          alert('User cancelled camera picker');
-          return;
-        } else if (response.errorCode == 'camera_unavailable') {
-          alert('Camera not available on device');
-          return;
-        } else if (response.errorCode == 'permission') {
-          alert('Permission not satisfied');
-          return;
-        } else if (response.errorCode == 'others') {
-          alert(response.errorMessage);
-          return;
+        const storedImage = await AsyncStorage.getItem('profileImage');
+        if (storedImage) {
+          setFilePath({uri: storedImage});
         }
-        setFilePath(response);
-      });
-    }
-  };
-
-  const chooseFile = type => {
-    setModalVisible(false);
-    let options = {
-      mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-    };
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        alert('User cancelled camera picker');
-        return;
-      } else if (response.errorCode == 'camera_unavailable') {
-        alert('Camera not available on device');
-        return;
-      } else if (response.errorCode == 'permission') {
-        alert('Permission not satisfied');
-        return;
-      } else if (response.errorCode == 'others') {
-        alert(response.errorMessage);
-        return;
+      } catch (error) {
+        console.error('Failed to load image:', error);
       }
-      setFilePath(response);
-    });
+    };
+    loadImage();
+  }, []);
+
+  const handleImageSelect = async imageResponse => {
+    console.log('Selected Image:', imageResponse);
+
+    if (imageResponse.uri) {
+      setFilePath({uri: imageResponse?.uri});
+
+      try {
+        await AsyncStorage.setItem('profileImage', imageResponse?.uri);
+      } catch (error) {
+        console.error('Failed to save image:', error);
+      }
+    }
   };
 
   const information = [
@@ -157,39 +80,44 @@ const MainProfile = ({route}) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={{marginTop: verticalScale(20)}}>
-            <AntDesign name="arrowleft" size={verticalScale(20)} />
+            <AntDesign
+              name="arrowleft"
+              size={verticalScale(20)}
+              color={Color.black}
+            />
           </TouchableOpacity>
 
           <View style={styles.imgIconView}>
-            {filePath.assets && filePath.assets.length > 0 ? (
-              <Image
-                source={{uri: filePath.assets[0].uri}}
-                style={styles.img}
-              />
+            {filePath?.uri ? (
+              <Image source={{uri: filePath?.uri}} style={styles.img} />
             ) : (
               <Image
                 source={require('../../../assets/Images/profile.jpg')}
                 style={styles.img}
               />
             )}
+
             <TouchableOpacity
               style={styles.icnWhiteView}
               onPress={() => setModalVisible(true)}>
               <View style={styles.icnPrimaryView}>
-                <Entypo
-                  name="camera"
-                  size={verticalScale(15)}
-                  color={Color.primary}
-                />
+                <Entypo name="camera" size={15} color={Color.black} />
               </View>
             </TouchableOpacity>
+
             <Text style={styles.profileName}>{data?.fullName}</Text>
+
+            <CameraPicker
+              visible={modalVisible}
+              onClose={() => setModalVisible(false)}
+              onImageSelect={handleImageSelect}
+            />
           </View>
         </View>
       </View>
 
       <View style={{marginTop: verticalScale(40)}}>
-        {information.map(item => (
+        {information?.map(item => (
           <View
             style={{
               flexDirection: 'row',
@@ -234,14 +162,6 @@ const MainProfile = ({route}) => {
           </View>
         ))}
       </View>
-
-      <PickerModal
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-        pressableClose={() => setModalVisible(false)}
-        captureImagePress={() => captureImage('photo')}
-        chooseFilePress={() => chooseFile('photo')}
-      />
     </View>
   );
 };
@@ -265,7 +185,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.primary,
-    borderRadius: 55,
+    borderRadius: scale(55),
     marginTop: verticalScale(50),
     marginStart: scale(-35),
   },
@@ -275,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.secondary,
-    borderRadius: 50,
+    borderRadius: scale(50),
   },
   profileName: {
     fontSize: verticalScale(18),
@@ -283,5 +203,35 @@ const styles = StyleSheet.create({
     color: Color.txt,
     marginLeft: scale(20),
     marginTop: verticalScale(20),
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(100,100,100,0.5)',
+  },
+  whiteContainer: {
+    width: '65%',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    borderRadius: scale(10),
+    paddingVertical: verticalScale(15),
+  },
+  title: {
+    fontSize: verticalScale(14),
+    fontWeight: '700',
+    color: Color.txt,
+    marginBottom: verticalScale(10),
+  },
+  border: {
+    borderBottomColor: Color.borderColor,
+    borderBottomWidth: 1,
+    width: '100%',
+    marginBottom: verticalScale(10),
+  },
+  btnTxt: {
+    fontSize: verticalScale(14),
+    fontWeight: '600',
+    color: Color.gray,
   },
 });

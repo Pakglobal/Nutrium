@@ -82,7 +82,7 @@ export const UpdateWaterIntake = async payload => {
       waterIntake: amount,
       time: time,
       date: date,
-    };
+    };    
 
     const response = await axios.put(url, body, {
       headers: {

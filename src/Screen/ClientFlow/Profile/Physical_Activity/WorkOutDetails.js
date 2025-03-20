@@ -30,7 +30,9 @@ const WorkOutDetails = ({route}) => {
   const activity = plus
     ? route?.params?.name
     : route?.params?.activity?.activity;
-  const defaultDuration = plus ? '' : route?.params?.activity?.time;
+  const defaultDuration = plus
+    ? route?.params?.time || ''
+    : route?.params?.activity?.time;
   const defaultDate = plus ? new Date() : route?.params?.activity?.date;
 
   const navigation = useNavigation();
@@ -138,19 +140,6 @@ const WorkOutDetails = ({route}) => {
     plus ? handleAddActivity() : handleUpdateActivity();
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <ActivityIndicator size="large" color={Color.primaryGreen} />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <BackHeader
@@ -159,6 +148,7 @@ const WorkOutDetails = ({route}) => {
         onPressBack={() => navigation.navigate('physicalActivity')}
         onPress={handleSave}
         onSave={true}
+        loading={loading}
       />
 
       <View style={styles.content}>

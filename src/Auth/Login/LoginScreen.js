@@ -13,12 +13,10 @@ import {
   Image,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
 import Color from '../../assets/colors/Colors';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {GoogleLogin, Login} from '../../Apis/Login/AuthApis';
 import {
   GoogleSignin,
@@ -47,6 +45,8 @@ const LoginScreen = () => {
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
+
+  const FCMtoken = useSelector(state => state?.user?.fcmToken)
 
   const validateEmail = value => {
     setEmail(value);
@@ -80,6 +80,7 @@ const LoginScreen = () => {
     const body = {
       email: email,
       password: password,
+      deviceToken: FCMtoken
     };
     try {
       setLoading(true);
@@ -102,7 +103,6 @@ const LoginScreen = () => {
       }
     } catch (error) {
       showToast(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -149,7 +149,6 @@ const LoginScreen = () => {
       }
     } catch (error) {
       showToast(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -240,7 +239,7 @@ const LoginScreen = () => {
             {backgroundColor: isAgree ? Color.secondary : '#E0E0E0'},
           ]}>
           {loading ? (
-            <ActivityIndicator size="large" color={Color.primary} />
+            <ActivityIndicator size="small" color={Color.primary} />
           ) : (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text
@@ -301,7 +300,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: scale(14),
-    color: '#757575',
+    color: Color.black,
     marginBottom: verticalScale(7),
     marginTop: verticalScale(15),
   },
@@ -316,7 +315,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(12),
     paddingHorizontal: scale(16),
     fontSize: scale(14),
-    color: Color.black,
+    color: Color.gray,
     width: '100%',
   },
   eyeIconContainer: {
@@ -355,7 +354,7 @@ const styles = StyleSheet.create({
   },
   termsText: {
     flex: 1,
-    color: '#757575',
+    color: Color.black,
     fontSize: scale(13),
     lineHeight: verticalScale(18),
   },

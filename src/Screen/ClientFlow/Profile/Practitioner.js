@@ -1,11 +1,5 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -13,22 +7,27 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from '../../../assets/colors/Colors';
 
 const Practitioner = ({route}) => {
-    const data = route?.params?.data;
-    
+  const data = route?.params?.data;
+  const image = data?.image
+    ? {uri: data?.image}
+    : data?.gender === 'Female'
+    ? require('../../../assets/Images/woman.png')
+    : require('../../../assets/Images/man.png');;   
+
   const navigation = useNavigation();
 
   const information = [
     {
-        id: 0,
-        icon: 'call',
-        label: 'Residence',
-        value: data?.country || '--',
+      id: 0,
+      icon: 'call',
+      label: 'Residence',
+      value: data?.country || '--',
     },
     {
-        id: 1,
-        icon: 'location',
-        label: 'Phone number',
-        value: data?.phoneNumber || '--',
+      id: 1,
+      icon: 'location',
+      label: 'Phone number',
+      value: data?.phoneNumber || '--',
     },
     {id: 2, icon: 'mail', label: 'E-mail', value: data?.email || '--'},
   ];
@@ -41,13 +40,14 @@ const Practitioner = ({route}) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={{marginTop: verticalScale(20)}}>
-            <AntDesign name="arrowleft" size={verticalScale(20)} color={Color.black} />
+            <AntDesign
+              name="arrowleft"
+              size={verticalScale(20)}
+              color={Color.black}
+            />
           </TouchableOpacity>
           <View style={styles.imgIconView}>
-            <Image
-              source={require('../../../assets/Images/profile.jpg')}
-              style={styles.img}
-            />
+            <Image source={image} style={styles.img} />
             <Text style={styles.profileName}>{data?.fullName}</Text>
           </View>
         </View>
@@ -83,8 +83,8 @@ const styles = StyleSheet.create({
     marginLeft: scale(15),
   },
   img: {
-    height: verticalScale(80),
-    width: verticalScale(80),
+    height: verticalScale(70),
+    width: verticalScale(70),
     borderRadius: scale(100),
   },
   icnWhiteView: {

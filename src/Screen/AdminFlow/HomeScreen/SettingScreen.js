@@ -68,7 +68,7 @@ const SettingScreen = () => {
         </View>
       </View>
 
-      <View style={{marginHorizontal: scale(8)}}>
+      <View style={{marginHorizontal: scale(16)}}>
         <Text
           style={{
             color: Color.primaryGreen,
@@ -85,25 +85,41 @@ const SettingScreen = () => {
             alignItems: 'center',
           }}>
           <View>
-            <Text style={{fontSize: scale(16), fontWeight: '500', color: Color.black}}>
+            <Text
+              style={{
+                fontSize: scale(16),
+                fontWeight: '500',
+                color: Color.black,
+              }}>
               Notifications
             </Text>
             {isEnabled ? (
-              <Text style={{color: Color.gray}}>You want to receive notifications</Text>
+              <Text style={{color: Color.gray}}>
+                You want to receive notifications
+              </Text>
             ) : (
-              <Text style={{color: Color.gray}}>Don't want to receive notifications</Text>
+              <Text style={{color: Color.gray}}>
+                Don't want to receive notifications
+              </Text>
             )}
           </View>
 
           {isEnabled === null ? (
-            <ActivityIndicator size="small" color={Color.primaryGreen} />
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator size="small" color={Color.primaryGreen} />
+            </View>
           ) : (
             <Switch
               trackColor={{
                 false: '#e0e0e0',
-                true: Color.primaryGreen,
+                true: '#A0D8C5',
               }}
-              thumbColor={isEnabled ? '#2E7D32' : '#ffffff'}
+              thumbColor={isEnabled ? Color.primaryGreen : '#ffffff'}
               onValueChange={toggleSwitch}
               value={isEnabled}
             />

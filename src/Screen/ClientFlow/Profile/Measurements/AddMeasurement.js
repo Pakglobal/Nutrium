@@ -82,7 +82,6 @@ const AddMeasurement = () => {
       }
     } catch (error) {
       showToast(error);
-    } finally {
       setLoading(false);
     }
   };

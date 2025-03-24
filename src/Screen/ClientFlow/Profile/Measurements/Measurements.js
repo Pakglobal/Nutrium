@@ -65,9 +65,9 @@ const Measurements = () => {
         showToast(response?.message);
         setLoading(false);
       }
+      setLoading(false)
     } catch (error) {
       showToast(error);
-    } finally {
       setLoading(false);
     }
   };

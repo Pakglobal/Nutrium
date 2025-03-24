@@ -5,6 +5,7 @@ const initialState = {
   measurementInfo: {},
   mealInfo: {},
   addInfo: {},
+  imageInfo: {},
 };
 
 const clientSlice = createSlice({
@@ -19,6 +20,9 @@ const clientSlice = createSlice({
     },
     addData: (state, action) => {
       state.addInfo = action.payload;
+    },
+    setImage: (state, action) => {
+      state.imageInfo = action.payload;
     },
     updateAppointmentStatus: (state, action) => {
       const {appointmentId, status} = action.payload;
@@ -38,6 +42,7 @@ export const {
   updateAppointmentStatus,
   waterIntakeData,
   addData,
+  setImage
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

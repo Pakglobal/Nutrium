@@ -65,6 +65,7 @@ const ClientProfileScreen = ({route}) => {
       ).start();
     }
   };
+  console.log(isOpen);
 
   const options = [
     {id: 0, label: 'INFORMATION'},
@@ -130,7 +131,6 @@ const ClientProfileScreen = ({route}) => {
             alignItems: 'center',
             marginTop: verticalScale(15),
           }}>
-          {/* <Image style={styles.avatar} source={{uri: userImage}} /> */}
           {clientData?.image ? (
             <Image source={{uri: clientData?.image}} style={styles.avatar} />
           ) : clientData?.gender === 'Female' ? (
@@ -226,7 +226,7 @@ const ClientProfileScreen = ({route}) => {
 
                 <TouchableOpacity
                   style={[styles.fabButton, {backgroundColor: item.color}]}>
-                  <Ionicons name={item.icon} size={24} color="#fff" />
+                  <Ionicons name={item.icon} size={18} color="#fff" />
                 </TouchableOpacity>
               </Animated.View>
             ))}
@@ -237,14 +237,10 @@ const ClientProfileScreen = ({route}) => {
                 styles.bottomButton,
                 {
                   transform: [{rotate: isOpen ? '45deg' : '0deg'}],
-                  backgroundColor: isOpen ? '#DC2626' : '#F97316',
+                  backgroundColor: isOpen ? '#FB923C' : '#FB923C',
                 },
               ]}>
-              <Ionicons
-                name={isOpen ? 'close' : 'add'}
-                size={30}
-                color="#fff"
-              />
+              <Ionicons name={'add-outline'} size={22} color="#FFF" />
             </TouchableOpacity>
           </View>
         </View>
@@ -330,8 +326,8 @@ const styles = StyleSheet.create({
     marginLeft: scaleSize(10),
   },
   fabButton: {
-    width: scaleSize(45),
-    height: scaleSize(45),
+    width: scaleSize(35),
+    height: scaleSize(35),
     borderRadius: scaleSize(30),
     justifyContent: 'center',
     alignItems: 'center',
@@ -344,17 +340,16 @@ const styles = StyleSheet.create({
   fabText: {
     backgroundColor: '#222',
     padding: scaleSize(5),
-    fontSize: scaleSize(13),
+    fontSize: scaleSize(11),
     color: '#fff',
     borderRadius: scaleSize(4),
     marginRight: scaleSize(8),
     fontWeight: '500',
     textAlign: 'left',
-    width: '45%',
   },
   bottomButton: {
-    width: scaleSize(50),
-    height: scaleSize(50),
+    width: scaleSize(40),
+    height: scaleSize(40),
     borderRadius: scaleSize(30),
     justifyContent: 'center',
     alignItems: 'center',

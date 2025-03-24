@@ -2,14 +2,11 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
   Animated,
-  ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '../assets/colors/Colors';
 import {useNavigation} from '@react-navigation/native';
 import HydratedView from './HydratedView';
@@ -48,7 +45,7 @@ const HydratedStay = () => {
 
         const todayEntries = response?.waterIntakeData?.waterIntakes || [];
         const todayTotal = todayEntries.reduce((total, entry) => {
-          return total + entry.amount / 1000;
+          return total + entry?.amount / 1000;
         }, 0);
 
         const numSmallBottles = Math.floor(todayTotal / 0.2);
@@ -59,7 +56,6 @@ const HydratedStay = () => {
         setSevenTeenL(numLargeBottles * 0.5);
       } catch (error) {
         console.error('Error loading water intake data:', error);
-      } finally {
         setLoading(false);
       }
     };
@@ -81,7 +77,7 @@ const HydratedStay = () => {
 
       if (amount === 0.2) {
         setSevenL(prev => prev + amount);
-      } else {
+      } else if (amount === 0.5) {
         setSevenTeenL(prev => prev + amount);
       }
 
@@ -93,7 +89,7 @@ const HydratedStay = () => {
       });
 
       const payload = {
-        waterIntakeId: waterIntake?.waterIntakeData?._id,
+        // waterIntakeId: waterIntake?.waterIntakeData?._id,
         clientId: waterIntake?.waterIntakeData?.clientId,
         token: token,
         date: currentDate,
@@ -102,18 +98,17 @@ const HydratedStay = () => {
       };
 
       await SetWaterIntakeDetails(payload);
-
       const updatedData = await GetWaterIntakeDetails(token, id);
+
       setWaterIntake(updatedData);
     } catch (error) {
       console.error('Error adding water intake:', error);
 
       if (amount === 0.2) {
         setSevenL(prev => prev);
-      } else {
+      } else if (amount === 0.5) {
         setSevenTeenL(prev => prev);
       }
-    } finally {
       setLoading(false);
     }
   };
@@ -124,19 +119,6 @@ const HydratedStay = () => {
     date: new Date(),
     press: 'plus',
   };
-
-  // if (loading) {
-  //   return (
-  //     <View
-  //       style={{
-  //         flex: 1,
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //       }}>
-  //       <ActivityIndicator size="large" color={Color.primaryGreen} />
-  //     </View>
-  //   );
-  // }
 
   return (
     <SafeAreaView>
@@ -187,8 +169,6 @@ const HydratedStay = () => {
             valueText={'Custom'}
           />
         </View>
-
-        
       </View>
     </SafeAreaView>
   );

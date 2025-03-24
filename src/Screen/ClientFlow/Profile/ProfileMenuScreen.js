@@ -30,30 +30,23 @@ const ProfileMenuScreen = () => {
   const token = getToken?.token;
   const profileData = getToken?.user || getToken?.userData;
 
+  const profileImage = useSelector(state => state?.client?.imageInfo)
+  
+
   const [loading, setLoading] = useState(false);
   const [asyncLoading, setAsyncLoading] = useState(false);
   const [userData, setUserData] = useState([]);
-  const [profileImage, setProfileImage] = useState(null);
+
   const userImage = userData?.image
-    ? {uri: userData.image}
-    : require('../../../assets/Images/profile.jpg');
+    ? {uri: userData?.image}
+    : userData?.gender === 'Female'
+    ? require('../../../assets/Images/woman.png')
+    : require('../../../assets/Images/man.png');
 
-  const loadImage = async () => {
-    try {
-      const storedImage = await AsyncStorage.getItem('profileImage');
-      if (storedImage) {
-        setProfileImage(storedImage);
-      }
-    } catch (error) {
-      console.error('Failed to load image:', error);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadImage();
-    }, []),
-  );
+  const profileDataImage =
+    profileData?.gender === 'Female'
+      ? require('../../../assets/Images/woman.png')
+      : require('../../../assets/Images/man.png');
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -93,9 +86,9 @@ const ProfileMenuScreen = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       console.log('All info synced successfully!');
+      setAsyncLoading(false);
     } catch (error) {
       console.error('Error syncing info:', error);
-    } finally {
       setAsyncLoading(false);
     }
   };
@@ -207,10 +200,7 @@ const ProfileMenuScreen = () => {
                   style={styles.profileImage}
                 />
               ) : (
-                <Image
-                  source={require('../../../assets/Images/profile.jpg')}
-                  style={styles.profileImage}
-                />
+                <Image source={profileDataImage} style={styles.profileImage} />
               )}
               <Text style={styles.profileName}>{item?.label}</Text>
             </TouchableOpacity>
@@ -284,9 +274,9 @@ const ProfileMenuScreen = () => {
           showToast(response?.message);
           setLoading(false);
         }
+        setLoading(false);
       } catch (error) {
         showToast(error);
-      } finally {
         setLoading(false);
       }
     };

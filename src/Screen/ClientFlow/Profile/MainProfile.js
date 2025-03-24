@@ -1,6 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -8,38 +15,60 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from '../../../assets/colors/Colors';
 import CameraPicker from '../../../Components/CameraPicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
+import {useDispatch, useSelector} from 'react-redux';
+import Toast from 'react-native-simple-toast';
+import {setImage} from '../../../redux/client';
 
 const MainProfile = ({route}) => {
   const data = route?.params?.data;
 
-  const navigation = useNavigation();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [filePath, setFilePath] = useState(null);
+  const dispatch = useDispatch();
+  const getToken = useSelector(state => state?.user?.userInfo);
+  const token = getToken?.token;
+  const id = getToken?.userData?._id || getToken?.user?._id;
 
-  useEffect(() => {
-    const loadImage = async () => {
-      try {
-        const storedImage = await AsyncStorage.getItem('profileImage');
-        if (storedImage) {
-          setFilePath({uri: storedImage});
-        }
-      } catch (error) {
-        console.error('Failed to load image:', error);
-      }
-    };
-    loadImage();
-  }, []);
+  const profileImage = useSelector(state => state?.client?.imageInfo);
+
+  const showToast = message => {
+    Toast.show(message, Toast.LONG, Toast.BOTTOM);
+  };
+
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  console.log(profileImage);
+
+  const image =
+    data?.gender === 'Female'
+      ? require('../../../assets/Images/woman.png')
+      : require('../../../assets/Images/man.png');
 
   const handleImageSelect = async imageResponse => {
-    console.log('Selected Image:', imageResponse);
-
-    if (imageResponse.uri) {
-      setFilePath({uri: imageResponse?.uri});
-
+    if (imageResponse) {
+      const imageUrl = {
+        uri: imageResponse?.uri,
+        fileName: imageResponse?.fileName,
+        type: imageResponse?.type,
+      };
+      setLoading(true);
       try {
-        await AsyncStorage.setItem('profileImage', imageResponse?.uri);
+        const response = await UpdateImage(token, id, imageUrl);
+        if (
+          response?.message === 'Client details updated successfully' ||
+          response?.success === true
+        ) {
+          dispatch(setImage(response?.client?.image));
+          setLoading(false);
+        } else {
+          showToast(response?.message);
+          setLoading(false);
+        }
+        setLoading(false);
       } catch (error) {
-        console.error('Failed to save image:', error);
+        showToast(error);
+        setLoading(false);
       }
     }
   };
@@ -88,11 +117,19 @@ const MainProfile = ({route}) => {
           </TouchableOpacity>
 
           <View style={styles.imgIconView}>
-            {filePath?.uri ? (
-              <Image source={{uri: filePath?.uri}} style={styles.img} />
+            {loading ? (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: verticalScale(80),
+                  width: verticalScale(80),
+                }}>
+                <ActivityIndicator size="small" color={Color.primaryGreen} />
+              </View>
             ) : (
               <Image
-                source={require('../../../assets/Images/profile.jpg')}
+                source={profileImage ? {uri: profileImage} : image}
                 style={styles.img}
               />
             )}

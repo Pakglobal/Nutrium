@@ -100,7 +100,6 @@ const WorkOutDetails = ({route}) => {
       }
     } catch (error) {
       showToast(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -131,7 +130,6 @@ const WorkOutDetails = ({route}) => {
       }
     } catch (error) {
       showToast(error);
-    } finally {
       setLoading(false);
     }
   };

@@ -262,7 +262,6 @@ const WaterIntake = () => {
       try {
         setLoading(true);
         const entryDate = new Date(selectedEntry?.date);
-
         navigation.navigate('waterIntakeLog', {
           intake: {
             waterIntakeId: selectedEntry?.waterIntakeId,
@@ -275,7 +274,6 @@ const WaterIntake = () => {
           },
           isEditing: true,
         });
-
         setModalVisible(false);
         setLoading(false);
       } catch (error) {
@@ -294,9 +292,7 @@ const WaterIntake = () => {
         waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
         token: token,
       };
-
       const response = await DeleteWaterIntake(payload);
-
       if (
         response?.message === 'Water intake data deleted successfully.' ||
         response?.success === true
@@ -514,6 +510,8 @@ const WaterIntake = () => {
   );
 };
 
+export default WaterIntake;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -623,5 +621,3 @@ const styles = StyleSheet.create({
     color: Color.black,
   },
 });
-
-export default WaterIntake;

@@ -47,7 +47,6 @@ const RecommendationScreen = () => {
       }
     } catch (error) {
       console.error('Error fetching recommendation data', error);
-    } finally {
       setLoading(false);
     }
   };
@@ -62,7 +61,6 @@ const RecommendationScreen = () => {
       }
     } catch (error) {
       console.error('Error fetching food avoid data', error);
-    } finally {
       setLoading(false);
     }
   };
@@ -77,7 +75,6 @@ const RecommendationScreen = () => {
       }
     } catch (error) {
       console.error('Error fetching food avoid data', error);
-    } finally {
       setLoading(false);
     }
   };

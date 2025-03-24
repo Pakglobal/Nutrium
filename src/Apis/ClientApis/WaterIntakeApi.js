@@ -31,18 +31,19 @@ export const GetWaterIntakeDetails = async (token, id) => {
 export const SetWaterIntakeDetails = async payload => {
   try {
     const {clientId, token, amount, time, date} = payload;
+    
     const url = `https://nutrium-back-end-1.onrender.com/api/v1/setwaterintake/${clientId}`;
     const body = {
       waterIntake: amount,
       time: time,
       date: date,
-    };
+    };       
 
     const response = await axios.post(url, body, {
       headers: {
         Authorization: token,
       },
-    });
+    });    
 
     return response?.data;
   } catch (error) {

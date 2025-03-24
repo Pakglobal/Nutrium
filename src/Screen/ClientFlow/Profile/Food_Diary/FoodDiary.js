@@ -58,9 +58,9 @@ const FoodDiary = () => {
       if (response?.foodDiary) {
         setDiaryData(response?.foodDiary?.foodDiaryData || []);
       }
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching food diary', error);
-    } finally {
       setLoading(false);
     }
   };
@@ -156,7 +156,7 @@ const FoodDiary = () => {
         txtFunction={getDateString()}
       />
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <ActivityIndicator size="large" color={Color.primaryGreen} />
         </View>
       ) : diaryData && diaryData?.length > 0 ? (

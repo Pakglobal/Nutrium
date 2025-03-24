@@ -65,10 +65,10 @@ const MealScreen = () => {
       } else {
         setPlan(false);
       }
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching meal plan:', error);
       setPlan(false);
-    } finally {
       setLoading(false);
     }
   };
@@ -189,7 +189,7 @@ const MealScreen = () => {
           </ScrollView>
         </View>
       )}
-      
+
       {loading ? (
         <View
           style={{

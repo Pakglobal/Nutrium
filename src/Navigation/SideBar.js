@@ -1,5 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from '../assets/colors/Colors';
@@ -12,6 +19,8 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 const SideBar = ({onSelectScreen}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const [asyncLoading, setAsyncLoading] = useState(false);
 
   const getUserInfo = useSelector(state => state?.user?.profileInfo);
   const imageUrl = getUserInfo?.image
@@ -26,7 +35,18 @@ const SideBar = ({onSelectScreen}) => {
     navigation.navigate('Settings');
   };
 
-  const handelRefresh = () => {
+  const handelRefresh = async () => {
+    setAsyncLoading(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      console.log('All info synced successfully!');
+      setAsyncLoading(false);
+    } catch (error) {
+      console.error('Error syncing info:', error);
+      setAsyncLoading(false);
+    }
     navigation.goBack();
   };
 
@@ -49,16 +69,21 @@ const SideBar = ({onSelectScreen}) => {
   const renderItem = ({item}) => (
     <TouchableOpacity
       onPress={() => {
-        if (item.action) {
-          item.action();
+        if (item?.action) {
+          item?.action();
         } else {
-          onSelectScreen(item.label);
-          navigation.navigate(item.label, {label: item.label});
+          onSelectScreen(item?.label);
+          navigation.navigate(item?.label, {label: item?.label});
         }
       }}
       style={styles.item}>
-      <Ionicons name={item.icon} color={Color.gray} size={scale(22)} />
-      <Text style={styles.title}>{item.name}</Text>
+      <Ionicons name={item?.icon} color={Color.gray} size={scale(22)} />
+      <Text style={styles.title}>{item?.name}</Text>
+      {item?.name === 'Sync all info' && asyncLoading && (
+        <View style={{alignItems: 'flex-end', flex: 1}}>
+          <ActivityIndicator />
+        </View>
+      )}
     </TouchableOpacity>
   );
 
@@ -90,7 +115,7 @@ const SideBar = ({onSelectScreen}) => {
           style={{
             marginHorizontal: scale(8),
             marginVertical: verticalScale(8),
-            color: Color.black
+            color: Color.black,
           }}>
           Recent
         </Text>
@@ -102,7 +127,7 @@ const SideBar = ({onSelectScreen}) => {
           style={{
             marginHorizontal: scale(8),
             marginVertical: verticalScale(8),
-            color: Color.black
+            color: Color.black,
           }}>
           Settings and support
         </Text>

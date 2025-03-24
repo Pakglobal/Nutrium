@@ -1,53 +1,61 @@
-// import { ScrollView, StyleSheet, Text } from 'react-native';
-// import React, { useState } from 'react';
-// import RootNavigation from './src/Navigation/RootNavigation';
-// import axios from 'axios';
-
-// interface posts {
-//   body: string,
-//   id: number,
-//   userId: number,
-//   title: string,
-// }
-// const App = () => {
-//   const [data, setData] = useState([])
-
-//   const callAPI = async () => {
-//     const res = await axios.get('https://jsonplaceholder.typicode.com/posts')
-//     const response = res.data
-
-//     setData(response)
-
-//   }
-//   callAPI();
-
-//   return (
-//     // <RootNavigation />
-//     <ScrollView showsVerticalScrollIndicator={false}>
-//       {
-//         data.map((post :posts) => (
-//           <>
-//             <Text>{post.id}</Text>
-//             <Text>{post.title}</Text>
-//             <Text>{post.userId}</Text>
-//             <Text>{post.body}</Text>
-//           </>
-//         ))
-//       }
-//     </ScrollView>
-//   );
-// };
-
-// export default App;
-
-// const styles = StyleSheet.create({});
-
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import { StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
 import RootNavigation from './src/Navigation/RootNavigation';
+import messaging from '@react-native-firebase/messaging';
+import { firebaseApp } from './src/firebaseConfig';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import { setFcmToken } from './src/redux/user';
+import { store } from './src/redux/Store';
+
+const AppContent = () => {
+  const dispatch = useDispatch();
+  const getToken = useSelector(state => state?.user?.userInfo);
+  const token = getToken?.token;
+  const id = getToken?.userData?._id || getToken?.user?._id;
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        if (!firebaseApp) {
+          console.error('Firebase is not initialized. Retrying...');
+          return;
+        }
+        const fcmToken = await messaging().getToken();
+        console.log('FCM Token:', fcmToken);
+
+        if (fcmToken) {
+          dispatch(setFcmToken(fcmToken));  // Store token in Redux
+        }
+
+        // if (fcmToken && token && id) {
+        //   sendTokenToBackend(fcmToken);
+        // }
+      } catch (error) {
+        console.error('Error getting FCM Token:', error);
+      }
+    };
+
+    fetchToken();
+
+    // Refresh FCM token when updated
+    const unsubscribe = messaging().onTokenRefresh(fcmToken => {
+      if (fcmToken) {
+        dispatch(setFcmToken(fcmToken));  // Update token in Redux
+      }
+    });
+
+    return () => unsubscribe();
+  }, [token, id]);
+
+  return <RootNavigation />;
+};
 
 const App = () => {
-  return <RootNavigation />;
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
+  );
 };
 
 export default App;

@@ -20,6 +20,7 @@ import {
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
 import Color from '../../../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
+import Bottle from '../../../../assets/Images/bottel.svg';
 
 const WaterIntakeLog = ({route}) => {
   const navigation = useNavigation();
@@ -50,9 +51,13 @@ const WaterIntakeLog = ({route}) => {
   const [loading, setLoading] = useState(false);
 
   const amount = routeData?.amount
-    ? parseInt(routeData.amount.replace(/\D/g, ''))
+    ? parseInt(routeData?.amount?.replace(/\D/g, ''))
     : 0;
   const [num, setNum] = useState(amount || 0);
+
+  const setAmount = valuee => {
+    setNum(prevNum => Number(prevNum) + Number(valuee));
+  };
 
   const parseTimeStringToDate = timeString => {
     try {
@@ -93,10 +98,6 @@ const WaterIntakeLog = ({route}) => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
 
-  const setAmount = valuee => {
-    setNum(prevNum => Number(prevNum) + Number(valuee));
-  };
-
   const formattedTime = `${String(time.getHours()).padStart(2, '0')}:${String(
     time.getMinutes(),
   ).padStart(2, '0')}`;
@@ -116,7 +117,6 @@ const WaterIntakeLog = ({route}) => {
 
   const handleUpdateWaterIntake = async () => {
     if (!validateInput()) return;
-
     setLoading(true);
     try {
       const payload = {
@@ -128,7 +128,6 @@ const WaterIntakeLog = ({route}) => {
         token: token,
         date: date,
       };
-
       const response = await UpdateWaterIntake(payload);
       if (
         response?.message === 'Water intake record updated successfully.' ||
@@ -138,17 +137,16 @@ const WaterIntakeLog = ({route}) => {
       } else {
         showToast(response?.message || 'Error updating water intake');
       }
+      setLoading(false)
     } catch (error) {
       console.error(error);
       showToast('An error occurred');
-    } finally {
       setLoading(false);
     }
   };
 
   const handleAddWaterIntake = async () => {
     if (!validateInput()) return;
-
     setLoading(true);
     try {
       const payload = {
@@ -158,7 +156,6 @@ const WaterIntakeLog = ({route}) => {
         token: token,
         date: date,
       };
-
       const response = await SetWaterIntakeDetails(payload);
       if (
         response?.message === 'Water intake recorded successfully.' ||
@@ -168,10 +165,10 @@ const WaterIntakeLog = ({route}) => {
       } else {
         showToast(response?.message || 'Error adding water intake');
       }
+      setLoading(false)
     } catch (error) {
       console.error(error);
       showToast('An error occurred');
-    } finally {
       setLoading(false);
     }
   };
@@ -220,12 +217,12 @@ const WaterIntakeLog = ({route}) => {
             onPress={() => setAmount(200)}
           />
           <HydratedView
-            img={require('../../../../assets/Images/bottel.png')}
+            img={require('../../../../assets/Images/glass.png')}
             valueText="300mL"
             onPress={() => setAmount(300)}
           />
           <HydratedView
-            img={require('../../../../assets/Images/bottel.png')}
+            img={require('../../../../assets/Images/glass.png')}
             valueText="500mL"
             onPress={() => setAmount(500)}
           />

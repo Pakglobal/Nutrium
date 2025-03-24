@@ -72,9 +72,9 @@ const LogPhysicalActivity = ({route}) => {
         setActivityData(response?.data);
         setFilteredData(response?.data);
       }
+      setLoading(false)
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -87,9 +87,9 @@ const LogPhysicalActivity = ({route}) => {
       const data = response?.data?.physicalActivity?.flat();
       setQuickAccess(data);
       setQuickAccessData(data);
+      setLoading(false)
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   };

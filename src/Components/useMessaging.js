@@ -39,13 +39,16 @@ const MessageComponent = ({
   userName,
   image,
   showHeader = true,
-  onBackPress,
   containerStyle,
+  gender,
 }) => {
   const navigation = useNavigation();
+
   const userImage = image
     ? {uri: image}
-    : require('../assets/Images/profile.jpg');
+    : gender === 'Female'
+    ? require('../assets/Images/woman.png')
+    : require('../assets/Images/man.png');
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -320,9 +323,9 @@ const MessageComponent = ({
   const uploadFileAndGetUrl = async file => {
     const formData = new FormData();
     formData.append('file', {
-      uri: file.uri,
-      name: file.name,
-      type: file.type,
+      uri: file?.uri,
+      name: file?.name,
+      type: file?.type,
     });
 
     const response = await fetch(
@@ -384,7 +387,7 @@ const MessageComponent = ({
 
   const renderHeader = () => {
     if (!showHeader) return null;
-    
+
     return (
       <View
         style={{

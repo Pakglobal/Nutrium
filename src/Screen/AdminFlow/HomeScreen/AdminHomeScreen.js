@@ -60,7 +60,7 @@ const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
           </TouchableOpacity>
 
           <View style={styles.logoContainer}>
-            <NutriumLogo height={scale(60)} width={scale(60)} />
+            <NutriumLogo height={scale(45)} width={scale(45)} />
           </View>
 
           <View style={styles.optionContainer}>
@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: Color.primaryGreen,
-    height: verticalScale(170),
   },
   header: {
     marginHorizontal: scale(16),
@@ -120,16 +119,16 @@ const styles = StyleSheet.create({
   optionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: verticalScale(20),
     alignItems: 'center',
+    marginVertical: verticalScale(15)
   },
   logoContainer: {
-    marginTop: verticalScale(25),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Color.primary,
     alignSelf: 'center',
     borderRadius: scale(50),
+    marginVertical: verticalScale(20)
   },
   bodyContainer: {
     backgroundColor: '#f5f5f5',
@@ -138,6 +137,7 @@ const styles = StyleSheet.create({
   text: {
     color: Color.primary,
     height: scale(25),
-    letterSpacing: 1.5,
+    letterSpacing: 1,
+    fontSize: scale(13)
   },
 });

@@ -54,8 +54,8 @@ const CameraPicker = ({ visible, onClose, onImageSelect }) => {
     let isStoragePermitted = await requestStoragePermission();
     if (isCameraPermitted && isStoragePermitted) {
       launchCamera(options, response => {
-        if (!response.didCancel && !response.errorCode) {
-          onImageSelect(response.assets[0]);
+        if (!response?.didCancel && !response?.errorCode) {
+          onImageSelect(response?.assets[0]);
         }
       });
     }
@@ -70,8 +70,8 @@ const CameraPicker = ({ visible, onClose, onImageSelect }) => {
       quality: 1,
     };
     launchImageLibrary(options, response => {
-      if (!response.didCancel && !response.errorCode) {
-        onImageSelect(response.assets[0]);
+      if (!response?.didCancel && !response?.errorCode) {
+        onImageSelect(response?.assets[0]);
       }
     });
   };
@@ -101,13 +101,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(100,100,100,0.5)',
+    backgroundColor: 'rgba(100,100,100,0.7)',
   },
   whiteContainer: {
     width: '65%',
     backgroundColor: 'white',
     alignItems: 'center',
-    borderRadius: scale(10),
     paddingVertical: verticalScale(15),
   },
   title: {

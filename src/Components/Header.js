@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
+  Pressable,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,13 +25,13 @@ const Header = ({headerText, showIcon}) => {
         }}>
         <NutriumLogo height={scale(25)} width={scale(150)} />
         {showIcon === true ? (
-          <TouchableOpacity style={{marginHorizontal: scale(16)}}>
+          <Pressable style={{marginHorizontal: scale(16)}}>
             <MaterialCommunityIcons
               name="email-outline"
               color={Color.gray}
               size={scale(22)}
             />
-          </TouchableOpacity>
+          </Pressable>
         ) : null}
       </View>
       {headerText ? <Text style={styles.titleTxt}>{headerText}</Text> : null}

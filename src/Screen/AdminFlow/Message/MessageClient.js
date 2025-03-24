@@ -12,12 +12,15 @@ const MessageClient = ({route}) => {
 
   const userName = clientData[0]?.fullName;
   const userImage = clientData[0]?.image;
+  const userGender = clientData[0]?.gender;
+  
   return (
     <MessageComponent
       userId={userId}
       otherUserId={otherUserId}
       userName={userName}
       image={userImage}
+      gender={userGender}
       showHeader={true}
       onBackPress={() => navigation.goBack()}
       containerStyle={{backgroundColor: '#f9f9f9'}}

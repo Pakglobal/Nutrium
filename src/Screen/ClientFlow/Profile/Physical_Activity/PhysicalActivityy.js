@@ -70,9 +70,9 @@ const PhysicalActivityy = () => {
       if (response?.success === true) {
         setPhysicalActivity(response?.data);
       }
+      setLoading(false);
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -121,9 +121,9 @@ const PhysicalActivityy = () => {
       });
 
       setModalVisible(false);
+      setLoading(false);
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -149,7 +149,6 @@ const PhysicalActivityy = () => {
       setModalVisible(false);
     } catch (error) {
       showToast(error);
-    } finally {
       setDeleteLoading(false);
     }
   };

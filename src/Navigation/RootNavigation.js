@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import SelectRegistrationType from '../Auth/Registartion/SelectRegistrationType';
 import Registration from '../Auth/Registartion/Registration';
 import UnlockAccess from '../Auth/Registartion/UnlockAccess';
@@ -19,7 +19,6 @@ import WaterIntake from '../Screen/ClientFlow/Profile/Water_Intake/WaterIntake';
 import Measurements from '../Screen/ClientFlow/Profile/Measurements/Measurements';
 import HomeScreen from '../Screen/ClientFlow/Home/HomeScreen';
 import AdminHomeScreen from '../Screen/AdminFlow/HomeScreen/AdminHomeScreen';
-import {StyleSheet} from 'react-native';
 import {persistor, store} from '../redux/Store';
 import {Provider, useSelector} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
@@ -41,7 +40,6 @@ import ShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/ShoppingLi
 import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShoppingList';
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
-
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -155,14 +153,5 @@ const RootNavigation = () => (
     </PersistGate>
   </Provider>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default RootNavigation;

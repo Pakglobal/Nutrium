@@ -1,5 +1,11 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -12,7 +18,7 @@ const BackHeader = ({
   onSave,
   backText,
   showRightButton = true,
-  loading
+  loading,
 }) => {
   return (
     <View style={styles.container}>
@@ -32,10 +38,21 @@ const BackHeader = ({
           <>
             {onSave ? (
               <TouchableOpacity onPress={onPress}>
-                {
-                  loading ? <ActivityIndicator size="small" color={Color.primaryGreen} /> :
-                <Text style={styles.save}>Save</Text>
-                }
+                {loading ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <ActivityIndicator
+                      size="small"
+                      color={Color.primaryGreen}
+                    />
+                  </View>
+                ) : (
+                  <Text style={styles.save}>Save</Text>
+                )}
               </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.plus} onPress={onPress}>
@@ -90,6 +107,6 @@ const styles = StyleSheet.create({
     marginLeft: scale(10),
     fontWeight: '600',
     fontSize: scale(14),
-    color: Color.black
+    color: Color.black,
   },
 });

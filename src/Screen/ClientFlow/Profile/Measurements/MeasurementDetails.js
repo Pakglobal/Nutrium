@@ -74,7 +74,6 @@ const MeasurementDetail = () => {
       }
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   }, [token, id, measurementType, selectedPeriod]);

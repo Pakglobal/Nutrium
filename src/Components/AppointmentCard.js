@@ -28,6 +28,7 @@ const AppointmentCard = ({
   activeAppointments,
   selectedAppointment,
   setSelectedAppointment,
+  setActiveAppointments,
 }) => {
   const userInfo = useSelector(state => state?.user?.userInfo);
   const token = userInfo?.token;
@@ -41,19 +42,6 @@ const AppointmentCard = ({
   const formatTime = isoString =>
     isoString ? moment(isoString).format('h:mm A') : '';
 
-  const handleConfirm = async appointment => {
-    try {
-      setLoading(true);
-      await UpdateAppointmentStatus(token, appointment?._id, {
-        status: 'confirmed',
-      });
-      await refreshAppointments();
-    } catch (error) {
-      console.error('Error confirming appointment:', error);
-      setLoading(false);
-    }
-  };
-
   const handleCancelAppointment = async () => {
     if (!selectedAppointment) return;
     try {
@@ -63,9 +51,33 @@ const AppointmentCard = ({
       });
       await refreshAppointments();
       setModalVisible(false);
+      setLoading(false);
     } catch (error) {
       console.error('Error canceling appointment:', error);
       setLoading(false);
+    }
+  };
+
+  const handleConfirm = async appointment => {
+    try {
+      const updatedAppointments = activeAppointments.map(app =>
+        app._id === appointment._id ? {...app, isLoading: true} : app,
+      );
+      setActiveAppointments(updatedAppointments);
+
+      await UpdateAppointmentStatus(token, appointment?._id, {
+        status: 'confirmed',
+      });
+
+      await refreshAppointments();
+    } catch (error) {
+      console.error('Error confirming appointment:', error);
+
+      const resetAppointments = activeAppointments.map(app => ({
+        ...app,
+        isLoading: false,
+      }));
+      setActiveAppointments(resetAppointments);
     }
   };
 
@@ -98,7 +110,13 @@ const AppointmentCard = ({
 
         <View style={styles.card}>
           <Image
-            source={require('../assets/Images/profile.jpg')}
+            source={
+              item?.image
+                ? {uri: item?.image}
+                : item?.gender === 'Female'
+                ? require('../assets/Images/woman.png')
+                : require('../assets/Images/man.png')
+            }
             style={styles.avatar}
           />
           <View style={styles.details}>
@@ -122,16 +140,15 @@ const AppointmentCard = ({
           <TouchableOpacity
             style={styles.confirmButton}
             onPress={() => handleConfirm(item)}
-            disabled={loading}>
+            disabled={item.isLoading}>
             <Text style={styles.confirmText}>
-              {loading ? 'Confirming...' : 'Confirm'}
+              {item.isLoading ? 'Confirming...' : 'Confirm'}
             </Text>
           </TouchableOpacity>
         )}
       </View>
     );
   };
-
   return (
     <View style={styles.container}>
       {activeAppointments?.length > 0 ? (
@@ -140,7 +157,9 @@ const AppointmentCard = ({
           renderItem={renderAppointmentItem}
           keyExtractor={item => item?._id}
         />
-      ) : null}
+      ) : (
+null
+      )}
 
       <Modal
         visible={isModalVisible}
@@ -187,20 +206,19 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     borderRadius: scale(15),
-    padding: scale(15),
+    padding: scale(10),
     marginHorizontal: scale(16),
     marginTop: scale(10),
-    marginBottom: scale(5),
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: verticalScale(10),
     alignItems: 'center',
   },
   title: {
     fontSize: scale(15),
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: Color.black,
   },
   status: {
     flexDirection: 'row',

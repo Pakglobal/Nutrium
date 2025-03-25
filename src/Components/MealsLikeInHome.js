@@ -26,8 +26,8 @@ const MealsLikeInHome = () => {
         <ImageBackground
           style={{height: '100%', width: '100%'}}
           source={require('../assets/Images/foodmealcard.jpg')}
-          resizeMode="stretch"
-          imageStyle={{borderRadius: scale(20)}}>
+          resizeMode="cover"
+          imageStyle={{borderRadius: 20}}>
           <View style={styles.card}>
             <Text style={styles.discription}>
               Log more meals and get the {'\n'}bigger picture of your days.
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginHorizontal: scale(5),
     height: verticalScale(130),
-    width: '90%'
+    width: '90%',
   },
   card: {
     height: '100%',

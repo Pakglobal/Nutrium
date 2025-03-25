@@ -14,7 +14,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from '../../../assets/colors/Colors';
 import CameraPicker from '../../../Components/CameraPicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
@@ -28,7 +27,8 @@ const MainProfile = ({route}) => {
   const token = getToken?.token;
   const id = getToken?.userData?._id || getToken?.user?._id;
 
-  const profileImage = useSelector(state => state?.client?.imageInfo);
+  const updateProfileImage = useSelector(state => state?.client?.imageInfo);
+  const profileImage = data?.image;
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -38,13 +38,6 @@ const MainProfile = ({route}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  console.log(profileImage);
-
-  const image =
-    data?.gender === 'Female'
-      ? require('../../../assets/Images/woman.png')
-      : require('../../../assets/Images/man.png');
-
   const handleImageSelect = async imageResponse => {
     if (imageResponse) {
       const imageUrl = {
@@ -52,8 +45,8 @@ const MainProfile = ({route}) => {
         fileName: imageResponse?.fileName,
         type: imageResponse?.type,
       };
-      setLoading(true);
       try {
+        setLoading(true);
         const response = await UpdateImage(token, id, imageUrl);
         if (
           response?.message === 'Client details updated successfully' ||
@@ -101,11 +94,23 @@ const MainProfile = ({route}) => {
     },
   ];
 
+  let imgSource;
+  if (updateProfileImage && typeof updateProfileImage === 'string') {
+    imgSource = {uri: updateProfileImage};
+  } else if (profileImage && typeof profileImage === 'string') {
+    imgSource = {uri: profileImage};
+  } else {
+    imgSource =
+      data?.gender === 'Female'
+        ? require('../../../assets/Images/woman.png')
+        : require('../../../assets/Images/man.png');
+  }
+
   return (
     <View style={{flex: 1, backgroundColor: Color.primary}}>
       <View
         style={{backgroundColor: Color.headerBG, height: verticalScale(150)}}>
-        <View style={{marginHorizontal: scale(8)}}>
+        <View style={{marginHorizontal: scale(16)}}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={{marginTop: verticalScale(20)}}>
@@ -128,10 +133,7 @@ const MainProfile = ({route}) => {
                 <ActivityIndicator size="small" color={Color.primaryGreen} />
               </View>
             ) : (
-              <Image
-                source={profileImage ? {uri: profileImage} : image}
-                style={styles.img}
-              />
+              <Image source={imgSource} style={styles.img} />
             )}
 
             <TouchableOpacity

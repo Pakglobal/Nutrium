@@ -53,16 +53,13 @@
 
 // export default stepTrackerSlice.reducer;
 
-
-
-
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEYS = {
   STEPS: 'steps',
   WORKOUTS: 'workouts',
-  LAST_RESET: 'lastReset'
+  LAST_RESET: 'lastReset',
 };
 
 const initialState = {
@@ -70,7 +67,7 @@ const initialState = {
   workouts: Array(7).fill(0),
   currentDay: new Date().getDay(),
   isTracking: false,
-  lastReset: new Date().toISOString()
+  lastReset: new Date().toISOString(),
 };
 
 // Function to save data to AsyncStorage
@@ -86,7 +83,7 @@ const stepTrackerSlice = createSlice({
   name: 'stepTracker',
   initialState,
   reducers: {
-    incrementSteps: (state) => {
+    incrementSteps: state => {
       state.steps += 1;
       saveToStorage(STORAGE_KEYS.STEPS, state.steps);
     },
@@ -98,7 +95,7 @@ const stepTrackerSlice = createSlice({
       state.workouts = action.payload;
       saveToStorage(STORAGE_KEYS.WORKOUTS, state.workouts);
     },
-    resetSteps: (state) => {
+    resetSteps: state => {
       state.workouts[state.currentDay] = state.steps;
       state.steps = 0;
       state.currentDay = new Date().getDay();
@@ -110,8 +107,14 @@ const stepTrackerSlice = createSlice({
     setIsTracking: (state, action) => {
       state.isTracking = action.payload;
     },
-  }
+  },
 });
 
-export const { incrementSteps, setSteps, setWorkouts, resetSteps, setIsTracking } = stepTrackerSlice.actions;
+export const {
+  incrementSteps,
+  setSteps,
+  setWorkouts,
+  resetSteps,
+  setIsTracking,
+} = stepTrackerSlice.actions;
 export default stepTrackerSlice.reducer;

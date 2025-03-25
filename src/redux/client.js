@@ -42,7 +42,7 @@ export const {
   updateAppointmentStatus,
   waterIntakeData,
   addData,
-  setImage
+  setImage,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

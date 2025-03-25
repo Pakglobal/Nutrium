@@ -24,7 +24,7 @@
 //   const dispatch = useDispatch();
 //   const lastAccelerationRef = useRef(0);
 //   const lastStepTimeRef = useRef(0);
-  
+
 //   const { steps, workouts, currentDay, isTracking } = useSelector(state => state.stepTracker);
 
 //   const calculateCalories = (stepCount) => {
@@ -50,7 +50,7 @@
 
 //       if (stepsData) dispatch(setSteps(JSON.parse(stepsData)));
 //       if (workoutsData) dispatch(setWorkouts(JSON.parse(workoutsData)));
-      
+
 //       const lastReset = lastResetData ? new Date(JSON.parse(lastResetData)) : new Date();
 //       const now = new Date();
 //       if (lastReset.getDate() !== now.getDate()) {
@@ -85,7 +85,7 @@
 //     const startTracking = async () => {
 //       try {
 //         setUpdateIntervalForType(SensorTypes.accelerometer, 100);
-        
+
 //         subscription = accelerometer.subscribe(({ x, y, z }) => {
 //           const acceleration = Math.sqrt(x * x + y * y + z * z);
 //           detectStep(acceleration);
@@ -127,20 +127,26 @@
 //   };
 // };
 
-
-
-
-
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
+import {useEffect, useRef} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  accelerometer,
+  setUpdateIntervalForType,
+  SensorTypes,
+} from 'react-native-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { incrementSteps, setSteps, setWorkouts, setIsTracking, resetSteps } from '../redux/stepTracker';
+import {
+  incrementSteps,
+  setSteps,
+  setWorkouts,
+  setIsTracking,
+  resetSteps,
+} from '../redux/stepTracker';
 
 const STORAGE_KEYS = {
   STEPS: 'steps',
   WORKOUTS: 'workouts',
-  LAST_RESET: 'lastReset'
+  LAST_RESET: 'lastReset',
 };
 
 const STEP_THRESHOLD = 6;
@@ -151,9 +157,11 @@ export const useStepTracking = () => {
   const lastAccelerationRef = useRef(0);
   const lastStepTimeRef = useRef(0);
 
-  const { steps, workouts, currentDay, isTracking } = useSelector(state => state.stepTracker);
+  const {steps, workouts, currentDay, isTracking} = useSelector(
+    state => state.stepTracker,
+  );
 
-  const calculateCalories = (stepCount) => {
+  const calculateCalories = stepCount => {
     const CALORIES_PER_STEP = 0.03;
     return Math.round(stepCount * CALORIES_PER_STEP);
   };
@@ -164,13 +172,15 @@ export const useStepTracking = () => {
       const [stepsData, workoutsData, lastResetData] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEYS.STEPS),
         AsyncStorage.getItem(STORAGE_KEYS.WORKOUTS),
-        AsyncStorage.getItem(STORAGE_KEYS.LAST_RESET)
+        AsyncStorage.getItem(STORAGE_KEYS.LAST_RESET),
       ]);
 
       if (stepsData) dispatch(setSteps(JSON.parse(stepsData)));
       if (workoutsData) dispatch(setWorkouts(JSON.parse(workoutsData)));
 
-      const lastReset = lastResetData ? new Date(JSON.parse(lastResetData)) : new Date();
+      const lastReset = lastResetData
+        ? new Date(JSON.parse(lastResetData))
+        : new Date();
       const now = new Date();
 
       if (lastReset.getDate() !== now.getDate()) {
@@ -182,12 +192,14 @@ export const useStepTracking = () => {
   };
 
   // Detect steps based on accelerometer data
-  const detectStep = (acceleration) => {
+  const detectStep = acceleration => {
     const currentTime = Date.now();
     const timeDiff = currentTime - lastStepTimeRef.current;
 
     if (timeDiff > MIN_STEP_DELAY) {
-      const accelerationDelta = Math.abs(acceleration - lastAccelerationRef.current);
+      const accelerationDelta = Math.abs(
+        acceleration - lastAccelerationRef.current,
+      );
 
       if (accelerationDelta > STEP_THRESHOLD) {
         dispatch(incrementSteps());
@@ -205,7 +217,7 @@ export const useStepTracking = () => {
       try {
         setUpdateIntervalForType(SensorTypes.accelerometer, 100);
 
-        subscription = accelerometer.subscribe(({ x, y, z }) => {
+        subscription = accelerometer.subscribe(({x, y, z}) => {
           const acceleration = Math.sqrt(x * x + y * y + z * z);
           detectStep(acceleration);
         });
@@ -243,6 +255,6 @@ export const useStepTracking = () => {
     calories: calculateCalories(steps),
     workouts,
     currentDay,
-    isTracking
+    isTracking,
   };
 };

@@ -9,7 +9,7 @@ import {
   Image,
   StyleSheet,
   PermissionsAndroid,
-  FlatList,
+  ScrollView,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
@@ -25,7 +25,6 @@ import {
   DeleteMealInFoodDiary,
   DeleteSpecificMealInFoodDiary,
 } from '../../../../Apis/ClientApis/FoodDiaryApi';
-import {ScrollView} from 'react-native-virtualized-view';
 import Toast from 'react-native-simple-toast';
 
 const LogMeal = () => {
@@ -41,7 +40,7 @@ const LogMeal = () => {
   const foodId = meal?.foodId;
   const foodIndex = meal?.foodIndex;
   const scheduleId = meal?.id;
-  const registrationDate = '2025-02-21T18:30:00.023Z'  
+  const registrationDate = '2025-02-21T18:30:00.023Z';
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -194,8 +193,8 @@ const LogMeal = () => {
     } else {
       showToast(response?.message);
     }
-  }; 
-  
+  };
+
   const handleDeleteSeparateMeal = async () => {
     const payload = {
       token: token,
@@ -291,7 +290,12 @@ const LogMeal = () => {
                 paddingVertical: verticalScale(10),
                 paddingHorizontal: scale(16),
               }}>
-              <Text style={{fontSize: scale(13), color: Color.black, textAlign: 'center'}}>
+              <Text
+                style={{
+                  fontSize: scale(13),
+                  color: Color.black,
+                  textAlign: 'center',
+                }}>
                 You did not eat any foods in this meal
               </Text>
             </View>

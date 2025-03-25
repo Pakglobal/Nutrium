@@ -9,6 +9,9 @@ import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../assets/colors/Colors';
 import {useStepTracking} from './StepTrackingService';
+import Dumble from '../assets/Images/dumble.svg';
+import Fire from '../assets/Images/fire.svg';
+import Shoes from '../assets/Images/shoes.svg';
 
 const PhysicalActivity = () => {
   const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
@@ -16,7 +19,8 @@ const PhysicalActivity = () => {
   return (
     <View style={{marginTop: verticalScale(10), marginHorizontal: scale(16)}}>
       <View style={styles.cardContainer}>
-        <ImageBackground
+      {/* <Dumble width="100%" height="100%" style={styles.bgImage} /> */}
+      <ImageBackground
           style={styles.bgImage}
           source={require('../assets/Images/dumble.png')}
           resizeMode="cover"
@@ -25,7 +29,7 @@ const PhysicalActivity = () => {
         <View
           style={[
             styles.cardOverlay,
-            {backgroundColor: 'rgba(137, 70, 146, 0.6)'},
+            {backgroundColor: 'rgba(137, 70, 146, 0.3)'},
           ]}>
           <View style={{marginLeft: scale(10), marginTop: verticalScale(58)}}>
             <Text style={styles.description}>Workouts this week</Text>
@@ -49,14 +53,14 @@ const PhysicalActivity = () => {
                       style={[
                         styles.dayContainer,
                         currentDay === index && {
-                          backgroundColor: 'rgba(215, 193, 215, 0.8)',
+                          backgroundColor: 'rgba(137, 70, 146, 0.3)',
                         },
                       ]}>
                       <View
                         style={[
                           styles.day,
                           workouts[index] > 0 && {
-                            backgroundColor: 'rgba(137, 70, 146, 0.8)',
+                            backgroundColor: 'rgba(137, 70, 146,1)',
                           },
                         ]}
                       />
@@ -82,7 +86,8 @@ const PhysicalActivity = () => {
           },
         ]}>
         <View style={styles.imageWrapper}>
-          <ImageBackground
+        {/* <Fire width="100%" height="100%" style={styles.bgImage} /> */}
+        <ImageBackground
             style={styles.bgImage}
             source={require('../assets/Images/fire.png')}
             resizeMode="cover"
@@ -101,7 +106,8 @@ const PhysicalActivity = () => {
         </View>
 
         <View style={styles.imageWrapper}>
-          <ImageBackground
+        {/* <Shoes width="100%" height="100%" style={styles.bgImage} /> */}
+        <ImageBackground
             style={styles.bgImage}
             source={require('../assets/Images/shoes.png')}
             resizeMode="cover"

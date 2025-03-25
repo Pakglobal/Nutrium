@@ -45,7 +45,7 @@ const MoreFor = ({data}) => {
   const navigation = useNavigation();
 
   const getToken = useSelector(state => state?.user?.userInfo);
-  const profileData = getToken?.user || getToken?.userData;  
+  const profileData = getToken?.user || getToken?.userData;
 
   const handlePress = () => {
     if (data?.buttonText === 'Add profile photo') {

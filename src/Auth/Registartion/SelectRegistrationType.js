@@ -9,9 +9,9 @@ import {
   StyleSheet,
   Button,
 } from 'react-native';
-import React, { useState } from 'react';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState} from 'react';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import TypesCard from './TypesCard';
 import Color from '../../assets/colors/Colors';
@@ -52,7 +52,7 @@ const SelectRegistrationType = () => {
   const onNavigate = () => {
     if (
       selectedOption ===
-      'My organization has access to Nutrium Care benefits' ||
+        'My organization has access to Nutrium Care benefits' ||
       selectedOption === 'I have an invitation code'
     ) {
       navigation.navigate('registration');
@@ -67,17 +67,17 @@ const SelectRegistrationType = () => {
     }
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.primary }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <SighnUpHeader onPressBack={() => navigation.goBack()} />
       <ScrollView
-        style={{ marginHorizontal: 15 }}
+        style={{marginHorizontal: 15}}
         showsVerticalScrollIndicator={false}>
         <Text style={styles.queTxt}>What brings you to Nutrium?</Text>
-        <View style={{ marginTop: verticalScale(10) }}>
+        <View style={{marginTop: verticalScale(10)}}>
           <FlatList
             showsVerticalScrollIndicator={false}
             data={data}
-            renderItem={({ item, index }) => (
+            renderItem={({item, index}) => (
               <TypesCard
                 item={item}
                 selectedOption={selectedOption}
@@ -90,7 +90,9 @@ const SelectRegistrationType = () => {
         <Button
           onPress={onNavigate}
           disabled={!selectedOption ? true : false}
-          backgroundColor={!selectedOption ? Color.borderColor : Color.secondary}
+          backgroundColor={
+            !selectedOption ? Color.borderColor : Color.secondary
+          }
           txtColor={!selectedOption ? Color.txt : Color.primary}
           iconColor={!selectedOption ? Color.txt : Color.primary}
           marginTop={verticalScale(20)}

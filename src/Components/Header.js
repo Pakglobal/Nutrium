@@ -15,7 +15,7 @@ import Color from '../assets/colors/Colors';
 
 const Header = ({headerText, showIcon}) => {
   return (
-    <SafeAreaView style={{backgroundColor:Color.common}}>
+    <SafeAreaView style={{backgroundColor: Color.common}}>
       <View
         style={{
           alignItems: 'flex-end',

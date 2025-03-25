@@ -17,13 +17,14 @@ import Color from '../../../assets/colors/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useSelector} from 'react-redux';
+import Cook from '../../../assets/Images/cooking.svg';
 
 const MealScreen = () => {
   const [mealPlan, setMealPlan] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
-  const [plan, setPlan] = useState(true);
+  const [plan, setPlan] = useState(false);
   const [open, setOpen] = useState(false);
   const bottomSheetRef = useRef(null);
 
@@ -35,8 +36,8 @@ const MealScreen = () => {
   }, []);
 
   const fetchMealPlanData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await FetchMealPlanApi(id);
       if (response?.template?.length > 0) {
         setMealPlan(response.template[0].mealTemplate);
@@ -62,10 +63,12 @@ const MealScreen = () => {
             ? todayTemplate.days
             : response.template[0].mealTemplate[0]?.days || [],
         );
+        setLoading(false);
       } else {
         setPlan(false);
+        setLoading(false);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching meal plan:', error);
       setPlan(false);
@@ -285,13 +288,19 @@ const MealScreen = () => {
         </ScrollView>
       ) : (
         <View style={styles.contentContainer}>
-          <View style={styles.imageWrapper}>
-            <View style={styles.imageBackground}></View>
-            <Image
-              source={require('../../../assets/Images/cooking.png')}
-              style={styles.image}
-              resizeMode="contain"
-            />
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              marginTop: verticalScale(80),
+              marginBottom: verticalScale(30),
+              height: scale(160),
+              width: scale(160),
+              backgroundColor: 'rgba(232,150,106,0.3)',
+              alignSelf: 'center',
+              borderRadius: scale(150)
+            }}>
+            <Cook height={scale(120)} width={scale(120)} />
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.title}>Cooking up your meal plan...</Text>
@@ -433,29 +442,6 @@ const styles = StyleSheet.create({
     color: Color.secondary,
     fontWeight: '600',
     marginStart: scale(5),
-  },
-  imageWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    borderRadius: 100,
-    marginTop: scale(50),
-    marginBottom: scale(15),
-    height: verticalScale(150),
-    width: '50%',
-  },
-  imageBackground: {
-    height: '100%',
-    width: '100%',
-    borderRadius: scale(150),
-    backgroundColor: 'rgba(232, 150, 106, 0.3)',
-  },
-  image: {
-    height: '80%',
-    width: '80%',
-    borderRadius: 100,
-    position: 'absolute',
-    bottom: 0,
   },
   textContainer: {
     alignItems: 'center',

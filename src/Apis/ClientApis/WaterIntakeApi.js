@@ -17,11 +17,14 @@ export const GetWaterintakeLimitData = async (token, id) => {
 export const GetWaterIntakeDetails = async (token, id) => {
   try {
     const url = `https://nutrium-back-end-1.onrender.com/api/v1/getWaterIntake/${id}`;
+    console.log('==', url);
+
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
       },
     });
+    console.log('---', response);
     return response?.data;
   } catch (error) {
     return error?.response?.data;
@@ -31,19 +34,22 @@ export const GetWaterIntakeDetails = async (token, id) => {
 export const SetWaterIntakeDetails = async payload => {
   try {
     const {clientId, token, amount, time, date} = payload;
-    
+    console.log('payload', payload);
+
     const url = `https://nutrium-back-end-1.onrender.com/api/v1/setwaterintake/${clientId}`;
     const body = {
       waterIntake: amount,
       time: time,
       date: date,
-    };       
+    };
+    console.log(body, 'body');
 
     const response = await axios.post(url, body, {
       headers: {
         Authorization: token,
       },
-    });    
+    });
+    console.log(response, '===');
 
     return response?.data;
   } catch (error) {
@@ -83,7 +89,7 @@ export const UpdateWaterIntake = async payload => {
       waterIntake: amount,
       time: time,
       date: date,
-    };    
+    };
 
     const response = await axios.put(url, body, {
       headers: {

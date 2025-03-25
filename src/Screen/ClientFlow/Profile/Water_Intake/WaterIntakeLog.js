@@ -20,7 +20,8 @@ import {
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
 import Color from '../../../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
-import Bottle from '../../../../assets/Images/bottel.svg';
+import Glass from '../../../../assets/Images/glass.svg';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const WaterIntakeLog = ({route}) => {
   const navigation = useNavigation();
@@ -28,6 +29,8 @@ const WaterIntakeLog = ({route}) => {
   const plusData = route?.params?.plusData;
   const plus = plusData?.press === 'plus';
   const clientId = plusData?.clientId;
+  console.log(route?.params, '=;kiokjjknj===');
+  
   const token = plusData?.token || routeData?.token;
 
   const initialDate = () => {
@@ -117,8 +120,8 @@ const WaterIntakeLog = ({route}) => {
 
   const handleUpdateWaterIntake = async () => {
     if (!validateInput()) return;
-    setLoading(true);
     try {
+      setLoading(true);
       const payload = {
         waterIntakeId: routeData?.waterIntakeId,
         waterRecordId: routeData?.waterRecordId,
@@ -135,9 +138,10 @@ const WaterIntakeLog = ({route}) => {
       ) {
         navigation.goBack();
       } else {
-        showToast(response?.message || 'Error updating water intake');
+        showToast(response?.message);
+        setLoading(false);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error(error);
       showToast('An error occurred');
@@ -147,8 +151,8 @@ const WaterIntakeLog = ({route}) => {
 
   const handleAddWaterIntake = async () => {
     if (!validateInput()) return;
-    setLoading(true);
     try {
+      setLoading(true);
       const payload = {
         clientId: clientId,
         amount: num,
@@ -157,16 +161,27 @@ const WaterIntakeLog = ({route}) => {
         date: date,
       };
       const response = await SetWaterIntakeDetails(payload);
-      if (
-        response?.message === 'Water intake recorded successfully.' ||
-        response?.success === true
-      ) {
+      console.log(response);
+      
+      if(response) {
         navigation.goBack();
-      } else {
-        showToast(response?.message || 'Error adding water intake');
       }
-      setLoading(false)
+      // if (
+      //   response?.message === 'Water intake recorded successfully.' ||
+      //   response?.success === true
+      // ) {
+      //   console.log(response);
+        
+      //   navigation.goBack();
+      // } else {
+      //   console.log('===');
+        
+      //   showToast(response?.message);
+      //   setLoading(false);
+      // }
+      setLoading(false);
     } catch (error) {
+      
       console.error(error);
       showToast('An error occurred');
       setLoading(false);
@@ -211,21 +226,50 @@ const WaterIntakeLog = ({route}) => {
 
         <Text style={styles.quickLogTitle}>Quick log</Text>
         <View style={styles.hydrationButtons}>
-          <HydratedView
-            img={require('../../../../assets/Images/glass.png')}
-            valueText="200mL"
-            onPress={() => setAmount(200)}
-          />
-          <HydratedView
-            img={require('../../../../assets/Images/glass.png')}
-            valueText="300mL"
-            onPress={() => setAmount(300)}
-          />
-          <HydratedView
-            img={require('../../../../assets/Images/glass.png')}
-            valueText="500mL"
-            onPress={() => setAmount(500)}
-          />
+          <TouchableOpacity
+            style={styles.waterCardView}
+            onPress={() => setAmount(200)}>
+            <Glass height={verticalScale(30)} width={scale(45)} />
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
+              <Text style={styles.waterTxt}>{'200mL'}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.waterCardView}
+            onPress={() => setAmount(300)}>
+            <Glass height={verticalScale(30)} width={scale(45)} />
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
+              <Text style={styles.waterTxt}>{'300mL'}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.waterCardView}
+            onPress={() => setAmount(500)}>
+            <Glass height={verticalScale(30)} width={scale(45)} />
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
+              <Text style={styles.waterTxt}>{'500mL'}</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.label}>Date</Text>
@@ -337,5 +381,35 @@ const styles = StyleSheet.create({
     fontSize: scale(12),
     marginTop: verticalScale(5),
     marginLeft: scale(5),
+  },
+  waterCardView: {
+    marginHorizontal: scale(5),
+    borderRadius: 10,
+    height: verticalScale(65),
+    width: '30%',
+    backgroundColor: '#f3f6fe',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  waterImg: {
+    height: verticalScale(40),
+    width: scale(30),
+    resizeMode: 'stretch',
+    marginStart: scale(8),
+  },
+  waterTxt: {
+    color: Color.gray,
+    fontWeight: '600',
+    marginTop: verticalScale(20),
+    marginEnd: scale(5),
   },
 });

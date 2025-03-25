@@ -32,11 +32,11 @@ const AppointmentScreen = ({selected, setSelected}) => {
 
   const fetchData = async () => {
     if (!token) return;
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await GetAppointmentData(token);
       dispatch(appointmentData(response || {}));
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching appointments:', error);
       setLoading(false);

@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../assets/colors/Colors';
 
-const TypesCard = ({ item, selectedOption, onSelect }) => {
+const TypesCard = ({item, selectedOption, onSelect}) => {
   const handleSelect = () => {
     if (selectedOption === item.title) {
       onSelect(null);

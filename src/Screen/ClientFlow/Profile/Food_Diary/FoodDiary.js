@@ -58,7 +58,7 @@ const FoodDiary = () => {
       if (response?.foodDiary) {
         setDiaryData(response?.foodDiary?.foodDiaryData || []);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching food diary', error);
       setLoading(false);

@@ -24,8 +24,10 @@ const SideBar = ({onSelectScreen}) => {
 
   const getUserInfo = useSelector(state => state?.user?.profileInfo);
   const imageUrl = getUserInfo?.image
-    ? {uri: getUserInfo.image}
-    : require('../assets/Images/profile.jpg');
+    ? {uri: getUserInfo?.image}
+    : getUserInfo?.gender === 'Female'
+    ? require('../assets/Images/woman.png')
+    : require('../assets/Images/man.png');
 
   const handleLogOut = async () => {
     dispatch(loginData());

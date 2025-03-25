@@ -65,7 +65,6 @@ const ClientProfileScreen = ({route}) => {
       ).start();
     }
   };
-  console.log(isOpen);
 
   const options = [
     {id: 0, label: 'INFORMATION'},
@@ -133,14 +132,13 @@ const ClientProfileScreen = ({route}) => {
           }}>
           {clientData?.image ? (
             <Image source={{uri: clientData?.image}} style={styles.avatar} />
-          ) : clientData?.gender === 'Female' ? (
-            <Image
-              source={require('../../../assets/Images/woman.png')}
-              style={styles.avatar}
-            />
           ) : (
             <Image
-              source={require('../../../assets/Images/man.png')}
+              source={
+                clientData?.gender === 'Female'
+                  ? require('../../../assets/Images/woman.png')
+                  : require('../../../assets/Images/man.png')
+              }
               style={styles.avatar}
             />
           )}

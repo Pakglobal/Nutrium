@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
-import { View, Modal, TouchableOpacity, Text, StyleSheet, Pressable, PermissionsAndroid, Platform } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { verticalScale, scale } from 'react-native-size-matters';
+import React, {useState} from 'react';
+import {
+  View,
+  Modal,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Pressable,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {verticalScale, scale} from 'react-native-size-matters';
 import Color from '../assets/colors/Colors';
 
-const CameraPicker = ({ visible, onClose, onImageSelect }) => {
+const CameraPicker = ({visible, onClose, onImageSelect}) => {
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -13,7 +22,7 @@ const CameraPicker = ({ visible, onClose, onImageSelect }) => {
           {
             title: 'Camera Permission',
             message: 'App needs camera permission',
-          }
+          },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
@@ -31,7 +40,7 @@ const CameraPicker = ({ visible, onClose, onImageSelect }) => {
           {
             title: 'Storage Permission',
             message: 'App needs storage permission',
-          }
+          },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
@@ -77,7 +86,11 @@ const CameraPicker = ({ visible, onClose, onImageSelect }) => {
   };
 
   return (
-    <Modal transparent={true} animationType="slide" visible={visible} onRequestClose={onClose}>
+    <Modal
+      transparent={true}
+      animationType="slide"
+      visible={visible}
+      onRequestClose={onClose}>
       <Pressable onPress={onClose} style={styles.container}>
         <View style={styles.whiteContainer}>
           <Text style={styles.title}>Add profile photo</Text>
@@ -86,7 +99,9 @@ const CameraPicker = ({ visible, onClose, onImageSelect }) => {
             <Text style={styles.btnTxt}>Take Photo</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={chooseFile}>
-            <Text style={[styles.btnTxt, { marginTop: verticalScale(15) }]}>Choose Photo</Text>
+            <Text style={[styles.btnTxt, {marginTop: verticalScale(15)}]}>
+              Choose Photo
+            </Text>
           </TouchableOpacity>
         </View>
       </Pressable>

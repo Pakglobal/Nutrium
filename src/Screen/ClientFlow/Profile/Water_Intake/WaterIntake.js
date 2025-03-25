@@ -41,6 +41,7 @@ const WaterIntake = () => {
 
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
+  
   const id = getToken?.userData?._id || getToken?.user?._id;
 
   const handleDate = selectedDate => {
@@ -125,8 +126,10 @@ const WaterIntake = () => {
   const getWaterIntakeData = async () => {
     try {
       setLoading(true);
-
+      console.log('token, id', token, id);
       const response = await GetWaterIntakeDetails(token, id);
+      console.log(response, 'rrrrr');
+
       if (response?.success === true) {
         setWaterIntake(response);
       }
@@ -325,6 +328,7 @@ const WaterIntake = () => {
         waterIntake?.waterIntakeData?.waterIntakeRecords,
       )
     : 0;
+  // console.log(waterIntake);
 
   const plusData = {
     clientId: waterIntake?.waterIntakeData?.clientId,

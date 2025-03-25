@@ -75,8 +75,8 @@ const WorkOutDetails = ({route}) => {
   const handleAddActivity = async () => {
     if (!validateInput()) return;
 
-    setLoading(true);
     try {
+      setLoading(true);
       const payload = {
         id: id,
         token: token,
@@ -98,6 +98,7 @@ const WorkOutDetails = ({route}) => {
         showToast(response?.message);
         setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       showToast(error);
       setLoading(false);
@@ -105,8 +106,8 @@ const WorkOutDetails = ({route}) => {
   };
 
   const handleUpdateActivity = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const payload = {
         clientId: id,
         activityId: activityId,
@@ -128,6 +129,7 @@ const WorkOutDetails = ({route}) => {
         showToast(response?.message);
         setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       showToast(error);
       setLoading(false);

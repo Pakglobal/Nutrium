@@ -19,6 +19,8 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {updateUnits} from '../../../redux/unit';
 import {useDispatch} from 'react-redux';
+import Glass from '../../../assets/Images/glass.svg';
+import Bottle from '../../../assets/Images/bottel.svg';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -32,7 +34,7 @@ const SettingsScreen = () => {
   const [selectedContainer, setSelectedContainer] = useState({
     name: '1 glass',
     volume: '200 mL',
-    image: require('../../../assets/Images/glass.png'),
+    image: Glass,
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
@@ -48,17 +50,17 @@ const SettingsScreen = () => {
     {
       name: '1 glass',
       volume: '200 ml',
-      image: require('../../../assets/Images/glass.png'),
+      image: Glass,
     },
     {
       name: '1 bottle',
       volume: '300 ml',
-      image: require('../../../assets/Images/bottel.png'),
+      image: Bottle,
     },
     {
       name: '1 bottle',
       volume: '500 ml',
-      image: require('../../../assets/Images/bottel.png'),
+      image: Bottle,
     },
   ];
 
@@ -154,7 +156,6 @@ const SettingsScreen = () => {
     const updatedUnits = {...units, [selectedUnit]: unitValue};
     setUnits(updatedUnits);
 
-    // Dispatch action to update global unit state
     dispatch(updateUnits(updatedUnits));
 
     setModalVisible(false);
@@ -349,10 +350,14 @@ const SettingsScreen = () => {
                         key={index}
                         onPress={() => handleSelectContainer(container)}
                         style={{alignItems: 'center'}}>
-                        <Image
-                          source={container?.image}
-                          style={styles.modalImg}
-                        />
+                        {typeof container.image === 'function' ? (
+                          <container.image
+                            height={scale(30)}
+                            width={scale(30)}
+                          />
+                        ) : (
+                          <Image source={container.image} />
+                        )}
                         <Text style={styles.modalTxt}>{container?.name}</Text>
                         <Text style={styles.modalTxt}>{container?.volume}</Text>
                       </TouchableOpacity>

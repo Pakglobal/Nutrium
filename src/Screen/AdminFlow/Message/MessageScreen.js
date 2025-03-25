@@ -21,7 +21,6 @@ import {
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
 import {clientInfoData} from '../../../redux/admin';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MessageScreen = () => {
   const navigation = useNavigation();
@@ -39,11 +38,11 @@ const MessageScreen = () => {
   }, []);
 
   const fetchData = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await GetAllClientData(token);
       dispatch(clientInfoData(response || []));
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching clients:', error);
       setLoading(false);
@@ -94,14 +93,13 @@ const MessageScreen = () => {
                 <View style={styles.messageCardContainer}>
                   {item?.image ? (
                     <Image source={{uri: item?.image}} style={styles.avatar} />
-                  ) : item?.gender === 'Female' ? (
-                    <Image
-                      source={require('../../../assets/Images/woman.png')}
-                      style={styles.avatar}
-                    />
                   ) : (
                     <Image
-                      source={require('../../../assets/Images/man.png')}
+                      source={
+                        item?.gender === 'Female'
+                          ? require('../../../assets/Images/woman.png')
+                          : require('../../../assets/Images/man.png')
+                      }
                       style={styles.avatar}
                     />
                   )}

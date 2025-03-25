@@ -20,7 +20,6 @@ const AddMeasurement = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const unit = route?.params?.routeData?.unit;
-  
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -47,9 +46,7 @@ const AddMeasurement = () => {
       return false;
     }
     if (value > 5000) {
-      setErrorMessage(
-        `weight cannot exceed 5000${unit}`,
-      );
+      setErrorMessage(`weight cannot exceed 5000${unit}`);
       return false;
     }
     setErrorMessage('');
@@ -80,6 +77,7 @@ const AddMeasurement = () => {
         showToast(response?.message);
         setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       showToast(error);
       setLoading(false);
@@ -98,9 +96,7 @@ const AddMeasurement = () => {
       />
 
       <View style={styles.content}>
-        <Text style={styles.label}>
-          Value ({unit})
-        </Text>
+        <Text style={styles.label}>Value ({unit})</Text>
         <View>
           <View style={styles.inputContainer}>
             <TextInput
@@ -114,9 +110,7 @@ const AddMeasurement = () => {
               }}
               placeholderTextColor={Color.black}
             />
-            <Text style={{marginLeft: 5, color: Color.black}}>
-              {unit}
-            </Text>
+            <Text style={{marginLeft: 5, color: Color.black}}>{unit}</Text>
           </View>
           {errorMessage ? (
             <Text style={styles.error}>{errorMessage}</Text>

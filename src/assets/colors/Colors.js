@@ -9,6 +9,6 @@ const Color = {
   black: '#000',
   lightGreen: '#e0f9f2',
   black: '#000000',
-  common: 'rgba(210, 233, 254, 0.6)'
+  common: 'rgba(210, 233, 254, 0.6)',
 };
 export default Color;

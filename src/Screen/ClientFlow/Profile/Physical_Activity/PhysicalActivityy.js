@@ -64,8 +64,8 @@ const PhysicalActivityy = () => {
   };
 
   const FetchPhysicalActivityData = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await GetPhysicalActivityDetails(token, id);
       if (response?.success === true) {
         setPhysicalActivity(response?.data);
@@ -192,19 +192,6 @@ const PhysicalActivityy = () => {
     token: token,
     id: id,
   };
-
-  // if (loading) {
-  //   return (
-  //     <View
-  //       style={{
-  //         flex: 1,
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //       }}>
-  //       <ActivityIndicator size="large" color={Color.primaryGreen} />
-  //     </View>
-  //   );
-  // }
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>

@@ -20,7 +20,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {loginData} from '../../../redux/user';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import Toast from 'react-native-simple-toast';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setImage} from '../../../redux/client';
 
 const ProfileMenuScreen = () => {
   const navigation = useNavigation();
@@ -30,8 +30,8 @@ const ProfileMenuScreen = () => {
   const token = getToken?.token;
   const profileData = getToken?.user || getToken?.userData;
 
-  const profileImage = useSelector(state => state?.client?.imageInfo)
-  
+  const updateProfileImage = useSelector(state => state?.client?.imageInfo);
+  const profileImage = getToken?.user?.image || getToken?.userData?.image;
 
   const [loading, setLoading] = useState(false);
   const [asyncLoading, setAsyncLoading] = useState(false);
@@ -42,11 +42,6 @@ const ProfileMenuScreen = () => {
     : userData?.gender === 'Female'
     ? require('../../../assets/Images/woman.png')
     : require('../../../assets/Images/man.png');
-
-  const profileDataImage =
-    profileData?.gender === 'Female'
-      ? require('../../../assets/Images/woman.png')
-      : require('../../../assets/Images/man.png');
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -63,6 +58,7 @@ const ProfileMenuScreen = () => {
         style: 'destructive',
         onPress: async () => {
           const success = await dispatch(loginData());
+          dispatch(setImage(''));
 
           if (success) {
             navigation.reset({
@@ -187,6 +183,17 @@ const ProfileMenuScreen = () => {
 
     if (item?.type === 'profile') {
       if (item?.id === 'profile') {
+        let profileImgSource;
+        if (updateProfileImage && typeof updateProfileImage === 'string') {
+          profileImgSource = {uri: updateProfileImage};
+        } else if (profileImage && typeof profileImage === 'string') {
+          profileImgSource = {uri: profileImage};
+        } else {
+          profileImgSource =
+            profileData?.gender === 'Female'
+              ? require('../../../assets/Images/woman.png')
+              : require('../../../assets/Images/man.png');
+        }
         return (
           <View key={item?.id} style={styles.profileTopContainer}>
             <TouchableOpacity
@@ -194,14 +201,7 @@ const ProfileMenuScreen = () => {
               onPress={() =>
                 navigation.navigate(item?.route, {data: profileData})
               }>
-              {profileImage ? (
-                <Image
-                  source={{uri: profileImage}}
-                  style={styles.profileImage}
-                />
-              ) : (
-                <Image source={profileDataImage} style={styles.profileImage} />
-              )}
+              <Image source={profileImgSource} style={styles.profileImage} />
               <Text style={styles.profileName}>{item?.label}</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -265,8 +265,8 @@ const ProfileMenuScreen = () => {
 
   useEffect(() => {
     const GetUserApiData = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
         const response = await GetUserApi(token);
         if (response?.message === 'User retrieved successfully') {
           setUserData(response?.data);

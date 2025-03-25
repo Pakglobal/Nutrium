@@ -6,9 +6,9 @@ import {useNavigation} from '@react-navigation/native';
 import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
-import moment from "moment";
-import { useDispatch } from 'react-redux';
-import { addData } from '../../../../redux/client';
+import moment from 'moment';
+import {useDispatch} from 'react-redux';
+import {addData} from '../../../../redux/client';
 
 const allMeal = [
   {id: '1', label: 'Breakfast', value: 'Breakfast'},
@@ -30,8 +30,8 @@ const AddMeal = () => {
   const [timeOpen, setTimeOpen] = useState(false);
   const [time, setTime] = useState(new Date());
 
-  const formatTime = (isoString) => {
-    return moment(isoString).format("h.mm A"); 
+  const formatTime = isoString => {
+    return moment(isoString).format('h.mm A');
   };
 
   const addMeal = {
@@ -41,9 +41,9 @@ const AddMeal = () => {
   };
 
   const handleSave = () => {
-    navigation.navigate('logMeal')
-    dispatch(addData(addMeal))
-  }
+    navigation.navigate('logMeal');
+    dispatch(addData(addMeal));
+  };
 
   const handleSelect = value => {
     setSelectedMeal(value);

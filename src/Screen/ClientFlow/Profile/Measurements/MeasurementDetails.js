@@ -72,6 +72,7 @@ const MeasurementDetail = () => {
           filterDataByPeriod(selectedPeriod, entries);
         }
       }
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);

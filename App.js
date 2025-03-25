@@ -1,15 +1,17 @@
-import { StyleSheet } from 'react-native';
-import React, { useEffect } from 'react';
+import {StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
 import RootNavigation from './src/Navigation/RootNavigation';
 import messaging from '@react-native-firebase/messaging';
-import { firebaseApp } from './src/firebaseConfig';
-import { Provider, useSelector, useDispatch } from 'react-redux';
-import { setFcmToken } from './src/redux/user';
-import { store } from './src/redux/Store';
+import {firebaseApp} from './src/firebaseConfig';
+import {Provider, useSelector, useDispatch} from 'react-redux';
+import {setFcmToken} from './src/redux/user';
+import {store} from './src/redux/Store';
 
 const AppContent = () => {
   const dispatch = useDispatch();
   const getToken = useSelector(state => state?.user?.userInfo);
+  console.log('getToken',getToken);
+  
   const token = getToken?.token;
   const id = getToken?.userData?._id || getToken?.user?._id;
 
@@ -24,7 +26,7 @@ const AppContent = () => {
         console.log('FCM Token:', fcmToken);
 
         if (fcmToken) {
-          dispatch(setFcmToken(fcmToken));  // Store token in Redux
+          dispatch(setFcmToken(fcmToken)); 
         }
 
         // if (fcmToken && token && id) {
@@ -37,10 +39,10 @@ const AppContent = () => {
 
     fetchToken();
 
-    // Refresh FCM token when updated
+
     const unsubscribe = messaging().onTokenRefresh(fcmToken => {
       if (fcmToken) {
-        dispatch(setFcmToken(fcmToken));  // Update token in Redux
+        dispatch(setFcmToken(fcmToken));
       }
     });
 

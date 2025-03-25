@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   drawerInfo: ['MESSAGES'],
@@ -14,6 +14,6 @@ const drawerSlice = createSlice({
   },
 });
 
-export const { drawerData } = drawerSlice.actions;
+export const {drawerData} = drawerSlice.actions;
 
 export default drawerSlice.reducer;

@@ -54,17 +54,17 @@ const ClientScreen = () => {
   }, [search, clientData]);
 
   const fetchData = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await GetAllClientData(token);
       setClientData(response || []);
       setFilteredClients(response || []);
       dispatch(clientInfoData(response || []));
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching clients:', error);
       setLoading(false);
-    } 
+    }
   };
 
   const handleClientNavigate = async item => {
@@ -127,14 +127,13 @@ const ClientScreen = () => {
                         source={{uri: item?.image}}
                         style={styles.avatar}
                       />
-                    ) : item?.gender === 'Female' ? (
-                      <Image
-                        source={require('../../../assets/Images/woman.png')}
-                        style={styles.avatar}
-                      />
                     ) : (
                       <Image
-                        source={require('../../../assets/Images/man.png')}
+                        source={
+                          item?.gender === 'Female'
+                            ? require('../../../assets/Images/woman.png')
+                            : require('../../../assets/Images/man.png')
+                        }
                         style={styles.avatar}
                       />
                     )}

@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: verticalScale(15)
+    marginVertical: verticalScale(15),
   },
   logoContainer: {
     justifyContent: 'center',
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.primary,
     alignSelf: 'center',
     borderRadius: scale(50),
-    marginVertical: verticalScale(20)
+    marginVertical: verticalScale(20),
   },
   bodyContainer: {
     backgroundColor: '#f5f5f5',
@@ -138,6 +138,6 @@ const styles = StyleSheet.create({
     color: Color.primary,
     height: scale(25),
     letterSpacing: 1,
-    fontSize: scale(13)
+    fontSize: scale(13),
   },
 });

@@ -38,6 +38,8 @@ const LoginScreen = () => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
 
+  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODllMDQ5NmQxODg0N2ViNTdiYzYwZSIsInJvbGUiOiJDbGllbnQiLCJpYXQiOjE3Mzk4Nzc3ODd9.ucS4MFnS9EE8vArdlm1gzOjHDQ4zvV4Syh2TJw49Ng0
+
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
@@ -46,7 +48,7 @@ const LoginScreen = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const FCMtoken = useSelector(state => state?.user?.fcmToken)
+  const FCMtoken = useSelector(state => state?.user?.fcmToken);
 
   const validateEmail = value => {
     setEmail(value);
@@ -80,11 +82,13 @@ const LoginScreen = () => {
     const body = {
       email: email,
       password: password,
-      deviceToken: FCMtoken
+      deviceToken: FCMtoken,
     };
     try {
       setLoading(true);
       const response = await Login(body);
+      console.log('response===',response);
+      
 
       if (response?.message == 'Login successful' || response?.token) {
         dispatch(loginData(response));
@@ -140,13 +144,11 @@ const LoginScreen = () => {
           const token = response?.token;
           const getProfileData = await GetAdminProfileData(token);
           dispatch(profileData(getProfileData));
-          setLoading(false);
         }
-        setLoading(false);
       } else {
         showToast(response?.message);
-        setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       showToast(error);
       setLoading(false);

@@ -18,7 +18,7 @@ import {useDispatch} from 'react-redux';
 const SwapMeal = ({route}) => {
   const foodName = route?.params?.data;
   console.log(foodName);
-  
+
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
@@ -48,8 +48,8 @@ const SwapMeal = ({route}) => {
 
   const handleAddFood = () => {
     const foodData = {
-      mealType: route.params.type, 
-      mealTime: route.params.time, 
+      mealType: route.params.type,
+      mealTime: route.params.time,
       quantity: quantity,
       size: selectedSize,
       name: foodName || 'Food Item',

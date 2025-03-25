@@ -4,6 +4,7 @@ import {
   View,
   Animated,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -16,6 +17,10 @@ import {
   SetWaterIntakeDetails,
 } from '../Apis/ClientApis/WaterIntakeApi';
 import OnOffFunctionality from './OnOffFunctionality';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Drop from '../assets/Images/drop.svg';
+import Bottle from '../assets/Images/bottel.svg';
+import Glass from '../assets/Images/glass.svg';
 
 const HydratedStay = () => {
   const navigation = useNavigation();
@@ -54,6 +59,7 @@ const HydratedStay = () => {
 
         setSevenL(numSmallBottles * 0.2);
         setSevenTeenL(numLargeBottles * 0.5);
+        setLoading(false);
       } catch (error) {
         console.error('Error loading water intake data:', error);
         setLoading(false);
@@ -82,14 +88,15 @@ const HydratedStay = () => {
       }
 
       const currentDate = new Date();
-      const currentTime = currentDate.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
+
+      const hours = currentDate.getHours();
+      const minutes = currentDate.getMinutes();
+      const currentTime = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}`;
 
       const payload = {
-        // waterIntakeId: waterIntake?.waterIntakeData?._id,
+        waterIntakeId: waterIntake?.waterIntakeData?._id,
         clientId: waterIntake?.waterIntakeData?.clientId,
         token: token,
         date: currentDate,
@@ -97,10 +104,12 @@ const HydratedStay = () => {
         time: currentTime,
       };
 
-      await SetWaterIntakeDetails(payload);
+      const res = await SetWaterIntakeDetails(payload);
+
       const updatedData = await GetWaterIntakeDetails(token, id);
 
       setWaterIntake(updatedData);
+      setLoading(false);
     } catch (error) {
       console.error('Error adding water intake:', error);
 
@@ -151,23 +160,52 @@ const HydratedStay = () => {
 
       <View style={styles.bottomContainer}>
         <View style={styles.hydrationButtons}>
-          <HydratedView
-            onPress={() => handleAddWater(0.2)}
-            img={require('../assets/Images/glass.png')}
-            valueText={'200mL'}
-          />
-          <HydratedView
-            onPress={() => handleAddWater(0.5)}
-            img={require('../assets/Images/bottel.png')}
-            valueText={'500mL'}
-          />
-          <HydratedView
+          <TouchableOpacity
+            style={styles.waterCardView}
+            onPress={() => handleAddWater(0.2)}>
+            <Glass height={verticalScale(30)} width={scale(45)} />
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
+              <Text style={styles.waterTxt}>{'200mL'}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.waterCardView}
+            onPress={() => handleAddWater(0.5)}>
+            <Bottle height={verticalScale(30)} width={scale(45)} />
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
+              <Text style={styles.waterTxt}>{'500mL'}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.waterCardView}
             onPress={() =>
               navigation.navigate('waterIntakeLog', {plusData: plusData})
-            }
-            img={require('../assets/Images/drop.png')}
-            valueText={'Custom'}
-          />
+            }>
+            <Drop height={verticalScale(30)} width={scale(45)} />
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
+              <Text style={styles.waterTxt}>{'Custom'}</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -268,5 +306,35 @@ const styles = StyleSheet.create({
     color: Color.txt,
     fontWeight: '500',
     marginRight: scale(10),
+  },
+  waterCardView: {
+    marginHorizontal: scale(5),
+    borderRadius: 10,
+    height: verticalScale(65),
+    width: '30%',
+    backgroundColor: '#f3f6fe',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  waterImg: {
+    height: verticalScale(40),
+    width: scale(30),
+    resizeMode: 'stretch',
+    marginStart: scale(8),
+  },
+  waterTxt: {
+    color: Color.gray,
+    fontWeight: '600',
+    marginTop: verticalScale(20),
+    marginEnd: scale(5),
   },
 });

@@ -12,7 +12,7 @@ const Practitioner = ({route}) => {
     ? {uri: data?.image}
     : data?.gender === 'Female'
     ? require('../../../assets/Images/woman.png')
-    : require('../../../assets/Images/man.png');;   
+    : require('../../../assets/Images/man.png');
 
   const navigation = useNavigation();
 

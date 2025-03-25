@@ -10,10 +10,10 @@ import React from 'react';
 import BackHeader from '../../../../Components/BackHeader';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const NewShoppingList = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const number = [
     {
       id: 0,

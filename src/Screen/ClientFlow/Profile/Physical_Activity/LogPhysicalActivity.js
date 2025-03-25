@@ -65,14 +65,14 @@ const LogPhysicalActivity = ({route}) => {
   };
 
   const FetchActivityData = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await GetPhysicalActivities();
       if (response?.success === true) {
         setActivityData(response?.data);
         setFilteredData(response?.data);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -80,14 +80,14 @@ const LogPhysicalActivity = ({route}) => {
   };
 
   const FetchQuickAccessData = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await GetQuickAccess(token, id);
 
       const data = response?.data?.physicalActivity?.flat();
       setQuickAccess(data);
       setQuickAccessData(data);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);

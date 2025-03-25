@@ -43,31 +43,6 @@ const HomeScreen = () => {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    GetUserApiData();
-    FetchAppointmentData().then(() => {
-      setRefreshing(false);
-    });
-  }, []);
-
-  const FetchAppointmentData = async () => {
-    try {
-      setLoading(true);
-      const response = await GetAppointmentByClientId(token, id);
-
-      const active = response
-        ?.filter(app => app?.status !== 'canceled')
-        ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
-
-      setActiveAppointments(active);
-      if (active.length > 0) setSelectedAppointment(active[0]);
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-      setLoading(false);
-    }
-  };
-
   const GetUserApiData = async () => {
     try {
       const response = await GetUserApi(token);
@@ -76,6 +51,52 @@ const HomeScreen = () => {
       console.error('Error fetching user data', error);
     }
   };
+
+  const FetchAppointmentData = async () => {
+    try {
+      setLoading(true);
+      const response = await GetAppointmentByClientId(token, id);
+
+      if (response && response.length > 0) {
+        const active = response
+          ?.filter(app => app?.status !== 'canceled')
+          ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
+
+        setActiveAppointments(active);
+
+        if (active.length > 0) {
+          setSelectedAppointment(active[0]);
+        }
+      } else {
+        setActiveAppointments([]);
+        setSelectedAppointment(null);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+
+      setActiveAppointments([]);
+      setSelectedAppointment(null);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    FetchAppointmentData();
+  }, [token, id]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    GetUserApiData();
+    FetchAppointmentData()
+      .then(() => {
+        setRefreshing(false);
+      })
+      .catch(() => {
+        setRefreshing(false);
+      });
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -118,12 +139,13 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <Header showIcon={true} />
+
       {loading ? (
         <View
           style={{
-            flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
+            marginTop: verticalScale(10),
           }}>
           <ActivityIndicator size="large" color={Color.primaryGreen} />
         </View>
@@ -137,6 +159,7 @@ const HomeScreen = () => {
           <AppointmentCard
             refreshAppointments={FetchAppointmentData}
             activeAppointments={activeAppointments}
+            setActiveAppointments={setActiveAppointments}
             selectedAppointment={selectedAppointment}
             setSelectedAppointment={setSelectedAppointment}
           />
@@ -174,7 +197,6 @@ const HomeScreen = () => {
           </Pressable>
         </ScrollView>
       )}
-
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -226,7 +248,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

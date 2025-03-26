@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Pressable,
+  FlatList,
+  RefreshControl,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -14,7 +16,6 @@ import BackHeader from '../../../../Components/BackHeader';
 import {useDispatch, useSelector} from 'react-redux';
 import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
 import {measurementData} from '../../../../redux/client';
-import Toast from 'react-native-simple-toast';
 
 const Measurements = () => {
   const navigation = useNavigation();
@@ -22,21 +23,16 @@ const Measurements = () => {
 
   const [measurement, setMeasurement] = useState({});
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
   const id = getToken?.userData?._id || getToken?.user?._id;
   const units = useSelector(state => state?.unit?.units);
 
-  useFocusEffect(
-    useCallback(() => {
-      getAllMeasurements();
-    }, [token, id, units]),
-  );
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
+  useEffect(() => {
+    getAllMeasurements();
+  }, [token, id, units]);
 
   const getAllMeasurements = async () => {
     if (!token || !id) return;
@@ -62,12 +58,10 @@ const Measurements = () => {
         dispatch(measurementData(measurementList));
         setMeasurement(formattedData);
       } else {
-        showToast(response?.message);
         setLoading(false);
       }
       setLoading(false);
     } catch (error) {
-      showToast(error);
       setLoading(false);
     }
   };
@@ -220,18 +214,10 @@ const Measurements = () => {
     },
   ];
 
-  // if (loading) {
-  //   return (
-  // <View
-  //   style={{
-  //     flex: 1,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //   }}>
-  //       <ActivityIndicator size="large" color={Color.primaryGreen} />
-  //     </View>
-  //   );
-  // }
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getAllMeasurements().finally(() => setRefreshing(false));
+  }, [getAllMeasurements]);
 
   const renderMenuItem = item => {
     if (item?.type === 'header') {
@@ -273,7 +259,13 @@ const Measurements = () => {
         </View>
       ) : (
         <View style={styles.contentContainer}>
-          {menuItems.map(item => renderMenuItem(item))}
+          <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            data={menuItems}
+            renderItem={({item}) => renderMenuItem(item)}
+          />
         </View>
       )}
     </View>

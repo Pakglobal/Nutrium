@@ -21,6 +21,17 @@ import {loginData} from '../../../redux/user';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import Toast from 'react-native-simple-toast';
 import {setImage} from '../../../redux/client';
+import {GetMeasurementData} from '../../../Apis/ClientApis/MeasurementApi';
+import {
+  GetPhysicalActivities,
+  GetPhysicalActivityDetails,
+  GetQuickAccess,
+} from '../../../Apis/ClientApis/PhysicalActivityApi';
+import {
+  GetFoodAvoidApiData,
+  GetGoalsApiData,
+  GetRecommendationApiData,
+} from '../../../Apis/ClientApis/RecommendationApi';
 
 const ProfileMenuScreen = () => {
   const navigation = useNavigation();
@@ -29,6 +40,7 @@ const ProfileMenuScreen = () => {
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
   const profileData = getToken?.user || getToken?.userData;
+  const id = getToken?.user?._id || getToken?.userData?._id;
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = getToken?.user?.image || getToken?.userData?.image;
@@ -79,14 +91,22 @@ const ProfileMenuScreen = () => {
     setAsyncLoading(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      console.log('All info synced successfully!');
+      await GetMeasurementData(token, id),
+      await GetPhysicalActivityDetails(token, id);
+      await GetMeasurementData(token, id);
+      await GetPhysicalActivityDetails(token, id);
+      await GetPhysicalActivities();
+      await GetQuickAccess(token, id);
+      await GetRecommendationApiData(token, id);
+      await GetFoodAvoidApiData(token, id);
+      await GetGoalsApiData(token, id);
       setAsyncLoading(false);
     } catch (error) {
-      console.error('Error syncing info:', error);
+      console.error('Sync Error:', error);
       setAsyncLoading(false);
     }
+
+    setAsyncLoading(false);
   };
 
   const menuItems = [

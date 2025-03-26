@@ -385,7 +385,7 @@ const MeasurementDetail = () => {
       <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName={measurementType}
-        showRightButton={true}
+        showRightButton={false}
         onPress={handleAddNewMeasurement}
         backText={'Measurement'}
       />
@@ -461,76 +461,65 @@ const MeasurementDetail = () => {
         </View>
       </View>
 
-      {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
-        </View>
-      ) : (
-        <View style={{marginHorizontal: scale(16)}}>
-          <View style={{marginVertical: verticalScale(15)}}>
-            <View style={styles.detailContainer}>
-              <Text style={styles.title}>Current</Text>
-              <View style={styles.valueContainer}>
-                <Text style={styles.value}>
-                  {stats.current.value !== '-'
-                    ? `${stats.current.value} ${unit}`
-                    : '-'}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.detailContainer}>
-              <Text style={styles.title}>Total variation</Text>
-              <Text
-                style={[
-                  styles.value,
-                  stats.totalVariation && stats.totalVariation.charAt(0) === '+'
-                    ? styles.positiveValue
-                    : stats.totalVariation &&
-                      stats.totalVariation.charAt(0) === '-'
-                    ? styles.negativeValue
-                    : null,
-                ]}>
-                {stats.totalVariation !== '-'
-                  ? `${stats.totalVariation} ${unit}`
+      <View style={{marginHorizontal: scale(16)}}>
+        <View style={{marginVertical: verticalScale(15)}}>
+          <View style={styles.detailContainer}>
+            <Text style={styles.title}>Current</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.value}>
+                {stats.current.value !== '-'
+                  ? `${stats.current.value} ${unit}`
                   : '-'}
               </Text>
             </View>
+          </View>
 
-            <View style={styles.detailContainer}>
-              <Text style={styles.title}>Highest</Text>
-              <View style={styles.valueContainer}>
-                <Text style={styles.value}>
-                  {stats.highest.value !== '-'
-                    ? `${stats.highest.value} ${unit}`
-                    : '-'}
-                </Text>
-              </View>
-            </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.title}>Total variation</Text>
+            <Text
+              style={[
+                styles.value,
+                stats.totalVariation && stats.totalVariation.charAt(0) === '+'
+                  ? styles.positiveValue
+                  : stats.totalVariation &&
+                    stats.totalVariation.charAt(0) === '-'
+                  ? styles.negativeValue
+                  : null,
+              ]}>
+              {stats.totalVariation !== '-'
+                ? `${stats.totalVariation} ${unit}`
+                : '-'}
+            </Text>
+          </View>
 
-            <View style={styles.detailContainer}>
-              <Text style={styles.title}>Lowest</Text>
-              <View style={styles.valueContainer}>
-                <Text style={styles.value}>
-                  {stats.lowest.value !== '-'
-                    ? `${stats.lowest.value} ${unit}`
-                    : '-'}
-                </Text>
-              </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.title}>Highest</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.value}>
+                {stats.highest.value !== '-'
+                  ? `${stats.highest.value} ${unit}`
+                  : '-'}
+              </Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={() => navigation.navigate('allLogs', {data: routeData})}>
-            <Text style={styles.buttonText}>See logs</Text>
-          </TouchableOpacity>
+
+          <View style={styles.detailContainer}>
+            <Text style={styles.title}>Lowest</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.value}>
+                {stats.lowest.value !== '-'
+                  ? `${stats.lowest.value} ${unit}`
+                  : '-'}
+              </Text>
+            </View>
+          </View>
         </View>
-      )}
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => navigation.navigate('allLogs', {data: routeData})}>
+          <Text style={styles.buttonText}>See logs</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

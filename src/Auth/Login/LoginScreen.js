@@ -26,9 +26,11 @@ import {loginData, profileData} from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
 import Toast from 'react-native-simple-toast';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
@@ -37,8 +39,6 @@ const LoginScreen = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODllMDQ5NmQxODg0N2ViNTdiYzYwZSIsInJvbGUiOiJDbGllbnQiLCJpYXQiOjE3Mzk4Nzc3ODd9.ucS4MFnS9EE8vArdlm1gzOjHDQ4zvV4Syh2TJw49Ng0
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -87,8 +87,6 @@ const LoginScreen = () => {
     try {
       setLoading(true);
       const response = await Login(body);
-      console.log('response===',response);
-      
 
       if (response?.message == 'Login successful' || response?.token) {
         dispatch(loginData(response));
@@ -134,6 +132,7 @@ const LoginScreen = () => {
       const body = {
         googleId: googleId,
         email: email,
+        deviceToken: FCMtoken,
       };
       const response = await GoogleLogin(body);
 
@@ -153,6 +152,11 @@ const LoginScreen = () => {
       showToast(error);
       setLoading(false);
     }
+  };
+
+  const handleGuestLogin = () => {
+    console.log('guest');
+navigation.navigate('guestMode')
   };
 
   return (
@@ -235,6 +239,7 @@ const LoginScreen = () => {
         </View>
 
         <TouchableOpacity
+          disabled={!isAgree}
           onPress={handleLogin}
           style={[
             styles.signInButton,
@@ -259,6 +264,28 @@ const LoginScreen = () => {
               />
             </View>
           )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleGuestLogin}
+          style={[
+            styles.signInButton,
+            {
+              backgroundColor: Color.secondary,
+              marginTop: verticalScale(10),
+            },
+          ]}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={[styles.signInText, {color: '#FFFFFF'}]}>
+              Guest mode
+            </Text>
+            <AntDesign
+              name="arrowright"
+              color={'#FFFFFF'}
+              size={16}
+              style={{marginLeft: scale(8)}}
+            />
+          </View>
         </TouchableOpacity>
 
         {/* <TouchableOpacity onPress={() => {

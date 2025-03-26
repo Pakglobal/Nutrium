@@ -24,9 +24,10 @@ const MealScreen = () => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
-  const [plan, setPlan] = useState(false);
   const [open, setOpen] = useState(false);
   const bottomSheetRef = useRef(null);
+
+  
 
   const getToken = useSelector(state => state?.user?.userInfo);
   const id = getToken?.userData?._id || getToken?.user?._id;
@@ -39,6 +40,8 @@ const MealScreen = () => {
     setLoading(true);
     try {
       const response = await FetchMealPlanApi(id);
+      console.log(response?.template[0]?.mealTemplate);
+      
       if (response?.template?.length > 0) {
         setMealPlan(response.template[0].mealTemplate);
 
@@ -65,22 +68,22 @@ const MealScreen = () => {
         );
         setLoading(false);
       } else {
-        setPlan(false);
         setLoading(false);
       }
       setLoading(false);
     } catch (error) {
       console.error('Error fetching meal plan:', error);
-      setPlan(false);
       setLoading(false);
     }
   };
 
   const getMealsForSelectedDays = () => {
-    const selectedTemplate = mealPlan?.find(template =>
-      selectedDays?.some(day => template?.days?.includes(day)),
-    );
-    return selectedTemplate ? selectedTemplate.mealSchedule || [] : [];
+    // const selectedTemplate = mealPlan?.find(template =>
+    //   selectedDays?.some(day => template?.days?.includes(day)),
+    // );
+
+    const selectedTemplate = mealPlan?.days
+    return selectedTemplate ? selectedTemplate?.mealSchedule || [] : [];
   };
 
   const handleOpen = id => {
@@ -141,7 +144,7 @@ const MealScreen = () => {
     <SafeAreaView style={styles.container}>
       <Header showIcon={true} headerText="Meal plan" />
 
-      {plan && mealPlan?.length > 0 && (
+      {mealPlan && mealPlan?.length > 0 && (
         <View
           style={{
             backgroundColor: Color.common,
@@ -202,7 +205,7 @@ const MealScreen = () => {
           }}>
           <ActivityIndicator size="large" color={Color.primaryGreen} />
         </View>
-      ) : plan ? (
+      ) : mealPlan ? (
         <ScrollView
           style={styles.contentContainer}
           showsVerticalScrollIndicator={false}>
@@ -471,6 +474,7 @@ const styles = StyleSheet.create({
   day: {
     fontSize: scale(13),
     fontWeight: '500',
+    color: '#000'
   },
   wrapper: {
     backgroundColor: 'rgba(0,0,0,0.5)',

@@ -40,6 +40,8 @@ import ShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/ShoppingLi
 import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShoppingList';
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
+import GuestLogin from '../Auth/Login/GuestLogin';
+import InformationScreen from '../Auth/Login/InformationScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -91,6 +93,8 @@ const AdminFlowStack = () => (
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="loginScreen" component={LoginScreen} />
+    <Stack.Screen name="guestMode" component={GuestLogin} />
+    <Stack.Screen name="information" component={InformationScreen} />
     <Stack.Screen name="registrationType" component={SelectRegistrationType} />
     <Stack.Screen name="registration" component={Registration} />
     <Stack.Screen name="unlockAccess" component={UnlockAccess} />

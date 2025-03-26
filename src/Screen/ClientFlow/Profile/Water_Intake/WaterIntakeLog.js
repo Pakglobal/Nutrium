@@ -29,8 +29,7 @@ const WaterIntakeLog = ({route}) => {
   const plusData = route?.params?.plusData;
   const plus = plusData?.press === 'plus';
   const clientId = plusData?.clientId;
-  console.log(route?.params, '=;kiokjjknj===');
-  
+
   const token = plusData?.token || routeData?.token;
 
   const initialDate = () => {
@@ -161,27 +160,21 @@ const WaterIntakeLog = ({route}) => {
         date: date,
       };
       const response = await SetWaterIntakeDetails(payload);
-      console.log(response);
-      
-      if(response) {
-        navigation.goBack();
-      }
-      // if (
-      //   response?.message === 'Water intake recorded successfully.' ||
-      //   response?.success === true
-      // ) {
-      //   console.log(response);
-        
+
+      // if(response) {
       //   navigation.goBack();
-      // } else {
-      //   console.log('===');
-        
-      //   showToast(response?.message);
-      //   setLoading(false);
       // }
+      if (
+        response?.message === 'Water intake recorded successfully.' ||
+        response?.success === true
+      ) {
+        navigation.goBack();
+      } else {
+        showToast(response?.message);
+        setLoading(false);
+      }
       setLoading(false);
     } catch (error) {
-      
       console.error(error);
       showToast('An error occurred');
       setLoading(false);

@@ -41,7 +41,7 @@ const WaterIntake = () => {
 
   const getToken = useSelector(state => state?.user?.userInfo);
   const token = getToken?.token;
-  
+
   const id = getToken?.userData?._id || getToken?.user?._id;
 
   const handleDate = selectedDate => {
@@ -126,9 +126,7 @@ const WaterIntake = () => {
   const getWaterIntakeData = async () => {
     try {
       setLoading(true);
-      console.log('token, id', token, id);
       const response = await GetWaterIntakeDetails(token, id);
-      console.log(response, 'rrrrr');
 
       if (response?.success === true) {
         setWaterIntake(response);
@@ -287,6 +285,8 @@ const WaterIntake = () => {
   };
 
   const handleDelete = async () => {
+    setModalVisible(false);
+
     try {
       setLoading(true);
       const payload = {
@@ -304,7 +304,6 @@ const WaterIntake = () => {
       } else {
         showToast(response?.message || 'Failed to delete entry');
       }
-      setModalVisible(false);
       setLoading(false);
     } catch (error) {
       showToast('An error occurred while deleting');

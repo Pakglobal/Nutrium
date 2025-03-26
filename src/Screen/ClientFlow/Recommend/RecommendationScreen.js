@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Header from '../../../Components/Header';
@@ -31,6 +32,7 @@ const RecommendationScreen = () => {
   const [recommendations, setRecommendetions] = useState([]);
   const [foodsAvoid, setFoodsAvoid] = useState([]);
   const [goals, setGoals] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleOpenBottomSheet = () => {
@@ -41,7 +43,10 @@ const RecommendationScreen = () => {
     try {
       setLoading(true);
       const response = await GetRecommendationApiData(token, id);
-      if (response) {
+      if (
+        response?.success === true ||
+        response?.message === 'Data retrieved successfully'
+      ) {
         setRecommendetions(response?.data);
         setLoading(false);
       }
@@ -55,7 +60,10 @@ const RecommendationScreen = () => {
     try {
       setLoading(true);
       const response = await GetFoodAvoidApiData(token, id);
-      if (response) {
+      if (
+        response?.success === true ||
+        response?.message === 'Data retrieved successfully'
+      ) {
         setFoodsAvoid(response?.data);
         setLoading(false);
       }
@@ -69,7 +77,10 @@ const RecommendationScreen = () => {
     try {
       setLoading(true);
       const response = await GetGoalsApiData(token, id);
-      if (response) {
+      if (
+        response?.success === true ||
+        response?.message === 'Goals retrieved successfully'
+      ) {
         setGoals(response?.allGoals);
         setLoading(false);
       }
@@ -79,28 +90,8 @@ const RecommendationScreen = () => {
     }
   };
 
-  useEffect(() => {
-    FetchFoodAvoidData();
-    FetchRecommendationData();
-    FetchGoalsData();
-  }, []);
-
   const recommendationData = recommendations?.recommendation;
   const foodAvoidData = foodsAvoid?.foodAvoids;
-  const goalData = goals[0]?.goals;
-
-  // if (loading) {
-  //   return (
-  // <View
-  //   style={{
-  //     flex: 1,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //   }}>
-  //   <ActivityIndicator size="large" color={Color.primaryGreen} />
-  // </View>
-  //   );
-  // }
 
   const renderEntryItem = ({item: entry, index}) => (
     <View
@@ -178,6 +169,23 @@ const RecommendationScreen = () => {
     </View>
   );
 
+  useEffect(() => {
+    FetchGoalsData();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    FetchFoodAvoidData();
+    FetchRecommendationData();
+    FetchGoalsData()
+      .then(() => {
+        setRefreshing(false);
+      })
+      .catch(() => {
+        setRefreshing(false);
+      });
+  }, []);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <Header showIcon={true} headerText="Recommendations" />
@@ -191,19 +199,23 @@ const RecommendationScreen = () => {
           <ActivityIndicator size="large" color={Color.primaryGreen} />
         </View>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <View style={styles.container}>
             <Text style={styles.title}>Foods to avoid</Text>
             <Text style={styles.subTitle}>
               Avoid these foods in your diet to improve your health
             </Text>
-            <View style={{marginVertical: verticalScale(10)}}>
+            <View>
               {foodAvoidData && foodAvoidData?.length > 0 ? (
                 foodAvoidData?.map(item => (
                   <Text style={{color: Color.black}}>{item}</Text>
                 ))
               ) : (
-                <View>
+                <View style={{marginVertical: verticalScale(10)}}>
                   <Text style={{color: Color.gray}}>
                     There are no records of food avoid
                   </Text>
@@ -217,11 +229,11 @@ const RecommendationScreen = () => {
             <Text style={styles.subTitle}>
               See more recommendations from your professional
             </Text>
-            <View style={{marginVertical: verticalScale(10)}}>
+            <View>
               {recommendationData && recommendationData?.length > 0 ? (
                 <Text style={{color: Color.black}}>{recommendationData}</Text>
               ) : (
-                <View>
+                <View style={{marginVertical: verticalScale(10)}}>
                   <Text style={{color: Color.gray}}>
                     There are no records of recommendation
                   </Text>
@@ -237,11 +249,11 @@ const RecommendationScreen = () => {
             <Text style={styles.subTitle}>
               Goals agreed with your professional
             </Text>
-            <View style={{}}>
-              {goalData && goalData?.length > 0 ? (
+            <View>
+              {goals && goals?.length > 0 ? (
                 <FlatList
                   showsVerticalScrollIndicator={false}
-                  data={goalData}
+                  data={goals[0]?.goals}
                   keyExtractor={(item, index) => item?._id || index.toString()}
                   renderItem={renderGoalItem}
                   contentContainerStyle={{
@@ -250,7 +262,7 @@ const RecommendationScreen = () => {
                   }}
                 />
               ) : (
-                <View>
+                <View style={{marginVertical: verticalScale(10)}}>
                   <Text style={{color: Color.gray}}>
                     There are no records of goals
                   </Text>
@@ -278,12 +290,20 @@ const RecommendationScreen = () => {
             </Text>
           </View>
           <View style={{marginHorizontal: scale(16), flex: 1}}>
-            <FlatList
-              data={goalData}
-              keyExtractor={(item, index) => item?._id || index.toString()}
-              renderItem={renderGoalItem}
-              showsVerticalScrollIndicator={false}
-            />
+            {goals && goals?.length > 0 ? (
+              <FlatList
+                data={goals[0]?.goals}
+                keyExtractor={(item, index) => item?._id || index.toString()}
+                renderItem={renderGoalItem}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : (
+              <View style={{marginVertical: verticalScale(10)}}>
+                <Text style={{color: Color.gray, textAlign: 'center'}}>
+                  There are no records of goals
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </RBSheet>

@@ -1,58 +1,3 @@
-// import { createSlice } from '@reduxjs/toolkit';
-
-// const initialState = {
-//   steps: 0,
-//   workouts: Array(7).fill(0),
-//   currentDay: new Date().getDay(),
-//   isTracking: false,
-//   lastReset: new Date().toISOString()
-// };
-
-// const stepTrackerSlice = createSlice({
-//   name: 'stepTracker',
-//   initialState,
-//   reducers: {
-//     incrementSteps: (state) => {
-//       state.steps += 1;
-//     },
-//     setSteps: (state, action) => {
-//       state.steps = action.payload;
-//     },
-//     setWorkouts: (state, action) => {
-//       state.workouts = action.payload;
-//     },
-//     setCurrentDay: (state, action) => {
-//       state.currentDay = action.payload;
-//     },
-//     setIsTracking: (state, action) => {
-//       state.isTracking = action.payload;
-//     },
-//     setLastReset: (state, action) => {
-//       state.lastReset = action.payload;
-//     },
-//     resetSteps: (state) => {
-//       const newWorkouts = [...state.workouts];
-//       newWorkouts[state.currentDay] = state.steps;
-//       state.workouts = newWorkouts;
-//       state.steps = 0;
-//       state.currentDay = new Date().getDay();
-//       state.lastReset = new Date().toISOString();
-//     }
-//   }
-// });
-
-// export const {
-//   incrementSteps,
-//   setSteps,
-//   setWorkouts,
-//   setCurrentDay,
-//   setIsTracking,
-//   setLastReset,
-//   resetSteps
-// } = stepTrackerSlice.actions;
-
-// export default stepTrackerSlice.reducer;
-
 import {createSlice} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -70,7 +15,6 @@ const initialState = {
   lastReset: new Date().toISOString(),
 };
 
-// Function to save data to AsyncStorage
 const saveToStorage = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));

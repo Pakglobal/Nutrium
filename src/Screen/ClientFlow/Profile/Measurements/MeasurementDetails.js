@@ -42,9 +42,9 @@ const MeasurementDetail = () => {
     totalVariation: '-',
   });
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
-  const id = getToken?.userData?._id || getToken?.user?._id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
 
   const fetchLatestData = useCallback(async () => {
     if (!token || !id) return;

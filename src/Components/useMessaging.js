@@ -130,15 +130,11 @@ const MessageComponent = ({
     joinRoom(userId, otherUserId);
 
     getChatHistory(userId, otherUserId, history => {
-      console.log(history);
-      
       setMessages(history?.reverse());
       setLoading(false);
     });
 
     const messageHandler = newMessage => {
-      console.log(newMessage);
-      
       setMessages(prevMessages => [newMessage, ...prevMessages]);
     };
 
@@ -146,37 +142,27 @@ const MessageComponent = ({
 
     const markMessagesAsSeen = () => {
       const unseenMessages = messages.filter(msg => !msg?.seen);
-      console.log(messages, '======');
-      
-  
+
       if (unseenMessages.length > 0) {
         const messageIds = unseenMessages.map(msg => msg?._id);
-        console.log(messageIds, 'id');
-        
-        
-        socket.emit('messageSeen', { userId, otherUserId, messageIds });
-  
+
+        socket.emit('messageSeen', {userId, otherUserId, messageIds});
+
         setMessages(prevMessages =>
           prevMessages.map(msg =>
-            messageIds.includes(msg.id) ? { ...msg, seen: true } : msg
-          )
+            messageIds.includes(msg.id) ? {...msg, seen: true} : msg,
+          ),
         );
       }
     };
-  
+
     markMessagesAsSeen();
-  
 
     return () => {
       socket.off('receiveMessage', messageHandler);
       socket.disconnect();
     };
   }, [userId, otherUserId]);
-
-  
-
-
-
 
   const formatTime = isoString => {
     return moment(isoString).format('h.mm A');

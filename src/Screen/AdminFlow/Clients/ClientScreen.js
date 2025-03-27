@@ -33,8 +33,8 @@ const ClientScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
 
   useEffect(() => {
     fetchData();

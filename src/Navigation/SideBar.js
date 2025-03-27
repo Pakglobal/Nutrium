@@ -42,8 +42,6 @@ const SideBar = ({onSelectScreen}) => {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
-
-      console.log('All info synced successfully!');
       setAsyncLoading(false);
     } catch (error) {
       console.error('Error syncing info:', error);

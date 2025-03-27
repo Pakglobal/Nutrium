@@ -37,9 +37,9 @@ const WorkOutDetails = ({route}) => {
 
   const navigation = useNavigation();
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
-  const id = getToken?.userData?._id || getToken?.user?._id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
   const activityId = route?.params?.activity?.id;
 
   const [date, setDate] = useState(new Date(defaultDate));

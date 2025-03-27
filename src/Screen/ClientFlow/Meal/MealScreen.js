@@ -26,11 +26,9 @@ const MealScreen = () => {
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [open, setOpen] = useState(false);
   const bottomSheetRef = useRef(null);
-
   
-
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const id = getToken?.userData?._id || getToken?.user?._id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const id = tokenId?.id;
 
   useEffect(() => {
     fetchMealPlanData();
@@ -40,8 +38,7 @@ const MealScreen = () => {
     setLoading(true);
     try {
       const response = await FetchMealPlanApi(id);
-      console.log(response?.template[0]?.mealTemplate);
-      
+
       if (response?.template?.length > 0) {
         setMealPlan(response.template[0].mealTemplate);
 
@@ -82,7 +79,7 @@ const MealScreen = () => {
     //   selectedDays?.some(day => template?.days?.includes(day)),
     // );
 
-    const selectedTemplate = mealPlan?.days
+    const selectedTemplate = mealPlan?.days;
     return selectedTemplate ? selectedTemplate?.mealSchedule || [] : [];
   };
 
@@ -301,7 +298,7 @@ const MealScreen = () => {
               width: scale(160),
               backgroundColor: 'rgba(232,150,106,0.3)',
               alignSelf: 'center',
-              borderRadius: scale(150)
+              borderRadius: scale(150),
             }}>
             <Cook height={scale(120)} width={scale(120)} />
           </View>
@@ -474,7 +471,7 @@ const styles = StyleSheet.create({
   day: {
     fontSize: scale(13),
     fontWeight: '500',
-    color: '#000'
+    color: '#000',
   },
   wrapper: {
     backgroundColor: 'rgba(0,0,0,0.5)',

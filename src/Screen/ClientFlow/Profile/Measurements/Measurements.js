@@ -25,9 +25,9 @@ const Measurements = () => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
-  const id = getToken?.userData?._id || getToken?.user?._id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
   const units = useSelector(state => state?.unit?.units);
 
   useEffect(() => {

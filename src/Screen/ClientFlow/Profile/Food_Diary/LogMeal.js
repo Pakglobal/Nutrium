@@ -182,7 +182,6 @@ const LogMeal = () => {
       registrationDate: registrationDate,
       scheduleId: scheduleId,
     };
-    console.log(payload);
 
     const response = await DeleteMealInFoodDiary(payload);
     if (
@@ -204,7 +203,6 @@ const LogMeal = () => {
     };
 
     const response = await DeleteSpecificMealInFoodDiary(payload);
-    console.log(response);
   };
 
   return (

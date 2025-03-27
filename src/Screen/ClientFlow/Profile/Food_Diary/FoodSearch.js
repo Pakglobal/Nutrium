@@ -22,8 +22,8 @@ const FoodSearch = () => {
   const [searchFoodData, setSearchFoodData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
 
   useEffect(() => {
     const fetchFoodData = async () => {

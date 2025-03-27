@@ -32,9 +32,9 @@ const FoodDiary = () => {
   const [diaryData, setDiaryData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
-  const id = getToken?.userData?._id || getToken?.user?._id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
 
   const getDateString = () => {
     if (dayOffset === 0) return 'Today';
@@ -53,7 +53,6 @@ const FoodDiary = () => {
     setLoading(true);
     try {
       const response = await FetchFoodDiary(token, id);
-      console.log(response?.foodDiary?.foodDiaryData[0]?.mealSchedule, '=====');
 
       if (response?.foodDiary) {
         setDiaryData(response?.foodDiary?.foodDiaryData || []);

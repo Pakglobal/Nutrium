@@ -29,8 +29,8 @@ const MessageScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
   const clientData = useSelector(state => state?.admin?.clientInfo);
 
   useEffect(() => {

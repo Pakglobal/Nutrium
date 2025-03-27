@@ -24,9 +24,9 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from 'react-native-virtualized-view';
 
 const RecommendationScreen = () => {
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
-  const id = getToken?.userData?._id || getToken?.user?._id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
   const bottomSheetRef = useRef(null);
 
   const [recommendations, setRecommendetions] = useState([]);

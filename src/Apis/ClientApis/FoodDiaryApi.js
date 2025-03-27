@@ -52,30 +52,6 @@ export const SearchFoodApi = async token => {
   }
 };
 
-// export const DeleteMealInFoodDiary = async payload => {
-//   try {
-//     const {token, registrationDate, scheduleId, foodIndex} = payload;
-//     const url = `https://nutrium-back-end-1.onrender.com/api/v1/food-diary/12123/delete-food`;
-//     const body = {
-//       registrationDate: registrationDate,
-//       scheduleId: scheduleId,
-//       foodIndex: foodIndex,
-//     };
-//     console.log(url, body, payload);
-
-//     const response = await axios.delete(url, body, {
-//       headers: {
-//         Authorization: token,
-//       },
-//     });
-//     console.log(response);
-
-//     return response?.data;
-//   } catch (error) {
-//     return error?.response?.data;
-//   }
-// };
-
 export const DeleteMealInFoodDiary = async payload => {
   try {
     const {token, registrationDate, scheduleId} = payload;

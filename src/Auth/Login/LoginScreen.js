@@ -22,11 +22,11 @@ import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
-import {loginData, profileData} from '../../redux/user';
+import {loginData, profileData, setToken} from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
-import Toast from 'react-native-simple-toast';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import CustomAlert from '../../Components/CustomAlert';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -39,10 +39,8 @@ const LoginScreen = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [login, setLogin] = useState([]);
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -74,38 +72,63 @@ const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    if (emailError || passwordError) {
-      Alert.alert('Error', 'Please correct the errors before submitting.');
-      return;
-    }
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
-    const body = {
-      email: email,
-      password: password,
-      deviceToken: FCMtoken,
-    };
-    try {
-      setLoading(true);
-      const response = await Login(body);
+    if (!email && !password) {
+      setEmailError('Email is required');
+      setPasswordError('Password is required');
+    } else if (!email) {
+      setEmailError('Email is required');
+      setPasswordError('');
+    } else if (!emailRegex.test(email)) {
+      setEmailError('Enter a valid email');
+      setPasswordError('');
+    } else if (!password) {
+      setPasswordError('Password is required');
+      setEmailError('');
+    } else if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      setEmailError('');
+    } else {
+      setEmailError('');
+      setPasswordError('');
 
-      if (response?.message == 'Login successful' || response?.token) {
-        dispatch(loginData(response));
+      const body = {
+        email: email,
+        password: password,
+        deviceToken: FCMtoken,
+      };
 
-        if (response) {
-          const token = response?.token;
-          const getProfileData = await GetAdminProfileData(token);
+      try {
+        setLoading(true);
+        const response = await Login(body);
+        setLogin(response);
 
-          dispatch(profileData(getProfileData));
+        const storeTokenId = {
+          token: response?.token,
+          id: response?.userData?._id,
+        };
+
+        if (response?.message == 'Login successful' || response?.token) {
+          dispatch(loginData(response));
+          dispatch(setToken(storeTokenId));
+
+          if (response) {
+            const token = response?.token;
+            const getProfileData = await GetAdminProfileData(token);
+
+            dispatch(profileData(getProfileData));
+            setLoading(false);
+          }
+          setLoading(false);
+        } else {
+          setAlertVisible(true);
           setLoading(false);
         }
         setLoading(false);
-      } else {
-        showToast(response?.message);
+      } catch (error) {
         setLoading(false);
       }
-    } catch (error) {
-      showToast(error);
-      setLoading(false);
     }
   };
 
@@ -134,33 +157,47 @@ const LoginScreen = () => {
         email: email,
         deviceToken: FCMtoken,
       };
+
       const response = await GoogleLogin(body);
+      setLogin(response);
+
+      const storeTokenId = {
+        token: response?.token,
+        id: response?.user?._id,
+      };
 
       if (response?.message == 'Login successfully' || response?.token) {
         dispatch(loginData(response));
+        dispatch(setToken(storeTokenId));
 
         if (response) {
           const token = response?.token;
           const getProfileData = await GetAdminProfileData(token);
+
           dispatch(profileData(getProfileData));
         }
       } else {
-        showToast(response?.message);
+        setAlertVisible(true);
+        setLoading(false);
       }
       setLoading(false);
     } catch (error) {
-      showToast(error);
       setLoading(false);
     }
   };
 
   const handleGuestLogin = () => {
-    console.log('guest');
-navigation.navigate('guestMode')
+    navigation.navigate('guestMode');
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomAlert
+        visible={alertVisible}
+        message={login.message}
+        onClose={() => setAlertVisible(false)}
+        singleButton={true}
+      />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
@@ -179,7 +216,10 @@ navigation.navigate('guestMode')
             placeholder="Enter email"
             onChangeText={validateEmail}
             placeholderTextColor={Color.gray}
-            style={styles.input}
+            style={[
+              styles.input,
+              {borderColor: !email ? 'black' : emailError ? 'red' : 'green'},
+            ]}
           />
         </View>
         {emailError ? (
@@ -193,7 +233,16 @@ navigation.navigate('guestMode')
             placeholder="Enter password"
             onChangeText={validatePassword}
             placeholderTextColor={Color.gray}
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                borderColor: !password
+                  ? 'black'
+                  : passwordError
+                  ? 'red'
+                  : 'green',
+              },
+            ]}
             secureTextEntry={!passwordVisible}
           />
           <TouchableOpacity

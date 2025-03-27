@@ -1,297 +1,4 @@
-// import React, {useState} from 'react';
-// import {
-//   ActivityIndicator,
-//   Alert,
-//   SafeAreaView,
-//   ScrollView,
-//   StyleSheet,
-//   Text,
-//   TextInput,
-//   ToastAndroid,
-//   TouchableOpacity,
-//   View,
-//   Image,
-//   Modal,
-//   FlatList,
-// } from 'react-native';
-// import {scale, verticalScale} from 'react-native-size-matters';
-// import AntDesign from 'react-native-vector-icons/AntDesign';
-// import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
-// import Color from '../../assets/colors/Colors';
-// import Toast from 'react-native-simple-toast';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import {useNavigation} from '@react-navigation/native';
-
-// const InformationScreen = () => {
-//   const navigation = useNavigation();
-//   const [loading, setLoading] = useState(false);
-//   const [isAgree, setIsAgree] = useState(false);
-//   const [name, setName] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [emailError, setEmailError] = useState('');
-//   const [passwordError, setPasswordError] = useState('');
-//   const [nameError, setNameError] = useState('');
-//   const [passwordVisible, setPasswordVisible] = useState(false);
-
-//   const options = [
-//     {label: 'Male', value: 'male'},
-//     {label: 'Female', value: 'female'},
-//     {label: 'Other', value: 'other'},
-//   ];
-
-//   const handleSelect = value => {
-//     console.log('Selected Value:', value);
-//   };
-
-//   const handleLogin = () => {
-//     navigation.navigate('information');
-//   };
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <ScrollView
-//         style={styles.scrollView}
-//         showsVerticalScrollIndicator={false}>
-//         <View style={styles.logoContainer}>
-//           <NutriumLogo
-//             style={styles.logo}
-//             width={scale(280)}
-//             height={verticalScale(50)}
-//           />
-//         </View>
-
-//         <View>
-//           <Text
-//             style={{
-//               color: Color.black,
-//               textAlign: 'center',
-//               fontSize: scale(15),
-//               marginVertical: verticalScale(10),
-//             }}>
-//             Hi, {'userName'}! We need some information so we can improve your
-//             experience
-//           </Text>
-//         </View>
-
-//         <Text style={styles.inputLabel}>Gender</Text>
-
-//         <Text style={styles.inputLabel}>Country</Text>
-
-//         <Text style={styles.inputLabel}>Mobile No</Text>
-
-//         <Text style={styles.inputLabel}>Profession</Text>
-
-//         <Text style={styles.inputLabel}>
-//           What are you looking for in Nutrium
-//         </Text>
-
-//         <Text style={styles.inputLabel}>Date of Birth</Text>
-
-//         <Text style={styles.inputLabel}>Worksplace</Text>
-
-//         <Text style={styles.inputLabel}>Expertise</Text>
-//         <TouchableOpacity
-//           disabled={!isAgree}
-//           onPress={handleLogin}
-//           style={[
-//             styles.signInButton,
-//             {backgroundColor: isAgree ? Color.secondary : '#E0E0E0'},
-//           ]}>
-//           {loading ? (
-//             <ActivityIndicator size="small" color={Color.primary} />
-//           ) : (
-//             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-//               <Text
-//                 style={[
-//                   styles.signInText,
-//                   {color: isAgree ? '#FFFFFF' : '#9E9E9E'},
-//                 ]}>
-//                 Sign In
-//               </Text>
-//               <AntDesign
-//                 name="arrowright"
-//                 color={isAgree ? '#FFFFFF' : '#9E9E9E'}
-//                 size={16}
-//                 style={{marginLeft: scale(8)}}
-//               />
-//             </View>
-//           )}
-//         </TouchableOpacity>
-//       </ScrollView>
-//     </SafeAreaView>
-//   );
-// };
-
-// export default InformationScreen;
-
-// const styles = StyleSheet.create({
-//   dropdownButton: {
-//     borderWidth: 1,
-//     borderColor: '#ccc',
-//     padding: 10,
-//     borderRadius: 5,
-//     width: '80%',
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//   },
-//   selectedText: {
-//     fontSize: 16,
-//     color: '#333',
-//   },
-//   overlay: {
-//     flex: 1,
-//     backgroundColor: 'rgba(0,0,0,0.5)',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   dropdownContainer: {
-//     backgroundColor: '#fff',
-//     width: '80%',
-//     maxHeight: 250,
-//     borderRadius: 10,
-//     paddingVertical: 10,
-//   },
-//   dropdownItem: {
-//     padding: 15,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#ccc',
-//   },
-//   itemText: {
-//     fontSize: 16,
-//     color: '#333',
-//   },
-//   container: {
-//     flex: 1,
-//     backgroundColor: Color.primary,
-//   },
-//   scrollView: {
-//     paddingHorizontal: scale(16),
-//   },
-//   logoContainer: {
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     marginVertical: verticalScale(48),
-//   },
-//   inputLabel: {
-//     fontSize: scale(14),
-//     color: Color.black,
-//     marginTop: verticalScale(15),
-//   },
-//   inputContainer: {
-//     position: 'relative',
-//     width: '100%',
-//   },
-//   input: {
-//     height: verticalScale(35),
-//     borderWidth: 1,
-//     borderColor: '#E0E0E0',
-//     borderRadius: scale(12),
-//     paddingHorizontal: scale(16),
-//     fontSize: scale(14),
-//     color: Color.gray,
-//     width: '100%',
-//   },
-//   eyeIconContainer: {
-//     position: 'absolute',
-//     right: scale(16),
-//     top: scale(8),
-//   },
-//   errorMessage: {
-//     color: '#F44336',
-//     fontSize: scale(13),
-//     marginTop: verticalScale(4),
-//   },
-//   forgotText: {
-//     color: '#757575',
-//     fontSize: scale(13),
-//     fontWeight: '600',
-//     marginTop: verticalScale(22),
-//   },
-//   termsContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginTop: verticalScale(22),
-//   },
-//   checkbox: {
-//     width: scale(22),
-//     height: scale(22),
-//     borderWidth: 2,
-//     borderRadius: scale(4),
-//     marginRight: scale(11),
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   checkedBox: {
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   termsText: {
-//     flex: 1,
-//     color: Color.black,
-//     fontSize: scale(13),
-//     lineHeight: verticalScale(18),
-//   },
-//   highlightedText: {
-//     color: Color.secondary,
-//   },
-//   signInButton: {
-//     flexDirection: 'row',
-//     height: verticalScale(38),
-//     borderRadius: scale(24),
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginTop: verticalScale(38),
-//   },
-//   signInText: {
-//     fontSize: scale(15),
-//     fontWeight: '600',
-//   },
-//   noAccountText: {
-//     color: Color.secondary,
-//     fontSize: scale(13),
-//     fontWeight: '600',
-//     textAlign: 'center',
-//     marginTop: verticalScale(22),
-//   },
-//   orContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginVertical: verticalScale(22),
-//   },
-//   divider: {
-//     flex: 1,
-//     height: 1,
-//     backgroundColor: '#E0E0E0',
-//   },
-//   orText: {
-//     color: '#757575',
-//     paddingHorizontal: scale(15),
-//     fontWeight: '600',
-//   },
-//   googleButton: {
-//     flexDirection: 'row',
-//     height: verticalScale(38),
-//     borderRadius: scale(24),
-//     borderWidth: 1,
-//     borderColor: '#E0E0E0',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginBottom: verticalScale(48),
-//   },
-//   googleIcon: {
-//     width: scale(22),
-//     height: scale(22),
-//     marginRight: 8,
-//   },
-//   googleText: {
-//     color: '#757575',
-//     fontSize: scale(14),
-//     fontWeight: '600',
-//   },
-// });
-
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -303,6 +10,7 @@ import {
   View,
   Modal,
   FlatList,
+  KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -313,9 +21,16 @@ import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
 import Color from '../../assets/colors/Colors';
 import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
+import {useDispatch, useSelector} from 'react-redux';
+import {loginData} from '../../redux/user';
 
 const InformationScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const userData = useSelector(state => state?.user?.userInfo);
+  const userName = userData?.name;
+
   const [loading, setLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -325,15 +40,18 @@ const InformationScreen = () => {
     useState(false);
   const [expertiseDropdownVisible, setExpertiseDropdownVisible] =
     useState(false);
+  const [goalsDropdownVisible, setGoalsDropdownVisible] = useState(false);
+  const [workspaceDropdownVisible, setWorkspaceDropdownVisible] =
+    useState(false);
 
   const [selectedGender, setSelectedGender] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedProfession, setSelectedProfession] = useState('');
   const [selectedExpertise, setSelectedExpertise] = useState([]);
+  const [selectedGoals, setSelectedGoals] = useState('');
+  const [selectedWorkspace, setSelectedWorkspace] = useState('');
 
   const [mobileNo, setMobileNo] = useState('');
-  const [lookingFor, setLookingFor] = useState('');
-  const [workspace, setWorkspace] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
@@ -365,20 +83,25 @@ const InformationScreen = () => {
     {label: 'Sports Performance', value: 'sports_performance'},
   ];
 
+  const goalsOptions = [
+    {label: 'Weight Loss', value: 'weight_loss'},
+    {label: 'Muscle Gain', value: 'muscle_gain'},
+    {label: 'Improve Fitness', value: 'fitness_improvement'},
+    {label: 'Athletic Performance', value: 'athletic_performance'},
+    {label: 'Nutrition Optimization', value: 'nutrition_optimization'},
+  ];
+
+  const workspaceOptions = [
+    {label: 'Home', value: 'home'},
+    {label: 'Gym', value: 'gym'},
+    {label: 'Office', value: 'office'},
+    {label: 'Outdoors', value: 'outdoors'},
+    {label: 'Online', value: 'online'},
+  ];
+
   const handleLogin = () => {
-    if (
-      selectedGender &&
-      selectedCountry &&
-      selectedProfession &&
-      mobileNo &&
-      lookingFor &&
-      workspace &&
-      selectedExpertise.length > 0
-    ) {
-      setIsAgree(true);
-      navigation.navigate('NextScreen');
-    } else {
-      alert('Please fill all fields');
+    if (userData?.role === 'Guest') {
+      navigation.navigate('BottomNavigation');
     }
   };
 
@@ -386,13 +109,25 @@ const InformationScreen = () => {
     const isValid =
       selectedGender &&
       selectedCountry &&
-      selectedProfession &&
       mobileNo &&
-      lookingFor &&
-      workspace &&
+      selectedProfession &&
+      selectedGoals &&
+      selectedWorkspace &&
       selectedExpertise.length > 0;
     setIsFormValid(isValid);
   };
+
+  useEffect(() => {
+    validateForm();
+  }, [
+    selectedGender,
+    selectedCountry,
+    mobileNo,
+    selectedProfession,
+    selectedGoals,
+    selectedWorkspace,
+    selectedExpertise,
+  ]);
 
   const CustomDropdown = ({
     label,
@@ -418,17 +153,25 @@ const InformationScreen = () => {
     };
 
     return (
-      <>
+      <View>
+        <Text style={styles.dropdownLabel}>{label}</Text>
         <TouchableOpacity
           style={styles.dropdownContainer}
           onPress={() => setVisible(true)}>
-          <Text style={styles.dropdownLabel}>{label}</Text>
-          <View style={styles.dropdownSelector}>
-            <Text style={styles.dropdownText}>
+          <View
+            style={[
+              styles.dropdownSelector,
+              !selectedValue && styles.placeholderStyle,
+            ]}>
+            <Text
+              style={[
+                styles.dropdownText,
+                !selectedValue && styles.placeholderText,
+              ]}>
               {multiple
                 ? selectedValue.length > 0
                   ? selectedValue
-                      .map(sel => options.find(o => o.value === sel)?.label)
+                      .map(sel => options.find(o => o?.value === sel)?.label)
                       .join(', ')
                   : `Select ${label}`
                 : selectedValue
@@ -446,11 +189,13 @@ const InformationScreen = () => {
           onRequestClose={() => setVisible(false)}>
           <View style={styles.modalOverlay}>
             <LinearGradient
-              colors={['#FFFFFF', '#F0F0F0']}
+              colors={['#FFFFFF', '#F6F6F6']}
               style={styles.modalContainer}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>{label}</Text>
-                <TouchableOpacity onPress={() => setVisible(false)}>
+                <TouchableOpacity
+                  onPress={() => setVisible(false)}
+                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Ionicons name="close" size={24} color={Color.black} />
                 </TouchableOpacity>
               </View>
@@ -471,6 +216,7 @@ const InformationScreen = () => {
                     )}
                   </TouchableOpacity>
                 )}
+                showsVerticalScrollIndicator={false}
               />
               {multiple && (
                 <TouchableOpacity
@@ -480,25 +226,26 @@ const InformationScreen = () => {
                 </TouchableOpacity>
               )}
             </LinearGradient>
-
-        
           </View>
         </Modal>
-      </>
+      </View>
     );
   };
 
-  // Custom input component
   const CustomInput = ({
     label,
     value,
     onChangeText,
     placeholder,
-    keyboardType = 'default',
+    keyboardType = 'numeric',
   }) => (
     <View style={styles.inputContainer}>
       <Text style={styles.inputLabel}>{label}</Text>
-      <View style={styles.inputWrapper}>
+      <View
+        style={[
+          styles.inputWrapper,
+          {paddingVertical: verticalScale(0), height: verticalScale(34)},
+        ]}>
         <TextInput
           style={styles.input}
           value={value}
@@ -515,135 +262,185 @@ const InformationScreen = () => {
   );
 
   return (
-    <LinearGradient colors={['#FFFFFF', '#F0F0F0']} style={styles.container}>
-      <SafeAreaView style={{flex: 1}}>
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}>
-          <View style={styles.headerContainer}>
-            <NutriumLogo width={scale(200)} height={verticalScale(40)} />
-            <Text style={styles.welcomeText}>Complete Your Profile</Text>
-            <Text style={styles.subtitleText}>
-              Help us personalize your Nutrium experience
-            </Text>
-          </View>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled">
+        <TouchableOpacity
+          style={{marginTop: verticalScale(15)}}
+          onPress={() => navigation.goBack()}>
+          <AntDesign
+            name="arrowleft"
+            color={Color.black}
+            size={verticalScale(18)}
+          />
+        </TouchableOpacity>
+        <View style={styles.headerContainer}>
+          <NutriumLogo width={scale(200)} height={verticalScale(40)} />
+          <Text style={styles.subtitleText}>
+            Hi, {userName}! We need some information to personalize your
+            experience.
+          </Text>
+        </View>
 
-          <View style={styles.formContainer}>
-            <CustomDropdown
-              label="Gender"
-              options={genderOptions}
-              visible={genderDropdownVisible}
-              setVisible={setGenderDropdownVisible}
-              selectedValue={selectedGender}
-              setSelectedValue={setSelectedGender}
-            />
+        <View style={styles.formContainer}>
+          <CustomDropdown
+            label="Gender"
+            options={genderOptions}
+            visible={genderDropdownVisible}
+            setVisible={setGenderDropdownVisible}
+            selectedValue={selectedGender}
+            setSelectedValue={setSelectedGender}
+          />
 
-            <CustomDropdown
-              label="Country"
-              options={countryOptions}
-              visible={countryDropdownVisible}
-              setVisible={setCountryDropdownVisible}
-              selectedValue={selectedCountry}
-              setSelectedValue={setSelectedCountry}
-            />
+          <CustomDropdown
+            label="Country"
+            options={countryOptions}
+            visible={countryDropdownVisible}
+            setVisible={setCountryDropdownVisible}
+            selectedValue={selectedCountry}
+            setSelectedValue={setSelectedCountry}
+          />
 
-            <CustomInput
-              label="Mobile Number"
-              value={mobileNo}
-              onChangeText={setMobileNo}
-              placeholder="Enter your mobile number"
-              keyboardType="phone-pad"
-            />
+          {/* <CustomInput
+            label="Mobile Number"
+            value={mobileNo}
+            onChangeText={e => setMobileNo(e)}
+            placeholder="Enter your mobile number"
+            keyboardType="numeric"
+          /> */}
 
-            <CustomDropdown
-              label="Profession"
-              options={professionOptions}
-              visible={professionDropdownVisible}
-              setVisible={setProfessionDropdownVisible}
-              selectedValue={selectedProfession}
-              setSelectedValue={setSelectedProfession}
-            />
+          <CustomInput
+            label="Mobile Number"
+            value={mobileNo}
+            onChangeText={text => {
+              setMobileNo(text);
+              setTimeout(() => validateForm(), 100); // Delay to prevent keyboard closing
+            }}
+            placeholder="Enter your mobile number"
+            keyboardType="numeric"
+          />
 
-            <CustomInput
-              label="Your Goals"
-              value={lookingFor}
-              onChangeText={setLookingFor}
-              placeholder="What are you looking to achieve?"
-            />
+          <CustomDropdown
+            label="Profession"
+            options={professionOptions}
+            visible={professionDropdownVisible}
+            setVisible={setProfessionDropdownVisible}
+            selectedValue={selectedProfession}
+            setSelectedValue={setSelectedProfession}
+          />
 
-            <TouchableOpacity
-              style={styles.datePickerContainer}
-              onPress={() => setDatePickerOpen(true)}>
-              <Text style={styles.inputLabel}>Date of Birth</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.dateText}>
-                  {dateOfBirth.toLocaleDateString()}
-                </Text>
-                <Ionicons name="calendar" size={20} color={Color.secondary} />
+          <CustomDropdown
+            label="Your Goals"
+            options={goalsOptions}
+            visible={goalsDropdownVisible}
+            setVisible={setGoalsDropdownVisible}
+            selectedValue={selectedGoals}
+            setSelectedValue={setSelectedGoals}
+          />
+
+          <Text style={styles.inputLabel}>Date of Birth</Text>
+          <TouchableOpacity
+            style={styles.datePickerContainer}
+            onPress={() => setDatePickerOpen(true)}>
+            <View style={styles.inputWrapper}>
+              <Ionicons
+                name="calendar"
+                size={20}
+                color={Color.secondary}
+                style={styles.dateIcon}
+              />
+              <Text style={styles.dateText}>
+                {dateOfBirth.toLocaleDateString()}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <DatePicker
+            modal
+            mode="date"
+            open={datePickerOpen}
+            date={dateOfBirth}
+            onConfirm={date => {
+              setDatePickerOpen(false);
+              setDateOfBirth(date);
+              validateForm();
+            }}
+            onCancel={() => setDatePickerOpen(false)}
+          />
+
+          <CustomDropdown
+            label="Workspace"
+            options={workspaceOptions}
+            visible={workspaceDropdownVisible}
+            setVisible={setWorkspaceDropdownVisible}
+            selectedValue={selectedWorkspace}
+            setSelectedValue={setSelectedWorkspace}
+          />
+
+          <CustomDropdown
+            label="Expertise"
+            options={expertiseOptions}
+            visible={expertiseDropdownVisible}
+            setVisible={setExpertiseDropdownVisible}
+            selectedValue={selectedExpertise}
+            setSelectedValue={setSelectedExpertise}
+            multiple={true}
+          />
+
+          <TouchableOpacity
+            disabled={!isFormValid}
+            onPress={handleLogin}
+            style={[
+              styles.continueButton,
+              !isFormValid && styles.disabledButton,
+            ]}>
+            {loading ? (
+              <ActivityIndicator size="small" color={Color.primary} />
+            ) : (
+              <View style={styles.buttonContent}>
+                <Text style={styles.continueButtonText}>Continue</Text>
+                <AntDesign name="arrowright" color={Color.primary} size={20} />
               </View>
-            </TouchableOpacity>
-            <DatePicker
-              modal
-              mode="date"
-              open={datePickerOpen}
-              date={dateOfBirth}
-              onConfirm={date => {
-                setDatePickerOpen(false);
-                setDateOfBirth(date);
-                validateForm();
-              }}
-              onCancel={() => setDatePickerOpen(false)}
-            />
-
-            <CustomInput
-              label="Workspace"
-              value={workspace}
-              onChangeText={setWorkspace}
-              placeholder="Enter your workspace"
-            />
-
-            <CustomDropdown
-              label="Expertise"
-              options={expertiseOptions}
-              visible={expertiseDropdownVisible}
-              setVisible={setExpertiseDropdownVisible}
-              selectedValue={selectedExpertise}
-              setSelectedValue={setSelectedExpertise}
-              multiple={true}
-            />
-
-            <TouchableOpacity
-              disabled={!isFormValid}
-              onPress={handleLogin}
-              style={styles.continueButton}>
-              {loading ? (
-                <ActivityIndicator size="small" color={Color.white} />
-              ) : (
-                <View style={styles.buttonContent}>
-                  <Text style={styles.continueButtonText}>Continue</Text>
-                  <AntDesign name="arrowright" color={Color.white} size={20} />
-                </View>
-              )}
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </LinearGradient>
+            )}
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  placeholderStyle: {
+    borderColor: '#E0E0E0',
+    backgroundColor: Color.primary,
+  },
+  placeholderText: {
+    color: Color.gray,
+  },
+  inputIconContainer: {
+    marginRight: scale(10),
+  },
+  inputWithIcon: {
+    flex: 1,
+  },
+  dateIcon: {
+    marginRight: scale(10),
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
   container: {
     flex: 1,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   scrollView: {
     flex: 1,
+    marginHorizontal: scale(16),
   },
   headerContainer: {
     alignItems: 'center',
     paddingVertical: verticalScale(20),
-    paddingHorizontal: scale(20),
   },
   welcomeText: {
     fontSize: scale(22),
@@ -658,14 +455,14 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
   },
   formContainer: {
-    paddingHorizontal: scale(20),
     paddingBottom: verticalScale(30),
+    backgroundColor: Color.primary,
   },
   dropdownContainer: {
     marginBottom: verticalScale(15),
   },
   dropdownLabel: {
-    fontSize: scale(14),
+    fontSize: scale(13),
     color: Color.black,
     marginBottom: verticalScale(5),
     fontWeight: '600',
@@ -677,11 +474,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: scale(10),
-    paddingHorizontal: scale(15),
-    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(8),
   },
   dropdownText: {
-    fontSize: scale(14),
+    fontSize: scale(12),
     color: Color.black,
     flex: 1,
   },
@@ -704,7 +501,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
   },
   modalTitle: {
-    fontSize: scale(18),
+    fontSize: scale(15),
     fontWeight: 'bold',
     color: Color.black,
   },
@@ -712,13 +509,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: verticalScale(15),
+    paddingVertical: verticalScale(12),
     paddingHorizontal: scale(15),
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
   dropdownItemText: {
-    fontSize: scale(14),
+    fontSize: scale(12),
     color: Color.black,
   },
   doneButton: {
@@ -727,7 +524,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   doneButtonText: {
-    color: Color.white,
+    color: Color.primary,
     fontSize: scale(16),
     fontWeight: 'bold',
   },
@@ -746,26 +543,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: scale(10),
-    paddingHorizontal: scale(15),
+    paddingVertical: verticalScale(8),
+    paddingHorizontal: scale(12),
   },
   input: {
     flex: 1,
-    fontSize: scale(14),
+    fontSize: scale(12),
     color: Color.black,
-    height: verticalScale(50),
   },
   datePickerContainer: {
     marginBottom: verticalScale(15),
   },
   dateText: {
-    fontSize: scale(14),
+    fontSize: scale(12),
     color: Color.black,
     flex: 1,
   },
   continueButton: {
     backgroundColor: Color.secondary,
     borderRadius: scale(10),
-    paddingVertical: verticalScale(15),
+    paddingVertical: verticalScale(12),
     alignItems: 'center',
     marginTop: verticalScale(20),
   },
@@ -775,10 +572,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   continueButtonText: {
-    color: Color.white,
+    color: Color.primary,
     fontSize: scale(16),
     fontWeight: 'bold',
     marginRight: scale(10),
+  },
+  selectedItem: {
+    backgroundColor: '#F0F0F0',
+  },
+  checkboxContainer: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: Color.gray,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedCheckbox: {
+    backgroundColor: Color.secondary,
+    borderColor: Color.secondary,
   },
 });
 

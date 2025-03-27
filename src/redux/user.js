@@ -4,6 +4,7 @@ const initialState = {
   userInfo: {},
   profileInfo: {},
   fcmToken: {},
+  token: {},
 };
 
 const userSlice = createSlice({
@@ -19,9 +20,12 @@ const userSlice = createSlice({
     setFcmToken: (state, action) => {
       state.fcmToken = action.payload;
     },
+    setToken: (state, action) => {
+      state.token = action.payload;
+    }
   },
 });
 
-export const {loginData, profileData, setFcmToken} = userSlice.actions;
+export const {loginData, profileData, setFcmToken, setToken} = userSlice.actions;
 
 export default userSlice.reducer;

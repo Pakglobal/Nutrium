@@ -23,9 +23,9 @@ const MainProfile = ({route}) => {
   const data = route?.params?.data;
 
   const dispatch = useDispatch();
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
-  const id = getToken?.userData?._id || getToken?.user?._id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = data?.image;

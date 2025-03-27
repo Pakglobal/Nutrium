@@ -19,10 +19,13 @@ import Color from '../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {loginData} from '../../redux/user';
 
 const GuestLogin = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-    const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
   const [name, setName] = useState('');
@@ -42,11 +45,11 @@ const GuestLogin = () => {
   };
 
   const validateName = value => {
-    setPassword(value);
+    setName(value);
     if (!value) {
       setNameError('Name is required');
-    } else if (value.length < 2) {
-      setNameError('Name must be at least 2 characters');
+    } else if (value.length < 3) {
+      setNameError('Name must be at least 3 characters');
     } else {
       setNameError('');
     }
@@ -76,14 +79,67 @@ const GuestLogin = () => {
   };
 
   const handleLogin = () => {
-navigation.navigate('information')
-  }
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;    
+
+    if (!email && !password && !name) {
+      setEmailError('Email is required');
+      setPasswordError('Password is required');
+      setNameError('Name is required');
+    } else if (!name) {
+      setNameError('Name is required');
+      setEmailError('');
+      setPasswordError('');
+    } else if (name.length < 3) {
+      setNameError('Name must be at least 3 chaaracters');
+      setEmailError('');
+      setPasswordError('');
+    } else if (!email) {
+      setEmailError('Email is required');
+      setPasswordError('');
+      setNameError('');
+    } else if (!emailRegex.test(email)) {
+      setEmailError('Enter a valid email');
+      setPasswordError('');
+      setNameError('');
+    } else if (!password) {
+      setPasswordError('Password is required');
+      setEmailError('');
+      setNameError('');
+    } else if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      setEmailError('');
+      setNameError('');
+    } else {
+      setEmailError('');
+      setPasswordError('');
+      setNameError('');
+
+      const body = {
+        email: email,
+        password: password,
+        name: name,
+        role: 'Guest',
+      };
+
+      dispatch(loginData(body));
+      navigation.navigate('information');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          style={{marginTop: verticalScale(15)}}
+          onPress={() => navigation.goBack()}>
+          <AntDesign
+            name="arrowleft"
+            color={Color.black}
+            size={verticalScale(18)}
+          />
+        </TouchableOpacity>
         <View style={styles.logoContainer}>
           <NutriumLogo
             style={styles.logo}
@@ -96,7 +152,7 @@ navigation.navigate('information')
         <View style={styles.inputContainer}>
           <TextInput
             value={name}
-            placeholder="Enter full name"
+            placeholder="Enter name"
             onChangeText={validateName}
             placeholderTextColor={Color.gray}
             style={styles.input}
@@ -207,133 +263,134 @@ navigation.navigate('information')
 export default GuestLogin;
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: Color.primary,
-    },
-    scrollView: {
-      paddingHorizontal: scale(16),
-    },
-    logoContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginVertical: verticalScale(48),
-    },
-    inputLabel: {
-      fontSize: scale(14),
-      color: Color.black,
-      marginBottom: verticalScale(7),
-      marginTop: verticalScale(15),
-    },
-    inputContainer: {
-      position: 'relative',
-      width: '100%',
-    },
-    input: {
-      height: verticalScale(35),
-      borderWidth: 1,
-      borderColor: '#E0E0E0',
-      borderRadius: scale(12),
-      paddingHorizontal: scale(16),
-      fontSize: scale(14),
-      color: Color.gray,
-      width: '100%',
-    },
-    eyeIconContainer: {
-      position: 'absolute',
-      right: scale(16),
-      top: scale(8),
-    },
-    errorMessage: {
-      color: '#F44336',
-      fontSize: scale(13),
-      marginTop: verticalScale(4),
-    },
-    forgotText: {
-      color: '#757575',
-      fontSize: scale(13),
-      fontWeight: '600',
-      marginTop: verticalScale(22),
-    },
-    termsContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: verticalScale(22),
-    },
-    checkbox: {
-      width: scale(22),
-      height: scale(22),
-      borderWidth: 2,
-      borderRadius: scale(4),
-      marginRight: scale(11),
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    checkedBox: {
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    termsText: {
-      flex: 1,
-      color: Color.black,
-      fontSize: scale(13),
-      lineHeight: verticalScale(18),
-    },
-    highlightedText: {
-      color: Color.secondary,
-    },
-    signInButton: {
-      flexDirection: 'row',
-      height: verticalScale(38),
-      borderRadius: scale(24),
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: verticalScale(38),
-    },
-    signInText: {
-      fontSize: scale(15),
-      fontWeight: '600',
-    },
-    noAccountText: {
-      color: Color.secondary,
-      fontSize: scale(13),
-      fontWeight: '600',
-      textAlign: 'center',
-      marginTop: verticalScale(22),
-    },
-    orContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: verticalScale(22),
-    },
-    divider: {
-      flex: 1,
-      height: 1,
-      backgroundColor: '#E0E0E0',
-    },
-    orText: {
-      color: '#757575',
-      paddingHorizontal: scale(15),
-      fontWeight: '600',
-    },
-    googleButton: {
-      flexDirection: 'row',
-      height: verticalScale(38),
-      borderRadius: scale(24),
-      borderWidth: 1,
-      borderColor: '#E0E0E0',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: verticalScale(48),
-    },
-    googleIcon: {
-      width: scale(22),
-      height: scale(22),
-      marginRight: 8,
-    },
-    googleText: {
-      color: '#757575',
-      fontSize: scale(14),
-      fontWeight: '600',
-    },
-  });
+  container: {
+    flex: 1,
+    backgroundColor: Color.primary,
+  },
+  scrollView: {
+    paddingHorizontal: scale(16),
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: verticalScale(30),
+  },
+  inputLabel: {
+    fontSize: scale(14),
+    color: Color.black,
+    marginBottom: verticalScale(7),
+    marginTop: verticalScale(15),
+  },
+  inputContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  input: {
+    height: verticalScale(35),
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: scale(12),
+    paddingHorizontal: scale(16),
+    fontSize: scale(14),
+    color: Color.gray,
+    width: '100%',
+  },
+  eyeIconContainer: {
+    position: 'absolute',
+    right: scale(16),
+    top: scale(8),
+  },
+  errorMessage: {
+    color: '#F44336',
+    fontSize: scale(13),
+    marginTop: verticalScale(4),
+  },
+  forgotText: {
+    color: '#757575',
+    fontSize: scale(13),
+    fontWeight: '600',
+    marginTop: verticalScale(22),
+  },
+  termsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: verticalScale(22),
+  },
+  checkbox: {
+    width: scale(22),
+    height: scale(22),
+    borderWidth: 2,
+    borderRadius: scale(4),
+    marginRight: scale(11),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkedBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  termsText: {
+    flex: 1,
+    color: Color.black,
+    fontSize: scale(13),
+    lineHeight: verticalScale(18),
+  },
+  highlightedText: {
+    color: Color.secondary,
+  },
+  signInButton: {
+    flexDirection: 'row',
+    height: verticalScale(38),
+    borderRadius: scale(24),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: verticalScale(38),
+    marginBottom: verticalScale(20),
+  },
+  signInText: {
+    fontSize: scale(15),
+    fontWeight: '600',
+  },
+  noAccountText: {
+    color: Color.secondary,
+    fontSize: scale(13),
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: verticalScale(22),
+  },
+  orContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: verticalScale(22),
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E0E0E0',
+  },
+  orText: {
+    color: '#757575',
+    paddingHorizontal: scale(15),
+    fontWeight: '600',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    height: verticalScale(38),
+    borderRadius: scale(24),
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: verticalScale(48),
+  },
+  googleIcon: {
+    width: scale(22),
+    height: scale(22),
+    marginRight: 8,
+  },
+  googleText: {
+    color: '#757575',
+    fontSize: scale(14),
+    fontWeight: '600',
+  },
+});

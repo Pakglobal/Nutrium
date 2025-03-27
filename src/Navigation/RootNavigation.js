@@ -100,6 +100,7 @@ const AuthStack = () => (
     <Stack.Screen name="unlockAccess" component={UnlockAccess} />
     <Stack.Screen name="getAccess" component={GetAccess} />
     <Stack.Screen name="helpForRegistration" component={HelpForRegistration} />
+    <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
   </Stack.Navigator>
 );
 

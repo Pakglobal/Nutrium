@@ -17,7 +17,6 @@ import {useDispatch} from 'react-redux';
 
 const SwapMeal = ({route}) => {
   const foodName = route?.params?.data;
-  console.log(foodName);
 
   const dispatch = useDispatch();
 

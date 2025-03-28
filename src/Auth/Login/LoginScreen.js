@@ -22,7 +22,13 @@ import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
-import {loginData, profileData, setToken} from '../../redux/user';
+import {
+  loginData,
+  profileData,
+  setGuestMode,
+  setIsGuest,
+  setToken,
+} from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
@@ -72,63 +78,67 @@ const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (!email && !password) {
-      setEmailError('Email is required');
-      setPasswordError('Password is required');
-    } else if (!email) {
-      setEmailError('Email is required');
-      setPasswordError('');
-    } else if (!emailRegex.test(email)) {
-      setEmailError('Enter a valid email');
-      setPasswordError('');
-    } else if (!password) {
-      setPasswordError('Password is required');
-      setEmailError('');
-    } else if (password.length < 8) {
-      setPasswordError('Password must be at least 8 characters');
-      setEmailError('');
-    } else {
-      setEmailError('');
-      setPasswordError('');
+    let emailError = '';
+    let passwordError = '';
 
-      const body = {
-        email: email,
-        password: password,
-        deviceToken: FCMtoken,
+    if (!email) {
+      emailError = 'Email is required';
+    }
+    if (!password) {
+      passwordError = 'Password is required';
+    }
+
+    if (email && !emailRegex.test(email)) {
+      emailError = 'Enter a valid email';
+    }
+    if (password && password.length < 8) {
+      passwordError = 'Password must be at least 8 characters';
+    }
+
+    setEmailError(emailError);
+    setPasswordError(passwordError);
+
+    if (emailError || passwordError) {
+      return;
+    }
+
+    const body = {
+      email: email,
+      password: password,
+      deviceToken: FCMtoken,
+    };
+
+    try {
+      setLoading(true);
+      const response = await Login(body);
+      setLogin(response);
+
+      const storeTokenId = {
+        token: response?.token,
+        id: response?.userData?._id,
       };
 
-      try {
-        setLoading(true);
-        const response = await Login(body);
-        setLogin(response);
+      if (response?.message == 'Login successful' || response?.token) {
+        dispatch(loginData(response));
+        dispatch(setToken(storeTokenId));
 
-        const storeTokenId = {
-          token: response?.token,
-          id: response?.userData?._id,
-        };
+        if (response) {
+          const token = response?.token;
+          const getProfileData = await GetAdminProfileData(token);
 
-        if (response?.message == 'Login successful' || response?.token) {
-          dispatch(loginData(response));
-          dispatch(setToken(storeTokenId));
-
-          if (response) {
-            const token = response?.token;
-            const getProfileData = await GetAdminProfileData(token);
-
-            dispatch(profileData(getProfileData));
-            setLoading(false);
-          }
-          setLoading(false);
-        } else {
-          setAlertVisible(true);
+          dispatch(profileData(getProfileData));
           setLoading(false);
         }
         setLoading(false);
-      } catch (error) {
+      } else {
+        setAlertVisible(true);
         setLoading(false);
       }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
     }
   };
 
@@ -186,8 +196,9 @@ const LoginScreen = () => {
     }
   };
 
-  const handleGuestLogin = () => {
-    navigation.navigate('guestMode');
+  const handleGuestLogin = async () => {
+    dispatch(setGuestMode(true));
+    navigation.navigate('guestLogin');
   };
 
   return (
@@ -267,7 +278,7 @@ const LoginScreen = () => {
           <TouchableOpacity
             style={[
               styles.checkbox,
-              {borderColor: isAgree ? Color.secondary : '#D3D3D3'},
+              {borderColor: isAgree ? Color.secondary : Color.black},
               {backgroundColor: isAgree ? '#FFFFFF' : '#FFFFFF'},
             ]}
             onPress={() => setIsAgree(!isAgree)}>
@@ -420,7 +431,7 @@ const styles = StyleSheet.create({
   checkbox: {
     width: scale(22),
     height: scale(22),
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: scale(4),
     marginRight: scale(11),
     alignItems: 'center',
@@ -438,6 +449,7 @@ const styles = StyleSheet.create({
   },
   highlightedText: {
     color: Color.secondary,
+    fontWeight: '600',
   },
   signInButton: {
     flexDirection: 'row',

@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import SelectRegistrationType from '../Auth/Registartion/SelectRegistrationType';
 import Registration from '../Auth/Registartion/Registration';
 import UnlockAccess from '../Auth/Registartion/UnlockAccess';
@@ -20,7 +20,7 @@ import Measurements from '../Screen/ClientFlow/Profile/Measurements/Measurements
 import HomeScreen from '../Screen/ClientFlow/Home/HomeScreen';
 import AdminHomeScreen from '../Screen/AdminFlow/HomeScreen/AdminHomeScreen';
 import {persistor, store} from '../redux/Store';
-import {Provider, useSelector} from 'react-redux';
+import {Provider, useDispatch, useSelector} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import ClientProfileScreen from '../Screen/AdminFlow/Clients/ClientProfileScreen';
 import ClientChatScreen from '../Screen/AdminFlow/Clients/ClientChatScreen';
@@ -93,14 +93,14 @@ const AdminFlowStack = () => (
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="loginScreen" component={LoginScreen} />
-    <Stack.Screen name="guestMode" component={GuestLogin} />
+    <Stack.Screen name="guestLogin" component={GuestLogin} />
     <Stack.Screen name="information" component={InformationScreen} />
+    <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
     <Stack.Screen name="registrationType" component={SelectRegistrationType} />
     <Stack.Screen name="registration" component={Registration} />
     <Stack.Screen name="unlockAccess" component={UnlockAccess} />
     <Stack.Screen name="getAccess" component={GetAccess} />
     <Stack.Screen name="helpForRegistration" component={HelpForRegistration} />
-    <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
   </Stack.Navigator>
 );
 
@@ -132,9 +132,27 @@ const UserFlowStack = () => (
   </Stack.Navigator>
 );
 
+const GuestStack = () => {
+  const isGuest = useSelector(state => state?.user?.isGuest);
+
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      {isGuest === true ? (
+        <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+      ) : (
+        <>
+          <Stack.Screen name="guestLogin" component={GuestLogin} />
+          <Stack.Screen name="information" component={InformationScreen} />
+        </>
+      )}
+    </Stack.Navigator>
+  );
+};
+
 const MainStack = () => {
-  const getRole = useSelector(state => state.user?.userInfo);
-  const role = getRole?.user?.role || getRole?.userData?.role;
+  const userInfo = useSelector(state => state.user?.userInfo);
+  const role = userInfo?.user?.role || userInfo?.userData?.role;
+  const isGuest = useSelector(state => state.user?.isGuest);
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -142,6 +160,8 @@ const MainStack = () => {
         <Stack.Screen name="AdminFlow" component={AdminFlowStack} />
       ) : role === 'Client' ? (
         <Stack.Screen name="UserFlow" component={UserFlowStack} />
+      ) : isGuest ? (
+        <Stack.Screen name="GuestStack" component={GuestStack} />
       ) : (
         <Stack.Screen name="AuthStack" component={AuthStack} />
       )}

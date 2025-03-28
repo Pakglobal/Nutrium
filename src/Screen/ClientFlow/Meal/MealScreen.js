@@ -27,6 +27,8 @@ const MealScreen = () => {
   const [open, setOpen] = useState(false);
   const bottomSheetRef = useRef(null);
   
+const isGuest = useSelector(state => state.user?.guestMode);
+
   const tokenId = useSelector(state => state?.user?.token);
   const id = tokenId?.id;
 

@@ -17,6 +17,7 @@ import MealScreen from '../Screen/ClientFlow/Meal/MealScreen';
 import RecommendationScreen from '../Screen/ClientFlow/Recommend/RecommendationScreen';
 import ProfileMenuScreen from '../Screen/ClientFlow/Profile/ProfileMenuScreen';
 import Color from '../assets/colors/Colors';
+import { useSelector } from 'react-redux';
 
 const modalScreens = [
   {
@@ -69,6 +70,8 @@ const screenOption = [
 ];
 
 const BottomNavigation = () => {
+  const isGuest = useSelector(state => state.user?.isGuest);
+  
   const [isModalVisible, setModalVisible] = useState(false);
   const Tab = createBottomTabNavigator();
   const navigation = useNavigation();

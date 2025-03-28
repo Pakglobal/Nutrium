@@ -37,6 +37,8 @@ const HomeScreen = () => {
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
+  const isGuest = useSelector(state => state.user?.guestMode);
+
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
@@ -83,7 +85,11 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    FetchAppointmentData();
+    if (isGuest) {
+      return;
+    } else {
+      FetchAppointmentData();
+    }
   }, [token, id]);
 
   const onRefresh = useCallback(() => {
@@ -139,64 +145,78 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <Header showIcon={true} />
-
-      {loading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: verticalScale(10),
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
-        </View>
-      ) : (
-        <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          style={{flex: 1, backgroundColor: Color.primary}}
-          showsVerticalScrollIndicator={false}>
-          <AppointmentCard
-            refreshAppointments={FetchAppointmentData}
-            activeAppointments={activeAppointments}
-            setActiveAppointments={setActiveAppointments}
-            selectedAppointment={selectedAppointment}
-            setSelectedAppointment={setSelectedAppointment}
-          />
-
+      {isGuest ? (
+        <ScrollView style={{flex: 1, backgroundColor: Color.primary}}>
           <Text style={styles.title}>What were your meals like?</Text>
           <MealsLikeInHome />
           <Text style={styles.title}>More for you</Text>
           <MoreForYou />
-
           <HydratedStay />
-
-          <Pressable
-            style={styles.waterView}
-            onPress={() => navigation.navigate('waterIntake')}>
-            <Text style={styles.waterText}>See all water logs</Text>
-            <AntDesign
-              name="arrowright"
-              size={verticalScale(15)}
-              color={Color.txt}
-            />
-          </Pressable>
-          <OnOffFunctionality title={'Your physical activity'} />
-
-          <PhysicalActivity />
-
-          <Pressable
-            style={styles.logButton}
-            onPress={() => navigation.navigate('physicalActivity')}>
-            <Text style={styles.logText}>See all physical activity stats</Text>
-            <AntDesign
-              name="arrowright"
-              size={verticalScale(15)}
-              color={Color.txt}
-            />
-          </Pressable>
         </ScrollView>
+      ) : (
+        <View>
+          {loading ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: verticalScale(10),
+              }}>
+              <ActivityIndicator size="large" color={Color.primaryGreen} />
+            </View>
+          ) : (
+            <ScrollView
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              style={{backgroundColor: Color.primary}}
+              showsVerticalScrollIndicator={false}>
+              <AppointmentCard
+                refreshAppointments={FetchAppointmentData}
+                activeAppointments={activeAppointments}
+                setActiveAppointments={setActiveAppointments}
+                selectedAppointment={selectedAppointment}
+                setSelectedAppointment={setSelectedAppointment}
+              />
+
+              <Text style={styles.title}>What were your meals like?</Text>
+              <MealsLikeInHome />
+              <Text style={styles.title}>More for you</Text>
+              <MoreForYou />
+
+              <HydratedStay />
+
+              <Pressable
+                style={styles.waterView}
+                onPress={() => navigation.navigate('waterIntake')}>
+                <Text style={styles.waterText}>See all water logs</Text>
+                <AntDesign
+                  name="arrowright"
+                  size={verticalScale(15)}
+                  color={Color.txt}
+                />
+              </Pressable>
+              <OnOffFunctionality title={'Your physical activity'} />
+
+              <PhysicalActivity />
+
+              <Pressable
+                style={styles.logButton}
+                onPress={() => navigation.navigate('physicalActivity')}>
+                <Text style={styles.logText}>
+                  See all physical activity stats
+                </Text>
+                <AntDesign
+                  name="arrowright"
+                  size={verticalScale(15)}
+                  color={Color.txt}
+                />
+              </Pressable>
+            </ScrollView>
+          )}
+        </View>
       )}
+
       <Modal
         transparent={true}
         visible={modalVisible}

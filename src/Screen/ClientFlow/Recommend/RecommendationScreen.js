@@ -39,6 +39,8 @@ const RecommendationScreen = () => {
     bottomSheetRef.current?.open();
   };
 
+  const isGuest = useSelector(state => state.user?.guestMode);
+
   const FetchRecommendationData = async () => {
     try {
       setLoading(true);
@@ -89,9 +91,6 @@ const RecommendationScreen = () => {
       setLoading(false);
     }
   };
-
-  const recommendationData = recommendations?.recommendation;
-  const foodAvoidData = foodsAvoid?.foodAvoids;
 
   const renderEntryItem = ({item: entry, index}) => (
     <View
@@ -170,7 +169,13 @@ const RecommendationScreen = () => {
   );
 
   useEffect(() => {
-    FetchGoalsData();
+    if (isGuest === true) {
+      return;
+    } else {
+      FetchRecommendationData();
+      FetchFoodAvoidData();
+      FetchGoalsData();
+    }
   }, []);
 
   const onRefresh = useCallback(() => {
@@ -189,88 +194,100 @@ const RecommendationScreen = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <Header showIcon={true} headerText="Recommendations" />
-      {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+      {isGuest ? (
+        <View>
+          <Text>Guest</Text>
         </View>
       ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }>
-          <View style={styles.container}>
-            <Text style={styles.title}>Foods to avoid</Text>
-            <Text style={styles.subTitle}>
-              Avoid these foods in your diet to improve your health
-            </Text>
-            <View>
-              {foodAvoidData && foodAvoidData?.length > 0 ? (
-                foodAvoidData?.map(item => (
-                  <Text style={{color: Color.black}}>{item}</Text>
-                ))
-              ) : (
-                <View style={{marginVertical: verticalScale(10)}}>
-                  <Text style={{color: Color.gray}}>
-                    There are no records of food avoid
-                  </Text>
-                </View>
-              )}
+        <View>
+          {loading ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator size="large" color={Color.primaryGreen} />
             </View>
-          </View>
+          ) : (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }>
+              <View style={styles.container}>
+                <Text style={styles.title}>Foods to avoid</Text>
+                <Text style={styles.subTitle}>
+                  Avoid these foods in your diet to improve your health
+                </Text>
+                <View>
+                  {foodsAvoid && foodsAvoid?.length > 0 ? (
+                    foodsAvoid?.foodAvoids?.map(item => (
+                      <Text style={{color: Color.black}}>{item}</Text>
+                    ))
+                  ) : (
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
+                        There are no records of food avoid
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </View>
 
-          <View style={styles.container}>
-            <Text style={styles.title}>Other recommendations</Text>
-            <Text style={styles.subTitle}>
-              See more recommendations from your professional
-            </Text>
-            <View>
-              {recommendationData && recommendationData?.length > 0 ? (
-                <Text style={{color: Color.black}}>{recommendationData}</Text>
-              ) : (
-                <View style={{marginVertical: verticalScale(10)}}>
-                  <Text style={{color: Color.gray}}>
-                    There are no records of recommendation
-                  </Text>
+              <View style={styles.container}>
+                <Text style={styles.title}>Other recommendations</Text>
+                <Text style={styles.subTitle}>
+                  See more recommendations from your professional
+                </Text>
+                <View>
+                  {recommendations && recommendations?.length > 0 ? (
+                    <Text style={{color: Color.black}}>
+                      {recommendations?.recommendation}
+                    </Text>
+                  ) : (
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
+                        There are no records of recommendation
+                      </Text>
+                    </View>
+                  )}
                 </View>
-              )}
-            </View>
-          </View>
+              </View>
 
-          <Pressable
-            style={styles.container}
-            onPress={() => handleOpenBottomSheet()}>
-            <Text style={styles.title}>Next goals</Text>
-            <Text style={styles.subTitle}>
-              Goals agreed with your professional
-            </Text>
-            <View>
-              {goals && goals?.length > 0 ? (
-                <FlatList
-                  showsVerticalScrollIndicator={false}
-                  data={goals[0]?.goals}
-                  keyExtractor={(item, index) => item?._id || index.toString()}
-                  renderItem={renderGoalItem}
-                  contentContainerStyle={{
-                    paddingHorizontal: scale(10),
-                    paddingVertical: verticalScale(5),
-                  }}
-                />
-              ) : (
-                <View style={{marginVertical: verticalScale(10)}}>
-                  <Text style={{color: Color.gray}}>
-                    There are no records of goals
-                  </Text>
+              <Pressable
+                style={styles.container}
+                onPress={() => handleOpenBottomSheet()}>
+                <Text style={styles.title}>Next goals</Text>
+                <Text style={styles.subTitle}>
+                  Goals agreed with your professional
+                </Text>
+                <View>
+                  {goals && goals?.length > 0 ? (
+                    <FlatList
+                      showsVerticalScrollIndicator={false}
+                      data={goals[0]?.goals}
+                      keyExtractor={(item, index) =>
+                        item?._id || index.toString()
+                      }
+                      renderItem={renderGoalItem}
+                      contentContainerStyle={{
+                        paddingHorizontal: scale(10),
+                        paddingVertical: verticalScale(5),
+                      }}
+                    />
+                  ) : (
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
+                        There are no records of goals
+                      </Text>
+                    </View>
+                  )}
                 </View>
-              )}
-            </View>
-          </Pressable>
-        </ScrollView>
+              </Pressable>
+            </ScrollView>
+          )}
+        </View>
       )}
 
       <RBSheet

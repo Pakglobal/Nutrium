@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,7 +10,7 @@ import {
   Pressable,
   RefreshControl,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Header from '../../../Components/Header';
 import Color from '../../../assets/colors/Colors';
 import {
@@ -18,10 +18,10 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../../../Apis/ClientApis/RecommendationApi';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {ScrollView} from 'react-native-virtualized-view';
+import { ScrollView } from 'react-native-virtualized-view';
 
 const RecommendationScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
@@ -40,8 +40,8 @@ const RecommendationScreen = () => {
   };
 
   const FetchRecommendationData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await GetRecommendationApiData(token, id);
       if (
         response?.success === true ||
@@ -57,8 +57,8 @@ const RecommendationScreen = () => {
   };
 
   const FetchFoodAvoidData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await GetFoodAvoidApiData(token, id);
       if (
         response?.success === true ||
@@ -74,8 +74,8 @@ const RecommendationScreen = () => {
   };
 
   const FetchGoalsData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await GetGoalsApiData(token, id);
       if (
         response?.success === true ||
@@ -92,8 +92,9 @@ const RecommendationScreen = () => {
 
   const recommendationData = recommendations?.recommendation;
   const foodAvoidData = foodsAvoid?.foodAvoids;
+  console.log('foodAvoidData', foodAvoidData)
 
-  const renderEntryItem = ({item: entry, index}) => (
+  const renderEntryItem = ({ item: entry, index }) => (
     <View
       key={index}
       style={{
@@ -122,7 +123,7 @@ const RecommendationScreen = () => {
     </View>
   );
 
-  const renderMeasurementItem = ({item: measurement, index}) => (
+  const renderMeasurementItem = ({ item: measurement, index }) => (
     <View
       key={index}
       style={{
@@ -146,14 +147,14 @@ const RecommendationScreen = () => {
           showsVerticalScrollIndicator={false}
         />
       ) : (
-        <Text style={{fontSize: scale(14), color: Color.gray}}>
+        <Text style={{ fontSize: scale(14), color: Color.gray }}>
           No entries available
         </Text>
       )}
     </View>
   );
 
-  const renderGoalItem = ({item, index}) => (
+  const renderGoalItem = ({ item, index }) => (
     <View
       key={index}
       style={{
@@ -171,6 +172,8 @@ const RecommendationScreen = () => {
 
   useEffect(() => {
     FetchGoalsData();
+    FetchRecommendationData();
+    FetchFoodAvoidData()
   }, []);
 
   const onRefresh = useCallback(() => {
@@ -187,7 +190,7 @@ const RecommendationScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.primary }}>
       <Header showIcon={true} headerText="Recommendations" />
       {loading ? (
         <View
@@ -212,11 +215,11 @@ const RecommendationScreen = () => {
             <View>
               {foodAvoidData && foodAvoidData?.length > 0 ? (
                 foodAvoidData?.map(item => (
-                  <Text style={{color: Color.black}}>{item}</Text>
+                  <Text style={{ color: Color.black }}>{item}</Text>
                 ))
               ) : (
-                <View style={{marginVertical: verticalScale(10)}}>
-                  <Text style={{color: Color.gray}}>
+                <View style={{ marginVertical: verticalScale(10) }}>
+                  <Text style={{ color: Color.gray }}>
                     There are no records of food avoid
                   </Text>
                 </View>
@@ -231,10 +234,10 @@ const RecommendationScreen = () => {
             </Text>
             <View>
               {recommendationData && recommendationData?.length > 0 ? (
-                <Text style={{color: Color.black}}>{recommendationData}</Text>
+                <Text style={{ color: Color.black }}>{recommendationData}</Text>
               ) : (
-                <View style={{marginVertical: verticalScale(10)}}>
-                  <Text style={{color: Color.gray}}>
+                <View style={{ marginVertical: verticalScale(10) }}>
+                  <Text style={{ color: Color.gray }}>
                     There are no records of recommendation
                   </Text>
                 </View>
@@ -262,8 +265,8 @@ const RecommendationScreen = () => {
                   }}
                 />
               ) : (
-                <View style={{marginVertical: verticalScale(10)}}>
-                  <Text style={{color: Color.gray}}>
+                <View style={{ marginVertical: verticalScale(10) }}>
+                  <Text style={{ color: Color.gray }}>
                     There are no records of goals
                   </Text>
                 </View>
@@ -289,7 +292,7 @@ const RecommendationScreen = () => {
               Goals agreed with your proffesional
             </Text>
           </View>
-          <View style={{marginHorizontal: scale(16), flex: 1}}>
+          <View style={{ marginHorizontal: scale(16), flex: 1 }}>
             {goals && goals?.length > 0 ? (
               <FlatList
                 data={goals[0]?.goals}
@@ -298,8 +301,8 @@ const RecommendationScreen = () => {
                 showsVerticalScrollIndicator={false}
               />
             ) : (
-              <View style={{marginVertical: verticalScale(10)}}>
-                <Text style={{color: Color.gray, textAlign: 'center'}}>
+              <View style={{ marginVertical: verticalScale(10) }}>
+                <Text style={{ color: Color.gray, textAlign: 'center' }}>
                   There are no records of goals
                 </Text>
               </View>

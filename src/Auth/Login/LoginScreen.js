@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,12 +12,12 @@ import {
   View,
   Image,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
 import Color from '../../assets/colors/Colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {GoogleLogin, Login} from '../../Apis/Login/AuthApis';
+import { useDispatch, useSelector } from 'react-redux';
+import { GoogleLogin, Login } from '../../Apis/Login/AuthApis';
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -30,8 +30,9 @@ import {
   setToken,
 } from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
+import { GetAdminProfileData } from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import CustomAlert from '../../Components/CustomAlert';
 
 const LoginScreen = () => {
@@ -196,9 +197,17 @@ const LoginScreen = () => {
     }
   };
 
-  const handleGuestLogin = async () => {
-    dispatch(setGuestMode(true));
-    navigation.navigate('guestLogin');
+  // const handleGuestLogin = async () => {
+  //   dispatch(setGuestMode(true));
+  //   navigation.navigate('guestLogin');
+
+  // const signInWithFacebook = () => {
+  //   console.log('Click FB');
+
+  // }
+
+  const handleGuestLogin = () => {
+    navigation.navigate('guestMode');
   };
 
   return (
@@ -229,7 +238,7 @@ const LoginScreen = () => {
             placeholderTextColor={Color.gray}
             style={[
               styles.input,
-              {borderColor: !email ? 'black' : emailError ? 'red' : 'green'},
+              { borderColor: !email ? 'black' : emailError ? 'red' : 'green' },
             ]}
           />
         </View>
@@ -250,8 +259,8 @@ const LoginScreen = () => {
                 borderColor: !password
                   ? 'black'
                   : passwordError
-                  ? 'red'
-                  : 'green',
+                    ? 'red'
+                    : 'green',
               },
             ]}
             secureTextEntry={!passwordVisible}
@@ -303,16 +312,16 @@ const LoginScreen = () => {
           onPress={handleLogin}
           style={[
             styles.signInButton,
-            {backgroundColor: isAgree ? Color.secondary : '#E0E0E0'},
+            { backgroundColor: isAgree ? Color.secondary : '#E0E0E0' },
           ]}>
           {loading ? (
             <ActivityIndicator size="small" color={Color.primary} />
           ) : (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text
                 style={[
                   styles.signInText,
-                  {color: isAgree ? '#FFFFFF' : '#9E9E9E'},
+                  { color: isAgree ? '#FFFFFF' : '#9E9E9E' },
                 ]}>
                 Sign in
               </Text>
@@ -320,7 +329,7 @@ const LoginScreen = () => {
                 name="arrowright"
                 color={isAgree ? '#FFFFFF' : '#9E9E9E'}
                 size={16}
-                style={{marginLeft: scale(8)}}
+                style={{ marginLeft: scale(8) }}
               />
             </View>
           )}
@@ -335,15 +344,15 @@ const LoginScreen = () => {
               marginTop: verticalScale(10),
             },
           ]}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={[styles.signInText, {color: '#FFFFFF'}]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={[styles.signInText, { color: '#FFFFFF' }]}>
               Guest mode
             </Text>
             <AntDesign
               name="arrowright"
               color={'#FFFFFF'}
               size={16}
-              style={{marginLeft: scale(8)}}
+              style={{ marginLeft: scale(8) }}
             />
           </View>
         </TouchableOpacity>
@@ -369,6 +378,12 @@ const LoginScreen = () => {
           />
           <Text style={styles.googleText}>Sign in with Google</Text>
         </TouchableOpacity>
+        {/* <TouchableOpacity
+          style={[styles.googleButton,{marginVertical:verticalScale(25)}]}
+          onPress={signInWithFacebook}>
+            <AntDesign name="facebook-square" color={'blue'} size={16} style={styles.googleIcon} />
+          <Text style={styles.googleText}>Sign in with facebook</Text>
+        </TouchableOpacity> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -493,7 +508,7 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: verticalScale(48),
+    marginBottom: verticalScale(10),
   },
   googleIcon: {
     width: scale(22),
@@ -508,3 +523,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+

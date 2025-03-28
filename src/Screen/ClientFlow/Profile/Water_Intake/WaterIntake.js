@@ -10,20 +10,21 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {BarChart} from 'react-native-gifted-charts';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { BarChart } from 'react-native-gifted-charts';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
+import CustomAlert from '../../../../Components/CustomAlert';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -31,9 +32,12 @@ const WaterIntake = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIntake, setSelectedIntake] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [waterIntake, setWaterIntake] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -107,7 +111,7 @@ const WaterIntake = () => {
         dates.push({
           fullDate: date,
           day: date.getDate(),
-          month: date.toLocaleString('default', {month: 'short'}),
+          month: date.toLocaleString('default', { month: 'short' }),
         });
       }
       return dates;
@@ -221,7 +225,7 @@ const WaterIntake = () => {
       if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
 
       return dateLabels.map(dateObj => {
-        if (!dateObj?.fullDate) return {value: 0, frontColor: '#2196F3'};
+        if (!dateObj?.fullDate) return { value: 0, frontColor: '#2196F3' };
 
         const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
         const dailyIntake = calculateDailyIntake(
@@ -284,8 +288,8 @@ const WaterIntake = () => {
   };
 
   const handleDelete = async () => {
-    setModalVisible(false);
-
+    // setModalVisible(false);
+setDeleteModal(false)
     try {
       setLoading(true);
       const payload = {
@@ -315,16 +319,16 @@ const WaterIntake = () => {
   useEffect(() => {
     setTimeout(() => {
       if (scrollRef.current) {
-        scrollRef.current.scrollToEnd({animated: true});
+        scrollRef.current.scrollToEnd({ animated: true });
       }
     }, 100);
   }, []);
 
   const selectedDateIntake = selectedDate
     ? calculateDailyIntake(
-        selectedDate,
-        waterIntake?.waterIntakeData?.waterIntakeRecords,
-      )
+      selectedDate,
+      waterIntake?.waterIntakeData?.waterIntakeRecords,
+    )
     : 0;
 
   const plusData = {
@@ -351,7 +355,7 @@ const WaterIntake = () => {
         titleName={'Water intake'}
         onPressBack={() => navigation.goBack()}
         onPress={() =>
-          navigation.navigate('waterIntakeLog', {plusData: plusData})
+          navigation.navigate('waterIntakeLog', { plusData: plusData })
         }
       />
 
@@ -374,7 +378,7 @@ const WaterIntake = () => {
                 style={styles.singleDateChart}
                 onPress={() => handleDate(date)}>
                 <BarChart
-                  data={[{value: formatChartData()[index]?.value || 0}]}
+                  data={[{ value: formatChartData()[index]?.value || 0 }]}
                   width={40}
                   height={150}
                   barWidth={20}
@@ -416,18 +420,18 @@ const WaterIntake = () => {
 
         {loading ? (
           <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <ActivityIndicator size="large" color={Color.primaryGreen} />
           </View>
         ) : selectedIntake && selectedIntake?.length > 0 ? (
           <View style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
-              renderItem={({item: record, index: recordIndex}) => (
+              renderItem={({ item: record, index: recordIndex }) => (
                 <View>
                   <FlatList
                     data={record?.waterIntakeAmount}
-                    renderItem={({item: intake, index: intakeIndex}) => (
+                    renderItem={({ item: intake, index: intakeIndex }) => (
                       <View style={styles.entryItem}>
                         <View style={styles.entryLeft}>
                           <Icon
@@ -478,8 +482,8 @@ const WaterIntake = () => {
             />
           </View>
         ) : (
-          <View style={{padding: verticalScale(16)}}>
-            <Text style={{textAlign: 'center', color: Color.gray}}>
+          <View style={{ padding: verticalScale(16) }}>
+            <Text style={{ textAlign: 'center', color: Color.gray }}>
               There are no records of water intake
             </Text>
           </View>
@@ -496,7 +500,10 @@ const WaterIntake = () => {
             <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
               <Text style={styles.modalText}>Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption} onPress={handleDelete}>
+            <TouchableOpacity style={[styles.modalOption]} onPress={() => {
+              setModalVisible(false)
+              setDeleteModal(true)
+            }}>
               <Text style={styles.modalText}>Delete</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -507,6 +514,16 @@ const WaterIntake = () => {
           </View>
         </View>
       </Modal>
+      <CustomAlert
+        visible={deleteModal}
+        message={'Are You Sure?'}
+        onChange={handleDelete}
+        onClose={()=> setDeleteModal(false)}
+        // singleButton={true}
+        doubleButton={true}
+      />
+
+
     </SafeAreaView>
   );
 };
@@ -606,15 +623,17 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#fff',
-    padding: scale(15),
+    // padding: scale(15),
     borderRadius: scale(10),
     width: scale(200),
-    height: scale(160),
-    alignItems: 'center',
+    // height: scale(160),
+    // alignItems: 'center',
     justifyContent: 'center',
   },
   modalOption: {
-    marginVertical: verticalScale(10),
+    paddingVertical: verticalScale(10),
+    // backgroundColor:"red",
+    width: '100%'
   },
   modalText: {
     fontSize: scale(15),

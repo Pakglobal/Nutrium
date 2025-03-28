@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -6,11 +6,10 @@ import {
   Text,
   View,
   SafeAreaView,
-  TouchableOpacity,
   Pressable,
   RefreshControl,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Header from '../../../Components/Header';
 import Color from '../../../assets/colors/Colors';
 import {
@@ -18,10 +17,10 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../../../Apis/ClientApis/RecommendationApi';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {ScrollView} from 'react-native-virtualized-view';
+import { ScrollView } from 'react-native-virtualized-view';
 
 const RecommendationScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
@@ -29,7 +28,7 @@ const RecommendationScreen = () => {
   const id = tokenId?.id;
   const bottomSheetRef = useRef(null);
 
-  const [recommendations, setRecommendetions] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [foodsAvoid, setFoodsAvoid] = useState([]);
   const [goals, setGoals] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -42,14 +41,14 @@ const RecommendationScreen = () => {
   const isGuest = useSelector(state => state.user?.guestMode);
 
   const FetchRecommendationData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await GetRecommendationApiData(token, id);
       if (
         response?.success === true ||
         response?.message === 'Data retrieved successfully'
       ) {
-        setRecommendetions(response?.data);
+        setRecommendations(response?.data);
         setLoading(false);
       }
     } catch (error) {
@@ -59,8 +58,8 @@ const RecommendationScreen = () => {
   };
 
   const FetchFoodAvoidData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await GetFoodAvoidApiData(token, id);
       if (
         response?.success === true ||
@@ -76,8 +75,8 @@ const RecommendationScreen = () => {
   };
 
   const FetchGoalsData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await GetGoalsApiData(token, id);
       if (
         response?.success === true ||
@@ -87,12 +86,12 @@ const RecommendationScreen = () => {
         setLoading(false);
       }
     } catch (error) {
-      console.error('Error fetching food avoid data', error);
+      console.error('Error fetching goals data', error);
       setLoading(false);
     }
   };
 
-  const renderEntryItem = ({item: entry, index}) => (
+  const renderEntryItem = ({ item: entry, index }) => (
     <View
       key={index}
       style={{
@@ -121,7 +120,7 @@ const RecommendationScreen = () => {
     </View>
   );
 
-  const renderMeasurementItem = ({item: measurement, index}) => (
+  const renderMeasurementItem = ({ item: measurement, index }) => (
     <View
       key={index}
       style={{
@@ -145,14 +144,14 @@ const RecommendationScreen = () => {
           showsVerticalScrollIndicator={false}
         />
       ) : (
-        <Text style={{fontSize: scale(14), color: Color.gray}}>
+        <Text style={{ fontSize: scale(14), color: Color.gray }}>
           No entries available
         </Text>
       )}
     </View>
   );
 
-  const renderGoalItem = ({item, index}) => (
+  const renderGoalItem = ({ item, index }) => (
     <View
       key={index}
       style={{
@@ -180,19 +179,21 @@ const RecommendationScreen = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    FetchFoodAvoidData();
-    FetchRecommendationData();
-    FetchGoalsData()
-      .then(() => {
-        setRefreshing(false);
-      })
-      .catch(() => {
-        setRefreshing(false);
-      });
+    Promise.all([
+      FetchFoodAvoidData(),
+      FetchRecommendationData(),
+      FetchGoalsData()
+    ])
+    .then(() => {
+      setRefreshing(false);
+    })
+    .catch(() => {
+      setRefreshing(false);
+    });
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.primary }}>
       <Header showIcon={true} headerText="Recommendations" />
       {isGuest ? (
         <View>
@@ -221,14 +222,14 @@ const RecommendationScreen = () => {
                   Avoid these foods in your diet to improve your health
                 </Text>
                 <View>
-                  {foodsAvoid && foodsAvoid?.length > 0 ? (
-                    foodsAvoid?.foodAvoids?.map(item => (
-                      <Text style={{color: Color.black}}>{item}</Text>
+                  {foodsAvoid && foodsAvoid?.foodAvoids?.length > 0 ? (
+                    foodsAvoid.foodAvoids.map((item, index) => (
+                      <Text key={index} style={{color: Color.black}}>{item}</Text>
                     ))
                   ) : (
                     <View style={{marginVertical: verticalScale(10)}}>
                       <Text style={{color: Color.gray}}>
-                        There are no records of food avoid
+                        There are no records of food to avoid
                       </Text>
                     </View>
                   )}
@@ -241,9 +242,9 @@ const RecommendationScreen = () => {
                   See more recommendations from your professional
                 </Text>
                 <View>
-                  {recommendations && recommendations?.length > 0 ? (
+                  {recommendations && recommendations?.recommendation ? (
                     <Text style={{color: Color.black}}>
-                      {recommendations?.recommendation}
+                      {recommendations.recommendation}
                     </Text>
                   ) : (
                     <View style={{marginVertical: verticalScale(10)}}>
@@ -267,9 +268,7 @@ const RecommendationScreen = () => {
                     <FlatList
                       showsVerticalScrollIndicator={false}
                       data={goals[0]?.goals}
-                      keyExtractor={(item, index) =>
-                        item?._id || index.toString()
-                      }
+                      keyExtractor={(item, index) => item?._id || index.toString()}
                       renderItem={renderGoalItem}
                       contentContainerStyle={{
                         paddingHorizontal: scale(10),
@@ -303,10 +302,10 @@ const RecommendationScreen = () => {
           <View style={styles.headerContainer}>
             <Text style={styles.headerText}>All goals</Text>
             <Text style={styles.headerText}>
-              Goals agreed with your proffesional
+              Goals agreed with your professional
             </Text>
           </View>
-          <View style={{marginHorizontal: scale(16), flex: 1}}>
+          <View style={{ marginHorizontal: scale(16), flex: 1 }}>
             {goals && goals?.length > 0 ? (
               <FlatList
                 data={goals[0]?.goals}
@@ -315,8 +314,8 @@ const RecommendationScreen = () => {
                 showsVerticalScrollIndicator={false}
               />
             ) : (
-              <View style={{marginVertical: verticalScale(10)}}>
-                <Text style={{color: Color.gray, textAlign: 'center'}}>
+              <View style={{ marginVertical: verticalScale(10) }}>
+                <Text style={{ color: Color.gray, textAlign: 'center' }}>
                   There are no records of goals
                 </Text>
               </View>

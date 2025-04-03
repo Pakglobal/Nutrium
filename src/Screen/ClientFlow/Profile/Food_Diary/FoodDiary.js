@@ -23,6 +23,7 @@ import BackHeader from '../../../../Components/BackHeader';
 import {FetchFoodDiary} from '../../../../Apis/ClientApis/FoodDiaryApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {addData} from '../../../../redux/client';
+import Header from '../../../../Components/Header';
 
 const FoodDiary = () => {
   const navigation = useNavigation();
@@ -106,7 +107,7 @@ const FoodDiary = () => {
             <View style={styles.cardContent}>
               <Ionicons
                 name="swap-horizontal"
-                color={Color.primary}
+                color={Color.white}
                 size={scale(16)}
               />
             </View>
@@ -142,11 +143,12 @@ const FoodDiary = () => {
 
   return (
     <View style={styles.container}>
-      <BackHeader
-        titleName={'Food diary'}
+      {/* <BackHeader
+        titleName={'}
         onPressBack={() => navigation.goBack()}
         onPress={() => navigation.navigate('addMeal')}
-      />
+      /> */}
+      <Header showIcon={false} backIcon={true} screenName='Food diary' iconStyle={{ left: scale(-80)}}  />
       <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
@@ -179,7 +181,7 @@ export default FoodDiary;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   loadingContainer: {
     flex: 1,
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: verticalScale(4),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     padding: scale(4),
     borderRadius: scale(5),
   },

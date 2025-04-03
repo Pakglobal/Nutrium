@@ -56,7 +56,7 @@ const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
           <TouchableOpacity
             style={{marginTop: scale(10)}}
             onPress={handleDrawerNavigation}>
-            <Ionicons name="menu" size={scale(24)} color={Color.primary} />
+            <Ionicons name="menu" size={scale(24)} color={Color.white} />
           </TouchableOpacity>
 
           <View style={styles.logoContainer}>
@@ -74,7 +74,7 @@ const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
                     {
                       borderBottomColor:
                         item?.label === selectedScreen
-                          ? Color.primary
+                          ? Color.white
                           : 'transparent',
                       borderBottomWidth: item?.label === selectedScreen ? 2 : 0,
                     },
@@ -108,7 +108,7 @@ export default React.memo(AdminHomeScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   headerContainer: {
     backgroundColor: Color.primaryGreen,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     alignSelf: 'center',
     borderRadius: scale(50),
     marginVertical: verticalScale(20),
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   text: {
-    color: Color.primary,
+    color: Color.white,
     height: scale(25),
     letterSpacing: 1,
     fontSize: scale(13),

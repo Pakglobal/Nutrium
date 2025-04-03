@@ -109,7 +109,7 @@ const MainProfile = ({ route }) => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Color.primary }}>
+    <View style={{ flex: 1, backgroundColor: Color.white }}>
       <View
         style={{ backgroundColor: Color.headerBG, height: verticalScale(150) }}>
         <View style={{ marginHorizontal: scale(16) }}>
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     width: verticalScale(35),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     borderRadius: scale(55),
     marginTop: verticalScale(50),
     marginStart: scale(-35),
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   },
   whiteContainer: {
     width: '65%',
-    backgroundColor: Color.primary,
+    backgroundColor: 'white',
     alignItems: 'center',
     borderRadius: scale(10),
     paddingVertical: verticalScale(15),

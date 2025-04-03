@@ -118,7 +118,7 @@ const ClientProfileScreen = ({route}) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons
               name="arrow-back"
-              color={Color.primary}
+              color={Color.white}
               size={scaleSize(22)}
             />
           </TouchableOpacity>
@@ -143,12 +143,12 @@ const ClientProfileScreen = ({route}) => {
             />
           )}
           <View style={{marginLeft: scaleSize(5)}}>
-            <Text style={{color: Color.primary, fontSize: scaleSize(14)}}>
+            <Text style={{color: Color.white, fontSize: scaleSize(14)}}>
               {userName}
             </Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Entypo name="location" color={Color.primary} size={16} />
-              <Text style={{marginLeft: scaleSize(5), color: Color.primary}}>
+              <Entypo name="location" color={Color.white} size={16} />
+              <Text style={{marginLeft: scaleSize(5), color: Color.white}}>
                 {userWorkspace}
               </Text>
             </View>
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: scaleSize(16),
     fontWeight: '600',
-    color: Color.primary,
+    color: Color.white,
     marginLeft: scaleSize(10),
   },
   optionText: {
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   optionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     padding: scaleSize(8),
   },
   bothContainer: {

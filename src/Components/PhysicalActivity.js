@@ -1,68 +1,93 @@
 import {
   ImageBackground,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import React from 'react';
-import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../assets/colors/Colors';
-import {useStepTracking} from './StepTrackingService';
-import Dumble from '../assets/Images/dumble.svg';
-import Fire from '../assets/Images/fire.svg';
-import Shoes from '../assets/Images/shoes.svg';
+import { scale, verticalScale } from 'react-native-size-matters';
+import Color, { Font } from '../assets/colors/Colors';
+import { useStepTracking } from './StepTrackingService';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+import { Shadow } from 'react-native-shadow-2';
 
-const PhysicalActivity = () => {
-  const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
+const PhysicalActivity = ({ style }) => {
+  const navigation = useNavigation()
+  const { steps, calories, workouts, currentDay, isTracking } = useStepTracking();
+
+
+  const formatNumber = (num) => {
+    if (num >= 10000000) {
+      return (num / 10000000).toFixed(1).replace(/\.0$/, '') + 'Cr';
+    } else if (num >= 100000) {
+      return (num / 100000).toFixed(1).replace(/\.0$/, '') + 'L';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    } else {
+      return num.toString();
+    }
+  };
+
+
+
 
   return (
-    <View style={{marginTop: verticalScale(10), marginHorizontal: scale(16)}}>
+    <View style={[styles.workoutContainer, style]}>
       <View style={styles.cardContainer}>
-        <Dumble width="100%" height="100%" style={styles.bgImage} />
+
         <View
           style={[
             styles.cardOverlay,
-            {backgroundColor: 'rgba(137, 70, 146, 0.3)'},
+            // { backgroundColor: 'rgba(137, 70, 146, 0.3)' },
           ]}>
-          <View style={{marginLeft: scale(10), marginTop: verticalScale(58)}}>
-            <Text style={styles.description}>Workouts this week</Text>
+          <View style={{}}>
+            <Text style={styles.description} >Your physical activity</Text>
+            <Text style={[styles.description, { fontSize: scale(13), marginTop: scale(7) ,color:'#344C5C'}]}>Workouts this week</Text>
             <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: verticalScale(10),
               }}>
-              <Text style={styles.zero}>
-                {workouts.reduce((sum, count) => sum + count, 0)}
-              </Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{marginRight: scale(5)}}>
+              <View
+                style={{ flexDirection: 'row', justifyContent: "space-between", width: "100%" }}>
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(
                   (day, index) => (
+
                     <View
                       key={day}
-                      style={[
-                        styles.dayContainer,
-                        currentDay === index && {
-                          backgroundColor: 'rgba(137, 70, 146, 0.3)',
-                        },
-                      ]}>
+                      style={[]}>
                       <View
                         style={[
                           styles.day,
-                          workouts[index] > 0 && {
-                            backgroundColor: 'rgba(137, 70, 146,1)',
-                          },
                         ]}
                       />
+                      {
+                        currentDay === index && (
+                          <Text
+                            style={{
+                              position: 'absolute',
+                              alignSelf: "center",
+                              top: scale(16),
+                              color: Color.white,
+                              minWidth: '50%',
+                              maxWidth: '90%',
+                              textAlign: "center",
+                              fontSize: scale(11),
+                              fontWeight: '500'
+                            }}
+                            numberOfLines={1}
+                            adjustsFontSizeToFit={true}
+                          >
+                            {formatNumber(1500)}
+                          </Text>
+                        )
+                      }
                       <Text style={styles.dayText}>{day}</Text>
                     </View>
                   ),
                 )}
-              </ScrollView>
+              </View>
             </View>
           </View>
         </View>
@@ -70,43 +95,65 @@ const PhysicalActivity = () => {
 
       <View
         style={[
-          styles.cardContainer,
+          // styles.cardContainer,
           {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
             marginVertical: verticalScale(10),
-            height: verticalScale(80),
+            // height: verticalScale(80),
+            gap: scale(25)
           },
         ]}>
         <View style={styles.imageWrapper}>
-          <Fire width="100%" height="100%" style={styles.bgImage} />
           <View
             style={[
-              styles.cardOverlay,
-              {backgroundColor: 'rgba(212, 151, 9, 0.6)'},
             ]}>
-            <View style={{marginTop: verticalScale(20), marginLeft: scale(10)}}>
-              <Text style={styles.description}>calories</Text>
-              <Text style={styles.zero}>{calories}</Text>
+            <View style={{ paddingVertical: verticalScale(10) }}>
+              <Text style={[styles.description, { textAlign: "center", padding: scale(0) }]}>calories</Text>
+              <Text style={[styles.zero, { textAlign: 'center' }]} numberOfLines={1} >{calories}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.imageWrapper}>
-          <Shoes width="100%" height="100%" style={styles.bgImage} />
           <View
             style={[
-              styles.cardOverlay,
-              {backgroundColor: 'rgba(47, 180, 247, 0.6)'},
             ]}>
-            <View style={{marginLeft: scale(10), marginTop: verticalScale(20)}}>
-              <Text style={styles.description}>steps</Text>
-              <Text style={styles.zero}>{steps}</Text>
+            <View style={{ paddingVertical: verticalScale(10) }}>
+              <Text style={[styles.description, { textAlign: "center", padding: scale(0) }]}>steps</Text>
+              <Text style={[styles.zero, { textAlign: 'center' }]}>{steps}</Text>
             </View>
           </View>
         </View>
       </View>
+
+      <View style={{ marginTop: scale(10) }} >
+
+        <Shadow distance={4} startColor={Color?.grayshadow} style={{ width: "100%" }} >
+          <View style={{
+            borderRadius: scale(5),
+            // padding: scale(10),
+            backgroundColor: Color?.white,
+          }}>
+            <Pressable
+              style={styles.logButton}
+              onPress={() => navigation.navigate('physicalActivity')}>
+              <View style={{ flexDirection: 'row', padding: scale(7), justifyContent: 'space-between' }} >
+                <Text style={styles.waterText}>See all physical activity stats</Text>
+                <AntDesign
+                  name="right"
+                  size={verticalScale(13)}
+                  color={Color.primaryColor}
+                  style={{ alignSelf: "center" }}
+                />
+              </View>
+            </Pressable>
+          </View>
+        </Shadow>
+      </View>
+
+
     </View>
   );
 };
@@ -120,6 +167,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: verticalScale(15),
   },
+  workoutContainer: {
+    padding: scale(10),
+  },
   title: {
     fontSize: verticalScale(14),
     fontWeight: '500',
@@ -127,20 +177,19 @@ const styles = StyleSheet.create({
     marginHorizontal: scale(16),
   },
   cardContainer: {
-    borderRadius: scale(20),
-    height: verticalScale(150),
+    height: verticalScale(110),
   },
   cardOverlay: {
-    height: '100%',
     width: '100%',
-    borderRadius: scale(20),
+    borderRadius: scale(10),
     position: 'absolute',
     justifyContent: 'center',
   },
   description: {
-    color: Color.primary,
-    fontSize: verticalScale(13),
+    color: Color.textColor,
+    fontSize: verticalScale(15),
     fontWeight: '500',
+    fontFamily: Font?.Poppins
   },
   txtIcon: {
     flexDirection: 'row',
@@ -150,41 +199,54 @@ const styles = StyleSheet.create({
   txt: {
     fontSize: verticalScale(12),
     fontWeight: '600',
-    color: Color.primary,
+    color: Color.white,
     marginTop: scale(8),
   },
   bgImage: {
     height: '100%',
     width: '100%',
-    borderRadius: scale(20),
   },
   dayContainer: {
-    borderRadius: scale(8),
+    borderRadius: scale(10),
   },
   day: {
     borderRadius: scale(20),
-    backgroundColor: '#E0E0E0',
-    marginHorizontal: scale(7),
+    backgroundColor: Color?.primaryColor,
     marginVertical: verticalScale(8),
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: scale(15),
+    shadowColor: Color?.black,
+    elevation: 5,
+    
   },
   dayText: {
     fontSize: scale(11),
-    color: Color.black,
-    fontWeight: '300',
+    color: Color.primaryColor,
+    fontWeight: '500',
     textAlign: 'center',
+    fontFamily:Font?.Sofia,
   },
   imageWrapper: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: scale(3),
+    borderWidth: scale(1),
+    borderColor: Color?.primaryColor,
+    borderRadius: scale(5)
   },
   zero: {
-    color: Color.primary,
-    fontSize: scale(32),
-    fontWeight: '600',
-    marginRight: scale(10),
+    color: Color.textColor,
+    fontSize: scale(25),
+    fontWeight: '500',
+    paddingHorizontal: scale(10),
+    fontFamily:Font?.Sofia
+  },
+  logButton: {
+  },
+  waterText: {
+    fontSize: verticalScale(12),
+    color: Color.primaryColor,
+    fontWeight: '500',
+    fontFamily:Font?.Poppins
   },
 });

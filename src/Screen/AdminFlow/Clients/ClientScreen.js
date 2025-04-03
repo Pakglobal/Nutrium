@@ -16,14 +16,13 @@ import Color from '../../../assets/colors/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   GetAllClientData,
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
 import {clientInfoData} from '../../../redux/admin';
-import {connectSocket} from '../../../Components/SocketService';
 
 const ClientScreen = () => {
   const [search, setSearch] = useState('');
@@ -40,15 +39,6 @@ const ClientScreen = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchSocket = async () => {
-        await connectSocket();
-      };
-      fetchSocket();
-    }, []),
-  );
 
   useEffect(() => {
     if (!search.trim()) {
@@ -69,7 +59,7 @@ const ClientScreen = () => {
       const response = await GetAllClientData(token);
       setClientData(response || []);
       setFilteredClients(response || []);
-      dispatch(clientInfoData(response));
+      dispatch(clientInfoData(response || []));
       setLoading(false);
     } catch (error) {
       console.error('Error fetching clients:', error);
@@ -184,7 +174,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     width: '100%',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     borderRadius: 5,
   },
   messageCardContainer: {

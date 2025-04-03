@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     width: '100%',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     borderRadius: 5,
   },
   messageCardContainer: {

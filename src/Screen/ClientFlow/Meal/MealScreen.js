@@ -24,10 +24,10 @@ const MealScreen = () => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
-  const [openItemId, setOpenItemId] = useState(null); 
+  const [openItemId, setOpenItemId] = useState(null);
   const bottomSheetRef = useRef(null);
-  
-const isGuest = useSelector(state => state.user?.guestMode);
+
+  const isGuest = useSelector(state => state.user?.guestMode);
 
   const tokenId = useSelector(state => state?.user?.token);
   const id = tokenId?.id;
@@ -283,7 +283,7 @@ const isGuest = useSelector(state => state.user?.guestMode);
           <View style={styles.detailsContainer}>
             {/* Show empty state if no meal items */}
             {!hasMealItems ? (
-              <Text style={{ paddingLeft: 10 }}>No items scheduled for this meal</Text>
+              <Text style={{ paddingLeft: 10, color: Color?.black }}>No items scheduled for this meal</Text>
             ) : (
               <>
                 {/* Render meal items from all possible properties */}
@@ -337,8 +337,8 @@ const isGuest = useSelector(state => state.user?.guestMode);
 
 
   const renderEmptyState = () => (
-    <View style={styles.contentContainer}>
-      <View style={{alignItems:'center'}}>
+    <View style={[styles.contentContainer, { justifyContent: 'center' }]}>
+      <View style={{ alignItems: 'center' }}>
         <Cook height={scale(120)} width={scale(120)} />
       </View>
       <View style={styles.textContainer}>
@@ -357,7 +357,7 @@ const isGuest = useSelector(state => state.user?.guestMode);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header showIcon={true} headerText="Meal plan" />
+      <Header showIcon={true}  screenName="Meal plan" />
 
       {mealPlan?.length > 0 && (
         <View style={styles.daysScrollContainer}>
@@ -487,7 +487,7 @@ const isGuest = useSelector(state => state.user?.guestMode);
 
             <View style={styles.recipeContainer}>
               <View>
-                <Text>Keto 90....</Text>
+                <Text style={{ color: Color?.black }} >Keto 90....</Text>
                 <View style={styles.recipeRow}>
                   <AntDesign name="tool" color={Color.black} size={scale(14)} />
                   <Text>1</Text>
@@ -508,7 +508,7 @@ export default MealScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   contentContainer: {
     marginHorizontal: scale(16),
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DDD',
     borderRadius: scale(10),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     // width:'100%'
   },
   cardHeader: {
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     marginTop: verticalScale(5),
     padding: scale(5),
     borderRadius: scale(10),
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     borderRadius: scale(10),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     paddingVertical: scale(20),
   },
   detailItem: {
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerText: {
-    color: Color.primary,
+    color: Color.white,
     marginHorizontal: scale(16),
     fontWeight: '500',
   },
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
   },
   listItemBoxRight: {
     padding: scale(10),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     width: '49%',
   },
   listItemText: {
@@ -660,9 +660,10 @@ const styles = StyleSheet.create({
   recipesText: {
     textAlign: 'center',
     fontSize: scale(12),
+    color: Color?.black
   },
   recipeContainer: {
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

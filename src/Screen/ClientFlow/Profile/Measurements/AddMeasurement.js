@@ -150,7 +150,7 @@ export default AddMeasurement;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   content: {
     marginHorizontal: scale(16),

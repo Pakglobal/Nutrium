@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
   received: {
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     alignSelf: 'flex-start',
     borderBottomLeftRadius: 0,
   },
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
     width: scaleSize(35),
     height: scaleSize(35),
     borderRadius: scaleSize(20),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     marginHorizontal: scaleSize(7),
   },
 });

@@ -22,7 +22,7 @@ const TypesCard = ({item, selectedOption, onSelect}) => {
           backgroundColor:
             selectedOption === item.title
               ? 'rgba(232, 150, 106,0.1)'
-              : Color.primary,
+              : Color.white,
         },
       ]}>
       <View

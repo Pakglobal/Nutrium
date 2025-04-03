@@ -327,7 +327,7 @@ const ProfileMenuScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+        <Header showIcon={true} logo={true} />
       {isGuest === true ? (
         <View>
           <View style={{marginHorizontal: scale(16)}}>
@@ -358,7 +358,7 @@ const ProfileMenuScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <ActivityIndicator size="large" color={Color.primaryGreen} />
+              <ActivityIndicator size="large" color={Color.primaryColor} />
             </View>
           ) : (
             <View style={styles.scrollView}>
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     width: scale(35),
     height: scale(35),
     borderRadius: scale(20),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   profileName: {
     marginLeft: scale(12),

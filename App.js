@@ -17,6 +17,7 @@ const AppContent = () => {
         console.error('Firebase is not initialized. Retrying...');
         return;
       }
+      
       const fcmToken = await messaging().getToken();
       console.log('FCM Token:', fcmToken);
 

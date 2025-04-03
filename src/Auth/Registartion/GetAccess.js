@@ -17,7 +17,7 @@ const GetAccess = () => {
     endText: 'If you already have credentials, Sign in to start using Nutrium',
   };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <SighnUpHeader onPressBack={() => navigation.goBack()} />
       <View style={{marginHorizontal: scale(20)}}>
         <Text style={styles.titleFont}>{accessTextInfo?.title}</Text>
@@ -30,8 +30,8 @@ const GetAccess = () => {
           onPress={() => navigation.navigate('loginScreen')}
           // disabled={!selectedOption ? true : false}
           backgroundColor={Color.secondary}
-          txtColor={Color.primary}
-          iconColor={Color.primary}
+          txtColor={Color.white}
+          iconColor={Color.white}
           marginTop={verticalScale(20)}
           text={'Go to Sign in'}
         />

@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   alertBox: {
     width: '60%',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     borderRadius: scale(10),
   },
   message: {

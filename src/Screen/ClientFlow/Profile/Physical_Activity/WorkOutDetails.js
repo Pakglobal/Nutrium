@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,8 +8,8 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
@@ -18,10 +18,11 @@ import {
   SetQuickAccess,
   UpdatePhysicalActivity,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Toast from 'react-native-simple-toast';
+import Header from '../../../../Components/Header';
 
-const WorkOutDetails = ({route}) => {
+const WorkOutDetails = ({ route }) => {
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
@@ -90,7 +91,7 @@ const WorkOutDetails = ({route}) => {
 
       if (
         response.message ===
-          'Activity added successfully and updated in quick access' ||
+        'Activity added successfully and updated in quick access' ||
         response?.success === true
       ) {
         navigation.navigate('physicalActivity');
@@ -142,16 +143,28 @@ const WorkOutDetails = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <BackHeader
+      {/* <BackHeader
         titleName={'Workout details'}
         backText={'Physical activity'}
         onPressBack={() => navigation.navigate('physicalActivity')}
         onPress={handleSave}
         onSave={true}
         loading={loading}
-      />
+      /> */}
+
+
+      <Header
+        showIcon={'save'}
+        backIcon={true}
+        screenName='Physical activity'
+        iconStyle={{ left: scale(-65) }}
+        onSave={handleSave}
+        onPress={() =>
+          navigation.navigate('logPhysicalActivity', { plusData: plusData })
+        } />
 
       <View style={styles.content}>
+        <Text style={styles.topTitle} >Workout Details</Text>
         <Text style={styles.label}>Physical activity</Text>
         <View style={styles.inputContainer}>
           <TextInput
@@ -220,7 +233,7 @@ const WorkOutDetails = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   content: {
     marginHorizontal: scale(16),
@@ -228,10 +241,19 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
+    borderWidth: scale(0.5),
+    borderColor: Color?.primaryColor,
     paddingHorizontal: scale(10),
-    borderRadius: scale(20),
+    borderRadius: scale(6),
+    elevation: 7,
+    shadowColor: Color?.primaryColor,
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    backgroundColor: Color?.white
   },
   unit: {
     marginLeft: 5,
@@ -244,15 +266,29 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: scale(14),
-    color: Color.gray,
+    color: '#646D73',
+    fontWeight: '500',
     marginTop: verticalScale(15),
     marginBottom: verticalScale(5),
   },
   pickerButton: {
-    borderWidth: 1,
-    borderColor: '#ccc',
     padding: scale(10),
-    borderRadius: scale(20),
+
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    borderWidth: scale(0.5),
+    borderColor: Color?.primaryColor,
+    paddingHorizontal: scale(10),
+    borderRadius: scale(6),
+    elevation: 7,
+    shadowColor: Color?.primaryColor,
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    backgroundColor: Color?.white
   },
   dateText: {
     color: Color.black,
@@ -262,6 +298,12 @@ const styles = StyleSheet.create({
     fontSize: scale(12),
     marginTop: verticalScale(5),
     marginLeft: scale(5),
+  },
+  topTitle: {
+    color: Color?.textColor,
+    marginTop: scale(10),
+    fontSize: scale(17),
+    fontWeight: '500'
   },
 });
 

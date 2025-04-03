@@ -20,7 +20,6 @@ import {
   GetPhysicalActivities,
   GetQuickAccess,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import Header from '../../../../Components/Header';
 
 const LogPhysicalActivity = ({route}) => {
   const token = route?.params?.plusData?.token;
@@ -101,24 +100,15 @@ const LogPhysicalActivity = ({route}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
-      {/* <BackHeader
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
+      <BackHeader
         titleName={'Log physical activity'}
         backText={'Physical activity'}
         onPressBack={() => navigation.goBack()}
         showRightButton={false}
-      /> */}
-      <Header
-        showIcon={{}}
-        backIcon={true}
-        screenName='Physical activity'
-        iconStyle={{ left: scale(-170) }}
-        onPress={() =>
-          navigation.navigate('logPhysicalActivity', {plusData: plusData})
-        } />
+      />
 
       <View style={{marginHorizontal: scale(16)}}>
-        <Text style={styles.topTitle} >Log Physical Activity</Text>
         <View style={styles.searchContainer}>
           <TextInput
             placeholder="Search for an activity..."
@@ -129,9 +119,9 @@ const LogPhysicalActivity = ({route}) => {
           />
           <Pressable style={styles.clearButton} onPress={clearSearch}>
             <AntDesign
-              name="close"
+              name="closecircle"
               size={verticalScale(22)}
-              color={Color.primaryColor}
+              color={Color.primaryGreen}
             />
           </Pressable>
         </View>
@@ -144,7 +134,7 @@ const LogPhysicalActivity = ({route}) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
         </View>
       ) : filteredData?.length > 0 ? (
         <FlatList
@@ -203,70 +193,49 @@ const styles = StyleSheet.create({
     marginHorizontal: scale(16),
   },
   searchContainer: {
-    // paddingVertical: verticalScale(2),
+    paddingVertical: verticalScale(2),
     width: '100%',
-    borderRadius: scale(5),
-    backgroundColor: Color.white,
-    marginTop: verticalScale(15),
+    borderRadius: scale(20),
+    backgroundColor: Color.headerBG,
+    marginTop: verticalScale(20),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 7,
-    shadowColor: Color?.primaryColor,
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    shadowOffset: {
-      width: 5,
-      height: 5,
-    },
-marginBottom:scale(10)
-  },
-  topTitle:{
-    color:Color?.textColor,
-    marginTop:scale(10),
-    fontSize:scale(17),
-    fontWeight:'500'
   },
   inputView: {
-    // marginStart: scale(10),
+    marginStart: scale(10),
     fontSize: scale(13),
     fontWeight: '600',
     color: Color.txt,
     width: '85%',
-    marginHorizontal:scale(8)
-
   },
   clearButton: {
     marginEnd: scale(10),
-    // padding: scale(5),
+    padding: scale(5),
   },
   title: {
     marginTop: verticalScale(20),
-    marginBottom: verticalScale(10),
-    fontSize: scale(16),
-    color: Color.textColor,
-    fontWeight:'500'
+    fontSize: scale(14),
+    color: Color.gray,
   },
   name: {
-    fontSize: scale(14),
-    fontWeight:'500',
+    fontSize: scale(13),
     paddingVertical: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
-    color: '#675A5A',
+    color: Color.black,
   },
   activity: {
-    fontSize: scale(14),
-    fontWeight:'500',
-    color: '#675A5A',
+    fontSize: scale(13),
+    color: Color.black,
     paddingTop: verticalScale(10),
   },
   time: {
-    fontSize: scale(12),
+    fontSize: scale(13),
     paddingBottom: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
-    color: '#999595',
+    color: Color.gray,
   },
   emptyContainer: {
     padding: scale(20),

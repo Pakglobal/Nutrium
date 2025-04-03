@@ -112,11 +112,11 @@ const AppointmentScreen = ({selected, setSelected}) => {
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor:
-                item?.id === selected ? Color.primaryGreen : Color.white,
+                item?.id === selected ? Color.primaryGreen : Color.primary,
             }}>
             <Text
               style={{
-                color: item?.id === selected ? Color.white : Color.black,
+                color: item?.id === selected ? Color.primary : Color.black,
                 fontSize: scale(14),
               }}>
               {item?.label}

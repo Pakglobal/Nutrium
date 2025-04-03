@@ -53,7 +53,7 @@ const FoodSearch = () => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <View style={{flex: 1, backgroundColor: Color.primary}}>
       <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName="Food search"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import BackHeader from '../../../../Components/BackHeader';
+import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
   SetWaterIntakeDetails,
@@ -19,11 +20,11 @@ import {
 import Color from '../../../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
-import Header from '../../../../Components/Header';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useDispatch } from 'react-redux';
+import { waterValue } from '../../../../redux/client';
 
-const WaterIntakeLog = ({ route }) => {
+const WaterIntakeLog = ({route}) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
@@ -60,6 +61,9 @@ const WaterIntakeLog = ({ route }) => {
   const setAmount = valuee => {
     setNum(prevNum => Number(prevNum) + Number(valuee));
   };
+
+  const dispatch = useDispatch();
+  dispatch(waterValue(num))  
 
   const parseTimeStringToDate = timeString => {
     try {
@@ -150,8 +154,8 @@ const WaterIntakeLog = ({ route }) => {
 
   const handleAddWaterIntake = async () => {
     if (!validateInput()) return;
-    setLoading(true);
     try {
+      setLoading(true);
       const payload = {
         clientId: clientId,
         amount: num,
@@ -160,10 +164,6 @@ const WaterIntakeLog = ({ route }) => {
         date: date,
       };
       const response = await SetWaterIntakeDetails(payload);
-
-      // if(response) {
-      //   navigation.goBack();
-      // }
       if (
         response?.message === 'Water intake recorded successfully.' ||
         response?.success === true
@@ -187,14 +187,13 @@ const WaterIntakeLog = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        showIcon={'save'}
-        backIcon={true}
-        screenName='Water intake log'
-        iconStyle={{ left: scale(-65) }}
-        onSave={() => {
-          handleSave()
-        }} />
+      <BackHeader
+        onPressBack={() => navigation.goBack()}
+        titleName="Water intake log"
+        onSave={true}
+        onPress={() => handleSave()}
+        loading={loading}
+      />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much water did you drink?</Text>
@@ -224,25 +223,13 @@ const WaterIntakeLog = ({ route }) => {
             style={styles.waterCardView}
             onPress={() => setAmount(200)}>
             <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end', }}>
-              {/* <AntDesign
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
                 name="pluscircleo"
                 color="#83bcff"
                 size={verticalScale(15)}
-                style={{ marginEnd: scale(10) }}
+                style={{marginEnd: scale(10)}}
               />
-               */}
-              <View style={styles.plusIcon}>
-                <Feather
-                  name="plus"
-                  color={Color?.primaryColor}
-                  style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
-                  }}
-                  size={verticalScale(15)}
-                />
-              </View>
               <Text style={styles.waterTxt}>{'200mL'}</Text>
             </View>
           </TouchableOpacity>
@@ -251,18 +238,13 @@ const WaterIntakeLog = ({ route }) => {
             style={styles.waterCardView}
             onPress={() => setAmount(300)}>
             <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-              <View style={[styles.plusIcon, { right: scale(-0.5) }]}>
-                <Feather
-                  name="plus"
-                  color={Color?.primaryColor}
-                  style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
-                  }}
-                  size={verticalScale(15)}
-                />
-              </View>
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
               <Text style={styles.waterTxt}>{'300mL'}</Text>
             </View>
           </TouchableOpacity>
@@ -271,32 +253,25 @@ const WaterIntakeLog = ({ route }) => {
             style={styles.waterCardView}
             onPress={() => setAmount(500)}>
             <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-              <View style={styles.plusIcon}>
-                <Feather
-                  name="plus"
-                  color={Color?.primaryColor}
-                  style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
-                  }}
-                  size={verticalScale(15)}
-                />
-              </View>
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <AntDesign
+                name="pluscircleo"
+                color="#83bcff"
+                size={verticalScale(15)}
+                style={{marginEnd: scale(10)}}
+              />
               <Text style={styles.waterTxt}>{'500mL'}</Text>
             </View>
           </TouchableOpacity>
         </View>
 
         <Text style={styles.label}>Date</Text>
-        <View style={styles.pickerButton} >
-          <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => setDateOpen(true)}>
-            <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.pickerButton}
+          onPress={() => setDateOpen(true)}>
+          <Text style={{color: Color.black}}>{date.toLocaleDateString()}</Text>
+        </TouchableOpacity>
+
         <DatePicker
           modal
           mode="date"
@@ -312,8 +287,10 @@ const WaterIntakeLog = ({ route }) => {
         />
 
         <Text style={styles.label}>Hour</Text>
-        <View style={[styles.pickerButton, { marginBottom: scale(15) }]} >
-          <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>
+        <TouchableOpacity
+          style={styles.pickerButton}
+          onPress={() => setTimeOpen(true)}>
+          <Text style={{color: Color.black}}>
             {time
               ?.toLocaleTimeString('en-US', {
                 hour: 'numeric',
@@ -323,12 +300,8 @@ const WaterIntakeLog = ({ route }) => {
               ?.replace(/\s+/g, ' ')
               ?.trim()}
           </Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => setTimeOpen(true)}>
-            <MaterialCommunityIcons name='clock-time-four-outline' color={Color?.primaryColor} size={20} />
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
+
         <DatePicker
           modal
           mode="time"
@@ -352,16 +325,16 @@ export default WaterIntakeLog;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color?.white,
+    backgroundColor: '#F8FBFF',
   },
   scrollView: {
-    paddingHorizontal: scale(15),
+    paddingHorizontal: scale(16),
   },
   label: {
-    fontSize: scale(17),
-    color: Color?.textColor,
+    fontSize: scale(14),
+    color: 'gray',
     marginTop: verticalScale(20),
-    fontWeight: "500",
+    marginBottom: verticalScale(5),
   },
   inputContainer: {
     flexDirection: 'row',
@@ -389,26 +362,12 @@ const styles = StyleSheet.create({
     marginVertical: scale(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: scale(5)
   },
   pickerButton: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: scale(10),
-    borderRadius: scale(8),
-    flexDirection: "row",
-    justifyContent: "space-between",
-    shadowColor: Color?.black,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 8,
-    backgroundColor: Color?.white,
-    width: "97%",
-    alignSelf: 'center',
+    borderRadius: scale(20),
   },
   errorText: {
     color: 'red',
@@ -417,26 +376,22 @@ const styles = StyleSheet.create({
     marginLeft: scale(5),
   },
   waterCardView: {
-    // marginHorizontal: scale(5),
-    borderRadius: scale(8),
-    // height: scale(65),
-    paddingTop: scale(10),
-    paddingBottom: scale(5),
+    marginHorizontal: scale(5),
+    borderRadius: 10,
+    height: verticalScale(65),
     width: '30%',
-    backgroundColor: Color?.white,
+    backgroundColor: '#f3f6fe',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 8,
+    shadowRadius: 2,
+    elevation: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingVertical:scale(10),
-
   },
   waterImg: {
     height: verticalScale(40),
@@ -446,19 +401,8 @@ const styles = StyleSheet.create({
   },
   waterTxt: {
     color: Color.gray,
-    fontWeight: '400',
+    fontWeight: '600',
     marginTop: verticalScale(20),
     marginEnd: scale(5),
-    fontSize: scale(11)
   },
-  plusIcon: {
-    backgroundColor: '#68A16C4D',
-    // position: "absolute",
-    top: scale(-10),
-    height: scale(18),
-    width: scale(18),
-    borderTopRightRadius: scale(7),
-    borderBottomLeftRadius: scale(5),
-    justifyContent: "center",
-  }
 });

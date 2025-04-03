@@ -22,7 +22,7 @@ const HelpForRegistration = () => {
     share2: 'Share Nutrium with your practitioner',
   };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <SighnUpHeader onPressBack={() => navigation.goBack()} />
       <View style={{marginHorizontal: scale(20)}}>
         <Text style={styles.titleFont}>{textInfoData?.title}</Text>

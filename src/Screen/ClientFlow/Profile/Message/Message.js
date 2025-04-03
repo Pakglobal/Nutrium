@@ -12,6 +12,7 @@ const Message = ({route}) => {
   const otherUserId = route?.params?.data?._id;
   const userName = route?.params?.data?.fullName;
   const userImage = route?.params?.data?.image;
+  const userGender = route?.params?.data?.gender;
 
   return (
     <MessageComponent
@@ -19,6 +20,7 @@ const Message = ({route}) => {
       otherUserId={otherUserId}
       userName={userName}
       image={userImage}
+      gender={userGender}
       showHeader={true}
       onBackPress={() => navigation.goBack()}
       containerStyle={{backgroundColor: '#f9f9f9'}}

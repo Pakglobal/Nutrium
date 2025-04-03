@@ -274,7 +274,7 @@ const InformationScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={closeDropdown}>
-      <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
         <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
@@ -405,7 +405,7 @@ const InformationScreen = () => {
                 !isFormValid && styles.disabledButton,
               ]}>
               {loading ? (
-                <ActivityIndicator size="small" color={Color.white} />
+                <ActivityIndicator size="small" color={Color.primary} />
               ) : (
                 <View style={styles.buttonContent}>
                   <Text
@@ -417,7 +417,7 @@ const InformationScreen = () => {
                   </Text>
                   <AntDesign
                     name="arrowright"
-                    color={isFormValid ? Color.white : Color.black}
+                    color={isFormValid ? Color.primary : Color.black}
                     size={20}
                   />
                 </View>
@@ -433,7 +433,7 @@ const InformationScreen = () => {
 const styles = StyleSheet.create({
   placeholderStyle: {
     borderColor: '#E0E0E0',
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   placeholderText: {
     color: Color.gray,
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   scrollView: {
     flex: 1,
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingBottom: verticalScale(30),
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   dropdownContainer: {
     marginBottom: verticalScale(5),
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: scale(10),
     borderBottomRightRadius: scale(10),
     maxHeight: verticalScale(200),
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     marginBottom: verticalScale(15),
     elevation: 2,
     shadowColor: '#000',
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   continueButtonText: {
-    color: Color.white,
+    color: Color.primary,
     fontSize: scale(16),
     fontWeight: 'bold',
     marginRight: scale(10),

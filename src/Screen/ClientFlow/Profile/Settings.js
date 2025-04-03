@@ -471,7 +471,7 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   sectionTitle: {
     fontSize: scale(15),
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(8),
   },
   settingRow: {
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     padding: scale(8),
     borderRadius: scale(8),
     marginBottom: verticalScale(10),
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
   modalView: {
     width: '85%',
     paddingVertical: verticalScale(15),
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     borderRadius: scale(10),
   },
   modalTxt: {

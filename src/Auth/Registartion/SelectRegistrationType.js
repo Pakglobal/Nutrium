@@ -67,7 +67,7 @@ const SelectRegistrationType = () => {
     }
   };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <SighnUpHeader onPressBack={() => navigation.goBack()} />
       <ScrollView
         style={{marginHorizontal: 15}}
@@ -93,8 +93,8 @@ const SelectRegistrationType = () => {
           backgroundColor={
             !selectedOption ? Color.borderColor : Color.secondary
           }
-          txtColor={!selectedOption ? Color.txt : Color.white}
-          iconColor={!selectedOption ? Color.txt : Color.white}
+          txtColor={!selectedOption ? Color.txt : Color.primary}
+          iconColor={!selectedOption ? Color.txt : Color.primary}
           marginTop={verticalScale(20)}
           text={'Next'}
         />

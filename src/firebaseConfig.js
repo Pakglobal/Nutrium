@@ -1,5 +1,4 @@
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/messaging';
+import {initializeApp, getApps, getApp} from '@react-native-firebase/app';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA-Gxy3Q3gNC7epdR8ndoU77PeXplskAMY',
@@ -11,18 +10,12 @@ const firebaseConfig = {
   databaseURL: 'https://nutrium-app-default-rtdb.firebaseio.com',
 };
 
-// Initialize Firebase properly with promise handling
-const initializeFirebase = async () => {
-  try {
-    if (!firebase.apps.length) {
-      return firebase.initializeApp(firebaseConfig);
-    } else {
-      return firebase.app();
-    }
-  } catch (error) {
-    console.error("Firebase initialization error:", error);
-    throw error; // Re-throw to handle in the component
-  }
-};
+let firebaseApp;
 
-export { initializeFirebase };
+if (!getApps().length) {
+  firebaseApp = initializeApp(firebaseConfig);
+} else {
+  firebaseApp = getApp();
+}
+
+export {firebaseApp};

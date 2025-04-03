@@ -48,7 +48,7 @@ const AllLogs = () => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.primary}}>
+    <View style={{flex: 1, backgroundColor: Color.white}}>
       <BackHeader
         titleName={'All logs'}
         showRightButton={false}

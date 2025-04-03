@@ -62,7 +62,7 @@ const SwapMeal = ({route}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.primary}}>
+    <View style={{flex: 1, backgroundColor: Color.white}}>
       <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName="Swap a food"

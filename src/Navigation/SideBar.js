@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     color: Color.gray,
   },
   text: {
-    color: Color.primary,
+    color: Color.white,
     fontSize: scale(14),
   },
 });

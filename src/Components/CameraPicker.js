@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   whiteContainer: {
     width: '65%',
-    backgroundColor: Color.primary,
+    backgroundColor: 'white',
     alignItems: 'center',
     paddingVertical: verticalScale(15),
   },

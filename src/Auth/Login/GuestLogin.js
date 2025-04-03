@@ -244,7 +244,7 @@ const GuestLogin = () => {
             {backgroundColor: isAgree ? Color.secondary : '#E0E0E0'},
           ]}>
           {loading ? (
-            <ActivityIndicator size="small" color={Color.primary} />
+            <ActivityIndicator size="small" color={Color.white} />
           ) : (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text
@@ -273,7 +273,7 @@ export default GuestLogin;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   scrollView: {
     paddingHorizontal: scale(16),

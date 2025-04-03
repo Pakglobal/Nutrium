@@ -1,5 +1,4 @@
 import {
-  Alert,
   Modal,
   Pressable,
   SafeAreaView,
@@ -8,13 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../assets/colors/Colors';
+import React, { useState } from 'react';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { scale, verticalScale } from 'react-native-size-matters';
+import Color, { Font } from '../assets/colors/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const OnOffFunctionality = ({title, hydrate = false}) => {
+const OnOffFunctionality = ({ title, hydrate = false,style }) => {
   const [showRevoke, setShowRevoke] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
 
@@ -37,24 +36,11 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
       try {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
-        console.log(userInfo);
-        
-        
-        if (userInfo && userInfo?.data?.idToken) {
+        if (userInfo) {
           setIsTracking(true);
-        } else {
-
-          console.log('Sign-in was cancelled');
-          setIsTracking(false);
         }
       } catch (error) {
         console.error('Error in Google Sign-in:', error);
-        setIsTracking(false);
-        Alert.alert(
-          'Sign-in Error',
-          'Failed to sign in with Google. Please try again.',
-          [{ text: 'OK' }]
-        );
       }
     }
   };
@@ -74,24 +60,26 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={style} >
       <View style={styles.header}>
+        <View style={{}} >
         <Text style={styles.title}>{title}</Text>
+        </View>
         <TouchableOpacity
           style={styles.buttonContainer}
           onPress={hydrate ? handleHydrateToggle : handleTrackingToggle}>
-          <Ionicons
-            name="notifications-outline"
-            size={verticalScale(15)}
-            color={isTracking ? Color.primaryGreen : Color.gray}
-          />
           <Text
             style={[
               styles.buttonText,
-              {color: isTracking ? Color.primaryGreen : Color.gray},
+              { color: isTracking ? Color.primaryColor : Color.gray },
             ]}>
             {isTracking ? 'On' : 'Off'}
           </Text>
+          <Ionicons
+            name="notifications"
+            size={verticalScale(15)}
+            color={isTracking ? Color.primaryColor : Color.gray}
+          />
         </TouchableOpacity>
       </View>
 
@@ -105,7 +93,7 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
             onPress={() => setShowRevoke(false)}
             style={styles.modalView}>
             <View style={styles.modalContainer}>
-              <View style={{marginHorizontal: scale(20)}}>
+              <View style={{ marginHorizontal: scale(20) }}>
                 <Text style={styles.modalTitle}>
                   Revoke Access to Physical Activity Data
                 </Text>
@@ -137,29 +125,35 @@ const styles = StyleSheet.create({
     fontSize: scale(15),
     fontWeight: '500',
     color: Color.txt,
-    marginHorizontal: scale(16),
-    marginTop: verticalScale(10),
+    // marginHorizontal: scale(16),
+    // marginTop: verticalScale(10),
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: verticalScale(10),
+    // marginTop: verticalScale(8),
+    width:'95%',
+    alignSelf:"center",
+    // backgroundColor:"lightgray",
   },
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: scale(10),
-    paddingVertical: verticalScale(5),
-    marginHorizontal: scale(16),
-    borderRadius: scale(20),
-    backgroundColor: Color.primary,
-    elevation: 1,
+    paddingVertical: verticalScale(2.5),
+    // marginHorizontal: scale(16),
+    borderRadius: scale(9),
+    backgroundColor: '#68A16C4D',
+    justifyContent: 'space-evenly',
+    width: '18%',
+    // elevation: 1,
+    marginVertical:scale(3)
   },
   buttonText: {
     color: Color.gray,
     fontWeight: '600',
     marginStart: scale(5),
+    fontFamily:Font?.Nunito
   },
   modalView: {
     flex: 1,
@@ -170,7 +164,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: '80%',
     paddingVertical: verticalScale(20),
-    backgroundColor: Color.primary,
+    // backgroundColor: 'white',
     borderRadius: 10,
   },
   modalTitle: {
@@ -196,5 +190,3 @@ const styles = StyleSheet.create({
     fontSize: scale(13),
   },
 });
-
-

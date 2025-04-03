@@ -19,12 +19,14 @@ import {
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BarChart } from 'react-native-gifted-charts';
 import { scale, verticalScale } from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
+import Header from '../../../../Components/Header';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -289,7 +291,7 @@ const WaterIntake = () => {
 
   const handleDelete = async () => {
     // setModalVisible(false);
-setDeleteModal(false)
+    setDeleteModal(false)
     try {
       setLoading(true);
       const payload = {
@@ -351,13 +353,11 @@ setDeleteModal(false)
 
   return (
     <SafeAreaView style={styles.container}>
-      <BackHeader
-        titleName={'Water intake'}
-        onPressBack={() => navigation.goBack()}
-        onPress={() =>
-          navigation.navigate('waterIntakeLog', { plusData: plusData })
-        }
-      />
+    
+      <Header showIcon={false} backIcon={true} screenName='Water Intake' iconStyle={{ left: scale(-80) }} onPress={() =>
+        navigation.navigate('waterIntakeLog', { plusData: plusData })
+      } />
+
 
       <ScrollView
         horizontal
@@ -392,7 +392,7 @@ setDeleteModal(false)
                     dailyGoal,
                     ...formatChartData().map(item => item.value || 0),
                   )}
-                  frontColor={isSelected ? '#1976D2' : '#75BFFF'}
+                  frontColor={isSelected ? Color?.primaryColor : '#6BCB77'}
                 />
                 <View style={styles.dateBox}>
                   <Text style={styles.dateText}>{date.day}</Text>
@@ -421,7 +421,7 @@ setDeleteModal(false)
         {loading ? (
           <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color={Color.primaryGreen} />
+            <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
         ) : selectedIntake && selectedIntake?.length > 0 ? (
           <View style={styles.entriesContainer}>
@@ -434,10 +434,10 @@ setDeleteModal(false)
                     renderItem={({ item: intake, index: intakeIndex }) => (
                       <View style={styles.entryItem}>
                         <View style={styles.entryLeft}>
-                          <Icon
-                            name="water-outline"
+                          <Ionicons
+                            name="water"
                             size={24}
-                            color="#2196F3"
+                            color={Color?.primaryColor}
                           />
                           <Text style={styles.entryAmount}>
                             {intake?.amount}
@@ -464,7 +464,7 @@ setDeleteModal(false)
                             <Icon
                               name="dots-vertical"
                               size={20}
-                              color={Color.gray}
+                              color={Color.primaryColor}
                             />
                           </TouchableOpacity>
                         </View>
@@ -518,7 +518,7 @@ setDeleteModal(false)
         visible={deleteModal}
         message={'Are You Sure?'}
         onChange={handleDelete}
-        onClose={()=> setDeleteModal(false)}
+        onClose={() => setDeleteModal(false)}
         // singleButton={true}
         doubleButton={true}
       />
@@ -569,20 +569,22 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Color.common,
+    backgroundColor: Color.white,
     padding: scale(16),
     borderRadius: scale(12),
     alignItems: 'center',
+    borderColor:Color?.lightgray,
+    borderWidth:scale(1)
   },
   statValue: {
-    fontSize: scale(17),
+    fontSize: scale(18),
     fontWeight: 'bold',
     marginBottom: verticalScale(4),
     color: Color.black,
   },
   statLabel: {
-    fontSize: scale(13),
-    color: '#757575',
+    fontSize: scale(15),
+    color:Color?.textColor,
   },
   entriesContainer: {
     flex: 1,
@@ -604,7 +606,8 @@ const styles = StyleSheet.create({
   },
   entryAmount: {
     fontSize: scale(15),
-    color: Color.black,
+    color: Color.textColor,
+    fontWeight:"500"
   },
   entryRight: {
     flexDirection: 'row',
@@ -612,8 +615,8 @@ const styles = StyleSheet.create({
     gap: scale(12),
   },
   entryTime: {
-    color: '#757575',
-    fontSize: scale(13),
+    color: '#767878',
+    fontSize: scale(15),
   },
   modalContainer: {
     flex: 1,

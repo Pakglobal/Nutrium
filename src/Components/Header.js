@@ -90,7 +90,7 @@ const Header = ({
         <>
           <Shadow
             distance={4}
-            startColor={'rgba(0,0,0,0.5'}
+            startColor={'rgba(0,0,0,0.25)'}
             style={{width: '100%'}}>
             <View
               style={{
@@ -108,13 +108,7 @@ const Header = ({
           </Shadow>
         </>
       )}
-      {screenheader && (
-        <View>
-          <View>{'<-'}</View>
-          <View>bhkjl</View>
-          <View>{'+'}</View>
-        </View>
-      )}
+      
       {/* <View
         style={{
           flexDirection: 'row',
@@ -163,6 +157,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 5,
-    elevation: 35,
   },
 });

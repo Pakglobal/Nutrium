@@ -464,7 +464,7 @@ const HomeScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <Header logoHeader={true} />
 
-      {/* {isGuest ? (
+      {isGuest ? (
         <ScrollView style={{ backgroundColor: Color.white, paddingHorizontal: scale(8) }}>
           <View style={{ paddingHorizontal: scale(10) }} >
             <View style={{ marginVertical: scale(10) }} >
@@ -568,7 +568,7 @@ const HomeScreen = () => {
             </ScrollView>
           )}
         </View>
-      )} */}
+      )}
     </SafeAreaView>
   );
 };

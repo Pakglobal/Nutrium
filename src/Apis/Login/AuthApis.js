@@ -7,9 +7,11 @@ export const Login = async data => {
       password: data?.password,
       deviceToken: data?.deviceToken,
     };
+    console.log('bodybodyapi', body)
 
     const url = 'https://nutrium-back-end-1.onrender.com/api/v1/sign_in';
     const response = await axios.post(url, body);    
+    console.log('responseapi', response)
     return response?.data;
   } catch (error) {
     return error?.response?.data;

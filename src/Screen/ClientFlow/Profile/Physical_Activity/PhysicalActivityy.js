@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,27 +9,26 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import CalenderHeader from '../../../../Components/CalenderHeader';
 import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import PhysicalActivity from '../../../../Components/PhysicalActivity';
-import { useStepTracking } from '../../../../Components/StepTrackingService';
+import {useStepTracking} from '../../../../Components/StepTrackingService';
 import {
   DeletePhysicalActivity,
   GetPhysicalActivityDetails,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
-import { ScrollView } from 'react-native-virtualized-view';
+import {ScrollView} from 'react-native-virtualized-view';
 import Toast from 'react-native-simple-toast';
-import Header from '../../../../Components/Header';
 
 const PhysicalActivityy = () => {
   const navigation = useNavigation();
-  const { steps, calories, workouts, currentDay } = useStepTracking();
+  const {steps, calories, workouts, currentDay} = useStepTracking();
 
   const [dayOffset, setDayOffset] = useState(0);
   const [physicalActivity, setPhysicalActivity] = useState([]);
@@ -195,46 +194,37 @@ const PhysicalActivityy = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white, }}>
-      {/* <BackHeader
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
+      <BackHeader
         titleName={'Physical activity'}
         onPressBack={() => navigation.goBack()}
         onPress={() =>
           navigation.navigate('logPhysicalActivity', {plusData: plusData})
         }
-      /> */}
-      <Header
-        showIcon={false}
-        backIcon={true}
-        screenName='Physical activity'
-        iconStyle={{ left: scale(-65) }}
-        onPress={() =>
-          navigation.navigate('logPhysicalActivity', { plusData: plusData })
-        } />
-      {/* <CalenderHeader
+      />
+      <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
         rightColor={dayOffset === 0 ? Color.txt : Color.primaryGreen}
         disabled={dayOffset === 0}
         txtFunction={getDateString()}
-      /> */}
+      />
 
-      <PhysicalActivity style={{ marginBottom: 0 }} />
-      <OnOffFunctionality title={'Your workouts'} style={{ marginTop: scale(8), borderBottomWidth: 1, paddingVertical: scale(10), borderBottomColor: Color?.lightgray }} />
-
+      <PhysicalActivity />
+      <OnOffFunctionality title={'Your workouts'} />
 
       {loading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color={Color.primaryGreen} />
         </View>
       ) : physicalActivityData && physicalActivityData?.length > 0 ? (
         <View style={styles.entriesContainer}>
           <FlatList
             data={physicalActivityData}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View style={styles.entryItem}>
-                <View style={{ width: '65%' ,marginLeft:scale(8)}}>
+                <View style={{width: '65%'}}>
                   <Text style={styles.activities}>{item?.activity}</Text>
                   <Text style={styles.date}>{formatDate(item?.date)}</Text>
                 </View>
@@ -249,7 +239,7 @@ const PhysicalActivityy = () => {
                   </View>
                   <View>
                     <TouchableOpacity
-                      style={{ marginLeft: scale(15) }}
+                      style={{marginLeft: scale(15)}}
                       onPress={() => {
                         setSelectedEntry({
                           id: item?._id,
@@ -269,8 +259,8 @@ const PhysicalActivityy = () => {
           />
         </View>
       ) : (
-        <View style={{ padding: verticalScale(10), marginTop: scale(10) }}>
-          <Text style={{ textAlign: 'center', color: Color.textColor, fontSize: scale(15), fontWeight: '500' }}>
+        <View style={{padding: verticalScale(16)}}>
+          <Text style={{textAlign: 'center', color: Color.gray}}>
             There are no records of physical activity
           </Text>
         </View>
@@ -321,7 +311,7 @@ const styles = StyleSheet.create({
   firstTitle: {
     fontSize: verticalScale(15),
     fontWeight: '700',
-    color: Color.white,
+    color: Color.primary,
     marginTop: verticalScale(15),
   },
   fisrtCardContainer: {
@@ -332,14 +322,14 @@ const styles = StyleSheet.create({
   numberTxt: {
     fontSize: verticalScale(30),
     fontWeight: '700',
-    color: Color.white,
+    color: Color.primary,
     marginEnd: scale(15),
   },
   dayRound: {
     height: verticalScale(20),
     width: verticalScale(20),
     borderRadius: 50,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     marginHorizontal: scale(7),
   },
   dayTxt: {
@@ -396,7 +386,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(5),
     marginHorizontal: scale(16),
     borderRadius: scale(20),
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     elevation: 1,
   },
   buttonText: {
@@ -406,32 +396,15 @@ const styles = StyleSheet.create({
   },
   entriesContainer: {
     flex: 1,
-    // paddingHorizontal: scale(16),
-    marginTop: scale(15),
-    backgroundColor: Color?.white,
+    paddingHorizontal: scale(16),
   },
   entryItem: {
-    elevation: 5,
-    shadowColor: Color?.black,
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    shadowOffset: {
-      width: 5,
-      height: 5,
-    },
-    width: '96%',
-    alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: scale(1),
-    borderColor: '#DDD',
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDD',
     paddingVertical: verticalScale(10),
-    borderRadius: scale(6),
-    // backgroundColor:'red',
-    marginBottom:scale(10),
-    backgroundColor:Color?.white,
-  
   },
   rightEntry: {
     flexDirection: 'row',
@@ -462,7 +435,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: '80%',
     paddingVertical: verticalScale(20),
-    backgroundColor: 'white',
+    backgroundColor: Color.primary,
     borderRadius: 10,
   },
   modalTitle: {

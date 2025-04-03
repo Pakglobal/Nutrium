@@ -206,7 +206,7 @@ const LogMeal = () => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <View style={{flex: 1, backgroundColor: Color.primary}}>
       <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName="Log your meal"
@@ -277,7 +277,7 @@ const LogMeal = () => {
                 }}>
                 <Ionicons
                   name="swap-horizontal"
-                  color={Color.white}
+                  color={Color.primary}
                   size={scale(14)}
                 />
               </TouchableOpacity>
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: verticalScale(8),
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     padding: scale(4),
     borderRadius: scale(10),
   },
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(15),
   },
   commentContent: {
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     paddingHorizontal: scale(20),
     paddingVertical: verticalScale(40),
     borderRadius: scale(10),
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
   inputView: {
     height: '60%',
     width: '90%',
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     borderRadius: 10,
     flexDirection: 'row',
     alignSelf: 'center',
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   },
   whiteContainer: {
     width: '65%',
-    backgroundColor: 'white',
+    backgroundColor: Color.primary,
     alignItems: 'center',
     borderRadius: scale(10),
     paddingVertical: verticalScale(15),

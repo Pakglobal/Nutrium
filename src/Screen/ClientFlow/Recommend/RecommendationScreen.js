@@ -111,7 +111,7 @@ const RecommendationScreen = () => {
         style={{
           fontSize: scale(14),
           color: Color.black,
-          backgroundColor: Color.white,
+          backgroundColor: Color.primary,
           paddingHorizontal: scale(5),
           borderRadius: scale(4),
         }}>
@@ -184,28 +184,26 @@ const RecommendationScreen = () => {
       FetchRecommendationData(),
       FetchGoalsData()
     ])
-      .then(() => {
-        setRefreshing(false);
-      })
-      .catch(() => {
-        setRefreshing(false);
-      });
+    .then(() => {
+      setRefreshing(false);
+    })
+    .catch(() => {
+      setRefreshing(false);
+    });
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
-      <Header showIcon={true} screenName='Recommendations' />
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.primary }}>
+      <Header showIcon={true} headerText="Recommendations" />
       {isGuest ? (
         <View>
-          <Text>Guest</Text>
+          <Text style={{color: Color.black}}>Guest</Text>
         </View>
       ) : (
         <View>
           {loading ? (
             <View
               style={{
-                // flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -225,11 +223,11 @@ const RecommendationScreen = () => {
                 <View>
                   {foodsAvoid && foodsAvoid?.foodAvoids?.length > 0 ? (
                     foodsAvoid.foodAvoids.map((item, index) => (
-                      <Text key={index} style={{ color: Color.black }}>{item}</Text>
+                      <Text key={index} style={{color: Color.black}}>{item}</Text>
                     ))
                   ) : (
-                    <View style={{ marginVertical: verticalScale(10) }}>
-                      <Text style={{ color: Color.gray }}>
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
                         There are no records of food to avoid
                       </Text>
                     </View>
@@ -244,12 +242,12 @@ const RecommendationScreen = () => {
                 </Text>
                 <View>
                   {recommendations && recommendations?.recommendation ? (
-                    <Text style={{ color: Color.black }}>
+                    <Text style={{color: Color.black}}>
                       {recommendations.recommendation}
                     </Text>
                   ) : (
-                    <View style={{ marginVertical: verticalScale(10) }}>
-                      <Text style={{ color: Color.gray }}>
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
                         There are no records of recommendation
                       </Text>
                     </View>
@@ -277,8 +275,8 @@ const RecommendationScreen = () => {
                       }}
                     />
                   ) : (
-                    <View style={{ marginVertical: verticalScale(10) }}>
-                      <Text style={{ color: Color.gray }}>
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
                         There are no records of goals
                       </Text>
                     </View>
@@ -369,7 +367,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerText: {
-    color: Color.white,
+    color: Color.primary,
     marginHorizontal: scale(16),
     fontWeight: '500',
   },

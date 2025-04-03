@@ -38,7 +38,7 @@ const NewShoppingList = () => {
   ];
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <TouchableOpacity onPress={() => navigation.navigate('myLists')}>
         <BackHeader
           titleName={'New shopping lists'}

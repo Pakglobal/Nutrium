@@ -8,7 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 const ShoppingList = () => {
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <BackHeader
         titleName={'Shopping lists'}
         onPressBack={() => navigation.goBack()}

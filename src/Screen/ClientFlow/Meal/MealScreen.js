@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,13 +10,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FetchMealPlanApi } from '../../../Apis/ClientApis/MealApi';
+import {FetchMealPlanApi} from '../../../Apis/ClientApis/MealApi';
 import Header from '../../../Components/Header';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../../assets/colors/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Cook from '../../../assets/Images/cooking.svg';
 
 const MealScreen = () => {
@@ -73,42 +73,29 @@ const MealScreen = () => {
     }
   };
 
-  // const getMealsForSelectedDays = () => {
-  //   if (!mealPlan || !selectedDays) return [];
-
-  //   const selectedTemplate = mealPlan.find(template =>
-  //     selectedDays.some(day => template?.days?.includes(day)),
-  //   );
-
-  //   return selectedTemplate?.mealSchedule || [];
-  // };
-
-  // console.log('mealPlan', mealPlan[0]?.mealSchedule)
-
   const getMealsForSelectedDays = () => {
     if (!mealPlan || !selectedDays || !Array.isArray(mealPlan)) return [];
 
-    // Handle both string ("Everyday") and array (["Monday", "Tuesday"]) day formats
     const selectedTemplate = mealPlan.find(template => {
       const templateDays = template?.days;
 
-      // If days is "Everyday", it matches all selected days
-      if (templateDays === "Everyday") return true;
+      if (templateDays === 'Everyday') return true;
 
-      // Otherwise check if any selected day is in template days array
-      return Array.isArray(templateDays) &&
-        selectedDays.some(day => templateDays.includes(day));
+      return (
+        Array.isArray(templateDays) &&
+        selectedDays.some(day => templateDays.includes(day))
+      );
     });
 
     return selectedTemplate?.mealSchedule || [];
   };
 
-  const handleOpenBottomSheet = (item) => {
+  const handleOpenBottomSheet = item => {
     setSelectedMeal(item);
     bottomSheetRef.current?.open();
   };
 
-  const formatDays = (days) => {
+  const formatDays = days => {
     if (!days || !Array.isArray(days)) return '';
 
     return days
@@ -146,98 +133,24 @@ const MealScreen = () => {
     },
   ];
 
-  const handleSelectDay = (template) => {
+  const handleSelectDay = template => {
     if (template?.days) {
       setSelectedDays(template.days);
     }
   };
 
-  // const isDaySelected = (templateDays) => {
-  //   if (!Array.isArray(selectedDays)) return false;
-  //   if (!Array.isArray(templateDays)) return false;
-  //   return JSON.stringify(selectedDays) === JSON.stringify(templateDays);
-  // };
-
-
-
-  const isDaySelected = (templateDays) => {
+  const isDaySelected = templateDays => {
     if (!Array.isArray(selectedDays)) return false;
-    if (templateDays === "Everyday") return true;
+    if (templateDays === 'Everyday') return true;
     if (!Array.isArray(templateDays)) return false;
     return JSON.stringify(selectedDays) === JSON.stringify(templateDays);
   };
-  // const renderMealItem = ({ item, index }) => {
-  //   const hasMealWithDisplayName = item?.meal?.some(
-  //     meal => meal?.displayName,
-  //   );
 
-  //   if (!hasMealWithDisplayName) {
-  //     return null;
-  //   }
-
-  //   return (
-  //     <View style={styles.card}>
-  //       <View style={styles.cardHeader}>
-  //         <View>
-  //           <Text style={styles.mealType}>
-  //             {item?.mealType || 'Meal'}
-  //           </Text>
-  //           <View style={styles.timeContainer}>
-  //             <AntDesign
-  //               name="clockcircleo"
-  //               color={Color.black}
-  //               size={scale(16)}
-  //             />
-  //             <Text style={styles.timeText}>
-  //               {item?.time || 'No time specified'}
-  //             </Text>
-  //           </View>
-  //         </View>
-  //         <TouchableOpacity onPress={() => toggleItem(index)}>
-  //           <AntDesign
-  //             name={openItemId === index ? 'up' : 'down'}
-  //             size={verticalScale(12)}
-  //             color={Color.gray}
-  //           />
-  //         </TouchableOpacity>
-  //       </View>
-  //       {openItemId === index && (
-  //         <View style={styles.detailsContainer}>
-  //           {item?.meal && Array.isArray(item.meal) && (
-  //             <FlatList
-  //               keyExtractor={(mealItem, mealIndex) => `meal-item-${mealIndex}`}
-  //               data={item.meal.filter(meal => meal?.displayName)}
-  //               renderItem={({ item: mealItem }) => (
-  //                 <View style={styles.detailItem}>
-  //                   <Text style={styles.detailText}>
-  //                     {mealItem?.displayName}
-  //                   </Text>
-  //                 </View>
-  //               )}
-  //             />
-  //           )}
-  //           <TouchableOpacity
-  //             style={styles.infoContainer}
-  //             onPress={() => handleOpenBottomSheet(item)}>
-  //             <AntDesign
-  //               name="infocirlce"
-  //               size={verticalScale(12)}
-  //               color={Color.secondary}
-  //             />
-  //             <Text style={styles.infoText}>Nutritional info</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //       )}
-  //     </View>
-  //   );
-  // };
-
-  const toggleItem = (id) => {
+  const toggleItem = id => {
     setOpenItemId(openItemId === id ? null : id);
   };
 
-  const renderMealItem = ({ item, index }) => {
-    // Check if there are any meal items in any of the possible properties
+  const renderMealItem = ({item, index}) => {
     const hasMealItems =
       (item.meal && item.meal.length > 0) ||
       (item.Appetizer && item.Appetizer.length > 0) ||
@@ -249,9 +162,7 @@ const MealScreen = () => {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <View>
-            <Text style={styles.mealType}>
-              {item?.mealType || 'Meal'}
-            </Text>
+            <Text style={styles.mealType}>{item?.mealType || 'Meal'}</Text>
             <View style={styles.timeContainer}>
               <AntDesign
                 name="clockcircleo"
@@ -263,13 +174,6 @@ const MealScreen = () => {
               </Text>
             </View>
           </View>
-          {/* <TouchableOpacity onPress={() => toggleItem(index)}>
-            <AntDesign
-              name={openItemId === index ? 'up' : 'down'}
-              size={verticalScale(12)}
-              color={Color.gray}
-            />
-          </TouchableOpacity> */}
           <TouchableOpacity onPress={() => toggleItem(index)}>
             <AntDesign
               name={openItemId === index ? 'up' : 'down'}
@@ -281,15 +185,17 @@ const MealScreen = () => {
 
         {openItemId === index && (
           <View style={styles.detailsContainer}>
-            {/* Show empty state if no meal items */}
             {!hasMealItems ? (
-              <Text style={{ paddingLeft: 10, color: Color?.black }}>No items scheduled for this meal</Text>
+              <Text style={{paddingLeft: 10, color: Color.black}}>
+                No items scheduled for this meal
+              </Text>
             ) : (
               <>
-                {/* Render meal items from all possible properties */}
                 {item.meal?.map((mealItem, i) => (
                   <View key={`meal-${i}`} style={styles.detailItem}>
-                    <Text style={styles.detailText}>{mealItem?.displayName}</Text>
+                    <Text style={styles.detailText}>
+                      {mealItem?.displayName}
+                    </Text>
                   </View>
                 ))}
 
@@ -335,10 +241,9 @@ const MealScreen = () => {
     );
   };
 
-
   const renderEmptyState = () => (
-    <View style={[styles.contentContainer, { justifyContent: 'center' }]}>
-      <View style={{ alignItems: 'center' }}>
+    <View style={[styles.contentContainer, {justifyContent: 'center'}]}>
+      <View style={{alignItems: 'center'}}>
         <Cook height={scale(120)} width={scale(120)} />
       </View>
       <View style={styles.textContainer}>
@@ -348,8 +253,8 @@ const MealScreen = () => {
         </Text>
         <Text style={styles.description}>
           Your professional can create a meal plan for you during your
-          appointment. If you've already had an appointment, your
-          professional might be taking a bit to wrap up some details.
+          appointment. If you've already had an appointment, your professional
+          might be taking a bit to wrap up some details.
         </Text>
       </View>
     </View>
@@ -357,93 +262,82 @@ const MealScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header showIcon={true}  screenName="Meal plan" />
-
-      {mealPlan?.length > 0 && (
-        <View style={styles.daysScrollContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.daysScrollContent}
-          >
-            {/* {mealPlan.map((template, index) => (
-              <TouchableOpacity
-                key={`day-${index}`}
-                onPress={() => handleSelectDay(template)}
-                style={[
-                  styles.dayContainer,
-                  {
-                    borderBottomWidth: isDaySelected(template?.days) ? 2 : 0,
-                  },
-                ]}>
-                <Text
-                  style={[
-                    styles.day,
-                    {
-                      color: isDaySelected(template?.days)
-                        ? Color.primaryGreen
-                        : Color.black,
-                    },
-                  ]}>
-                  {formatDays(template?.days)}
-                </Text>
-              </TouchableOpacity>
-            ))} */}
-            {mealPlan.map((template, index) => {
-              const daysText = template.days === "Everyday"
-                ? "Everyday"
-                : formatDays(template.days);
-
-              const isSelected = template.days === "Everyday" ||
-                isDaySelected(template.days);
-
-              return (
-                <TouchableOpacity
-                  key={`day-${index}`}
-                  onPress={() => handleSelectDay(template)}
-                  style={[
-                    styles.dayContainer,
-                    { borderBottomWidth: isSelected ? 2 : 0 },
-                  ]}>
-                  <Text
-                    style={[
-                      styles.day,
-                      { color: isSelected ? Color.primaryGreen : Color.black },
-                    ]}>
-                    {daysText}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+      <Header showIcon={true} headerText="Meal plan" />
+      {isGuest ? (
+        <View>
+          <Text style={{color: Color.black}}>Guest</Text>
         </View>
-      )}
+      ) : (
+        <View>
+          {mealPlan?.length > 0 && (
+            <View style={styles.daysScrollContainer}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.daysScrollContent}>
+                {mealPlan.map((template, index) => {
+                  const daysText =
+                    template.days === 'Everyday'
+                      ? 'Everyday'
+                      : formatDays(template.days);
 
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
-        </View>
-      ) : mealPlan?.length > 0 ? (
-        <ScrollView
-          style={styles.contentContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          {getMealsForSelectedDays()?.length > 0 ? (
-            <FlatList
-              keyExtractor={(item, index) => `meal-${index}`}
-              data={getMealsForSelectedDays()}
-              renderItem={renderMealItem}
-            />
-          ) : (
-            <View style={styles.noRecordsContainer}>
-              <Text style={styles.noRecordsText}>
-                There are no records of meal plan
-              </Text>
+                  const isSelected =
+                    template.days === 'Everyday' ||
+                    isDaySelected(template.days);
+
+                  return (
+                    <TouchableOpacity
+                      key={`day-${index}`}
+                      onPress={() => handleSelectDay(template)}
+                      style={[
+                        styles.dayContainer,
+                        {borderBottomWidth: isSelected ? 2 : 0},
+                      ]}>
+                      <Text
+                        style={[
+                          styles.day,
+                          {
+                            color: isSelected
+                              ? Color.primaryGreen
+                              : Color.black,
+                          },
+                        ]}>
+                        {daysText}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
             </View>
           )}
-        </ScrollView>
-      ) : (
-        renderEmptyState()
+
+          {loading ? (
+            <View
+              style={{justifyContent: 'center', alignItems: 'center'}}>
+              <ActivityIndicator size="large" color={Color.primaryGreen} />
+            </View>
+          ) : mealPlan?.length > 0 ? (
+            <ScrollView
+              style={styles.contentContainer}
+              showsVerticalScrollIndicator={false}>
+              {getMealsForSelectedDays()?.length > 0 ? (
+                <FlatList
+                  keyExtractor={(item, index) => `meal-${index}`}
+                  data={getMealsForSelectedDays()}
+                  renderItem={renderMealItem}
+                />
+              ) : (
+                <View style={styles.noRecordsContainer}>
+                  <Text style={styles.noRecordsText}>
+                    There are no records of meal plan
+                  </Text>
+                </View>
+              )}
+            </ScrollView>
+          ) : (
+            renderEmptyState()
+          )}
+        </View>
       )}
 
       <RBSheet
@@ -454,8 +348,7 @@ const MealScreen = () => {
         customStyles={{
           wrapper: styles.wrapper,
           draggableIcon: styles.draggableIcon,
-        }}
-      >
+        }}>
         <View style={styles.bottomContainer}>
           <View style={styles.headerContainer}>
             <Text style={styles.headerText}>
@@ -468,9 +361,9 @@ const MealScreen = () => {
 
           <View style={styles.bottomContentContainer}>
             <FlatList
-              keyExtractor={(item) => `bottomSheet-${item.id}`}
+              keyExtractor={item => `bottomSheet-${item.id}`}
               data={bottomSheetData}
-              renderItem={({ item }) => (
+              renderItem={({item}) => (
                 <View style={styles.listItemContainer}>
                   <View style={styles.listItemBoxLeft}>
                     <Text style={styles.listItemText}>{item.title}</Text>
@@ -487,10 +380,10 @@ const MealScreen = () => {
 
             <View style={styles.recipeContainer}>
               <View>
-                <Text style={{ color: Color?.black }} >Keto 90....</Text>
+                <Text style={{color: Color.black}}>Keto 90....</Text>
                 <View style={styles.recipeRow}>
                   <AntDesign name="tool" color={Color.black} size={scale(14)} />
-                  <Text>1</Text>
+                  <Text style={{color: Color.black}}>1</Text>
                 </View>
               </View>
               <AntDesign name="right" color={Color.black} size={scale(14)} />
@@ -502,19 +395,16 @@ const MealScreen = () => {
   );
 };
 
-
 export default MealScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   contentContainer: {
     marginHorizontal: scale(16),
     flex: 1,
-    // justifyContent: 'center',
-    // alignSelf:'center'
   },
   bottomContentContainer: {
     marginHorizontal: scale(16),
@@ -526,7 +416,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DDD',
     borderRadius: scale(10),
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     // width:'100%'
   },
   cardHeader: {
@@ -546,7 +436,7 @@ const styles = StyleSheet.create({
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     marginTop: verticalScale(5),
     padding: scale(5),
     borderRadius: scale(10),
@@ -557,11 +447,11 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     borderRadius: scale(10),
-    backgroundColor: Color.white,
     paddingVertical: scale(20),
   },
   detailItem: {
     paddingHorizontal: scale(10),
+    color: Color.black,
   },
   detailText: {
     paddingVertical: verticalScale(5),
@@ -625,7 +515,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerText: {
-    color: Color.white,
+    color: Color.primary,
     marginHorizontal: scale(16),
     fontWeight: '500',
   },
@@ -642,7 +532,7 @@ const styles = StyleSheet.create({
   },
   listItemBoxRight: {
     padding: scale(10),
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     width: '49%',
   },
   listItemText: {
@@ -660,10 +550,10 @@ const styles = StyleSheet.create({
   recipesText: {
     textAlign: 'center',
     fontSize: scale(12),
-    color: Color?.black
+    color: Color.black,
   },
   recipeContainer: {
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -677,4 +567,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-

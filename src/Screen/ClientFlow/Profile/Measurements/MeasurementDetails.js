@@ -430,9 +430,9 @@ const MeasurementDetail = () => {
               height={220}
               yAxisSide="left"
               chartConfig={{
-                backgroundColor: Color.white,
-                backgroundGradientFrom: Color.white,
-                backgroundGradientTo: Color.white,
+                backgroundColor: Color.primary,
+                backgroundGradientFrom: Color.primary,
+                backgroundGradientTo: Color.primary,
                 decimalPlaces: 1,
                 color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                 labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
@@ -440,7 +440,7 @@ const MeasurementDetail = () => {
                   r: '6',
                   stroke: Color.primaryGreen,
                   strokeWidth: '2',
-                  fill: Color.white,
+                  fill: Color.primary,
                 },
                 propsForVerticalLabels: {
                   fontSize: 10,
@@ -529,7 +529,7 @@ export default MeasurementDetail;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   content: {
     flex: 1,
@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(20),
   },
   buttonText: {
-    color: Color.white,
+    color: Color.primary,
     fontSize: scale(14),
     fontWeight: '500',
   },

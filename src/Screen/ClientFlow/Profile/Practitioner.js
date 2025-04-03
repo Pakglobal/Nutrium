@@ -33,7 +33,7 @@ const Practitioner = ({route}) => {
   ];
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <View style={{flex: 1, backgroundColor: Color.primary}}>
       <View
         style={{backgroundColor: Color.headerBG, height: verticalScale(150)}}>
         <View style={{marginHorizontal: scale(16)}}>
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     width: verticalScale(35),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     borderRadius: 55,
     marginTop: verticalScale(50),
     marginStart: scale(-35),

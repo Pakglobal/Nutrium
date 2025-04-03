@@ -60,7 +60,7 @@ const SettingScreen = () => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons
               name="arrow-back"
-              color={Color.white}
+              color={Color.primary}
               size={scale(22)}
             />
           </TouchableOpacity>
@@ -142,7 +142,7 @@ export default SettingScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
   },
   header: {
     flexDirection: 'row',
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     marginLeft: scale(10),
     fontSize: scale(16),
     fontWeight: 'bold',
-    color: Color.white,
+    color: Color.primary,
   },
   inputContainer: {
     flexDirection: 'row',

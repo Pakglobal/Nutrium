@@ -19,14 +19,12 @@ import {
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BarChart } from 'react-native-gifted-charts';
 import { scale, verticalScale } from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
-import Header from '../../../../Components/Header';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -291,7 +289,7 @@ const WaterIntake = () => {
 
   const handleDelete = async () => {
     // setModalVisible(false);
-    setDeleteModal(false)
+setDeleteModal(false)
     try {
       setLoading(true);
       const payload = {
@@ -353,11 +351,13 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-    
-      <Header showIcon={false} backIcon={true} screenName='Water Intake' iconStyle={{ left: scale(-80) }} onPress={() =>
-        navigation.navigate('waterIntakeLog', { plusData: plusData })
-      } />
-
+      <BackHeader
+        titleName={'Water intake'}
+        onPressBack={() => navigation.goBack()}
+        onPress={() =>
+          navigation.navigate('waterIntakeLog', { plusData: plusData })
+        }
+      />
 
       <ScrollView
         horizontal
@@ -392,7 +392,7 @@ const WaterIntake = () => {
                     dailyGoal,
                     ...formatChartData().map(item => item.value || 0),
                   )}
-                  frontColor={isSelected ? Color?.primaryColor : '#6BCB77'}
+                  frontColor={isSelected ? '#1976D2' : '#75BFFF'}
                 />
                 <View style={styles.dateBox}>
                   <Text style={styles.dateText}>{date.day}</Text>
@@ -421,7 +421,7 @@ const WaterIntake = () => {
         {loading ? (
           <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color={Color.primaryColor} />
+            <ActivityIndicator size="large" color={Color.primaryGreen} />
           </View>
         ) : selectedIntake && selectedIntake?.length > 0 ? (
           <View style={styles.entriesContainer}>
@@ -434,10 +434,10 @@ const WaterIntake = () => {
                     renderItem={({ item: intake, index: intakeIndex }) => (
                       <View style={styles.entryItem}>
                         <View style={styles.entryLeft}>
-                          <Ionicons
-                            name="water"
+                          <Icon
+                            name="water-outline"
                             size={24}
-                            color={Color?.primaryColor}
+                            color="#2196F3"
                           />
                           <Text style={styles.entryAmount}>
                             {intake?.amount}
@@ -464,7 +464,7 @@ const WaterIntake = () => {
                             <Icon
                               name="dots-vertical"
                               size={20}
-                              color={Color.primaryColor}
+                              color={Color.gray}
                             />
                           </TouchableOpacity>
                         </View>
@@ -518,7 +518,7 @@ const WaterIntake = () => {
         visible={deleteModal}
         message={'Are You Sure?'}
         onChange={handleDelete}
-        onClose={() => setDeleteModal(false)}
+        onClose={()=> setDeleteModal(false)}
         // singleButton={true}
         doubleButton={true}
       />
@@ -569,22 +569,20 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Color.white,
+    backgroundColor: Color.common,
     padding: scale(16),
     borderRadius: scale(12),
     alignItems: 'center',
-    borderColor:Color?.lightgray,
-    borderWidth:scale(1)
   },
   statValue: {
-    fontSize: scale(18),
+    fontSize: scale(17),
     fontWeight: 'bold',
     marginBottom: verticalScale(4),
     color: Color.black,
   },
   statLabel: {
-    fontSize: scale(15),
-    color:Color?.textColor,
+    fontSize: scale(13),
+    color: '#757575',
   },
   entriesContainer: {
     flex: 1,
@@ -606,8 +604,7 @@ const styles = StyleSheet.create({
   },
   entryAmount: {
     fontSize: scale(15),
-    color: Color.textColor,
-    fontWeight:"500"
+    color: Color.black,
   },
   entryRight: {
     flexDirection: 'row',
@@ -615,8 +612,8 @@ const styles = StyleSheet.create({
     gap: scale(12),
   },
   entryTime: {
-    color: '#767878',
-    fontSize: scale(15),
+    color: '#757575',
+    fontSize: scale(13),
   },
   modalContainer: {
     flex: 1,

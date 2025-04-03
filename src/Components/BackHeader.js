@@ -58,7 +58,7 @@ const BackHeader = ({
               <TouchableOpacity style={styles.plus} onPress={onPress}>
                 <AntDesign
                   name="plus"
-                  color={Color.white}
+                  color={Color.primary}
                   size={verticalScale(16)}
                 />
               </TouchableOpacity>

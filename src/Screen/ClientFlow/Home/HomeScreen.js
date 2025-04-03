@@ -194,13 +194,13 @@ const HomeScreen = () => {
               }
               style={{backgroundColor: Color.primary}}
               showsVerticalScrollIndicator={false}>
-              <AppointmentCard
+              {/* <AppointmentCard
                 // refreshAppointments={FetchAppointmentData}
                 activeAppointments={activeAppointments}
                 setActiveAppointments={setActiveAppointments}
                 selectedAppointment={selectedAppointment}
                 setSelectedAppointment={setSelectedAppointment}
-              />
+              /> */}
               <Text style={styles.title}>What were your meals like?</Text>
               <MealsLikeInHome />
               <Text style={styles.title}>More for you</Text>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -22,14 +22,18 @@ import {
   getChatHistory,
   onReceiveMessage,
   sendMessage,
+  disconnectSocket,
+  markMessagesAsSeen,
+  onMessagesSeen,
+  leaveRoom,
+  onUnreadMessages,
 } from '../Components/SocketService';
 
-import {useNavigation} from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
+import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
 import Color from '../assets/colors/Colors';
 
@@ -45,10 +49,10 @@ const MessageComponent = ({
   const navigation = useNavigation();
 
   const userImage = image
-    ? {uri: image}
+    ? { uri: image }
     : gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -86,7 +90,7 @@ const MessageComponent = ({
 
           const distance = Math.sqrt(
             Math.pow(touch2.pageX - touch1.pageX, 2) +
-              Math.pow(touch2.pageY - touch1.pageY, 2),
+            Math.pow(touch2.pageY - touch1.pageY, 2),
           );
 
           const newScale = Math.max(1, Math.min(5, distance / 100));
@@ -122,47 +126,199 @@ const MessageComponent = ({
     }),
   ).current;
 
-  useEffect(() => {
-    const socket = connectSocket();
-    if (socket) {
-      setLoading(true);
-    }
-    joinRoom(userId, otherUserId);
+  useFocusEffect(
+    useCallback(() => {
+      const socketInstance = connectSocket();
 
-    getChatHistory(userId, otherUserId, history => {
-      setMessages(history?.reverse());
-      setLoading(false);
-    });
-
-    const messageHandler = newMessage => {
-      setMessages(prevMessages => [newMessage, ...prevMessages]);
-    };
-
-    onReceiveMessage(messageHandler);
-
-    const markMessagesAsSeen = () => {
-      const unseenMessages = messages.filter(msg => !msg?.seen);
-
-      if (unseenMessages.length > 0) {
-        const messageIds = unseenMessages.map(msg => msg?._id);
-
-        socket.emit('messageSeen', {userId, otherUserId, messageIds});
-
-        setMessages(prevMessages =>
-          prevMessages.map(msg =>
-            messageIds.includes(msg.id) ? {...msg, seen: true} : msg,
-          ),
-        );
+      if (socketInstance) {
+        setLoading(true);
       }
-    };
 
-    markMessagesAsSeen();
+      joinRoom(userId, otherUserId);
 
-    return () => {
-      socket.off('receiveMessage', messageHandler);
-      socket.disconnect();
-    };
+      getChatHistory(userId, otherUserId, history => {
+        setMessages(history?.reverse());
+        setLoading(false);
+      });
+
+      const messageHandler = newMessage => {
+        console.log('newMessage', newMessage);
+        setMessages(prevMessages => [newMessage, ...prevMessages]);
+
+        if (newMessage?.senderId === userId) {
+          markMessagesAsSeen([newMessage?._id], userId, otherUserId);
+        }
+      };
+
+      onReceiveMessage(messageHandler);
+
+      const seenHandler = ({ messageIds }) => {
+        console.log(messageIds, '=====');
+
+        if (messageIds && messageIds.length > 0) {
+          setMessages(prevMessages =>
+            prevMessages.map(msg =>
+              messageIds.includes(msg?._id) ? { ...msg, seen: true } : msg,
+            ),
+          );
+        }
+      };
+
+      onMessagesSeen(seenHandler);
+
+      return () => {
+        if (socketInstance) {
+          socketInstance.off('receiveMessage', messageHandler);
+          socketInstance.off('messageSeen', seenHandler);
+          disconnectSocket();
+        }
+      };
+    }, [userId, otherUserId]),
+  );
+
+
+
+
+
+  const socketConnectedRef = useRef(false);
+  const roomJoinedRef = useRef(false);
+
+  // Handle incoming messages
+  const handleNewMessage = useCallback(newMessage => {
+    console.log('Received new message:', newMessage);
+
+    setMessages(prevMessages => {
+      // Check if message already exists to prevent duplicates
+      const messageExists = prevMessages.some(msg => msg._id === newMessage._id);
+      if (messageExists) return prevMessages;
+
+      const updatedMessages = [newMessage, ...prevMessages];
+
+      // If we're receiving a message from the other user and chat is active, 
+      // mark it as seen immediately
+      if (newMessage.senderId === otherUserId && !newMessage.seen) {
+        setTimeout(() => {
+          markMessagesAsSeen([newMessage._id], otherUserId, userId);
+        }, 500); // Small delay to ensure the message is processed first
+      }
+
+      return updatedMessages;
+    });
+  }, [otherUserId, userId]);
+
+  // Handle messages seen updates
+  const handleMessagesSeen = useCallback(({ messageIds }) => {
+    console.log('Messages seen update:', messageIds);
+
+    if (messageIds && messageIds.length > 0) {
+      setMessages(prevMessages =>
+        prevMessages.map(msg =>
+          messageIds.includes(msg?._id) ? { ...msg, seen: true } : msg,
+        ),
+      );
+    }
+  }, []);
+
+  // Handle unread messages when joining a room
+  const handleUnreadMessages = useCallback(({ messages: unreadMessages }) => {
+    console.log('Unread messages:', unreadMessages);
+
+    if (unreadMessages && unreadMessages.length > 0) {
+      setMessages(prevMessages => {
+        // Filter out any duplicates
+        const existingIds = new Set(prevMessages.map(msg => msg._id));
+        const newUnreadMessages = unreadMessages.filter(msg => !existingIds.has(msg._id));
+
+        if (newUnreadMessages.length === 0) return prevMessages;
+
+        return [...newUnreadMessages.reverse(), ...prevMessages];
+      });
+    }
+  }, []);
+
+  // Initialize socket connection and room joining
+  const initializeChat = useCallback(() => {
+    const socket = connectSocket();
+
+    if (socket) {
+      socketConnectedRef.current = true;
+      setLoading(true);
+
+      const joinSuccess = joinRoom(userId, otherUserId);
+      if (joinSuccess) {
+        roomJoinedRef.current = true;
+      }
+
+      getChatHistory(userId, otherUserId, history => {
+        if (history) {
+          setMessages(history?.reverse() || []);
+
+          // Mark messages as seen when chat history is loaded
+          const unreadMessages = history
+            .filter(msg => msg.senderId === otherUserId && !msg.seen)
+            .map(msg => msg._id);
+
+          if (unreadMessages.length > 0) {
+            markMessagesAsSeen(unreadMessages, otherUserId, userId);
+          }
+        }
+        setLoading(false);
+      });
+
+      // Set up event listeners
+      onReceiveMessage(handleNewMessage);
+      onMessagesSeen(handleMessagesSeen);
+      onUnreadMessages(handleUnreadMessages);
+    }
+  }, [userId, otherUserId, handleNewMessage, handleMessagesSeen, handleUnreadMessages]);
+
+  // Clean up function
+  const cleanupChat = useCallback(() => {
+    if (roomJoinedRef.current) {
+      leaveRoom(userId, otherUserId);
+      roomJoinedRef.current = false;
+    }
+
+    if (socketConnectedRef.current) {
+      disconnectSocket();
+      socketConnectedRef.current = false;
+    }
   }, [userId, otherUserId]);
+
+  // Effect for when the screen gets focus
+  useFocusEffect(
+    useCallback(() => {
+      initializeChat();
+
+      // Clean up when the screen loses focus
+      return () => {
+        cleanupChat();
+      };
+    }, [initializeChat, cleanupChat])
+  );
+
+  // Function to mark all currently visible unread messages as seen
+  const markVisibleMessagesAsSeen = useCallback(() => {
+    const unreadMessages = messages
+      .filter(msg => msg.senderId === otherUserId && !msg.seen)
+      .map(msg => msg._id);
+
+    if (unreadMessages.length > 0) {
+      markMessagesAsSeen(unreadMessages, otherUserId, userId);
+    }
+  }, [messages, otherUserId, userId]);
+
+  // You can call this function when the user interacts with the chat
+  useEffect(() => {
+    const interactionTimeout = setTimeout(() => {
+      markVisibleMessagesAsSeen();
+    }, 1000);
+
+    return () => clearTimeout(interactionTimeout);
+  }, [markVisibleMessagesAsSeen, messages]);
+
+
+
 
   const formatTime = isoString => {
     return moment(isoString).format('h.mm A');
@@ -261,7 +417,7 @@ const MessageComponent = ({
 
   const flatListData = createFlatListData(sortedMessages);
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     if (item.type === 'date') {
       return (
         <View style={styles.dateSeparator}>
@@ -271,7 +427,7 @@ const MessageComponent = ({
         </View>
       );
     } else {
-      return renderMessage({item});
+      return renderMessage({ item });
     }
   };
 
@@ -323,7 +479,7 @@ const MessageComponent = ({
           console.error('Upload failed:', error);
         } finally {
           setUploadingFiles(prev => {
-            const newState = {...prev};
+            const newState = { ...prev };
             delete newState[fileId];
             return newState;
           });
@@ -364,12 +520,13 @@ const MessageComponent = ({
     return await response.json();
   };
 
-  const renderMessage = ({item}) => {
+  const renderMessage = ({ item }) => {
     const isSender = item?.senderId === userId;
     const fileUrl = item?.file || item?.fileUrl;
     const time = formatTime(item?.createdAt || item?.timestamp);
 
     const isUploading = item.isTemp || uploadingFiles[item._id];
+    const isSeen = item?.seen;
 
     return (
       <View
@@ -385,16 +542,30 @@ const MessageComponent = ({
               </View>
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                <Image source={{uri: fileUrl}} style={styles.image} />
+                <Image source={{ uri: fileUrl }} style={styles.image} />
               </TouchableOpacity>
             )}
           </View>
         )}
 
         {item?.message && (
-          <View style={styles.messageContent}>
+          <View style={{}}>
             <Text style={styles.messageText}>{item?.message}</Text>
-            <Text style={styles.timestampText}>{time}</Text>
+            <View style={styles.messageContent}>
+              <Text style={styles.timestampText}>{time}</Text>
+
+              <View style={styles.messageFooter}>
+                {isSender && (
+                  <View style={{ marginLeft: scaleSize(5) }}>
+                    <Ionicons
+                      name={isSeen ? 'checkmark-done' : 'checkmark'}
+                      size={16}
+                      color={isSeen ? Color.primaryGreen : Color.gray}
+                    />
+                  </View>
+                )}
+              </View>
+            </View>
           </View>
         )}
 
@@ -432,7 +603,7 @@ const MessageComponent = ({
           <Text style={styles.backTxt}>{userName}</Text>
         </View>
 
-        <TouchableOpacity style={{marginHorizontal: scaleSize(16)}}>
+        <TouchableOpacity style={{ marginHorizontal: scaleSize(16) }}>
           <Feather
             name="info"
             color={Color.primaryGreen}
@@ -448,7 +619,7 @@ const MessageComponent = ({
       {renderHeader()}
 
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
           <View
@@ -532,9 +703,9 @@ const MessageComponent = ({
                 styles.imageViewerWrapper,
                 {
                   transform: [
-                    {scale: scale},
-                    {translateX: offsetX},
-                    {translateY: offsetY},
+                    { scale: scale },
+                    { translateX: offsetX },
+                    { translateY: offsetY },
                   ],
                 },
               ]}>
@@ -549,7 +720,7 @@ const MessageComponent = ({
                 }}
                 delayLongPress={200}>
                 <Animated.Image
-                  source={{uri: selectedImage}}
+                  source={{ uri: selectedImage }}
                   style={styles.fullScreenImage}
                   resizeMode="contain"
                 />
@@ -618,7 +789,7 @@ const styles = StyleSheet.create({
   },
   messageContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   messageText: {
     color: Color.black,
@@ -630,7 +801,6 @@ const styles = StyleSheet.create({
   timestampText: {
     color: Color.gray,
     fontSize: scaleSize(10),
-    alignSelf: 'flex-end',
   },
   previewContainer: {
     padding: verticalScale(10),

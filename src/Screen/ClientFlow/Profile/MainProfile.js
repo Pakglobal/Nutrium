@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
@@ -109,7 +110,7 @@ const MainProfile = ({ route }) => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Color.white }}>
+    <View style={{ flex: 1, backgroundColor: Color.primary }}>
       <View
         style={{ backgroundColor: Color.headerBG, height: verticalScale(150) }}>
         <View style={{ marginHorizontal: scale(16) }}>
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     width: verticalScale(35),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.white,
+    backgroundColor: Color.primary,
     borderRadius: scale(55),
     marginTop: verticalScale(50),
     marginStart: scale(-35),
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
   },
   whiteContainer: {
     width: '65%',
-    backgroundColor: 'white',
+    backgroundColor: Color.primary,
     alignItems: 'center',
     borderRadius: scale(10),
     paddingVertical: verticalScale(15),

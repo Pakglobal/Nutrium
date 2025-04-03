@@ -210,7 +210,7 @@ const LoginScreen = () => {
     <SafeAreaView style={styles.container}>
       <CustomAlert
         visible={alertVisible}
-        message={login.message}
+        message={login?.message}
         onClose={() => setAlertVisible(false)}
         singleButton={true}
       />

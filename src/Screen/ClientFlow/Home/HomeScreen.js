@@ -140,12 +140,41 @@ const HomeScreen = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
       <Header showIcon={true} />
       {isGuest ? (
+<<<<<<< Updated upstream
         <ScrollView style={{flex: 1, backgroundColor: Color.primary}}>
           <Text style={styles.title}>What were your meals like?</Text>
           <MealsLikeInHome />
           <Text style={styles.title}>More for you</Text>
           {/* <MoreForYou /> */}
           <HydratedStay />
+=======
+        <ScrollView style={{ backgroundColor: Color.white, paddingHorizontal: scale(8) }}>
+          <View style={{ paddingHorizontal: scale(10) }} >
+            <View style={{ marginVertical: scale(10) }} >
+
+              <Shadow distance={6} startColor={Color?.shadowColor} style={{ width: "100%" }} >
+                <View style={{
+                  borderRadius: scale(10),
+                  backgroundColor: Color?.white,
+                }}>
+                  <MealsLikeInHome />
+                </View>
+              </Shadow>
+            </View>
+
+            <MoreForYou />
+            <View style={{ marginVertical: scale(10) }} >
+              <Shadow distance={6} startColor={Color?.shadowColor} style={{ width: "100%" }} >
+                <View style={{
+                  borderRadius: scale(10),
+                  backgroundColor: Color?.white,
+                }}>
+                  <HydratedStay />
+                </View>
+              </Shadow>
+            </View>
+          </View>
+>>>>>>> Stashed changes
         </ScrollView>
       ) : (
         <View>

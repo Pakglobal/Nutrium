@@ -421,7 +421,7 @@ const MeasurementDetail = () => {
                 datasets: [
                   {
                     data: values.length ? values : [0],
-                    color: (opacity = 1) => Color.primaryGreen,
+                    color: (opacity = 1) => Color.primaryColor,
                     strokeWidth: 2,
                   },
                 ],
@@ -438,7 +438,7 @@ const MeasurementDetail = () => {
                 labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                 propsForDots: {
                   r: '6',
-                  stroke: Color.primaryGreen,
+                  stroke: Color.primaryColor,
                   strokeWidth: '2',
                   fill: Color.white,
                 },
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: verticalScale(10),
     borderBottomWidth: 2,
-    borderBottomColor: Color.primaryGreen,
+    borderBottomColor: Color.primaryColor,
   },
   headerText: {
     fontSize: scale(16),
@@ -586,14 +586,14 @@ const styles = StyleSheet.create({
   },
   selectedPeriod: {
     borderBottomWidth: 2,
-    borderBottomColor: Color.primaryGreen,
+    borderBottomColor: Color.primaryColor,
   },
   periodText: {
     color: Color.gray,
     fontSize: scale(14),
   },
   selectedPeriodText: {
-    color: Color.primaryGreen,
+    color: Color.primaryColor,
     fontWeight: '500',
   },
   dateRangeText: {
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
     marginHorizontal: scale(8),
   },
   positiveValue: {
-    color: Color.primaryGreen,
+    color: Color.primaryColor,
   },
   negativeValue: {
     color: '#E74C3C',

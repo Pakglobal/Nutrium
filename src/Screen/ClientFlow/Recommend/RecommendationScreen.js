@@ -194,7 +194,7 @@ const RecommendationScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
-      <Header showIcon={true} screenName='Recommendations' />
+      <Header logoHeader={true} />
 
       {isGuest ? (
         <View>
@@ -209,7 +209,7 @@ const RecommendationScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <ActivityIndicator size="large" color={Color.primaryGreen} />
+              <ActivityIndicator size="large" color={Color.primaryColor} />
             </View>
           ) : (
             <ScrollView
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerContainer: {
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     paddingVertical: verticalScale(15),
     justifyContent: 'center',
   },

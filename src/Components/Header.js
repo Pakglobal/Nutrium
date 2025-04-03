@@ -101,6 +101,7 @@ const Header = ({
                 paddingVertical: verticalScale(15),
                 borderBottomLeftRadius: scale(12),
                 borderBottomRightRadius: scale(12),
+                marginHorizontal: scale(8),
               }}>
               <Logo />
               <Menu />
@@ -108,7 +109,7 @@ const Header = ({
           </Shadow>
         </>
       )}
-      
+
       {/* <View
         style={{
           flexDirection: 'row',
@@ -143,12 +144,6 @@ const Header = ({
 
 export default Header;
 const styles = StyleSheet.create({
-  titleTxt: {
-    fontSize: scale(18),
-    color: Color.white,
-    fontWeight: '500',
-    fontFamily: Font?.Sofia,
-  },
   header: {
     backgroundColor: Color?.primaryColor,
     borderBottomLeftRadius: scale(12),

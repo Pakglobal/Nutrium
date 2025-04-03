@@ -214,7 +214,7 @@ const PhysicalActivityy = () => {
       {/* <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
-        rightColor={dayOffset === 0 ? Color.txt : Color.primaryGreen}
+        rightColor={dayOffset === 0 ? Color.txt : Color.primaryColor}
         disabled={dayOffset === 0}
         txtFunction={getDateString()}
       /> */}
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   modalBtnTxt: {
     letterSpacing: 1.5,
     fontSize: verticalScale(12),
-    color: Color.primaryGreen,
+    color: Color.primaryColor,
     fontWeight: '600',
   },
   description: {

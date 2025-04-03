@@ -132,7 +132,7 @@ const MainProfile = ({ route }) => {
                   height: verticalScale(80),
                   width: verticalScale(80),
                 }}>
-                <ActivityIndicator size="small" color={Color.primaryGreen} />
+                <ActivityIndicator size="small" color={Color.primaryColor} />
               </View>
             ) : (
 
@@ -147,7 +147,7 @@ const MainProfile = ({ route }) => {
                   height: verticalScale(80),
                   width: verticalScale(80),
                 }}>
-                <ActivityIndicator size="small" color={Color.primaryGreen} />
+                <ActivityIndicator size="small" color={Color.primaryColor} />
               </View>
             ) : (
               <TouchableOpacity onPress={() => setFullscreenImageVisible(true)}>
@@ -196,7 +196,7 @@ const MainProfile = ({ route }) => {
               <Ionicons
                 name={item?.icon}
                 size={scale(20)}
-                color={Color.primaryGreen}
+                color={Color.primaryColor}
               />
             </View>
             <View style={{ marginLeft: scale(20) }}>

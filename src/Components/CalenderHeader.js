@@ -19,7 +19,7 @@ const CalenderHeader = ({
         <View style={styles.calenderView}>
           <AntDesign
             name="left"
-            color={Color.primaryGreen}
+            color={Color.primaryColor}
             size={verticalScale(16)}
             onPress={onPressLeft}
           />

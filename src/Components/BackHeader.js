@@ -47,7 +47,7 @@ const BackHeader = ({
                     }}>
                     <ActivityIndicator
                       size="small"
-                      color={Color.primaryGreen}
+                      color={Color.primaryColor}
                     />
                   </View>
                 ) : (
@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
   },
   plus: {
     padding: scale(5),
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     borderRadius: scale(20),
   },
   save: {
-    color: Color.primaryGreen,
+    color: Color.primaryColor,
     fontWeight: '600',
     fontSize: scale(15),
   },

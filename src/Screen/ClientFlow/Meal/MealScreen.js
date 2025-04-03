@@ -357,7 +357,7 @@ const MealScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header showIcon={true}  screenName="Meal plan" />
+      <Header logoHeader={true}/>
 
       {mealPlan?.length > 0 && (
         <View style={styles.daysScrollContainer}>
@@ -381,7 +381,7 @@ const MealScreen = () => {
                     styles.day,
                     {
                       color: isDaySelected(template?.days)
-                        ? Color.primaryGreen
+                        ? Color.primaryColor
                         : Color.black,
                     },
                   ]}>
@@ -408,7 +408,7 @@ const MealScreen = () => {
                   <Text
                     style={[
                       styles.day,
-                      { color: isSelected ? Color.primaryGreen : Color.black },
+                      { color: isSelected ? Color.primaryColor : Color.black },
                     ]}>
                     {daysText}
                   </Text>
@@ -421,7 +421,7 @@ const MealScreen = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : mealPlan?.length > 0 ? (
         <ScrollView
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
   dayContainer: {
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(30),
-    borderBottomColor: Color.primaryGreen,
+    borderBottomColor: Color.primaryColor,
   },
   day: {
     fontSize: scale(13),
@@ -620,7 +620,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerContainer: {
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     paddingVertical: verticalScale(15),
     justifyContent: 'center',
   },
@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: scale(50),
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     height: verticalScale(2),
     alignSelf: 'center',
     marginTop: verticalScale(15),

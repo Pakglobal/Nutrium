@@ -112,7 +112,7 @@ const AppointmentScreen = ({selected, setSelected}) => {
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor:
-                item?.id === selected ? Color.primaryGreen : Color.white,
+                item?.id === selected ? Color.primaryColor : Color.white,
             }}>
             <Text
               style={{
@@ -132,7 +132,7 @@ const AppointmentScreen = ({selected, setSelected}) => {
             alignItems: 'center',
             marginTop: verticalScale(10),
           }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : (
         <View
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   messageCard: {
     backgroundColor: '#fff',
     marginTop: scale(5),
-    borderLeftColor: Color.primaryGreen,
+    borderLeftColor: Color.primaryColor,
     borderLeftWidth: 2,
     borderRadius: scale(5),
   },
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     height: scale(40),
     borderRadius: 25,
     marginRight: scale(10),
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   clientName: {
     fontSize: scale(12),

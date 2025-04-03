@@ -72,7 +72,7 @@ const MessageScreen = () => {
             alignItems: 'center',
             marginTop: verticalScale(10),
           }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : (
         <View
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     height: scale(40),
     borderRadius: 25,
     marginRight: 10,
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   clientName: {
     fontWeight: '500',

@@ -75,7 +75,7 @@ const FoodSearch = () => {
             <AntDesign
               name="closecircle"
               size={verticalScale(22)}
-              color={Color.primaryGreen}
+              color={Color.primaryColor}
             />
           </Pressable>
         </View>

@@ -152,13 +152,13 @@ const FoodDiary = () => {
       <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
-        rightColor={dayOffset === 0 ? Color.txt : Color.primaryGreen}
+        rightColor={dayOffset === 0 ? Color.txt : Color.primaryColor}
         disabled={dayOffset === 0}
         txtFunction={getDateString()}
       />
       {loading ? (
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : diaryData && diaryData?.length > 0 ? (
         <FlatList

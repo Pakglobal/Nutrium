@@ -1,9 +1,10 @@
+import { color } from "react-native-reanimated";
+
 const Color = {
   headerBG: '#f5f8ff',
   secondary: '#E8966A',
   borderColor: '#C5C6D0',
   txt: '#3F3F4E',
-  primaryGreen: '#31B393',
   gray: 'gray',
   lightgray: 'lightgray',
   black: '#000',
@@ -23,3 +24,10 @@ export const Font = {
   Nunito:'Nunito',
   Sofia:'Sofia Sans'
 };
+
+export const ShadowValues = {
+  distance: 4,
+  blackShadowDistance: 2,
+  color: '#6BCB77',
+  blackShadow: 'rgba(0,0,0,0.25)'
+}

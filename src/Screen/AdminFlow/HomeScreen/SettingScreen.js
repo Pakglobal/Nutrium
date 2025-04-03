@@ -71,7 +71,7 @@ const SettingScreen = () => {
       <View style={{marginHorizontal: scale(16)}}>
         <Text
           style={{
-            color: Color.primaryGreen,
+            color: Color.primaryColor,
             marginVertical: scale(8),
             fontWeight: 'bold',
           }}>
@@ -111,7 +111,7 @@ const SettingScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <ActivityIndicator size="small" color={Color.primaryGreen} />
+              <ActivityIndicator size="small" color={Color.primaryColor} />
             </View>
           ) : (
             <Switch
@@ -119,7 +119,7 @@ const SettingScreen = () => {
                 false: '#e0e0e0',
                 true: '#A0D8C5',
               }}
-              thumbColor={isEnabled ? Color.primaryGreen : '#ffffff'}
+              thumbColor={isEnabled ? Color.primaryColor : '#ffffff'}
               onValueChange={toggleSwitch}
               value={isEnabled}
             />
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: scale(8),
     height: scale(50),
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   leftSection: {
     flexDirection: 'row',

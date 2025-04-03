@@ -91,7 +91,7 @@ const SideBar = ({onSelectScreen}) => {
     <View style={{flex: 1}}>
       <View
         style={{
-          backgroundColor: Color.primaryGreen,
+          backgroundColor: Color.primaryColor,
           paddingVertical: verticalScale(20),
         }}>
         <View style={{marginHorizontal: scale(8)}}>

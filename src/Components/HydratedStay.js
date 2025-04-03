@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import React, { useEffect, useState, useRef } from 'react';
-import { scale, verticalScale } from 'react-native-size-matters';
-import Color, { Font } from '../assets/colors/Colors';
-import { useNavigation } from '@react-navigation/native';
+import React, {useEffect, useState, useRef} from 'react';
+import {scale, verticalScale} from 'react-native-size-matters';
+import Color, {Font, ShadowValues} from '../assets/colors/Colors';
+import {useNavigation} from '@react-navigation/native';
 import HydratedView from './HydratedView';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import {
   GetWaterIntakeDetails,
   SetWaterIntakeDetails,
@@ -23,7 +23,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import Drop from '../assets/Images/drop.svg';
 import Bottle from '../assets/Images/bottel.svg';
 import Glass from '../assets/Images/glass.svg';
-import { Shadow } from 'react-native-shadow-2';
+import {Shadow} from 'react-native-shadow-2';
+import RightBack from '../assets/Icon/rightBack.svg';
 
 const HydratedStay = () => {
   const navigation = useNavigation();
@@ -134,18 +135,16 @@ const HydratedStay = () => {
 
   return (
     <SafeAreaView>
-      <View style={styles.waterContainer} >
+      <View style={styles.waterContainer}>
         <View style={styles.topContainer}>
-          {/* <OnOffFunctionality
-          title={'Are you staying hydrated?'}
-          hydrate={true}
-        /> */}
           <View>
             <Text style={styles.mainTitle}>Are you staying hydrated?</Text>
-            <Text style={styles.subTitle}>Keep going to reach you daily goal!</Text>
+            <Text style={styles.subTitle}>
+              Keep going to reach you daily goal!
+            </Text>
           </View>
           <View>
-            <View style={styles.showIntake} >
+            <View style={styles.showIntake}>
               <Text style={styles.intakeTxt}>Current intake</Text>
               <Text style={styles.intakeTxt}>
                 {`${bothL.toFixed(1)}L / ${totalGoal}L`}
@@ -171,14 +170,16 @@ const HydratedStay = () => {
         <View style={styles.bottomContainer}>
           {/* <View style={styles.hydrationButtons}> */}
           <View style={styles.hydrationButtons}>
-
-
-
-            <View style={{ width: '30%' }} >
-              <TouchableOpacity style={styles.waterCardView} onPress={() => handleAddWater(0.2)}>
-
-                <Glass height={verticalScale(40)} width={scale(45)} style={styles.waterIcon} />
-                <View style={styles.plusIcon} >
+            <View style={{width: '30%'}}>
+              <TouchableOpacity
+                style={styles.waterCardView}
+                onPress={() => handleAddWater(0.2)}>
+                <Glass
+                  height={verticalScale(40)}
+                  width={scale(45)}
+                  style={styles.waterIcon}
+                />
+                <View style={styles.plusIcon}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
@@ -189,12 +190,16 @@ const HydratedStay = () => {
               <Text style={styles.waterTxt}>{'200mL'}</Text>
             </View>
 
-
-
-            <View style={{ width: '30%' }} >
-              <TouchableOpacity style={styles.waterCardView} onPress={() => handleAddWater(0.5)}>
-                <Bottle height={verticalScale(40)} width={scale(45)} style={styles.waterIcon} />
-                <View style={styles.plusIcon} >
+            <View style={{width: '30%'}}>
+              <TouchableOpacity
+                style={styles.waterCardView}
+                onPress={() => handleAddWater(0.5)}>
+                <Bottle
+                  height={verticalScale(40)}
+                  width={scale(45)}
+                  style={styles.waterIcon}
+                />
+                <View style={styles.plusIcon}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
@@ -203,19 +208,20 @@ const HydratedStay = () => {
                 </View>
               </TouchableOpacity>
               <Text style={styles.waterTxt}>{'500mL'}</Text>
-
             </View>
 
-
-
-            <View style={{ width: '30%' }} >
+            <View style={{width: '30%'}}>
               <TouchableOpacity
                 style={styles.waterCardView}
                 onPress={() =>
-                  navigation.navigate('waterIntakeLog', { plusData: plusData })
+                  navigation.navigate('waterIntakeLog', {plusData: plusData})
                 }>
-                <Drop height={verticalScale(40)} width={scale(45)} style={styles.waterIcon} />
-                <View style={styles.plusIcon} >
+                <Drop
+                  height={verticalScale(40)}
+                  width={scale(45)}
+                  style={styles.waterIcon}
+                />
+                <View style={styles.plusIcon}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
@@ -224,49 +230,35 @@ const HydratedStay = () => {
                 </View>
               </TouchableOpacity>
               <Text style={styles.waterTxt}>{'Custom'}</Text>
-
             </View>
           </View>
         </View>
 
-        <View style={{ marginTop: scale(10) }} >
-
-          <Shadow distance={4} startColor={Color?.grayshadow} style={{ width: "100%" }} >
-            <View style={{
-              borderRadius: scale(5),
-              // padding: scale(10),
-              backgroundColor: Color?.white,
-            }}>
-              <Pressable
-                onPress={() => navigation.navigate('waterIntake')}>
-                <View style={{ flexDirection: 'row', padding: scale(7), justifyContent: 'space-between' }} >
-
+        <View style={{marginTop: scale(10)}}>
+          <Shadow
+            distance={ShadowValues.blackShadowDistance}
+            startColor={ShadowValues.blackShadow}
+            style={{width: '100%'}}>
+            <View
+              style={{
+                borderRadius: scale(5),
+                backgroundColor: Color?.white,
+              }}>
+              <Pressable onPress={() => navigation.navigate('waterIntake')}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    padding: scale(7),
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
                   <Text style={styles.waterText}>See all water logs</Text>
-                  <AntDesign
-                    name="right"
-                    size={verticalScale(13)}
-                    color={Color.primaryColor}
-                    style={{ alignSelf: "center" }}
-                  />
+                  <RightBack />
                 </View>
               </Pressable>
             </View>
           </Shadow>
         </View>
-        {/* <Pressable
-          style={styles.waterView}
-          onPress={() => navigation.navigate('waterIntake')}>
-          <View style={{ flexDirection: 'row', padding: scale(7), justifyContent: 'space-between' }} >
-
-            <Text style={styles.waterText}>See all water logs</Text>
-            <AntDesign
-              name="right"
-              size={verticalScale(13)}
-              color={Color.primaryColor}
-              style={{ alignSelf: "center" }}
-            />
-          </View>
-        </Pressable> */}
       </View>
     </SafeAreaView>
   );
@@ -276,14 +268,14 @@ export default HydratedStay;
 
 const styles = StyleSheet.create({
   waterContainer: {
-    padding: scale(10)
+    padding: scale(10),
   },
   plusIcon: {
     backgroundColor: '#68A16C4D',
     position: 'absolute',
     right: scale(5),
     top: scale(5),
-    borderRadius: scale(3)
+    borderRadius: scale(3),
   },
   waterIcon: {
     alignSelf: 'center',
@@ -291,13 +283,13 @@ const styles = StyleSheet.create({
   intakeTxt: {
     color: Color?.primaryColor,
     fontWeight: '500',
-    fontSize: verticalScale(13),
-    fontFamily:Font?.Poppins
+    fontSize: scale(14),
+    fontFamily: Font?.Poppins,
   },
   showIntake: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: scale(5)
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: scale(5),
   },
   header: {
     flexDirection: 'row',
@@ -310,11 +302,10 @@ const styles = StyleSheet.create({
     color: Color.txt,
   },
   mainTitle: {
-    fontSize: verticalScale(15),
+    fontSize: scale(16),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily:Font?.Poppins
-
+    fontFamily: Font?.Poppins,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -325,16 +316,16 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   buttonText: {
-    color: Color.primaryGreen,
+    color: Color.primaryColor,
     fontWeight: '600',
     marginStart: scale(5),
   },
   subTitle: {
-    fontSize: verticalScale(13),
+    fontSize: scale(14),
     fontWeight: '400',
     color: Color.subText,
     marginTop: verticalScale(10),
-    fontFamily:Font?.Poppins
+    fontFamily: Font?.Poppins,
   },
   hydrateContainer: {
     height: verticalScale(10),
@@ -365,7 +356,7 @@ const styles = StyleSheet.create({
   hydrationButtons: {
     marginVertical: scale(12),
     flexDirection: 'row',
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   logButton: {
     flexDirection: 'row',
@@ -384,10 +375,9 @@ const styles = StyleSheet.create({
     height: verticalScale(70),
     // width: '30%',
     backgroundColor: Color?.primary,
-    justifyContent: "center",
+    justifyContent: 'center',
     borderWidth: scale(1),
-    borderColor: Color?.primaryColor
-
+    borderColor: Color?.primaryColor,
   },
   waterImg: {
     height: verticalScale(40),
@@ -400,13 +390,13 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginTop: verticalScale(5),
     textAlign: 'center',
-    fontFamily:Font?.Sofia
+    fontFamily: Font?.Sofia,
+    fontSize: scale(14),
   },
   waterText: {
-    fontSize: verticalScale(12),
+    fontSize: scale(12),
     color: Color.primaryColor,
     fontWeight: '500',
-    fontFamily:Font?.Poppins
-
+    fontFamily: Font?.Poppins,
   },
 });

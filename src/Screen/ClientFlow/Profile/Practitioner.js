@@ -60,7 +60,7 @@ const Practitioner = ({route}) => {
               <Ionicons
                 name={item?.icon}
                 size={scale(20)}
-                color={Color.primaryGreen}
+                color={Color.primaryColor}
               />
             </View>
             <View style={{marginLeft: scale(20)}}>

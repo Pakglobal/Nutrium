@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   headerContainer: {
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   header: {
     marginHorizontal: scale(16),

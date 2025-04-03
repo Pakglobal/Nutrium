@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,17 +11,18 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Color from '../assets/colors/Colors';
 import {
   GetAppointmentByClientId,
   UpdateAppointmentStatus,
 } from '../Apis/ClientApis/ClientAppointmentApi';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import { Shadow } from 'react-native-shadow-2';
 
 const AppointmentCard = ({
   refreshAppointments,
@@ -61,7 +62,7 @@ const AppointmentCard = ({
   const handleConfirm = async appointment => {
     try {
       const updatedAppointments = activeAppointments.map(app =>
-        app._id === appointment._id ? {...app, isLoading: true} : app,
+        app._id === appointment._id ? { ...app, isLoading: true } : app,
       );
       setActiveAppointments(updatedAppointments);
 
@@ -81,84 +82,98 @@ const AppointmentCard = ({
     }
   };
 
-  const renderAppointmentItem = ({item}) => {
+  const renderAppointmentItem = ({ item }) => {
     const date = formatDate(item?.start);
     const time = `${formatTime(item?.start)} - ${formatTime(item?.end)}`;
     const isPending = item?.status === 'not_confirmed';
 
     return (
-      <View
-        style={[
-          styles.cardContainer,
-          {
-            backgroundColor: isPending
-              ? 'rgba(232, 150, 106, 0.3)'
-              : Color.common,
-          },
-        ]}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Appointment</Text>
-          <View style={styles.status}>
-            <FontAwesome name="calendar" size={14} color="#D97848" />
-            <Text style={styles.statusText}>
-              {isPending
-                ? 'Pending'
-                : item?.status.charAt(0)?.toUpperCase() + item?.status.slice(1)}
-            </Text>
-          </View>
-        </View>
+      <View style={{ marginBottom: scale(18), }} >
+        <View style={{ paddingHorizontal: scale(10) }} >
+          <Shadow distance={6} startColor={Color?.shadowColor} style={{ width: "100%" }} >
+            <View style={{
+              borderRadius: scale(10),
+              // padding: scale(10),
+              backgroundColor: Color?.white,
 
-        <View style={styles.card}>
-          <Image
-            source={
-              item?.image
-                ? {uri: item?.image}
-                : item?.gender === 'Female'
-                ? require('../assets/Images/woman.png')
-                : require('../assets/Images/man.png')
-            }
-            style={styles.avatar}
-          />
-          <View style={styles.details}>
-            <Text style={styles.date}>{date}</Text>
-            <View style={styles.timeRow}>
-              <FontAwesome name="clock-o" size={14} color="#555" />
-              <Text style={styles.time}>{time}</Text>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            onPress={() => {
-              setSelectedAppointment(item);
-              setModalVisible(true);
             }}>
-            <MaterialIcons name="more-vert" size={24} color="#555" />
-          </TouchableOpacity>
-        </View>
+              <View
+                style={styles.cardContainer}>
+                <View style={styles.header}>
+                  <Text style={styles.title}>Appointment</Text>
+                  <View style={styles.status}>
 
-        {isPending && (
-          <TouchableOpacity
-            style={styles.confirmButton}
-            onPress={() => handleConfirm(item)}
-            disabled={item.isLoading}>
-            <Text style={styles.confirmText}>
-              {item.isLoading ? 'Confirming...' : 'Confirm'}
-            </Text>
-          </TouchableOpacity>
-        )}
+                    <Text style={styles.statusText}>
+                      {isPending
+                        ? 'Pending'
+                        : item?.status.charAt(0)?.toUpperCase() + item?.status.slice(1)}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.card}>
+                  <Image
+                    source={
+                      item?.image
+                        ? { uri: item?.image }
+                        : item?.gender === 'Female'
+                          ? require('../assets/Images/woman.png')
+                          : require('../assets/Images/man.png')
+                    }
+                    style={styles.avatar}
+                  />
+                  <View style={styles.details}>
+                    <Text style={styles.date}>{date}</Text>
+                    <View style={styles.timeRow}>
+                      <Text style={styles.time}>{time}</Text>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedAppointment(item);
+                      setModalVisible(true);
+                    }}>
+                    <MaterialIcons name="more-vert" size={24} color={Color?.primaryColor} />
+                  </TouchableOpacity>
+                </View>
+
+                {isPending && (
+                  <TouchableOpacity
+                    style={styles.confirmButton}
+                    onPress={() => handleConfirm(item)}
+                    disabled={item.isLoading}>
+                    <Text style={styles.confirmText}>
+                      {item.isLoading ? 'Confirming...' : 'Confirm'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          </Shadow>
+        </View>
       </View>
+
+
+
     );
   };
   return (
     <View style={styles.container}>
       {activeAppointments?.length > 0 ? (
+        // <FlatList
+        //   data={activeAppointments}
+        //   renderItem={renderAppointmentItem}
+        //   keyExtractor={item => item?._id}
+        // />
         <FlatList
           data={activeAppointments}
           renderItem={renderAppointmentItem}
           keyExtractor={item => item?._id}
         />
+
       ) : (
-null
+        null
       )}
 
       <Modal
@@ -168,16 +183,16 @@ null
         <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
           <View style={styles.modalContainer}>
             <View style={styles.modalView}>
-              <View style={{marginHorizontal: scale(20)}}>
-                <Pressable style={{marginBottom: verticalScale(12)}}>
-                  <Text style={{fontSize: scale(15), color: Color.txt}}>
+              <View style={{ marginHorizontal: scale(20) }}>
+                <Pressable style={{ marginBottom: verticalScale(12) }}>
+                  <Text style={{ fontSize: scale(15), color: Color.txt }}>
                     Manage appointment
                   </Text>
                 </Pressable>
 
                 <TouchableOpacity
                   onPress={handleCancelAppointment}
-                  style={{marginVertical: verticalScale(10)}}>
+                  style={{ marginVertical: verticalScale(10) }}>
                   <Text style={styles.modalTxt}>
                     {selectedAppointment?.status === 'not_confirmed'
                       ? 'Reject Appointment'
@@ -192,24 +207,20 @@ null
     </View>
   );
 };
+
+
 export default AppointmentCard;
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
-  },
-  loaderContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    zIndex: 999,
+    // paddingHorizontal:scale(10),
   },
   cardContainer: {
-    borderRadius: scale(15),
     padding: scale(10),
-    marginHorizontal: scale(16),
-    marginTop: scale(10),
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -224,11 +235,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: scale(5),
-    padding: scale(5),
+    // padding: scale(5),
     borderRadius: scale(10),
   },
   statusText: {
-    color: Color.secondary,
+    color: Color.primaryColor,
     fontSize: scale(13),
     fontWeight: '600',
     marginLeft: scale(5),
@@ -236,8 +247,10 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: scale(10),
+    // padding: scale(10),
     borderRadius: scale(15),
+    marginTop: scale(10)
+
   },
   avatar: {
     width: scale(40),
@@ -261,23 +274,22 @@ const styles = StyleSheet.create({
   time: {
     fontSize: scale(12),
     color: Color.black,
-    marginLeft: scale(5),
     marginTop: verticalScale(2),
   },
   moreIcon: {
-    backgroundColor: Color.primary,
-    padding: scale(5),
+    backgroundColor: Color.white,
+    // padding: scale(5),
     borderRadius: scale(10),
   },
   confirmButton: {
-    backgroundColor: Color.secondary,
-    padding: scale(10),
+    backgroundColor: Color.primaryColor,
+    padding: scale(7),
     borderRadius: scale(20),
     marginTop: verticalScale(10),
     alignItems: 'center',
   },
   confirmText: {
-    color: Color.primary,
+    color: Color.white,
     fontWeight: '600',
     fontSize: scale(16),
   },
@@ -290,7 +302,7 @@ const styles = StyleSheet.create({
   modalView: {
     width: '85%',
     paddingVertical: verticalScale(15),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     borderRadius: scale(10),
   },
   modalTxt: {
@@ -298,3 +310,4 @@ const styles = StyleSheet.create({
     color: Color.txt,
   },
 });
+

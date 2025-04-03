@@ -23,7 +23,7 @@ const ClientChatScreen = () => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons
               name="arrow-back"
-              color={Color.primary}
+              color={Color.white}
               size={scale(22)}
             />
           </TouchableOpacity>
@@ -31,7 +31,7 @@ const ClientChatScreen = () => {
         </View>
         <Ionicons
           name="information-circle-outline"
-          color={Color.primary}
+          color={Color.white}
           size={scale(22)}
         />
       </View>
@@ -55,7 +55,7 @@ export default ClientChatScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   header: {
     flexDirection: 'row',
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     marginLeft: scale(10),
     fontSize: scale(16),
     fontWeight: 'bold',
-    color: Color.primary,
+    color: Color.white,
   },
   inputContainer: {
     flexDirection: 'row',

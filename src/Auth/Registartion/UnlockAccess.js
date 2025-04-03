@@ -27,14 +27,14 @@ const UnlockAccess = () => {
       'Just follow these steps and start enjoying all your Nutrium care perks, including appointments with experts.',
   };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.primary}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <SighnUpHeader onPressBack={() => navigation.goBack()} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginHorizontal: scale(20)}}>
-          <Image
+          {/* <Image
             source={require('../../assets/Images/temGym.jpeg')}
             style={styles.image}
-          />
+          /> */}
           <Text style={styles.titleFont}>{gymTextData?.title}</Text>
           <Text style={styles.subTitleFont}>{gymTextData?.subTitle}</Text>
           <View style={{marginLeft: verticalScale(5), marginTop: scale(10)}}>

@@ -7,6 +7,7 @@ const CustomAlert = ({
   visible,
   message,
   onClose,
+  onChange,
   singleButton = false,
   doubleButton = false,
 }) => {
@@ -76,7 +77,7 @@ const CustomAlert = ({
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={onClose}
+                onPress={onChange}
                 style={{
                   width: '50%',
                   padding: scale(10),
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   },
   alertBox: {
     width: '60%',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     borderRadius: scale(10),
   },
   message: {

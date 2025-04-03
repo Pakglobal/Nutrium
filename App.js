@@ -1,4 +1,4 @@
-import {Alert, PermissionsAndroid, StyleSheet} from 'react-native';
+import {Alert, PermissionsAndroid, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import RootNavigation from './src/Navigation/RootNavigation';
 import messaging from '@react-native-firebase/messaging';
@@ -17,6 +17,7 @@ const AppContent = () => {
         console.error('Firebase is not initialized. Retrying...');
         return;
       }
+      
       const fcmToken = await messaging().getToken();
       console.log('FCM Token:', fcmToken);
 
@@ -57,8 +58,11 @@ const AppContent = () => {
   useEffect(() => {
     requestUserPermission();
   }, []);
+  
 
-  return <RootNavigation />;
+  return (
+      <RootNavigation />
+  );
 };
 
 const App = () => {

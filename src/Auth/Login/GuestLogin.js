@@ -18,9 +18,9 @@ import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
 import Color from '../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {loginData} from '../../redux/user';
+import {guestLoginData} from '../../redux/user';
 
 const GuestLogin = () => {
   const navigation = useNavigation();
@@ -35,10 +35,6 @@ const GuestLogin = () => {
   const [passwordError, setPasswordError] = useState('');
   const [nameError, setNameError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -78,52 +74,49 @@ const GuestLogin = () => {
     }
   };
 
-  const handleLogin = () => {
-    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;    
+  const handleGuestLogin = async () => {
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (!email && !password && !name) {
-      setEmailError('Email is required');
-      setPasswordError('Password is required');
-      setNameError('Name is required');
-    } else if (!name) {
-      setNameError('Name is required');
-      setEmailError('');
-      setPasswordError('');
-    } else if (name.length < 3) {
-      setNameError('Name must be at least 3 chaaracters');
-      setEmailError('');
-      setPasswordError('');
-    } else if (!email) {
-      setEmailError('Email is required');
-      setPasswordError('');
-      setNameError('');
-    } else if (!emailRegex.test(email)) {
-      setEmailError('Enter a valid email');
-      setPasswordError('');
-      setNameError('');
-    } else if (!password) {
-      setPasswordError('Password is required');
-      setEmailError('');
-      setNameError('');
-    } else if (password.length < 8) {
-      setPasswordError('Password must be at least 8 characters');
-      setEmailError('');
-      setNameError('');
-    } else {
-      setEmailError('');
-      setPasswordError('');
-      setNameError('');
+    let emailError = '';
+    let passwordError = '';
+    let nameError = '';
 
-      const body = {
-        email: email,
-        password: password,
-        name: name,
-        role: 'Guest',
-      };
-
-      dispatch(loginData(body));
-      navigation.navigate('information');
+    if (!email) {
+      emailError = 'Email is required';
     }
+    if (!password) {
+      passwordError = 'Password is required';
+    }
+    if (!name) {
+      nameError = 'Name is required';
+    }
+
+    if (email && !emailRegex.test(email)) {
+      emailError = 'Enter a valid email';
+    }
+    if (password && password.length < 8) {
+      passwordError = 'Password must be at least 8 characters';
+    }
+    if (name && name.length < 3) {
+      nameError = 'Name must be at least 8 characters';
+    }
+
+    setEmailError(emailError);
+    setPasswordError(passwordError);
+    setNameError(nameError);
+
+    if (emailError || passwordError || nameError) {
+      return;
+    }
+
+    const body = {
+      email: email,
+      password: password,
+      name: name,
+    };
+
+    dispatch(guestLoginData(body));
+    navigation.navigate('information');
   };
 
   return (
@@ -155,7 +148,10 @@ const GuestLogin = () => {
             placeholder="Enter name"
             onChangeText={validateName}
             placeholderTextColor={Color.gray}
-            style={styles.input}
+            style={[
+              styles.input,
+              {borderColor: !name ? 'black' : nameError ? 'red' : 'green'},
+            ]}
           />
         </View>
         {nameError ? (
@@ -169,7 +165,10 @@ const GuestLogin = () => {
             placeholder="Enter email"
             onChangeText={validateEmail}
             placeholderTextColor={Color.gray}
-            style={styles.input}
+            style={[
+              styles.input,
+              {borderColor: !email ? 'black' : emailError ? 'red' : 'green'},
+            ]}
           />
         </View>
         {emailError ? (
@@ -183,7 +182,16 @@ const GuestLogin = () => {
             placeholder="Enter password"
             onChangeText={validatePassword}
             placeholderTextColor={Color.gray}
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                borderColor: !password
+                  ? 'black'
+                  : passwordError
+                  ? 'red'
+                  : 'green',
+              },
+            ]}
             secureTextEntry={!passwordVisible}
           />
           <TouchableOpacity
@@ -208,7 +216,7 @@ const GuestLogin = () => {
           <TouchableOpacity
             style={[
               styles.checkbox,
-              {borderColor: isAgree ? Color.secondary : '#D3D3D3'},
+              {borderColor: isAgree ? Color.secondary : Color.black},
               {backgroundColor: isAgree ? '#FFFFFF' : '#FFFFFF'},
             ]}
             onPress={() => setIsAgree(!isAgree)}>
@@ -230,13 +238,13 @@ const GuestLogin = () => {
 
         <TouchableOpacity
           disabled={!isAgree}
-          onPress={handleLogin}
+          onPress={handleGuestLogin}
           style={[
             styles.signInButton,
             {backgroundColor: isAgree ? Color.secondary : '#E0E0E0'},
           ]}>
           {loading ? (
-            <ActivityIndicator size="small" color={Color.primary} />
+            <ActivityIndicator size="small" color={Color.white} />
           ) : (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text
@@ -265,7 +273,7 @@ export default GuestLogin;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   scrollView: {
     paddingHorizontal: scale(16),
@@ -319,7 +327,7 @@ const styles = StyleSheet.create({
   checkbox: {
     width: scale(22),
     height: scale(22),
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: scale(4),
     marginRight: scale(11),
     alignItems: 'center',
@@ -337,6 +345,7 @@ const styles = StyleSheet.create({
   },
   highlightedText: {
     color: Color.secondary,
+    fontWeight: '600',
   },
   signInButton: {
     flexDirection: 'row',

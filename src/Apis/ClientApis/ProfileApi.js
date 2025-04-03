@@ -10,7 +10,7 @@ export const GetUserApi = async token => {
     });
     return response?.data;
   } catch (error) {
-    console.error('Error fetching get appointment by client', error);
+    console.error('Error fetching get user', error);
   }
 };
 

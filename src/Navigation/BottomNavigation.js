@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
+  Image,
   Modal,
   Pressable,
   StyleSheet,
@@ -8,15 +9,23 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
 import HomeScreen from '../Screen/ClientFlow/Home/HomeScreen';
 import MealScreen from '../Screen/ClientFlow/Meal/MealScreen';
 import RecommendationScreen from '../Screen/ClientFlow/Recommend/RecommendationScreen';
 import ProfileMenuScreen from '../Screen/ClientFlow/Profile/ProfileMenuScreen';
 import Color from '../assets/colors/Colors';
+import HomeGreen from '../assets/Icon/homeGreen.svg';
+import MealWhite from '../assets/Icon/mealWhite.svg';
+import RecommendationWhite from '../assets/Icon/recommendationWhite.svg';
+import ProfileWhite from '../assets/Icon/profileWhite.svg';
+import HomeWhite from '../assets/Icon/homeWhite.svg';
+import MealGreen from '../assets/Icon/mealGreen.svg';
+import RecommendationGreen from '../assets/Icon/recommendationGreen.svg';
+import ProfileGreen from '../assets/Icon/profileGreen.svg';
 
 const modalScreens = [
   {
@@ -42,30 +51,10 @@ const modalScreens = [
 ];
 
 const screenOption = [
-  {
-    id: 0,
-    name: 'home',
-    component: HomeScreen,
-    icon: 'apps-outline',
-  },
-  {
-    id: 1,
-    name: 'mealScreen',
-    component: MealScreen,
-    icon: 'restaurant-outline',
-  },
-  {
-    id: 2,
-    name: 'recommendation',
-    component: RecommendationScreen,
-    icon: 'reorder-three-outline',
-  },
-  {
-    id: 3,
-    name: 'profileMenu',
-    component: ProfileMenuScreen,
-    icon: 'ellipsis-horizontal-outline',
-  },
+  { id: 0, name: 'home', component: HomeScreen, activeIcon: HomeGreen, inactiveIcon: HomeWhite },
+  { id: 1, name: 'mealScreen', component: MealScreen, activeIcon: MealGreen, inactiveIcon: MealWhite },
+  { id: 2, name: 'recommendation', component: RecommendationScreen, activeIcon: RecommendationGreen, inactiveIcon: RecommendationWhite },
+  { id: 3, name: 'profileMenu', component: ProfileMenuScreen, activeIcon: ProfileGreen, inactiveIcon: ProfileWhite },
 ];
 
 const BottomNavigation = () => {
@@ -73,88 +62,73 @@ const BottomNavigation = () => {
   const Tab = createBottomTabNavigator();
   const navigation = useNavigation();
 
-  const closeModal = () => {
-    setModalVisible(false);
-  };
+  const closeModal = () => setModalVisible(false);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1, backgroundColor: Color?.white }}>
       <Tab.Navigator
-        screenOptions={{
-          tabBarActiveTintColor: Color.secondary,
-          tabBarInactiveTintColor: Color.gray,
+        screenOptions={({ route }) => ({
+          tabBarActiveTintColor: Color?.primaryColor,
+          tabBarInactiveTintColor: Color.white,
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: styles.tabBarStyle,
-        }}>
-        {screenOption &&
-          screenOption.map(item => {
+          tabBarIcon: ({ focused }) => {
+            const currentItem = screenOption.find(item => item.name === route.name);
+            const IconComponent = focused ? currentItem.activeIcon : currentItem.inactiveIcon;
+            
             return (
-              <Tab.Screen
-                key={item.id}
-                name={item.name}
-                component={item.component}
-                options={{
-                  tabBarIcon: ({color, size}) => (
-                    <>
-                      <Ionicons
-                        name={item.icon}
-                        color={color}
-                        size={verticalScale(20)}
-                      />
-                    </>
-                  ),
-                  tabBarIconStyle: {
-                    ...(item.icon === 'restaurant-outline' && {
-                      right: scale(25),
-                    }),
-                    ...(item.icon === 'reorder-three-outline' && {
-                      left: scale(25),
-                    }),
-                  },
-                }}
-              />
+              <View style={[styles.iconContainer, focused && styles.activeTab]}>
+                <IconComponent 
+                  width={scale(22)} 
+                  height={scale(22)} 
+                />
+              </View>
             );
-          })}
+          },
+        })}
+      >
+        {screenOption.map(item => (
+          <Tab.Screen key={item.id} name={item.name} component={item.component} />
+        ))}
       </Tab.Navigator>
 
-      <TouchableOpacity
-        style={styles.plusBtn}
-        onPress={() => setModalVisible(true)}>
-        <Ionicons
-          name="add-outline"
-          color={Color.secondary}
-          size={verticalScale(25)}
+      {/* Floating Add Button */}
+      <TouchableOpacity style={styles.plusBtn} onPress={() => setModalVisible(true)}>
+        {/* <Image source={require('../assets/Images/BottomTabIcon/bottomIcon.png')} /> */}
+        <Ionicons 
+          name="add-outline" 
+          color={Color.primaryColor} 
+          size={verticalScale(23)} 
+          style={{position: "absolute", alignSelf: "center", top: scale(27)}} 
         />
       </TouchableOpacity>
 
       <Modal
         visible={isModalVisible}
         onRequestClose={closeModal}
-        transparent={true}>
+        transparent={true}
+        animationType="fade">
         <TouchableWithoutFeedback onPress={closeModal}>
           <View style={styles.modalContainer}>
             <View style={styles.modalView}>
-              <View style={{marginHorizontal: scale(20)}}>
-                <Pressable style={{marginBottom: verticalScale(15)}}>
-                  <Text style={{fontSize: scale(15), color: Color.txt}}>
-                    New message
+              <View style={{ marginHorizontal: scale(20) }}>
+                <Pressable style={{ marginBottom: verticalScale(15) }}>
+                  <Text style={styles.modalHeaderTxt}>
+                    Add Activity
                   </Text>
                 </Pressable>
-                {modalScreens &&
-                  modalScreens.map(item => {
-                    return (
-                      <TouchableOpacity
-                        key={item.id}
-                        onPress={() => {
-                          navigation.navigate(item.root);
-                          setModalVisible(false);
-                        }}
-                        style={{marginVertical: verticalScale(15)}}>
-                        <Text style={styles.modalTxt}>{item.name}</Text>
-                      </TouchableOpacity>
-                    );
-                  })}
+                {modalScreens.map(item => (
+                  <TouchableOpacity
+                    key={item.id}
+                    onPress={() => {
+                      navigation.navigate(item.root);
+                      setModalVisible(false);
+                    }}
+                    style={styles.modalItemContainer}>
+                    <Text style={styles.modalTxt}>{item.name}</Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
           </View>
@@ -163,22 +137,34 @@ const BottomNavigation = () => {
     </View>
   );
 };
+
 export default BottomNavigation;
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    flexDirection: 'row',
-    height: verticalScale(55),
-    backgroundColor: Color.primary,
+    height: verticalScale(50),
+    backgroundColor: Color?.primaryColor,
+    borderRadius: scale(18),
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 4,
+    marginHorizontal: scale(10),
+    bottom: scale(5)
+  },
+  iconContainer: {
+    padding: scale(7),
+    borderRadius: scale(20),
+  },
+  activeTab: {
+    backgroundColor: 'white',
+    borderRadius: scale(50),
   },
   plusBtn: {
     position: 'absolute',
-    bottom: scale(7),
+    bottom: verticalScale(6),
     alignSelf: 'center',
-    backgroundColor: 'rgba(232, 150, 106, 0.3)',
-    padding: scale(10),
-    borderRadius: scale(30),
-    marginHorizontal: scale(50),
   },
   modalContainer: {
     flex: 1,
@@ -189,10 +175,20 @@ const styles = StyleSheet.create({
   modalView: {
     width: '85%',
     paddingVertical: verticalScale(15),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
+    borderRadius: scale(10),
+  },
+  modalHeaderTxt: {
+    fontSize: scale(15), 
+    color: Color.txt,
+    fontWeight: '500',
+  },
+  modalItemContainer: {
+    marginVertical: verticalScale(15),
+    paddingVertical: verticalScale(5),
   },
   modalTxt: {
     fontSize: scale(13),
     color: Color.txt,
-  },
+  }
 });

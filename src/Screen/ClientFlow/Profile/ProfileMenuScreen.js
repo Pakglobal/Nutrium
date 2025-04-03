@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Button,
   Image,
   SafeAreaView,
   ScrollView,
@@ -17,7 +18,12 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Header from '../../../Components/Header';
 import Color from '../../../assets/colors/Colors';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginData} from '../../../redux/user';
+import {
+  guestLoginData,
+  loginData,
+  setGuestMode,
+  setIsGuest,
+} from '../../../redux/user';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import Toast from 'react-native-simple-toast';
 import {setImage} from '../../../redux/client';
@@ -41,6 +47,11 @@ const ProfileMenuScreen = () => {
   const token = getToken?.token;
   const profileData = getToken?.user || getToken?.userData;
   const id = getToken?.user?._id || getToken?.userData?._id;
+
+  const isGuest = useSelector(state => state.user?.guestMode);
+  const guestData = useSelector(state => state.user?.guestUserData);
+  console.log(profileData);
+  
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = getToken?.user?.image || getToken?.userData?.image;
@@ -92,7 +103,7 @@ const ProfileMenuScreen = () => {
 
     try {
       await GetMeasurementData(token, id),
-      await GetPhysicalActivityDetails(token, id);
+        await GetPhysicalActivityDetails(token, id);
       await GetMeasurementData(token, id);
       await GetPhysicalActivityDetails(token, id);
       await GetPhysicalActivities();
@@ -284,41 +295,76 @@ const ProfileMenuScreen = () => {
   };
 
   useEffect(() => {
-    const GetUserApiData = async () => {
-      try {
-        setLoading(true);
-        const response = await GetUserApi(token);
-        if (response?.message === 'User retrieved successfully') {
-          setUserData(response?.data);
-        } else {
-          showToast(response?.message);
-          setLoading(false);
-        }
-        setLoading(false);
-      } catch (error) {
-        showToast(error);
+    if (isGuest === true) {
+      return;
+    } else {
+      GetUserApiData();
+    }
+  }, []);
+
+  const GetUserApiData = async () => {
+    try {
+      setLoading(true);
+      const response = await GetUserApi(token);
+      if (response?.message === 'User retrieved successfully') {
+        setUserData(response?.data);
+      } else {
+        showToast(response?.message);
         setLoading(false);
       }
-    };
+      setLoading(false);
+    } catch (error) {
+      showToast(error);
+      setLoading(false);
+    }
+  };
 
-    GetUserApiData();
-  }, []);
+  const handleLogout = async () => {
+    dispatch(setGuestMode());
+    dispatch(setIsGuest());
+    dispatch(guestLoginData());
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
-      {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+        <Header showIcon={true} logo={true} />
+      {isGuest === true ? (
+        <View>
+          <View style={{marginHorizontal: scale(16)}}>
+            <Text style={{color: Color.black}}>{guestData?.name}</Text>
+            <Text style={{color: Color.black}}>{guestData?.email}</Text>
+
+            <TouchableOpacity
+              onPress={handleLogout}
+              style={styles.signOutButton}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={styles.signOutText}>Log out</Text>
+                <AntDesign
+                  name="arrowright"
+                  color={'#FFFFFF'}
+                  size={16}
+                  style={{marginLeft: scale(8)}}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (
-        <View style={styles.scrollView}>
-          {menuItems.map(item => renderMenuItem(item))}
+        <View>
+          {loading ? (
+            <View
+              style={{
+                // flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator size="large" color={Color.primaryColor} />
+            </View>
+          ) : (
+            <View style={styles.scrollView}>
+              {menuItems.map(item => renderMenuItem(item))}
+            </View>
+          )}
         </View>
       )}
     </SafeAreaView>
@@ -333,7 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   scrollView: {
-    flex: 1,
+    // flex: 1,
     paddingHorizontal: scale(16),
   },
   profileTopContainer: {
@@ -356,7 +402,7 @@ const styles = StyleSheet.create({
     width: scale(35),
     height: scale(35),
     borderRadius: scale(20),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   profileName: {
     marginLeft: scale(12),
@@ -390,5 +436,18 @@ const styles = StyleSheet.create({
     marginLeft: scale(16),
     fontSize: scale(14),
     color: Color.black,
+  },
+  signOutButton: {
+    flexDirection: 'row',
+    height: verticalScale(38),
+    borderRadius: scale(24),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: verticalScale(38),
+    backgroundColor: Color.secondary,
+  },
+  signOutText: {
+    fontSize: scale(15),
+    fontWeight: '600',
   },
 });

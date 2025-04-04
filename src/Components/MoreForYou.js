@@ -12,10 +12,11 @@ import {
 import {scale, verticalScale} from 'react-native-size-matters';
 import Carousel from 'react-native-snap-carousel';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Color, {Font} from '../assets/colors/Colors';
+import Color, {Font, ShadowValues} from '../assets/colors/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import Plus from '../assets/Icon/plus.svg';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { Shadow } from 'react-native-shadow-2';
 
 const {width} = Dimensions.get('window');
 
@@ -65,10 +66,15 @@ const MoreFor = ({data}) => {
         end={{x: 1, y: 1}}
         style={styles.gradientBox}>
         <Text style={styles.description}>{data.text}</Text>
+        <Shadow
+          distance={ShadowValues.blackShadowDistance}
+          startColor={ShadowValues.blackShadow}
+          style={{width: '100%',}}>
         <View style={styles.txtIcon}>
           <Text style={styles.txt}>{data.buttonText} </Text>
-          <Plus />
+          <Entypo name="plus" size={24} color={Color.primaryColor} />
         </View>
+        </Shadow>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -182,11 +188,11 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(14),
     fontWeight: '600',
     fontFamily: Font?.Poppins,
+    marginBottom: verticalScale(10),
   },
   txtIcon: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: verticalScale(10),
     backgroundColor: Color?.white,
     padding: scale(7),
     borderRadius: scale(5),
@@ -197,6 +203,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Color.primaryColor,
     fontFamily: Font?.Poppins,
+    marginLeft: scale(5),
+    marginTop: scale(2)
   },
 });
 

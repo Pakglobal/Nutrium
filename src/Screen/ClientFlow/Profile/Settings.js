@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackHeader from '../../../Components/BackHeader';
 import Color from '../../../assets/colors/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import {useNavigation, useFocusEffect, DrawerActions} from '@react-navigation/native';
 import {updateUnits} from '../../../redux/unit';
 import {useDispatch} from 'react-redux';
 import Glass from '../../../assets/Images/glass.svg';
@@ -177,12 +177,17 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleGoBack = () => {
+    navigation.goBack();
+    navigation.dispatch(DrawerActions.closeDrawer());
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <BackHeader
         showRightButton={false}
         titleName={'Settings'}
-        onPressBack={() => navigation.goBack()}
+        onPressBack={handleGoBack}
       />
 
       <ScrollView

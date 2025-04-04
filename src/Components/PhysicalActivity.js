@@ -10,10 +10,9 @@ import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color, {Font, ShadowValues} from '../assets/colors/Colors';
 import {useStepTracking} from './StepTrackingService';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
-import RightBack from '../assets/Icon/rightBack.svg';
 
 const PhysicalActivity = ({style}) => {
   const navigation = useNavigation();
@@ -40,7 +39,9 @@ const PhysicalActivity = ({style}) => {
             // { backgroundColor: 'rgba(137, 70, 146, 0.3)' },
           ]}>
           <View style={{}}>
-            <Text style={styles.description}>Your physical activity</Text>
+            <Text style={[styles.description, {fontSize: scale(16)}]}>
+              Your physical activity
+            </Text>
             <Text
               style={[
                 styles.description,
@@ -89,13 +90,12 @@ const PhysicalActivity = ({style}) => {
 
       <View
         style={[
-          // styles.cardContainer,
+          styles.cardContainer,
           {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
             marginVertical: verticalScale(10),
-            // height: verticalScale(80),
             gap: scale(25),
           },
         ]}>
@@ -109,9 +109,7 @@ const PhysicalActivity = ({style}) => {
                 ]}>
                 calories
               </Text>
-              <Text
-                style={styles.zero}
-                numberOfLines={1}>
+              <Text style={styles.zero} numberOfLines={1}>
                 {calories}
               </Text>
             </View>
@@ -134,7 +132,7 @@ const PhysicalActivity = ({style}) => {
         </View>
       </View>
 
-      <View style={{marginTop: scale(10)}}>
+      <View style={{}}>
         <Shadow
           distance={ShadowValues.blackShadowDistance}
           startColor={ShadowValues.blackShadow}
@@ -150,14 +148,18 @@ const PhysicalActivity = ({style}) => {
               <View
                 style={{
                   flexDirection: 'row',
-                  padding: scale(7),
+                  padding: scale(6),
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
                 <Text style={styles.waterText}>
-                  See all physical activity stats
+                  See All Physical Activity Stats
                 </Text>
-                <RightBack />
+                <Entypo
+                  name="chevron-right"
+                  size={24}
+                  color={Color.primaryColor}
+                />
               </View>
             </Pressable>
           </View>
@@ -240,6 +242,7 @@ const styles = StyleSheet.create({
     borderWidth: scale(1),
     borderColor: Color?.primaryColor,
     borderRadius: scale(5),
+    marginTop: verticalScale(10),
   },
   zero: {
     color: Color.textColor,
@@ -247,13 +250,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     paddingHorizontal: scale(10),
     fontFamily: Font?.Sofia,
-    textAlign: 'center'
+    textAlign: 'center',
   },
-  logButton: {},
   waterText: {
     fontSize: scale(12),
     color: Color.primaryColor,
     fontWeight: '500',
     fontFamily: Font?.Poppins,
+    marginTop: verticalScale(2),
+    marginLeft: scale(5),
   },
 });

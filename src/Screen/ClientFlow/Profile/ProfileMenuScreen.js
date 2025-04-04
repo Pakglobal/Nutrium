@@ -50,7 +50,6 @@ const ProfileMenuScreen = () => {
 
   const isGuest = useSelector(state => state.user?.guestMode);
   const guestData = useSelector(state => state.user?.guestUserData);
-  console.log(profileData);
   
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);

@@ -18,13 +18,12 @@ import {
   SetWaterIntakeDetails,
 } from '../Apis/ClientApis/WaterIntakeApi';
 import OnOffFunctionality from './OnOffFunctionality';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import Drop from '../assets/Images/drop.svg';
 import Bottle from '../assets/Images/bottel.svg';
 import Glass from '../assets/Images/glass.svg';
 import {Shadow} from 'react-native-shadow-2';
-import RightBack from '../assets/Icon/rightBack.svg';
 
 const HydratedStay = () => {
   const navigation = useNavigation();
@@ -248,12 +247,16 @@ const HydratedStay = () => {
                 <View
                   style={{
                     flexDirection: 'row',
-                    padding: scale(7),
+                    padding: scale(6),
                     justifyContent: 'space-between',
                     alignItems: 'center',
                   }}>
-                  <Text style={styles.waterText}>See all water logs</Text>
-                  <RightBack />
+                  <Text style={styles.waterText}>See All Water Logs</Text>
+                  <Entypo
+                    name="chevron-right"
+                    size={24}
+                    color={Color.primaryColor}
+                  />
                 </View>
               </Pressable>
             </View>
@@ -285,6 +288,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: scale(14),
     fontFamily: Font?.Poppins,
+    marginTop: verticalScale(5),
   },
   showIntake: {
     flexDirection: 'row',
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     fontWeight: '400',
     color: Color.subText,
-    marginTop: verticalScale(10),
+    marginTop: verticalScale(2),
     fontFamily: Font?.Poppins,
   },
   hydrateContainer: {
@@ -333,6 +337,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.lightgray,
     alignSelf: 'center',
     marginTop: verticalScale(10),
+    marginVertical: verticalScale(5),
     borderRadius: scale(15),
     justifyContent: 'center',
     alignItems: 'center',
@@ -374,7 +379,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(5),
     height: verticalScale(70),
     // width: '30%',
-    backgroundColor: Color?.primary,
+    backgroundColor: Color?.white,
     justifyContent: 'center',
     borderWidth: scale(1),
     borderColor: Color?.primaryColor,
@@ -398,5 +403,7 @@ const styles = StyleSheet.create({
     color: Color.primaryColor,
     fontWeight: '500',
     fontFamily: Font?.Poppins,
+    marginTop: verticalScale(2),
+    marginLeft: scale(5)
   },
 });

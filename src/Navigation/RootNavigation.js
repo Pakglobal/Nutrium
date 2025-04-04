@@ -42,9 +42,65 @@ import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
 import GuestLogin from '../Auth/Login/GuestLogin';
 import InformationScreen from '../Auth/Login/InformationScreen';
+import ClientDrawerContent from './ClientDrawer';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
+const ClientDrawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
+
+const ClientHomeWithDrawer = () => {
+  return (
+    <View style={{flex: 1}}>
+      <BottomNavigation />
+    </View>
+  );
+};
+
+const ClientDrawerNavigator = () => {
+  return (
+    <ClientDrawer.Navigator
+      drawerContent={props => <ClientDrawerContent {...props} />}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          width: '70%',
+        },
+      }}>
+      <ClientDrawer.Screen name="ClientHome" component={ClientHomeWithDrawer} />
+    </ClientDrawer.Navigator>
+  );
+};
+
+const UserFlowStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="ClientDrawer" component={ClientDrawerNavigator} />
+    <Stack.Screen name="mainProfile" component={MainProfile} />
+    <Stack.Screen name="practitioner" component={Practitioner} />
+    <Stack.Screen name="settings" component={Settings} />
+    <Stack.Screen name="foodDiary" component={FoodDiary} />
+    <Stack.Screen name="addMeal" component={AddMeal} />
+    <Stack.Screen name="logMeal" component={LogMeal} />
+    <Stack.Screen name="swapMeal" component={SwapMeal} />
+    <Stack.Screen name="foodSearch" component={FoodSearch} />
+    <Stack.Screen name="physicalActivity" component={PhysicalActivityy} />
+    <Stack.Screen name="logPhysicalActivity" component={LogPhysicalActivity} />
+    <Stack.Screen name="workOutDetails" component={WorkOutDetails} />
+    <Stack.Screen name="waterIntake" component={WaterIntake} />
+    <Stack.Screen name="waterIntakeLog" component={WaterIntakeLog} />
+    <Stack.Screen name="measurements" component={Measurements} />
+    <Stack.Screen name="addMeasurement" component={AddMeasurement} />
+    <Stack.Screen name="measurementDetail" component={MeasurementDetail} />
+    <Stack.Screen name="allLogs" component={AllLogs} />
+    <Stack.Screen name="messages" component={Message} />
+    <Stack.Screen name="shoppingLists" component={ShoppingList} />
+    <Stack.Screen name="newShoppingLists" component={NewShoppingList} />
+    <Stack.Screen name="myLists" component={MyList} />
+  </Stack.Navigator>
+);
 
 const MyDrawer = () => {
   const [selectedScreen, setSelectedScreen] = useState('MESSAGES');
@@ -101,34 +157,6 @@ const AuthStack = () => (
     <Stack.Screen name="unlockAccess" component={UnlockAccess} />
     <Stack.Screen name="getAccess" component={GetAccess} />
     <Stack.Screen name="helpForRegistration" component={HelpForRegistration} />
-  </Stack.Navigator>
-);
-
-const UserFlowStack = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-    <Stack.Screen name="userFlow" component={HomeScreen} />
-    <Stack.Screen name="mainProfile" component={MainProfile} />
-    <Stack.Screen name="practitioner" component={Practitioner} />
-    <Stack.Screen name="settings" component={Settings} />
-    <Stack.Screen name="foodDiary" component={FoodDiary} />
-    <Stack.Screen name="addMeal" component={AddMeal} />
-    <Stack.Screen name="logMeal" component={LogMeal} />
-    <Stack.Screen name="swapMeal" component={SwapMeal} />
-    <Stack.Screen name="foodSearch" component={FoodSearch} />
-    <Stack.Screen name="physicalActivity" component={PhysicalActivityy} />
-    <Stack.Screen name="logPhysicalActivity" component={LogPhysicalActivity} />
-    <Stack.Screen name="workOutDetails" component={WorkOutDetails} />
-    <Stack.Screen name="waterIntake" component={WaterIntake} />
-    <Stack.Screen name="waterIntakeLog" component={WaterIntakeLog} />
-    <Stack.Screen name="measurements" component={Measurements} />
-    <Stack.Screen name="addMeasurement" component={AddMeasurement} />
-    <Stack.Screen name="measurementDetail" component={MeasurementDetail} />
-    <Stack.Screen name="allLogs" component={AllLogs} />
-    <Stack.Screen name="messages" component={Message} />
-    <Stack.Screen name="shoppingLists" component={ShoppingList} />
-    <Stack.Screen name="newShoppingLists" component={NewShoppingList} />
-    <Stack.Screen name="myLists" component={MyList} />
   </Stack.Navigator>
 );
 

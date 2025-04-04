@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
+import NutriumLogo from '../../assets/Images/logoGreen.svg';
 import Color from '../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
 import Ionicons from 'react-native-vector-icons/Ionicons';

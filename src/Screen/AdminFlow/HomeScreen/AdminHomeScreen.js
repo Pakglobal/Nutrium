@@ -8,7 +8,7 @@ import {
 import React, {useCallback, useState} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color from '../../../assets/colors/Colors';
-import NutriumLogo from '../../../assets/Icon/logo.svg';
+import NutriumLogo from '../../../assets/Images/logoWhite.svg';
 import MessageScreen from '../Message/MessageScreen';
 import ClientScreen from '../Clients/ClientScreen';
 import AppointmentScreen from '../Appointments/AppointmentScreen';

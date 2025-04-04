@@ -85,7 +85,7 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
             {isTracking ? 'On' : 'Off'}
           </Text>
           <Ionicons
-            name="notifications-outline"
+            name={isTracking ? "notifications" : "notifications-outline"}
             size={verticalScale(15)}
             color={isTracking ? Color.primaryColor : Color.gray}
           />
@@ -145,8 +145,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: Color.gray,
     fontWeight: '600',
-    marginHorizontal: scale(5),
+    marginHorizontal: scale(8),
     fontSize: scale(14),
+    fontFamily: Font.Nunito
   },
   modalView: {
     flex: 1,
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: '80%',
     paddingVertical: verticalScale(20),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
     borderRadius: 10,
   },
   modalTitle: {

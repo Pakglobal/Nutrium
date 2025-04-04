@@ -7,12 +7,11 @@ import {
 } from 'react-native';
 import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Color, {Font, ShadowValues} from '../assets/colors/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
 import Food from '../assets/Images/Food.svg';
-import RightBack from '../assets/Icon/rightBack.svg';
 
 const MealsLikeInHome = () => {
   const navigation = useNavigation();
@@ -21,16 +20,16 @@ const MealsLikeInHome = () => {
   };
 
   return (
-    <View style={{backgroundColor: Color?.primary, padding: scale(10)}}>
+    <View style={{padding: scale(10)}}>
       <Text style={styles.title}>What were your meals like?</Text>
       <View style={styles.cardContainer}>
-        <Food />
+        <Food width={'100%'} height={verticalScale(170)} />
         <Text style={styles.discription}>
           Log more meals and get the {'\n'}bigger picture of your days.
         </Text>
       </View>
 
-      <View style={{marginTop: scale(10)}}>
+      <View style={{marginTop: scale(8)}}>
         <Shadow
           distance={ShadowValues.blackShadowDistance}
           startColor={ShadowValues.blackShadow}
@@ -44,7 +43,11 @@ const MealsLikeInHome = () => {
               style={styles.DiaryBtn}
               onPress={handleGoFoodDiary}>
               <Text style={styles.txt}>Go to Food Diary</Text>
-              <RightBack />
+              <Entypo
+                name="chevron-right"
+                size={24}
+                color={Color.primaryColor}
+              />
             </TouchableOpacity>
           </View>
         </Shadow>
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(20),
     alignSelf: 'center',
     width: '100%',
-    backgroundColor: Color?.primary,
+    backgroundColor: Color?.white,
   },
   card: {
     height: '100%',
@@ -82,18 +85,19 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Color.primaryColor,
     fontFamily: Font?.Poppins,
+    marginTop: verticalScale(2),
+    marginLeft: scale(5),
   },
   title: {
     fontSize: verticalScale(14),
     fontWeight: '500',
     color: Color.textColor,
-    paddingBottom: scale(7),
     fontFamily: Font?.Poppins,
   },
   DiaryBtn: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: scale(8),
+    padding: scale(6),
     alignItems: 'center',
   },
 });

@@ -17,22 +17,21 @@ import Carousel from 'react-native-snap-carousel';
 import moment from 'moment';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color, {Font} from '../assets/colors/Colors';
-import {UpdateAppointmentStatus} from '../Apis/ClientApis/ClientAppointmentApi';
+import {GetAppointmentByClientId, UpdateAppointmentStatus} from '../Apis/ClientApis/ClientAppointmentApi';
 import {Shadow} from 'react-native-shadow-2';
-import ThreeDot from '../assets/Icon/threeDot.svg';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const AppointmentCard = ({
-  refreshAppointments,
-  activeAppointments,
-  selectedAppointment,
-  setSelectedAppointment,
-  setActiveAppointments,
   navigation,
 }) => {
-  const userInfo = useSelector(state => state?.user?.userInfo);
-  const token = userInfo?.token;
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
+
+  const [activeAppointments, setActiveAppointments] = useState([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   const filteredAppointments = activeAppointments.filter(
     app => app.status === 'not_confirmed' || app.status === 'confirmed',
@@ -57,6 +56,42 @@ const AppointmentCard = ({
       setCurrentIndex(carouselRef.current.currentIndex || 0);
     }
   }, [filteredAppointments]);
+
+  const FetchAppointmentData = async () => {
+    try {
+      setLoading(true);
+      const response = await GetAppointmentByClientId(token, id);
+
+      if (response && response.length > 0) {
+        const active = response
+          ?.filter(app => app?.status !== 'canceled')
+          ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
+
+        setActiveAppointments(active);
+
+        if (active.length > 0) {
+          setSelectedAppointment(active[0]);
+        }
+      } else {
+        setActiveAppointments([]);
+        setSelectedAppointment(null);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+
+      setActiveAppointments([]);
+      setSelectedAppointment(null);
+      setLoading(false);
+    }
+  };
+
+  const refreshAppointments = FetchAppointmentData
+
+  useEffect(() => {
+    FetchAppointmentData();
+  }, [token, id]);
 
   const formatDate = isoString =>
     isoString ? moment(isoString).format('dddd, D MMMM') : '';
@@ -125,7 +160,7 @@ const AppointmentCard = ({
 
       await refreshAppointments();
 
-      Alert.alert('Success', 'Appointment confirmed successfully!');
+      // Alert.alert('Success', 'Appointment confirmed successfully!');
     } catch (error) {
       console.error('Error confirming appointment:', error);
       Alert.alert(
@@ -164,7 +199,12 @@ const AppointmentCard = ({
     return (
       <Animated.View
         style={[
-          {marginVertical: verticalScale(8), paddingHorizontal: scale(15)},
+          {
+            marginVertical: verticalScale(8),
+            paddingHorizontal: scale(15),
+            alignSelf: 'center',
+            width: '100%',
+          },
           {opacity: fadeAnim},
         ]}>
         <Shadow
@@ -193,11 +233,12 @@ const AppointmentCard = ({
                 <Text style={styles.timeText}>{timeRange}</Text>
               </View>
               <TouchableOpacity
+                style={{padding: scale(10)}}
                 onPress={() => {
                   setSelectedAppointment(item);
                   setModalVisible(true);
                 }}>
-                <ThreeDot height={20} width={20} />
+                <Entypo name="dots-three-vertical" size={24} color={Color.primaryColor} />
               </TouchableOpacity>
             </View>
 
@@ -337,6 +378,8 @@ export default AppointmentCard;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardContainer: {
     padding: scale(10),
@@ -405,7 +448,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: verticalScale(12),
+    paddingTop: verticalScale(3),
+    paddingBottom: verticalScale(10)
   },
   paginationDot: {
     height: scale(8),

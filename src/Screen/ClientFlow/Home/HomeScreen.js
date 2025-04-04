@@ -30,8 +30,8 @@ const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [receivedMessage, setReceivedMessage] = useState(null);
 
-  const [activeAppointments, setActiveAppointments] = useState([]);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  // const [activeAppointments, setActiveAppointments] = useState([]);
+  // const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   const isGuest = useSelector(state => state.user?.guestMode);
 
@@ -50,48 +50,48 @@ const HomeScreen = () => {
     }
   };
 
-  const FetchAppointmentData = async () => {
-    try {
-      setLoading(true);
-      const response = await GetAppointmentByClientId(token, id);
+  // const FetchAppointmentData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await GetAppointmentByClientId(token, id);
 
-      if (response && response.length > 0) {
-        const active = response
-          ?.filter(app => app?.status !== 'canceled')
-          ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
+  //     if (response && response.length > 0) {
+  //       const active = response
+  //         ?.filter(app => app?.status !== 'canceled')
+  //         ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
 
-        setActiveAppointments(active);
+  //       setActiveAppointments(active);
 
-        if (active.length > 0) {
-          setSelectedAppointment(active[0]);
-        }
-      } else {
-        setActiveAppointments([]);
-        setSelectedAppointment(null);
-      }
+  //       if (active.length > 0) {
+  //         setSelectedAppointment(active[0]);
+  //       }
+  //     } else {
+  //       setActiveAppointments([]);
+  //       setSelectedAppointment(null);
+  //     }
 
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching appointments:', error);
 
-      setActiveAppointments([]);
-      setSelectedAppointment(null);
-      setLoading(false);
-    }
-  };
+  //     setActiveAppointments([]);
+  //     setSelectedAppointment(null);
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (isGuest) {
-      return;
-    } else {
-      FetchAppointmentData();
-    }
-  }, [token, id]);
+  // useEffect(() => {
+  //   if (isGuest) {
+  //     return;
+  //   } else {
+  //     FetchAppointmentData();
+  //   }
+  // }, [token, id]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    GetUserApiData();
-    FetchAppointmentData()
+    GetUserApiData()
+    // FetchAppointmentData()
       .then(() => {
         setRefreshing(false);
       })
@@ -102,7 +102,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
-      <Header logoHeader={true} />
+      <Header logoHeader={true} handleMenu={() => navigation.openDrawer()} />
 
       {isGuest ? (
         <ScrollView
@@ -151,22 +151,22 @@ const HomeScreen = () => {
               style={{
                 backgroundColor: Color.white,
                 paddingHorizontal: scale(5),
-                marginTop: verticalScale(3),
+                marginTop: verticalScale(10),
               }}
               showsVerticalScrollIndicator={false}>
               <AppointmentCard
-                refreshAppointments={FetchAppointmentData}
-                activeAppointments={activeAppointments}
-                setActiveAppointments={setActiveAppointments}
-                selectedAppointment={selectedAppointment}
-                setSelectedAppointment={setSelectedAppointment}
+                // refreshAppointments={FetchAppointmentData}
+                // activeAppointments={activeAppointments}
+                // setActiveAppointments={setActiveAppointments}
+                // selectedAppointment={selectedAppointment}
+                // setSelectedAppointment={setSelectedAppointment}
               />
               <View
-                style={{paddingHorizontal: scale(10), marginTop: scale(15)}}>
+                style={{paddingHorizontal: scale(10), marginTop: scale(7)}}>
                 <View style={{}}>
                   <Shadow
                     distance={ShadowValues.distance}
-                    startColor={Color.shadowColor}
+                    startColor={ShadowValues.color}
                     style={{width: '100%'}}>
                     <View style={styles.shadow}>
                       <MealsLikeInHome />

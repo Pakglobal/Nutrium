@@ -101,15 +101,28 @@ const BottomNavigation = () => {
           tabBarStyle: styles.tabBarStyle,
           tabBarIcon: ({focused}) => {
             const currentItem = screenOption.find(
-              item => item.name === route.name,
+              item => item?.name === route?.name,
             );
             const IconComponent = focused
-              ? currentItem.activeIcon
-              : currentItem.inactiveIcon;
+              ? currentItem?.activeIcon
+              : currentItem?.inactiveIcon;
+
+            const mealStyle = {
+              marginRight: route.name === 'mealScreen' ? scale(20) : 0,
+            };
+            const recommendationStyle = {
+              marginLeft: route.name === 'recommendation' ? scale(20) : 0,
+            };
 
             return (
-              <View style={[styles.iconContainer, focused && styles.activeTab]}>
-                <IconComponent width={scale(22)} height={scale(22)} />
+              <View
+                style={[
+                  styles.iconContainer,
+                  focused && styles.activeTab,
+                  mealStyle,
+                  recommendationStyle,
+                ]}>
+                <IconComponent width={scale(24)} height={scale(24)} />
               </View>
             );
           },
@@ -123,11 +136,16 @@ const BottomNavigation = () => {
         ))}
       </Tab.Navigator>
 
-        <TouchableOpacity
-          style={styles.plusBtn}
-          onPress={() => setModalVisible(true)}>  
-          <BottomPlus />
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.plusBtn}
+        onPress={() => setModalVisible(true)}>
+        {/* <Image
+          source={require('../assets/Icon/bottom.png')}
+          // style={{height: scale(80), width: scale(80)}}
+        /> */}
+
+        <BottomPlus height={80} width={60} resizeMode="cover"  />
+      </TouchableOpacity>
 
       <Modal
         visible={isModalVisible}
@@ -165,29 +183,34 @@ export default BottomNavigation;
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    height: verticalScale(50),
+    height: verticalScale(65),
     backgroundColor: Color?.primaryColor,
     borderRadius: scale(18),
-    elevation: 5,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: {width: 0, height: 4},
     shadowRadius: 4,
-    marginHorizontal: scale(10),
+    marginHorizontal: scale(20),
     bottom: scale(5),
   },
   iconContainer: {
     padding: scale(7),
-    borderRadius: scale(20),
   },
   activeTab: {
-    backgroundColor: 'white',
+    backgroundColor: Color.white,
     borderRadius: scale(50),
+    height: scale(44),
+    width: scale(44),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   plusBtn: {
     position: 'absolute',
-    bottom: verticalScale(6),
+    bottom: verticalScale(38),
     alignSelf: 'center',
+    // backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalContainer: {
     flex: 1,

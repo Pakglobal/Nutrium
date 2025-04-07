@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
     width: scale(35),
     height: scale(35),
     borderRadius: scale(20),
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
   profileName: {
     marginLeft: scale(12),
@@ -458,6 +458,6 @@ const styles = StyleSheet.create({
   signOutText: {
     fontSize: scale(15),
     fontWeight: '600',
-    color: Color.primary,
+    color: Color.white,
   },
 });

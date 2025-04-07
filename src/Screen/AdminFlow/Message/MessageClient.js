@@ -20,7 +20,7 @@ const MessageClient = ({route}) => {
       otherUserId={otherUserId}
       userName={userName}
       image={userImage}
-      gender={userGender}
+      // gender={userGender}
       showHeader={true}
       onBackPress={() => navigation.goBack()}
       containerStyle={{backgroundColor: '#f9f9f9'}}

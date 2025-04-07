@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(5),
     height: verticalScale(70),
     // width: '30%',
-    backgroundColor: Color?.primary,
+    backgroundColor: Color?.white,
     justifyContent: "center",
     borderWidth: scale(1),
     borderColor: Color?.primaryColor

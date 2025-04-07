@@ -50,7 +50,6 @@ const ProfileMenuScreen = () => {
 
   const isGuest = useSelector(state => state.user?.guestMode);
   const guestData = useSelector(state => state.user?.guestUserData);
-  
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = getToken?.user?.image || getToken?.userData?.image;
@@ -326,7 +325,7 @@ const ProfileMenuScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-        <Header logoHeader={true} />
+      <Header logoHeader={true} />
       {isGuest === true ? (
         <View>
           <View style={{marginHorizontal: scale(16)}}>

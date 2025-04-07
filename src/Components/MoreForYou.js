@@ -16,7 +16,7 @@ import Color, {Font, ShadowValues} from '../assets/colors/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { Shadow } from 'react-native-shadow-2';
+import {Shadow} from 'react-native-shadow-2';
 
 const {width} = Dimensions.get('window');
 
@@ -69,11 +69,11 @@ const MoreFor = ({data}) => {
         <Shadow
           distance={ShadowValues.blackShadowDistance}
           startColor={ShadowValues.blackShadow}
-          style={{width: '100%',}}>
-        <View style={styles.txtIcon}>
-          <Text style={styles.txt}>{data.buttonText} </Text>
-          <Entypo name="plus" size={24} color={Color.primaryColor} />
-        </View>
+          style={{width: '100%'}}>
+          <View style={styles.txtIcon}>
+            <Text style={styles.txt}>{data.buttonText} </Text>
+            <Entypo name="plus" size={24} color={Color.primaryColor} />
+          </View>
         </Shadow>
       </LinearGradient>
     </TouchableOpacity>
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     color: Color.primaryColor,
     fontFamily: Font?.Poppins,
     marginLeft: scale(5),
-    marginTop: scale(2)
+    marginTop: scale(2),
   },
 });
 

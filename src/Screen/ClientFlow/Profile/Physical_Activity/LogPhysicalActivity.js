@@ -111,14 +111,15 @@ const LogPhysicalActivity = ({route}) => {
       <Header
         showIcon={{}}
         backIcon={true}
-        screenName='Physical activity'
-        iconStyle={{ left: scale(-170) }}
+        screenName="Physical activity"
+        iconStyle={{left: scale(-170)}}
         onPress={() =>
           navigation.navigate('logPhysicalActivity', {plusData: plusData})
-        } />
+        }
+      />
 
       <View style={{marginHorizontal: scale(16)}}>
-        <Text style={styles.topTitle} >Log Physical Activity</Text>
+        <Text style={styles.topTitle}>Log Physical Activity</Text>
         <View style={styles.searchContainer}>
           <TextInput
             placeholder="Search for an activity..."
@@ -219,13 +220,13 @@ const styles = StyleSheet.create({
       width: 5,
       height: 5,
     },
-marginBottom:scale(10)
+    marginBottom: scale(10),
   },
-  topTitle:{
-    color:Color?.textColor,
-    marginTop:scale(10),
-    fontSize:scale(17),
-    fontWeight:'500'
+  topTitle: {
+    color: Color?.textColor,
+    marginTop: scale(10),
+    fontSize: scale(17),
+    fontWeight: '500',
   },
   inputView: {
     // marginStart: scale(10),
@@ -233,8 +234,7 @@ marginBottom:scale(10)
     fontWeight: '600',
     color: Color.txt,
     width: '85%',
-    marginHorizontal:scale(8)
-
+    marginHorizontal: scale(8),
   },
   clearButton: {
     marginEnd: scale(10),
@@ -245,11 +245,11 @@ marginBottom:scale(10)
     marginBottom: verticalScale(10),
     fontSize: scale(16),
     color: Color.textColor,
-    fontWeight:'500'
+    fontWeight: '500',
   },
   name: {
     fontSize: scale(14),
-    fontWeight:'500',
+    fontWeight: '500',
     paddingVertical: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
@@ -257,7 +257,7 @@ marginBottom:scale(10)
   },
   activity: {
     fontSize: scale(14),
-    fontWeight:'500',
+    fontWeight: '500',
     color: '#675A5A',
     paddingTop: verticalScale(10),
   },

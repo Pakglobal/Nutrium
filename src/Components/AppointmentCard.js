@@ -17,15 +17,16 @@ import Carousel from 'react-native-snap-carousel';
 import moment from 'moment';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color, {Font} from '../assets/colors/Colors';
-import {GetAppointmentByClientId, UpdateAppointmentStatus} from '../Apis/ClientApis/ClientAppointmentApi';
+import {
+  GetAppointmentByClientId,
+  UpdateAppointmentStatus,
+} from '../Apis/ClientApis/ClientAppointmentApi';
 import {Shadow} from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const AppointmentCard = ({
-  navigation,
-}) => {
+const AppointmentCard = ({navigation}) => {
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
@@ -87,7 +88,7 @@ const AppointmentCard = ({
     }
   };
 
-  const refreshAppointments = FetchAppointmentData
+  const refreshAppointments = FetchAppointmentData;
 
   useEffect(() => {
     FetchAppointmentData();
@@ -238,7 +239,11 @@ const AppointmentCard = ({
                   setSelectedAppointment(item);
                   setModalVisible(true);
                 }}>
-                <Entypo name="dots-three-vertical" size={24} color={Color.primaryColor} />
+                <Entypo
+                  name="dots-three-vertical"
+                  size={24}
+                  color={Color.primaryColor}
+                />
               </TouchableOpacity>
             </View>
 
@@ -449,7 +454,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: verticalScale(3),
-    paddingBottom: verticalScale(10)
+    paddingBottom: verticalScale(10),
   },
   paginationDot: {
     height: scale(8),

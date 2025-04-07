@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,19 +8,19 @@ import {
   ActivityIndicator,
   Modal,
 } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from '../../../assets/colors/Colors';
 import CameraPicker from '../../../Components/CameraPicker';
-import { UpdateImage } from '../../../Apis/ClientApis/ProfileApi';
-import { useDispatch, useSelector } from 'react-redux';
+import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
+import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
-import { setImage } from '../../../redux/client';
+import {setImage} from '../../../redux/client';
 
-const MainProfile = ({ route }) => {
+const MainProfile = ({route}) => {
   const data = route?.params?.data;
 
   const dispatch = useDispatch();
@@ -87,7 +87,7 @@ const MainProfile = ({ route }) => {
       label: 'Phone number',
       value: data?.phoneNumber || '--',
     },
-    { id: 3, icon: 'mail', label: 'E-mail', value: data?.email || '--' },
+    {id: 3, icon: 'mail', label: 'E-mail', value: data?.email || '--'},
     {
       id: 4,
       icon: 'location',
@@ -98,9 +98,9 @@ const MainProfile = ({ route }) => {
 
   let imgSource;
   if (updateProfileImage && typeof updateProfileImage === 'string') {
-    imgSource = { uri: updateProfileImage };
+    imgSource = {uri: updateProfileImage};
   } else if (profileImage && typeof profileImage === 'string') {
-    imgSource = { uri: profileImage };
+    imgSource = {uri: profileImage};
   } else {
     imgSource =
       data?.gender === 'Female'
@@ -109,13 +109,13 @@ const MainProfile = ({ route }) => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Color.white }}>
+    <View style={{flex: 1, backgroundColor: Color.white}}>
       <View
-        style={{ backgroundColor: Color.headerBG, height: verticalScale(150) }}>
-        <View style={{ marginHorizontal: scale(16) }}>
+        style={{backgroundColor: Color.headerBG, height: verticalScale(150)}}>
+        <View style={{marginHorizontal: scale(16)}}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            style={{ marginTop: verticalScale(20) }}>
+            style={{marginTop: verticalScale(20)}}>
             <AntDesign
               name="arrowleft"
               size={verticalScale(20)}
@@ -174,7 +174,7 @@ const MainProfile = ({ route }) => {
         </View>
       </View>
 
-      <View style={{ marginTop: verticalScale(40) }}>
+      <View style={{marginTop: verticalScale(40)}}>
         {information?.map(item => (
           <View
             style={{
@@ -199,7 +199,7 @@ const MainProfile = ({ route }) => {
                 color={Color.primaryColor}
               />
             </View>
-            <View style={{ marginLeft: scale(20) }}>
+            <View style={{marginLeft: scale(20)}}>
               <Text
                 style={{
                   color: Color.gray,

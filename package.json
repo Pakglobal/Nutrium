@@ -48,6 +48,8 @@
     "react-native-linear-gradient": "^2.6.2",
     "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-onboard": "^2.6.0",
+    "react-native-onboarding-swiper": "^1.2.0",
     "react-native-pedometer": "^0.0.7",
     "react-native-permissions": "^5.2.5",
     "react-native-raw-bottom-sheet": "^2.2.0",

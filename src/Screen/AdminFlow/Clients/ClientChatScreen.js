@@ -21,11 +21,7 @@ const ClientChatScreen = () => {
       <View style={styles.header}>
         <View style={styles.leftSection}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons
-              name="arrow-back"
-              color={Color.white}
-              size={scale(22)}
-            />
+            <Ionicons name="arrow-back" color={Color.white} size={scale(22)} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Example conversation</Text>
         </View>

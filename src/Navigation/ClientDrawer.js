@@ -6,15 +6,16 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
-import {useSelector} from 'react-redux';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch, useSelector} from 'react-redux';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Logo from '../assets/Images/logoGreen.svg';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Color, {Font} from '../assets/colors/Colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {loginData} from '../redux/user';
 import {setImage} from '../redux/client';
@@ -30,15 +31,18 @@ import {
   GetRecommendationApiData,
 } from '../Apis/ClientApis/RecommendationApi';
 import {GetUserApi} from '../Apis/ClientApis/ProfileApi';
-import IconStyle, { IconPadding } from '../assets/styles/Icon';
+import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
 
 const ClientDrawerContent = props => {
   const {navigation} = props;
+  const dispatch = useDispatch();
 
   const [asyncLoading, setAsyncLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState([]);
+
   const userInfo = useSelector(state => state.user?.userInfo);
+  const user = userInfo?.user || userInfo?.userData;
   const userName = userInfo?.user?.fullName || userInfo?.userData?.fullName;
   const userImage = userInfo?.user?.image || userInfo?.userData?.image;
 
@@ -120,73 +124,117 @@ const ClientDrawerContent = props => {
       <View style={styles.logoContainer}>
         <Logo />
         <TouchableOpacity onPress={() => props.navigation.closeDrawer()}>
-          <Ionicons style={IconPadding} name="close" size={26} color={Color.black} />
+          <Ionicons
+            style={IconPadding}
+            name="close"
+            size={26}
+            color={Color.black}
+          />
         </TouchableOpacity>
       </View>
 
       <View style={styles.drawerHeader}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <TouchableOpacity
+          style={{flexDirection: 'row', alignItems: 'center'}}
+          onPress={() => {
+            props.navigation.closeDrawer();
+            navigation.navigate('mainProfile', {data: user});
+          }}>
           <Image source={{uri: userImage}} style={styles.avatar} />
           <Text style={styles.userName}>{userName}</Text>
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate('settings')}>
-          <Ionicons style={IconPadding} name="settings-sharp" size={26} color={Color.black} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.closeDrawer();
+            navigation.navigate('settings');
+          }}>
+          <Ionicons
+            style={IconPadding}
+            name="settings-sharp"
+            size={26}
+            color={Color.black}
+          />
         </TouchableOpacity>
       </View>
 
       <View>
         <TouchableOpacity
           style={styles.drawerItem}
-          onPress={() => navigation.navigate('foodDiary')}>
-          <Ionicons
-            name="water-sharp"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+          onPress={() => {
+            props.navigation.closeDrawer();
+            navigation.navigate('foodDiary');
+          }}>
+          <View style={IconBg}>
+            <Octicons
+              name="note"
+              size={IconStyle.drawerIconSize}
+              color={IconStyle.drawerIconColor}
+            />
+          </View>
           <Text style={styles.drawerItemText}>Food diary</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.drawerItem}
-          onPress={() => navigation.navigate('waterIntake')}>
-          <Ionicons
-            name="water-sharp"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+          onPress={() => {
+            props.navigation.closeDrawer();
+            navigation.navigate('waterIntake');
+          }}>
+          <View style={IconBg}>
+            <Ionicons
+              name="water-sharp"
+              size={IconStyle.drawerIconSize}
+              color={IconStyle.drawerIconColor}
+            />
+          </View>
           <Text style={styles.drawerItemText}>Water intake</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.drawerItem}
-          onPress={() => navigation.navigate('physicalActivity')}>
-          <FontAwesome5
-            name="running"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+          onPress={() => {
+            props.navigation.closeDrawer();
+            navigation.navigate('physicalActivity');
+          }}>
+          <View style={IconBg}>
+            <FontAwesome5
+              name="running"
+              size={IconStyle.drawerIconSize}
+              color={IconStyle.drawerIconColor}
+            />
+          </View>
           <Text style={styles.drawerItemText}>Physical activity</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.drawerItem}
-          onPress={() => navigation.navigate('measurements')}>
-          <MaterialIcons
-            name="shopping-cart"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+          onPress={() => {
+            props.navigation.closeDrawer();
+            navigation.navigate('measurements');
+          }}>
+          <View style={IconBg}>
+            <MaterialCommunityIcons
+              name="calendar-text"
+              size={IconStyle.drawerIconSize}
+              color={IconStyle.drawerIconColor}
+            />
+          </View>
           <Text style={styles.drawerItemText}>Measurements</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.drawerItem}
-          onPress={() => navigation.navigate('shoppingLists')}>
-          <MaterialIcons
-            name="shopping-cart"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+          onPress={() => {
+            props.navigation.closeDrawer();
+            navigation.navigate('shoppingLists');
+          }}>
+          <View style={IconBg}>
+            <MaterialIcons
+              name="shopping-cart"
+              size={IconStyle.drawerIconSize}
+              color={IconStyle.drawerIconColor}
+            />
+          </View>
           <Text style={styles.drawerItemText}>Shopping lists</Text>
         </TouchableOpacity>
       </View>
@@ -197,19 +245,27 @@ const ClientDrawerContent = props => {
 
       <TouchableOpacity
         style={styles.drawerItem}
-        onPress={() => navigation.navigate('practitioner')}>
+        onPress={() => {
+          props.navigation.closeDrawer();
+          navigation.navigate('practitioner', {data: userData});
+        }}>
         <Image source={practitionerImage} style={styles.avatar} />
         <Text style={styles.drawerItemText}>{practitionerName}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.drawerItem}
-        onPress={() => navigation.navigate('messages')}>
-        <Icon
-          name="email"
-          size={IconStyle.drawerIconSize}
-          color={IconStyle.drawerIconColor}
-        />
+        onPress={() => {
+          props.navigation.closeDrawer();
+          navigation.navigate('messages', {data: user});
+        }}>
+        <View style={IconBg}>
+          <MaterialCommunityIcons
+            name="email"
+            size={IconStyle.drawerIconSize}
+            color={IconStyle.drawerIconColor}
+          />
+        </View>
         <Text style={styles.drawerItemText}>Messages</Text>
       </TouchableOpacity>
 
@@ -218,20 +274,29 @@ const ClientDrawerContent = props => {
       </View>
 
       <TouchableOpacity style={styles.drawerItem} onPress={handleSyncInfo}>
-        <Ionicons
-          name="sync"
-          size={IconStyle.drawerIconSize}
-          color={IconStyle.drawerIconColor}
-        />
+        <View style={IconBg}>
+          <Ionicons
+            name="sync"
+            size={IconStyle.drawerIconSize}
+            color={IconStyle.drawerIconColor}
+          />
+        </View>
         <Text style={styles.drawerItemText}>Sync all info</Text>
+        {asyncLoading && (
+          <View style={{position: 'absolute', right: 0}}>
+            <ActivityIndicator />
+          </View>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.drawerItem} onPress={handleSignOut}>
-        <MaterialIcons
-          name="logout"
-          size={IconStyle.drawerIconSize}
-          color={IconStyle.drawerIconColor}
-        />
+        <View style={IconBg}>
+          <MaterialIcons
+            name="logout"
+            color={IconStyle.drawerIconColor}
+            size={IconStyle.drawerIconSize}
+          />
+        </View>
         <Text style={styles.drawerItemText}>Sign out</Text>
       </TouchableOpacity>
     </View>
@@ -242,14 +307,13 @@ const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
     backgroundColor: Color.white,
-    paddingVertical: verticalScale(23),
-    paddingHorizontal: scale(15),
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: scale(16),
   },
   logoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    // paddingVertical: scale(10),
   },
   drawerHeader: {
     flexDirection: 'row',
@@ -262,7 +326,6 @@ const styles = StyleSheet.create({
     width: scale(37),
     height: scale(37),
     borderRadius: scale(20),
-    backgroundColor: 'red',
   },
   userName: {
     fontSize: scale(16),
@@ -292,9 +355,10 @@ const styles = StyleSheet.create({
     paddingBottom: verticalScale(5),
   },
   sectionTitle: {
-    fontSize: scale(16),
+    fontSize: scale(20),
     fontWeight: '500',
     color: Color.textColor,
+    fontFamily: Font.Sofia,
   },
 });
 

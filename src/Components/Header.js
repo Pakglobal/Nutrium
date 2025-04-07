@@ -15,18 +15,17 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Color, {Font, ShadowValues} from '../assets/colors/Colors';
 import {useNavigation} from '@react-navigation/native';
 import Logo from '../assets/Images/logoWhite.svg';
-import Plus from '../assets/Icon/headerPlus.svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import {Shadow} from 'react-native-shadow-2';
-import { IconPadding } from '../assets/styles/Icon';
+import IconStyle, {IconPadding} from '../assets/styles/Icon';
 
 const Header = ({
   screenName,
   logoHeader,
   screenheader,
   handlePlus,
-  handleMenu
+  handleMenu,
 }) => {
   const navigation = useNavigation();
   return (
@@ -50,7 +49,12 @@ const Header = ({
               }}>
               <Logo />
               <TouchableOpacity onPress={handleMenu} style={{}}>
-              <MaterialCommunityIcons style={IconPadding} name="menu" color={Color.white} size={24} />
+                <MaterialCommunityIcons
+                  style={IconPadding}
+                  name="menu"
+                  color={Color.white}
+                  size={24}
+                />
               </TouchableOpacity>
             </View>
           </Shadow>
@@ -75,15 +79,23 @@ const Header = ({
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
                   onPress={() => navigation.goBack()}
-                  style={{padding: scale(10), backgroundColor: 'red'}}>
-<AntDesign name="arrowleft" size={24} color={Color.white} />
+                  style={{padding: scale(10)}}>
+                  <AntDesign
+                    name="arrowleft"
+                    size={IconStyle.drawerIconSize}
+                    color={Color.white}
+                  />
                 </TouchableOpacity>
                 <Text style={styles.screenName}>{screenName}</Text>
               </View>
               <TouchableOpacity
                 onPress={handlePlus}
                 style={{padding: scale(8)}}>
-                <Plus />
+                <AntDesign
+                  name="pluscircle"
+                  size={IconStyle.headerIconSize}
+                  color={Color.white}
+                />
               </TouchableOpacity>
             </View>
           </Shadow>

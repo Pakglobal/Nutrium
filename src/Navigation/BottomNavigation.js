@@ -144,7 +144,7 @@ const BottomNavigation = () => {
           // style={{height: scale(80), width: scale(80)}}
         /> */}
 
-        <BottomPlus height={80} width={60} resizeMode="cover"  />
+        <BottomPlus height={80} width={60} resizeMode="cover" />
       </TouchableOpacity>
 
       <Modal

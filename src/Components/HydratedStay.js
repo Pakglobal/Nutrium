@@ -404,6 +404,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Font?.Poppins,
     marginTop: verticalScale(2),
-    marginLeft: scale(5)
+    marginLeft: scale(5),
   },
 });

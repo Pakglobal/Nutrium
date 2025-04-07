@@ -10,7 +10,7 @@ const GuestHomeScreen = () => {
       <Text>GuestHomeScreen</Text>
       {/* <MealsLikeInHome /> */}
       <View style={{}}>
-      <BottomNavigation />
+        <BottomNavigation />
       </View>
     </View>
   );

@@ -11,7 +11,7 @@ import {
 import React, {useState} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color, { Font } from '../assets/colors/Colors';
+import Color, {Font} from '../assets/colors/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const OnOffFunctionality = ({title, hydrate = false}) => {
@@ -85,7 +85,7 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
             {isTracking ? 'On' : 'Off'}
           </Text>
           <Ionicons
-            name={isTracking ? "notifications" : "notifications-outline"}
+            name={isTracking ? 'notifications' : 'notifications-outline'}
             size={verticalScale(15)}
             color={isTracking ? Color.primaryColor : Color.gray}
           />
@@ -132,7 +132,7 @@ export default OnOffFunctionality;
 const styles = StyleSheet.create({
   header: {
     alignSelf: 'flex-end',
-    marginVertical: verticalScale(7)
+    marginVertical: verticalScale(7),
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginHorizontal: scale(8),
     fontSize: scale(14),
-    fontFamily: Font.Nunito
+    fontFamily: Font.Nunito,
   },
   modalView: {
     flex: 1,

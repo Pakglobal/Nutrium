@@ -45,7 +45,10 @@ import InformationScreen from '../Auth/Login/InformationScreen';
 import ClientDrawerContent from './ClientDrawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { View } from 'react-native';
+import {View} from 'react-native';
+import LoginChoiceScreen from '../Auth/Login/LoginChoiceScreen';
+import OnboardingScreen from './OnboardingScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -74,33 +77,6 @@ const ClientDrawerNavigator = () => {
     </ClientDrawer.Navigator>
   );
 };
-
-const UserFlowStack = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name="ClientDrawer" component={ClientDrawerNavigator} />
-    <Stack.Screen name="mainProfile" component={MainProfile} />
-    <Stack.Screen name="practitioner" component={Practitioner} />
-    <Stack.Screen name="settings" component={Settings} />
-    <Stack.Screen name="foodDiary" component={FoodDiary} />
-    <Stack.Screen name="addMeal" component={AddMeal} />
-    <Stack.Screen name="logMeal" component={LogMeal} />
-    <Stack.Screen name="swapMeal" component={SwapMeal} />
-    <Stack.Screen name="foodSearch" component={FoodSearch} />
-    <Stack.Screen name="physicalActivity" component={PhysicalActivityy} />
-    <Stack.Screen name="logPhysicalActivity" component={LogPhysicalActivity} />
-    <Stack.Screen name="workOutDetails" component={WorkOutDetails} />
-    <Stack.Screen name="waterIntake" component={WaterIntake} />
-    <Stack.Screen name="waterIntakeLog" component={WaterIntakeLog} />
-    <Stack.Screen name="measurements" component={Measurements} />
-    <Stack.Screen name="addMeasurement" component={AddMeasurement} />
-    <Stack.Screen name="measurementDetail" component={MeasurementDetail} />
-    <Stack.Screen name="allLogs" component={AllLogs} />
-    <Stack.Screen name="messages" component={Message} />
-    <Stack.Screen name="shoppingLists" component={ShoppingList} />
-    <Stack.Screen name="newShoppingLists" component={NewShoppingList} />
-    <Stack.Screen name="myLists" component={MyList} />
-  </Stack.Navigator>
-);
 
 const MyDrawer = () => {
   const [selectedScreen, setSelectedScreen] = useState('MESSAGES');
@@ -146,17 +122,57 @@ const AdminFlowStack = () => (
   </Stack.Navigator>
 );
 
-const AuthStack = () => (
+const AuthStack = ({route}) => {
+  const {onboardingCompleted} = route.params || {};
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      {!onboardingCompleted ? (
+        <Stack.Screen name="onBoarding" component={OnboardingScreen} />
+      ) : null}
+      <Stack.Screen name="loginChoice" component={LoginChoiceScreen} />
+      <Stack.Screen name="loginScreen" component={LoginScreen} />
+      <Stack.Screen name="guestLogin" component={GuestLogin} />
+      <Stack.Screen name="information" component={InformationScreen} />
+      <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+      <Stack.Screen
+        name="registrationType"
+        component={SelectRegistrationType}
+      />
+      <Stack.Screen name="registration" component={Registration} />
+      <Stack.Screen name="unlockAccess" component={UnlockAccess} />
+      <Stack.Screen name="getAccess" component={GetAccess} />
+      <Stack.Screen
+        name="helpForRegistration"
+        component={HelpForRegistration}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const UserFlowStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name="loginScreen" component={LoginScreen} />
-    <Stack.Screen name="guestLogin" component={GuestLogin} />
-    <Stack.Screen name="information" component={InformationScreen} />
-    <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-    <Stack.Screen name="registrationType" component={SelectRegistrationType} />
-    <Stack.Screen name="registration" component={Registration} />
-    <Stack.Screen name="unlockAccess" component={UnlockAccess} />
-    <Stack.Screen name="getAccess" component={GetAccess} />
-    <Stack.Screen name="helpForRegistration" component={HelpForRegistration} />
+    <Stack.Screen name="ClientDrawer" component={ClientDrawerNavigator} />
+    <Stack.Screen name="mainProfile" component={MainProfile} />
+    <Stack.Screen name="practitioner" component={Practitioner} />
+    <Stack.Screen name="settings" component={Settings} />
+    <Stack.Screen name="foodDiary" component={FoodDiary} />
+    <Stack.Screen name="addMeal" component={AddMeal} />
+    <Stack.Screen name="logMeal" component={LogMeal} />
+    <Stack.Screen name="swapMeal" component={SwapMeal} />
+    <Stack.Screen name="foodSearch" component={FoodSearch} />
+    <Stack.Screen name="physicalActivity" component={PhysicalActivityy} />
+    <Stack.Screen name="logPhysicalActivity" component={LogPhysicalActivity} />
+    <Stack.Screen name="workOutDetails" component={WorkOutDetails} />
+    <Stack.Screen name="waterIntake" component={WaterIntake} />
+    <Stack.Screen name="waterIntakeLog" component={WaterIntakeLog} />
+    <Stack.Screen name="measurements" component={Measurements} />
+    <Stack.Screen name="addMeasurement" component={AddMeasurement} />
+    <Stack.Screen name="measurementDetail" component={MeasurementDetail} />
+    <Stack.Screen name="allLogs" component={AllLogs} />
+    <Stack.Screen name="messages" component={Message} />
+    <Stack.Screen name="shoppingLists" component={ShoppingList} />
+    <Stack.Screen name="newShoppingLists" component={NewShoppingList} />
+    <Stack.Screen name="myLists" component={MyList} />
   </Stack.Navigator>
 );
 
@@ -181,6 +197,19 @@ const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const isGuest = useSelector(state => state.user?.isGuest);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(null);
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      const completed = await AsyncStorage.getItem('onboardingCompleted');
+      setOnboardingCompleted(completed === 'true');
+    };
+    checkOnboarding();
+  }, []);
+
+  if (onboardingCompleted === null) {
+    return null;
+  }
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -191,7 +220,11 @@ const MainStack = () => {
       ) : isGuest ? (
         <Stack.Screen name="GuestStack" component={GuestStack} />
       ) : (
-        <Stack.Screen name="AuthStack" component={AuthStack} />
+        <Stack.Screen
+          name="AuthStack"
+          component={AuthStack}
+          initialParams={{onboardingCompleted}}
+        />
       )}
     </Stack.Navigator>
   );

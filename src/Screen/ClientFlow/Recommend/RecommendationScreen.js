@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -9,7 +9,7 @@ import {
   Pressable,
   RefreshControl,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import Header from '../../../Components/Header';
 import Color from '../../../assets/colors/Colors';
 import {
@@ -17,10 +17,10 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../../../Apis/ClientApis/RecommendationApi';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import moment from 'moment';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { ScrollView } from 'react-native-virtualized-view';
+import {ScrollView} from 'react-native-virtualized-view';
 
 const RecommendationScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
@@ -91,7 +91,7 @@ const RecommendationScreen = () => {
     }
   };
 
-  const renderEntryItem = ({ item: entry, index }) => (
+  const renderEntryItem = ({item: entry, index}) => (
     <View
       key={index}
       style={{
@@ -120,7 +120,7 @@ const RecommendationScreen = () => {
     </View>
   );
 
-  const renderMeasurementItem = ({ item: measurement, index }) => (
+  const renderMeasurementItem = ({item: measurement, index}) => (
     <View
       key={index}
       style={{
@@ -144,14 +144,14 @@ const RecommendationScreen = () => {
           showsVerticalScrollIndicator={false}
         />
       ) : (
-        <Text style={{ fontSize: scale(14), color: Color.gray }}>
+        <Text style={{fontSize: scale(14), color: Color.gray}}>
           No entries available
         </Text>
       )}
     </View>
   );
 
-  const renderGoalItem = ({ item, index }) => (
+  const renderGoalItem = ({item, index}) => (
     <View
       key={index}
       style={{
@@ -182,7 +182,7 @@ const RecommendationScreen = () => {
     Promise.all([
       FetchFoodAvoidData(),
       FetchRecommendationData(),
-      FetchGoalsData()
+      FetchGoalsData(),
     ])
       .then(() => {
         setRefreshing(false);
@@ -193,7 +193,7 @@ const RecommendationScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header logoHeader={true} />
 
       {isGuest ? (
@@ -225,11 +225,13 @@ const RecommendationScreen = () => {
                 <View>
                   {foodsAvoid && foodsAvoid?.foodAvoids?.length > 0 ? (
                     foodsAvoid.foodAvoids.map((item, index) => (
-                      <Text key={index} style={{ color: Color.black }}>{item}</Text>
+                      <Text key={index} style={{color: Color.black}}>
+                        {item}
+                      </Text>
                     ))
                   ) : (
-                    <View style={{ marginVertical: verticalScale(10) }}>
-                      <Text style={{ color: Color.gray }}>
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
                         There are no records of food to avoid
                       </Text>
                     </View>
@@ -244,12 +246,12 @@ const RecommendationScreen = () => {
                 </Text>
                 <View>
                   {recommendations && recommendations?.recommendation ? (
-                    <Text style={{ color: Color.black }}>
+                    <Text style={{color: Color.black}}>
                       {recommendations.recommendation}
                     </Text>
                   ) : (
-                    <View style={{ marginVertical: verticalScale(10) }}>
-                      <Text style={{ color: Color.gray }}>
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
                         There are no records of recommendation
                       </Text>
                     </View>
@@ -269,7 +271,9 @@ const RecommendationScreen = () => {
                     <FlatList
                       showsVerticalScrollIndicator={false}
                       data={goals[0]?.goals}
-                      keyExtractor={(item, index) => item?._id || index.toString()}
+                      keyExtractor={(item, index) =>
+                        item?._id || index.toString()
+                      }
                       renderItem={renderGoalItem}
                       contentContainerStyle={{
                         paddingHorizontal: scale(10),
@@ -277,8 +281,8 @@ const RecommendationScreen = () => {
                       }}
                     />
                   ) : (
-                    <View style={{ marginVertical: verticalScale(10) }}>
-                      <Text style={{ color: Color.gray }}>
+                    <View style={{marginVertical: verticalScale(10)}}>
+                      <Text style={{color: Color.gray}}>
                         There are no records of goals
                       </Text>
                     </View>
@@ -306,7 +310,7 @@ const RecommendationScreen = () => {
               Goals agreed with your professional
             </Text>
           </View>
-          <View style={{ marginHorizontal: scale(16), flex: 1 }}>
+          <View style={{marginHorizontal: scale(16), flex: 1}}>
             {goals && goals?.length > 0 ? (
               <FlatList
                 data={goals[0]?.goals}
@@ -315,8 +319,8 @@ const RecommendationScreen = () => {
                 showsVerticalScrollIndicator={false}
               />
             ) : (
-              <View style={{ marginVertical: verticalScale(10) }}>
-                <Text style={{ color: Color.gray, textAlign: 'center' }}>
+              <View style={{marginVertical: verticalScale(10)}}>
+                <Text style={{color: Color.gray, textAlign: 'center'}}>
                   There are no records of goals
                 </Text>
               </View>

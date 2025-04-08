@@ -209,8 +209,8 @@ const AppointmentCard = ({navigation}) => {
           {opacity: fadeAnim},
         ]}>
         <Shadow
-          distance={4}
-          startColor={Color.shadowColor}
+          distance={3}
+          startColor={Color.primaryColor}
           style={{width: '100%', borderRadius: scale(16)}}>
           <View style={styles.cardContainer}>
             <View style={styles.cardHeader}>

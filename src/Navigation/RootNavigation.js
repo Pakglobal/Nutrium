@@ -40,7 +40,6 @@ import ShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/ShoppingLi
 import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShoppingList';
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
-import GuestLogin from '../Auth/Login/GuestLogin';
 import InformationScreen from '../Auth/Login/InformationScreen';
 import ClientDrawerContent from './ClientDrawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -49,6 +48,11 @@ import {View} from 'react-native';
 import LoginChoiceScreen from '../Auth/Login/LoginChoiceScreen';
 import OnboardingScreen from './OnboardingScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SelectWorkspace from '../Screen/GuestFlow/login/SelectWorkspace';
+import SelectCountry from '../Screen/GuestFlow/login/SelectCountry';
+import GuestLogin from '../Screen/GuestFlow/login/GuestLogin';
+import SelectGender from '../Screen/GuestFlow/login/SelectGender';
+import SelectProfession from '../Screen/GuestFlow/login/SelectProfession';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -131,7 +135,11 @@ const AuthStack = ({route}) => {
       ) : null}
       <Stack.Screen name="loginChoice" component={LoginChoiceScreen} />
       <Stack.Screen name="loginScreen" component={LoginScreen} />
-      <Stack.Screen name="guestLogin" component={GuestLogin} />
+      <Stack.Screen name="SelectGender" component={SelectGender} />
+      <Stack.Screen name="SelectProfession" component={SelectProfession} />
+      <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} />
+      <Stack.Screen name="SelectCountry" component={SelectCountry} />
+      <Stack.Screen name="GuestLogin" component={GuestLogin} />
       <Stack.Screen name="information" component={InformationScreen} />
       <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen
@@ -176,22 +184,22 @@ const UserFlowStack = () => (
   </Stack.Navigator>
 );
 
-const GuestStack = () => {
-  const isGuest = useSelector(state => state?.user?.isGuest);
+// const GuestStack = () => {
+//   const isGuest = useSelector(state => state?.user?.isGuest);
 
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      {isGuest === true ? (
-        <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-      ) : (
-        <>
-          <Stack.Screen name="guestLogin" component={GuestLogin} />
-          <Stack.Screen name="information" component={InformationScreen} />
-        </>
-      )}
-    </Stack.Navigator>
-  );
-};
+//   return (
+//     <Stack.Navigator screenOptions={{headerShown: false}}>
+//       {isGuest === true ? (
+//         <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+//       ) : (
+//         <>
+//           <Stack.Screen name="guestLogin" component={GuestLogin} />
+//           <Stack.Screen name="information" component={InformationScreen} />
+//         </>
+//       )}
+//     </Stack.Navigator>
+//   );
+// };
 
 const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
@@ -217,8 +225,8 @@ const MainStack = () => {
         <Stack.Screen name="AdminFlow" component={AdminFlowStack} />
       ) : role === 'Client' ? (
         <Stack.Screen name="UserFlow" component={UserFlowStack} />
-      ) : isGuest ? (
-        <Stack.Screen name="GuestStack" component={GuestStack} />
+      // ) : isGuest ? (
+      //   <Stack.Screen name="GuestStack" component={GuestStack} />
       ) : (
         <Stack.Screen
           name="AuthStack"

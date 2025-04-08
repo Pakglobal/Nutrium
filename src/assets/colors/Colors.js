@@ -9,8 +9,8 @@ const Color = {
   lightGreen: '#e0f9f2',
   common: 'rgba(210, 233, 254, 0.6)',
   primaryColor: '#21972B',
+  primaryLight: 'rgba(33, 151, 43,0.3)',
   white: '#fff',
-  shadowColor: '#6BCB77',
   textColor: '#303233',
   grayshadow: '#e3dfde',
   subText: '#6E7071',
@@ -26,7 +26,7 @@ export const Font = {
 
 export const ShadowValues = {
   distance: 5,
-  blackShadowDistance: 2,
+  blackShadowDistance: 3,
   color: '#6BCB77',
   blackShadow: 'rgba(0,0,0,0.35)',
 };

@@ -218,6 +218,7 @@ const LoginScreen = () => {
           height: '7%',
           justifyContent: 'center',
           paddingHorizontal: scale(16),
+          alignSelf: 'flex-start'
         }}>
         <AntDesign
           name="arrowleft"
@@ -254,7 +255,7 @@ const LoginScreen = () => {
           <View style={styles.inputContainer}>
             <Shadow
               distance={ShadowValues.distance}
-              startColor={emailError ? 'rgba(255,0,0,0.3)' : Color.shadowColor}
+              startColor={emailError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}
               style={{width: '100%', borderRadius: scale(5)}}>
               <TextInput
                 value={email}
@@ -273,7 +274,7 @@ const LoginScreen = () => {
             <Shadow
               distance={ShadowValues.distance}
               startColor={
-                passwordError ? 'rgba(255,0,0,0.3)' : Color.shadowColor
+                passwordError ? 'rgba(255,0,0,0.3)' : Color.primaryColor
               }
               style={{width: '100%', borderRadius: scale(5)}}>
               <TextInput
@@ -379,13 +380,15 @@ const styles = StyleSheet.create({
   },
   input: {
     height: verticalScale(38),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: scale(4),
     borderRadius: scale(5),
     paddingHorizontal: scale(8),
     fontSize: scale(14),
     fontWeight: '500',
     fontFamily: Font.Poppins,
     letterSpacing: 1,
-    marginTop: verticalScale(2),
     color: Color.textColor,
   },
   eyeIconContainer: {

@@ -6,22 +6,23 @@ import Color, {Font} from '../../assets/colors/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
+import {setGuestMode} from '../../redux/user';
 
 const LoginChoiceScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const handleGuestLogin = async () => {
-    dispatch(setGuestMode(true));
-    navigation.navigate('guestLogin');
-  };
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <View style={{height: '60%', width: '100%', backgroundColor: '#FFF'}}>
-        <HeaderImage width={'100%'} height={'100%'} />
+      <View style={{width: '100%', height: '50%'}}>
+        <HeaderImage
+          width="100%"
+          height="100%"
+          preserveAspectRatio="xMidYMax slice"
+        />
       </View>
 
-      <View style={{height: '20%'}}>
+      <View style={{height: '30%'}}>
         <View
           style={{
             height: '20%',
@@ -44,6 +45,7 @@ const LoginChoiceScreen = () => {
         style={{
           height: '20%',
           justifyContent: 'center',
+          bottom: 10
         }}>
         <TouchableOpacity
           onPress={() => navigation.navigate('loginScreen')}
@@ -52,7 +54,9 @@ const LoginChoiceScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('guestLogin')}
+          onPress={() => {
+            dispatch(setGuestMode(true));
+            navigation.navigate('SelectGender')}}
           style={[
             styles.button,
             {backgroundColor: Color.white, borderWidth: 2},

@@ -89,21 +89,20 @@ export const onMessagesSeen = (callback) => {
   return true;
 };
 
-export const getChatHistory = (userId, otherUserId, callback) => {
-  if (!socket) {
-    console.error('Cannot get chat history: Socket not initialized');
-    return;
+export const onUnreadMessages = (callback) => {
+  if (!socket || !socket.connected) {
+    console.warn('⚠️ Cannot set unread messages listener: Socket not connected');
+    return false;
   }
 
-  socket.off('chatHistory');
-
-  socket.on('chatHistory', history => {
-    callback(history);
+  socket.off('unreadMessages');
+  socket.on('unreadMessages', (data) => {
+    console.log('📩 Received unread messages:', data);
+    callback(data);
   });
 
-  socket.emit('getHistory', { userId, otherUserId });
+  return true;
 };
-
 export const sendMessage = async (senderId, receiverId, message, fileUri, tempId,) => {
   const socket = getSocket();
 
@@ -132,6 +131,23 @@ export const sendMessage = async (senderId, receiverId, message, fileUri, tempId
   }
 };
 
+export const getChatHistory = (userId, otherUserId, callback) => {
+  if (!socket) {
+    console.error('Cannot get chat history: Socket not initialized');
+    return;
+  }
+
+  socket.off('chatHistory');
+
+  socket.on('chatHistory', history => {
+    callback(history);
+  });
+
+  socket.emit('getHistory', { userId, otherUserId });
+};
+
+
+
 
 
 export const onReceiveMessage = callback => {
@@ -146,6 +162,8 @@ export const onReceiveMessage = callback => {
     callback(message);
   });
 };
+
+
 export const leaveRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
     console.log(`📢 Leaving room: ${userId}-${otherUserId}`);
@@ -157,18 +175,4 @@ export const leaveRoom = (userId, otherUserId) => {
   }
 };
 
-export const onUnreadMessages = (callback) => {
-  if (!socket || !socket.connected) {
-    console.warn('⚠️ Cannot set unread messages listener: Socket not connected');
-    return false;
-  }
-
-  socket.off('unreadMessages');
-  socket.on('unreadMessages', (data) => {
-    console.log('📩 Received unread messages:', data);
-    callback(data);
-  });
-
-  return true;
-};
 

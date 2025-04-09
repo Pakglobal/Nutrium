@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Alert, 
 } from 'react-native';
 import Color, {Font} from '../../../assets/colors/Colors';
 import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
@@ -32,13 +33,34 @@ const SelectWorkspace = () => {
     {id: 'heart_health', label: 'Heart Health'},
   ];
 
+  const handleNavigation = () => {
+    if (!workspace || !expertise) {
+      let message = '';
+      if (!workspace && !expertise) {
+        message = 'Please select your workspace and expertise to continue';
+      } else if (!workspace) {
+        message = 'Please select your workspace to continue';
+      } else {
+        message = 'Please select your expertise to continue';
+      }
+      
+      Alert.alert(
+        'Selection Required',
+        message,
+        [{text: 'OK', style: 'cancel'}]
+      );
+      return;
+    }
+    navigation.navigate('SelectCountry');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={'60%'} />
 
       <LeftIcon />
       <View style={{height: '82%', marginHorizontal: scale(16)}}>
-        <Text style={styles.sectionTitle}>Workspace</Text>
+        <Text style={[styles.sectionTitle, {fontWeight: '600'}]}>Workspace</Text>
         {workspaceOptions.map(item => (
           <TouchableOpacity
             key={item?.id}
@@ -65,7 +87,7 @@ const SelectWorkspace = () => {
           </TouchableOpacity>
         ))}
 
-        <Text style={styles.sectionTitle}>Expertise</Text>
+        <Text style={[styles.sectionTitle, {fontWeight: '600'}]}>Expertise</Text>
         {expertiseOptions.map(item => (
           <TouchableOpacity
             key={item?.id}
@@ -92,7 +114,7 @@ const SelectWorkspace = () => {
           </TouchableOpacity>
         ))}
       </View>
-      <RightIcon onPress={() => navigation.navigate('SelectCountry')} />
+      <RightIcon onPress={handleNavigation} />
     </SafeAreaView>
   );
 };

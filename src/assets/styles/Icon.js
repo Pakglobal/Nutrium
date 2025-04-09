@@ -32,10 +32,10 @@ export const LeftIcon = () => {
       style={[styles.buttonContainer, {alignSelf: 'flex-start'}]}
       onPress={() => navigation.goBack()}>
       <View style={[styles.button]}>
-        <FontAwesome6
-          name="circle-arrow-left"
-          color={Color.primaryColor}
-          size={32}
+      <AntDesign
+          name="arrowleft"
+          size={IconStyle.headerIconSize}
+          color={Color.white}
         />
       </View>
     </TouchableOpacity>
@@ -48,10 +48,10 @@ export const RightIcon = ({onPress}) => {
       style={[styles.buttonContainer, {alignSelf: 'flex-end'}]}
       onPress={onPress}>
       <View style={[styles.button]}>
-        <FontAwesome6
-          name="circle-arrow-right"
-          color={Color.primaryColor}
-          size={32}
+      <AntDesign
+          name="arrowright"
+          size={IconStyle.headerIconSize}
+          color={Color.white}
         />
       </View>
     </TouchableOpacity>
@@ -66,7 +66,9 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: scale(5),
+    padding: scale(7),
+    backgroundColor: Color.primaryColor,
+    borderRadius: scale(25)
   },
   buttonContainer: {
     justifyContent: 'center',

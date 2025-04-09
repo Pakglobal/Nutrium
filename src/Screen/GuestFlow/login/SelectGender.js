@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert, 
 } from 'react-native';
 import React, {useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -26,6 +27,19 @@ const SelectGender = () => {
 
   const handleSelect = gender => {
     setSelectedGender(gender);
+  };
+
+  const handleNavigation = () => {
+    if (!selectedGender) {
+      // Show alert if no gender is selected
+      Alert.alert(
+        'Selection Required',
+        'Please select your gender to continue',
+        [{text: 'OK', style: 'cancel'}]
+      );
+      return;
+    }
+    navigation.navigate('SelectProfession');
   };
 
   return (
@@ -56,11 +70,11 @@ const SelectGender = () => {
           ]}>
           Hi
         </Text>
-        <Text style={[styles.titleText, {fontSize: scale(16)}]}>
+        <Text style={[styles.titleText, {fontSize: scale(16), fontWeight: '600'}]}>
           Select Gender
         </Text>
         <Text
-          style={[styles.titleText, {fontSize: scale(12), fontWeight: '400'}]}>
+          style={[styles.titleText, {fontSize: scale(12)}]}>
           Please select your gender to continue
         </Text>
 
@@ -135,7 +149,7 @@ const SelectGender = () => {
         </View>
       </View>
 
-      <RightIcon onPress={() => navigation.navigate('SelectProfession')} />
+      <RightIcon onPress={handleNavigation} />
     </SafeAreaView>
   );
 };

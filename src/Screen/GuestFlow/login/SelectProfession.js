@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert, 
 } from 'react-native';
 import React, {useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -24,7 +25,6 @@ import Octicons from 'react-native-vector-icons/Octicons';
 
 const SelectProfession = () => {
   const navigation = useNavigation();
-
   const [profession, setProfession] = useState(null);
   const [goal, setGoal] = useState(null);
 
@@ -82,6 +82,27 @@ const SelectProfession = () => {
     {id: 'better_digestion', label: 'Better Digestion'},
   ];
 
+  const handleNavigation = () => {
+    if (!profession || !goal) {
+      let message = '';
+      if (!profession && !goal) {
+        message = 'Please select your profession and goal to continue';
+      } else if (!profession) {
+        message = 'Please select your profession to continue';
+      } else {
+        message = 'Please select your goal to continue';
+      }
+      
+      Alert.alert(
+        'Selection Required',
+        message,
+        [{text: 'OK', style: 'cancel'}]
+      );
+      return;
+    }
+    navigation.navigate('SelectWorkspace');
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <GuestFlowHeader progress={'40%'} />
@@ -103,7 +124,7 @@ const SelectProfession = () => {
           height: '42%',
         }}>
         <View style={styles.formContainer}>
-          <Text style={[styles.titleText, {fontSize: scale(14)}]}>
+          <Text style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
             What is your profession
           </Text>
           <View style={styles.optionsGrid}>
@@ -126,7 +147,7 @@ const SelectProfession = () => {
             ))}
           </View>
 
-          <Text style={[styles.titleText, {fontSize: scale(14)}]}>
+          <Text style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
             What is your Goal
           </Text>
           <View style={styles.optionsGrid}>
@@ -151,7 +172,7 @@ const SelectProfession = () => {
         </View>
       </View>
 
-      <RightIcon onPress={() => navigation.navigate('SelectWorkspace')} />
+      <RightIcon onPress={handleNavigation} />
     </SafeAreaView>
   );
 };

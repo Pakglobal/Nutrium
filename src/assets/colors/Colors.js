@@ -8,7 +8,7 @@ const Color = {
   black: '#000',
   lightGreen: '#e0f9f2',
   common: 'rgba(210, 233, 254, 0.6)',
-  primaryColor: '#21972B',
+  primaryColor: '#21972b',
   primaryLight: 'rgba(33, 151, 43,0.3)',
   white: '#fff',
   textColor: '#303233',

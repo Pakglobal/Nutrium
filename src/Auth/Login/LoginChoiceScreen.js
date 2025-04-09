@@ -14,38 +14,36 @@ const LoginChoiceScreen = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <View style={{width: '100%', height: '50%'}}>
-        <HeaderImage
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMidYMax slice"
-        />
+      <HeaderImage
+        width="100%"
+        height="56%"
+        preserveAspectRatio="xMidYMax slice"
+      />
+
+      <View
+        style={{
+          height: verticalScale(31),
+          width: scale(155),
+          alignSelf: 'center',
+          marginTop: verticalScale(24),
+          marginBottom: verticalScale(24),
+        }}>
+        <NutriumLogo height={'100%'} width={'100%'} />
       </View>
 
-      <View style={{height: '30%'}}>
-        <View
-          style={{
-            height: '20%',
-            width: '50%',
-            alignSelf: 'center',
-            marginVertical: verticalScale(20),
-          }}>
-          <NutriumLogo height={'100%'} width={'100%'} />
-        </View>
-
-        <View>
-          <Text style={styles.text}>
-            Nutrium provides personalized{'\n'}meal plans and diet tracking for
-            {'\n'}a healthier lifestyle.
-          </Text>
-        </View>
+      <View style={{paddingHorizontal: scale(22)}}>
+        <Text style={styles.text}>
+          Nutrium provides personalized meal plans and diet tracking for a healthier lifestyle.
+        </Text>
       </View>
 
       <View
         style={{
-          height: '20%',
           justifyContent: 'center',
-          bottom: 10
+          bottom: verticalScale(25),
+          position: 'absolute',
+          width: '100%',
+          paddingHorizontal: scale(22),
         }}>
         <TouchableOpacity
           onPress={() => navigation.navigate('loginScreen')}
@@ -56,10 +54,10 @@ const LoginChoiceScreen = () => {
         <TouchableOpacity
           onPress={() => {
             dispatch(setGuestMode(true));
-            navigation.navigate('SelectGender')}}
+          }}
           style={[
             styles.button,
-            {backgroundColor: Color.white, borderWidth: 2},
+            {backgroundColor: Color.white, borderWidth: 2, marginTop: verticalScale(8)},
           ]}>
           <Text style={[styles.buttonText, {color: Color.primaryColor}]}>
             Continue As Guest
@@ -80,6 +78,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Font.Poppins,
     textAlign: 'center',
+    lineHeight: scale(22)
   },
   buttonText: {
     fontSize: scale(16),
@@ -91,10 +90,8 @@ const styles = StyleSheet.create({
   },
   button: {
     borderColor: Color.primaryColor,
-    marginHorizontal: scale(16),
-    marginVertical: verticalScale(5),
     borderRadius: scale(8),
-    height: verticalScale(42),
+    height: verticalScale(35),
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -26,8 +26,6 @@ import {
 import {
   loginData,
   profileData,
-  setGuestMode,
-  setIsGuest,
   setToken,
 } from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';

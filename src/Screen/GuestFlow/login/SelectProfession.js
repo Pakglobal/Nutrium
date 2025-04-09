@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,10 +22,12 @@ import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
+import {setGuestMode} from '../../../redux/user';
+import {useDispatch} from 'react-redux';
 
 const SelectProfession = () => {
   const navigation = useNavigation();
-
+  const dispatch = useDispatch();
   const [profession, setProfession] = useState(null);
   const [goal, setGoal] = useState(null);
 
@@ -32,7 +35,7 @@ const SelectProfession = () => {
     {
       id: 'student',
       label: 'Student',
-      icon: (id) => (
+      icon: id => (
         <FontAwesome5
           name="user-graduate"
           size={18}
@@ -43,7 +46,7 @@ const SelectProfession = () => {
     {
       id: 'businessman',
       label: 'Businessman',
-      icon: (id) => (
+      icon: id => (
         <FontAwesome
           name="stethoscope"
           size={18}
@@ -54,7 +57,7 @@ const SelectProfession = () => {
     {
       id: 'musician',
       label: 'Musician',
-      icon: (id) => (
+      icon: id => (
         <Feather
           name="music"
           size={18}
@@ -65,7 +68,7 @@ const SelectProfession = () => {
     {
       id: 'lawyer',
       label: 'Lawyer',
-      icon: (id) => (
+      icon: id => (
         <Octicons
           name="law"
           size={18}
@@ -82,76 +85,84 @@ const SelectProfession = () => {
     {id: 'better_digestion', label: 'Better Digestion'},
   ];
 
+  const handleNavigation = () => {
+    if (!profession || !goal) {
+      let message = '';
+      if (!profession && !goal) {
+        message = 'Please select your profession and goal to continue';
+      } else if (!profession) {
+        message = 'Please select your profession to continue';
+      } else {
+        message = 'Please select your goal to continue';
+      }
+
+      Alert.alert('Selection Required', message, [
+        {text: 'OK', style: 'cancel'},
+      ]);
+      return;
+    }
+    navigation.navigate('SelectWorkspace');
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <GuestFlowHeader progress={'40%'} />
 
-      <LeftIcon />
+      <LeftIcon onGoBack={() => navigation.goBack()} />
 
-      <View
-        style={{
-          height: '40%',
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <LoginHeader height={'100%'} width={'100%'} />
-      </View>
+      <LoginHeader height={'40%'} width={'100%'} />
 
-      <View
-        style={{
-          height: '42%',
-        }}>
-        <View style={styles.formContainer}>
-          <Text style={[styles.titleText, {fontSize: scale(14)}]}>
-            What is your profession
-          </Text>
-          <View style={styles.optionsGrid}>
-            {professions.map(item => (
-              <TouchableOpacity
-                key={item?.id}
+      <View style={styles.formContainer}>
+        <Text
+          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
+          What is your profession
+        </Text>
+        <View style={styles.optionsGrid}>
+          {professions.map(item => (
+            <TouchableOpacity
+              key={item?.id}
+              style={[
+                styles.optionButton,
+                profession === item?.id && styles.selectedButton,
+              ]}
+              onPress={() => setProfession(item?.id)}>
+              <Text
                 style={[
-                  styles.optionButton,
-                  profession === item?.id && styles.selectedButton,
-                ]}
-                onPress={() => setProfession(item?.id)}>
-                <Text
-                  style={[
-                    styles.optionText,
-                    profession === item?.id && styles.selectedText,
-                  ]}>
-                  {item?.icon(item.id)} {item?.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                  styles.optionText,
+                  profession === item?.id && styles.selectedText,
+                ]}>
+                {item?.icon(item.id)} {item?.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-          <Text style={[styles.titleText, {fontSize: scale(14)}]}>
-            What is your Goal
-          </Text>
-          <View style={styles.optionsGrid}>
-            {goals.map(item => (
-              <TouchableOpacity
-                key={item?.id}
+        <Text
+          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
+          What is your Goal
+        </Text>
+        <View style={styles.optionsGrid}>
+          {goals.map(item => (
+            <TouchableOpacity
+              key={item?.id}
+              style={[
+                styles.optionButton,
+                goal === item?.id && styles.selectedButton,
+              ]}
+              onPress={() => setGoal(item?.id)}>
+              <Text
                 style={[
-                  styles.optionButton,
-                  goal === item?.id && styles.selectedButton,
-                ]}
-                onPress={() => setGoal(item?.id)}>
-                <Text
-                  style={[
-                    styles.optionText,
-                    goal === item?.id && styles.selectedText,
-                  ]}>
-                  {item?.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                  styles.optionText,
+                  goal === item?.id && styles.selectedText,
+                ]}>
+                {item?.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
-      <RightIcon onPress={() => navigation.navigate('SelectWorkspace')} />
+      <RightIcon onPress={handleNavigation} />
     </SafeAreaView>
   );
 };
@@ -172,7 +183,7 @@ const styles = StyleSheet.create({
     marginVertical: scale(4),
   },
   formContainer: {
-    padding: scale(16),
+    paddingHorizontal: scale(16),
   },
   optionsGrid: {
     flexDirection: 'row',

@@ -174,14 +174,14 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Color, {Font} from '../assets/colors/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
 import Onboarding1 from '../assets/Images/onBoarding1.svg';
 import Onboarding2 from '../assets/Images/onBoarding2.svg';
 import Onboarding3 from '../assets/Images/onBoarding3.svg';
+import { completeOnboarding } from '../redux/user';
+import { useDispatch } from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
@@ -207,19 +207,20 @@ const onboardingData = [
 const OnboardingScreen = ({navigation}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
+  const dispatch = useDispatch()
 
   const handleNext = async () => {
     if (currentIndex < onboardingData.length - 1) {
       flatListRef.current.scrollToIndex({index: currentIndex + 1});
     } else {
-      await AsyncStorage.setItem('onboardingCompleted', 'true');
-      navigation.replace('loginChoice');
+      dispatch(completeOnboarding());
+      navigation.navigate('loginChoice');
     }
   };
 
   const handleSkip = async () => {
-    await AsyncStorage.setItem('onboardingCompleted', 'true');
-    navigation.replace('loginChoice');
+    dispatch(completeOnboarding());
+    navigation.navigate('loginChoice');
   };
 
   const onViewableItemsChanged = useRef(({viewableItems}) => {

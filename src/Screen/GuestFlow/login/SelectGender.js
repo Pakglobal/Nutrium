@@ -4,6 +4,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
+  Dimensions,
 } from 'react-native';
 import React, {useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -19,48 +21,54 @@ import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
 import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
+import {useDispatch} from 'react-redux';
+import {setGuestMode} from '../../../redux/user';
 
 const SelectGender = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [selectedGender, setSelectedGender] = useState(null);
 
   const handleSelect = gender => {
     setSelectedGender(gender);
   };
 
+  const handleNavigation = () => {
+    if (!selectedGender) {
+      Alert.alert(
+        'Selection Required',
+        'Please select your gender to continue',
+        [{text: 'OK', style: 'cancel'}],
+      );
+      return;
+    }
+    navigation.navigate('SelectProfession');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={'20%'} />
 
-      <LeftIcon />
+      <LeftIcon onGoBack={() => dispatch(setGuestMode())} />
+
+      <LoginHeader height={'45%'} width={'100%'} />
 
       <View
         style={{
-          height: '40%',
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <LoginHeader height={'100%'} width={'100%'} />
-      </View>
-
-      <View
-        style={{
-          height: '42%',
-          marginHorizontal: scale(16),
+          paddingHorizontal: scale(16),
         }}>
         <Text
           style={[
             styles.titleText,
-            {color: Color.primaryColor, marginTop: verticalScale(18)},
+            {color: Color.primaryColor, marginTop: verticalScale(20)},
           ]}>
           Hi
         </Text>
-        <Text style={[styles.titleText, {fontSize: scale(16)}]}>
+        <Text
+          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
           Select Gender
         </Text>
-        <Text
-          style={[styles.titleText, {fontSize: scale(12), fontWeight: '400'}]}>
+        <Text style={[styles.titleText, {fontSize: scale(11)}]}>
           Please select your gender to continue
         </Text>
 
@@ -92,7 +100,7 @@ const SelectGender = () => {
             <Text
               style={[
                 styles.titleText,
-                {fontSize: scale(14)},
+                {fontSize: scale(13)},
                 selectedGender === 'female' && styles.selectedText,
               ]}>
               Female
@@ -126,7 +134,7 @@ const SelectGender = () => {
             <Text
               style={[
                 styles.titleText,
-                {fontSize: scale(14)},
+                {fontSize: scale(13)},
                 selectedGender === 'male' && styles.selectedText,
               ]}>
               Male
@@ -135,7 +143,7 @@ const SelectGender = () => {
         </View>
       </View>
 
-      <RightIcon onPress={() => navigation.navigate('SelectProfession')} />
+      <RightIcon onPress={handleNavigation} />
     </SafeAreaView>
   );
 };
@@ -149,7 +157,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontWeight: '500',
-    fontSize: scale(32),
+    fontSize: scale(28),
     color: Color.textColor,
     letterSpacing: 1,
     fontFamily: Font.Poppins,
@@ -182,8 +190,8 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: verticalScale(15),
-    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(18),
     borderRadius: scale(8),
     borderWidth: 1,
     borderColor: Color.primaryColor,

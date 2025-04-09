@@ -28,6 +28,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {guestLoginData, setIsGuest} from '../../../redux/user';
 
 const GuestLogin = () => {
   const dispatch = useDispatch();
@@ -51,11 +52,24 @@ const GuestLogin = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  const handleGuestLogin = () => {
+    // Example guest data (replace with actual data from your flow)
+    const guestData = {
+      gender: 'Male', // Example: collected from SelectGender
+      profession: 'Developer', // Example: collected from SelectProfession
+      workspace: 'Office', // Example: collected from SelectWorkspace
+      country: 'USA', // Example: collected from SelectCountry
+    };
+
+    dispatch(guestLoginData(guestData)); // Store guest data in Redux
+    navigation.navigate('BottomNavigation'); // Navigate to main app screen
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <GuestFlowHeader progress={'100%'} />
 
-      <LeftIcon />
+      <LeftIcon onGoBack={() => navigation.goBack()} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <LoginHeader style={{alignSelf: 'center'}} />
 
@@ -143,7 +157,7 @@ const GuestLogin = () => {
           </View>
         </View>
       </ScrollView>
-      <RightIcon onPress={() => navigation.navigate('GuestLogin')} />
+      <RightIcon onPress={handleGuestLogin} />
     </SafeAreaView>
   );
 };

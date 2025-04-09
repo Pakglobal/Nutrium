@@ -319,7 +319,7 @@ const ProfileMenuScreen = () => {
 
   const handleLogout = async () => {
     dispatch(setGuestMode());
-    dispatch(setIsGuest());
+    // dispatch(setIsGuest());
     dispatch(guestLoginData());
   };
 

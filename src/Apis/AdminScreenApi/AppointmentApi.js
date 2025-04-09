@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetAppointmentData = async token => {
   try {
     const url =
-      'https://nutrium-back-end-1.onrender.com/api/v1/scheduleApointment';
+      `${BASE_URL}scheduleApointment`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,

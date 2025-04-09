@@ -37,7 +37,6 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
       try {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
-        console.log(userInfo);
 
         if (userInfo && userInfo?.data?.idToken) {
           setIsTracking(true);

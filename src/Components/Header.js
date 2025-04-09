@@ -88,6 +88,7 @@ const Header = ({
                 </TouchableOpacity>
                 <Text style={styles.screenName}>{screenName}</Text>
               </View>
+              
               <TouchableOpacity
                 onPress={handlePlus}
                 style={{padding: scale(8)}}>

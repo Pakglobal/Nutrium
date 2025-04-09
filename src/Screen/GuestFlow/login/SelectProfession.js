@@ -4,29 +4,33 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert, 
+  Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, {Font, ShadowValues} from '../../../assets/colors/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import Color, { Font, ShadowValues } from '../../../assets/colors/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectProfession.svg';
-import {Shadow} from 'react-native-shadow-2';
+import { Shadow } from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
 
-const SelectProfession = () => {
+const SelectProfession = ({ route }) => {
   const navigation = useNavigation();
   const [profession, setProfession] = useState(null);
   const [goal, setGoal] = useState(null);
+  const Gender = route?.params?.gender
+  const selectedGoal = { goal, profession ,Gender}
+
+
 
   const professions = [
     {
@@ -76,10 +80,10 @@ const SelectProfession = () => {
   ];
 
   const goals = [
-    {id: 'weight_loss', label: 'Weight Loss'},
-    {id: 'muscle_gain', label: 'Muscle Gain'},
-    {id: 'maintain_weight', label: 'Maintain Weight'},
-    {id: 'better_digestion', label: 'Better Digestion'},
+    { id: 'weight_loss', label: 'Weight Loss' },
+    { id: 'muscle_gain', label: 'Muscle Gain' },
+    { id: 'maintain_weight', label: 'Maintain Weight' },
+    { id: 'better_digestion', label: 'Better Digestion' },
   ];
 
   const handleNavigation = () => {
@@ -92,19 +96,19 @@ const SelectProfession = () => {
       } else {
         message = 'Please select your goal to continue';
       }
-      
+
       Alert.alert(
         'Selection Required',
         message,
-        [{text: 'OK', style: 'cancel'}]
+        [{ text: 'OK', style: 'cancel' }]
       );
       return;
     }
-    navigation.navigate('SelectWorkspace');
+    navigation.navigate('SelectWorkspace', selectedGoal);
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <GuestFlowHeader progress={'40%'} />
 
       <LeftIcon />
@@ -124,7 +128,7 @@ const SelectProfession = () => {
           height: '42%',
         }}>
         <View style={styles.formContainer}>
-          <Text style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
+          <Text style={[styles.titleText, { fontSize: scale(14), fontWeight: '600' }]}>
             What is your profession
           </Text>
           <View style={styles.optionsGrid}>
@@ -147,7 +151,7 @@ const SelectProfession = () => {
             ))}
           </View>
 
-          <Text style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
+          <Text style={[styles.titleText, { fontSize: scale(14), fontWeight: '600' }]}>
             What is your Goal
           </Text>
           <View style={styles.optionsGrid}>

@@ -84,7 +84,7 @@ const ProfileMenuScreen = () => {
           if (success) {
             navigation.reset({
               index: 0,
-              routes: [{name: 'loginScreen'}],
+              routes: [{name: 'loginChoice'}],
             });
           } else {
             Alert.alert('Error', 'Failed to sign out. Please try again.', [

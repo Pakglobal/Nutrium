@@ -347,7 +347,7 @@ const MessageComponent = ({
     });
 
     const response = await fetch(
-      'https://nutrium-back-end-1.onrender.com/api/v1/upload',
+      '${BASE_URL}upload',
       {
         method: 'POST',
         body: formData,

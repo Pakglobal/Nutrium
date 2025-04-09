@@ -10,10 +10,10 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
@@ -22,7 +22,7 @@ import {
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
 import Header from '../../../../Components/Header';
 
-const LogPhysicalActivity = ({route}) => {
+const LogPhysicalActivity = ({ route }) => {
   const token = route?.params?.plusData?.token;
   const id = route?.params?.plusData?.id;
   const plus = route?.params?.plusData?.press === 'plus';
@@ -101,14 +101,14 @@ const LogPhysicalActivity = ({route}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       {/* <BackHeader
         titleName={'Log physical activity'}
         backText={'Physical activity'}
         onPressBack={() => navigation.goBack()}
         showRightButton={false}
       /> */}
-      <Header
+      {/* <Header
         showIcon={{}}
         backIcon={true}
         screenName="Physical activity"
@@ -116,9 +116,13 @@ const LogPhysicalActivity = ({route}) => {
         onPress={() =>
           navigation.navigate('logPhysicalActivity', {plusData: plusData})
         }
-      />
+      /> */}
 
-      <View style={{marginHorizontal: scale(16)}}>
+
+      <Header screenheader={true} screenName={'Water intake'}  />
+
+
+      <View style={{ marginHorizontal: scale(16) }}>
         <Text style={styles.topTitle}>Log Physical Activity</Text>
         <View style={styles.searchContainer}>
           <TextInput
@@ -151,7 +155,7 @@ const LogPhysicalActivity = ({route}) => {
         <FlatList
           data={filteredData}
           ListHeaderComponent={
-            <View style={{marginHorizontal: scale(16)}}>
+            <View style={{ marginHorizontal: scale(16) }}>
               {quickAccessData?.length > 0 && (
                 <View>
                   <Text style={styles.title}>Quick access</Text>
@@ -173,10 +177,10 @@ const LogPhysicalActivity = ({route}) => {
               <Text style={styles.title}>All physical activities</Text>
             </View>
           }
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handlePressItem(item?.activity)}
-              style={{marginHorizontal: scale(16)}}>
+              style={{ marginHorizontal: scale(16) }}>
               <Text style={styles.name}>{item?.activity}</Text>
             </TouchableOpacity>
           )}

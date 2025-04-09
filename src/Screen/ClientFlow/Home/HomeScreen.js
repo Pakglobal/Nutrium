@@ -179,7 +179,7 @@ const HomeScreen = () => {
                 <View style={{marginVertical: scale(10)}}>
                   <Shadow
                     distance={ShadowValues.distance}
-                    startColor={Color?.shadowColor}
+                    startColor={ShadowValues?.color}
                     style={{width: '100%'}}>
                     <View style={styles.shadow}>
                       <HydratedStay />

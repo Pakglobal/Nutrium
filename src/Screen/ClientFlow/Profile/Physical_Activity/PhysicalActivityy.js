@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,27 +9,27 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CalenderHeader from '../../../../Components/CalenderHeader';
 import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import PhysicalActivity from '../../../../Components/PhysicalActivity';
-import {useStepTracking} from '../../../../Components/StepTrackingService';
+import { useStepTracking } from '../../../../Components/StepTrackingService';
 import {
   DeletePhysicalActivity,
   GetPhysicalActivityDetails,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
-import {ScrollView} from 'react-native-virtualized-view';
+import { ScrollView } from 'react-native-virtualized-view';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
 
 const PhysicalActivityy = () => {
   const navigation = useNavigation();
-  const {steps, calories, workouts, currentDay} = useStepTracking();
+  const { steps, calories, workouts, currentDay } = useStepTracking();
 
   const [dayOffset, setDayOffset] = useState(0);
   const [physicalActivity, setPhysicalActivity] = useState([]);
@@ -195,7 +195,7 @@ const PhysicalActivityy = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       {/* <BackHeader
         titleName={'Physical activity'}
         onPressBack={() => navigation.goBack()}
@@ -203,15 +203,18 @@ const PhysicalActivityy = () => {
           navigation.navigate('logPhysicalActivity', {plusData: plusData})
         }
       /> */}
-      <Header
+
+      <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
+        navigation.navigate('logPhysicalActivity', { plusData: plusData })} />
+      {/* <Header
         showIcon={false}
         backIcon={true}
         screenName="Physical activity"
         iconStyle={{left: scale(-65)}}
         onPress={() =>
-          navigation.navigate('logPhysicalActivity', {plusData: plusData})
+         
         }
-      />
+      /> */}
       {/* <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
@@ -220,7 +223,7 @@ const PhysicalActivityy = () => {
         txtFunction={getDateString()}
       /> */}
 
-      <PhysicalActivity style={{marginBottom: 0}} />
+      <PhysicalActivity style={{ marginBottom: 0 }} />
       <OnOffFunctionality
         title={'Your workouts'}
         style={{
@@ -232,7 +235,7 @@ const PhysicalActivityy = () => {
       />
 
       {loading ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : physicalActivityData && physicalActivityData?.length > 0 ? (
@@ -240,9 +243,9 @@ const PhysicalActivityy = () => {
           <FlatList
             data={physicalActivityData}
             showsVerticalScrollIndicator={false}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View style={styles.entryItem}>
-                <View style={{width: '65%', marginLeft: scale(8)}}>
+                <View style={{ width: '65%', marginLeft: scale(8) }}>
                   <Text style={styles.activities}>{item?.activity}</Text>
                   <Text style={styles.date}>{formatDate(item?.date)}</Text>
                 </View>
@@ -257,7 +260,7 @@ const PhysicalActivityy = () => {
                   </View>
                   <View>
                     <TouchableOpacity
-                      style={{marginLeft: scale(15)}}
+                      style={{ marginLeft: scale(15) }}
                       onPress={() => {
                         setSelectedEntry({
                           id: item?._id,
@@ -277,7 +280,7 @@ const PhysicalActivityy = () => {
           />
         </View>
       ) : (
-        <View style={{padding: verticalScale(10), marginTop: scale(10)}}>
+        <View style={{ padding: verticalScale(10), marginTop: scale(10) }}>
           <Text
             style={{
               textAlign: 'center',

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,31 +6,36 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  Alert, 
+  Alert,
 } from 'react-native';
-import Color, {Font} from '../../../assets/colors/Colors';
-import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import Color, { Font } from '../../../assets/colors/Colors';
+import { LeftIcon, RightIcon } from '../../../assets/styles/Icon';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 
-const SelectWorkspace = () => {
+const SelectWorkspace = ({ route }) => {
   const navigation = useNavigation();
   const [workspace, setWorkspace] = useState(null);
   const [expertise, setExpertise] = useState(null);
 
+
+  const goaldata=route?.params
+  const selectWorkspace={...goaldata,workspace,expertise}
+
+
   const workspaceOptions = [
-    {id: 'meal_plans', label: 'Meal Plans'},
-    {id: 'client_management', label: 'Client Management'},
-    {id: 'nutrition_tracking', label: 'Nutrition Tracking'},
-    {id: 'reports_analytics', label: 'Reports & Analytics'},
+    { id: 'meal_plans', label: 'Meal Plans' },
+    { id: 'client_management', label: 'Client Management' },
+    { id: 'nutrition_tracking', label: 'Nutrition Tracking' },
+    { id: 'reports_analytics', label: 'Reports & Analytics' },
   ];
 
   const expertiseOptions = [
-    {id: 'spoorts_nutrition', label: 'Sports Nutrition'},
-    {id: 'diabetes_management', label: 'Diabetes Management'},
-    {id: 'vegan_nutrition', label: 'Vegan Nutrition'},
-    {id: 'heart_health', label: 'Heart Health'},
+    { id: 'spoorts_nutrition', label: 'Sports Nutrition' },
+    { id: 'diabetes_management', label: 'Diabetes Management' },
+    { id: 'vegan_nutrition', label: 'Vegan Nutrition' },
+    { id: 'heart_health', label: 'Heart Health' },
   ];
 
   const handleNavigation = () => {
@@ -43,15 +48,15 @@ const SelectWorkspace = () => {
       } else {
         message = 'Please select your expertise to continue';
       }
-      
+
       Alert.alert(
         'Selection Required',
         message,
-        [{text: 'OK', style: 'cancel'}]
+        [{ text: 'OK', style: 'cancel' }]
       );
       return;
     }
-    navigation.navigate('SelectCountry');
+    navigation.navigate('SelectCountry',selectWorkspace);
   };
 
   return (
@@ -59,8 +64,8 @@ const SelectWorkspace = () => {
       <GuestFlowHeader progress={'60%'} />
 
       <LeftIcon />
-      <View style={{height: '82%', marginHorizontal: scale(16)}}>
-        <Text style={[styles.sectionTitle, {fontWeight: '600'}]}>Workspace</Text>
+      <View style={{ height: '82%', marginHorizontal: scale(16) }}>
+        <Text style={[styles.sectionTitle, { fontWeight: '600' }]}>Workspace</Text>
         {workspaceOptions.map(item => (
           <TouchableOpacity
             key={item?.id}
@@ -87,7 +92,7 @@ const SelectWorkspace = () => {
           </TouchableOpacity>
         ))}
 
-        <Text style={[styles.sectionTitle, {fontWeight: '600'}]}>Expertise</Text>
+        <Text style={[styles.sectionTitle, { fontWeight: '600' }]}>Expertise</Text>
         {expertiseOptions.map(item => (
           <TouchableOpacity
             key={item?.id}

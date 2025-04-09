@@ -16,12 +16,13 @@ import {
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import Color from '../../../../assets/colors/Colors';
+import Color, { ShadowValues } from '../../../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
+import { Shadow } from 'react-native-shadow-2';
 
 const WaterIntakeLog = ({ route }) => {
   const navigation = useNavigation();
@@ -187,14 +188,17 @@ const WaterIntakeLog = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
+      {/* <Header
         showIcon={'save'}
         backIcon={true}
         screenName='Water intake log'
         iconStyle={{ left: scale(-65) }}
         onSave={() => {
           handleSave()
-        }} />
+        }} /> */}
+
+      <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
+        handleSave()} />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much water did you drink?</Text>
@@ -289,14 +293,32 @@ const WaterIntakeLog = ({ route }) => {
         </View>
 
         <Text style={styles.label}>Date</Text>
-        <View style={styles.pickerButton} >
-          <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => setDateOpen(true)}>
-            <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
-          </TouchableOpacity>
-        </View>
+        {/* <View style={{ marginVertical: scale(10) }}>
+          <Shadow
+            distance={ShadowValues.distance}
+            startColor={ShadowValues.color}
+            style={{ width: '100%' }}>
+
+            <View style={styles.pickerButton} >
+              <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
+              <TouchableOpacity
+                style={{}}
+                onPress={() => setDateOpen(true)}>
+                <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
+              </TouchableOpacity>
+            </View>
+          </Shadow>
+        </View> */}
+        
+          <View style={styles.pickerButton} >
+            <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
+            <TouchableOpacity
+              style={{}}
+              onPress={() => setDateOpen(true)}>
+              <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
+            </TouchableOpacity>
+          </View>
+
         <DatePicker
           modal
           mode="date"

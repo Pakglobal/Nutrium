@@ -10,25 +10,25 @@ import {
   View,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, {Font, ShadowValues} from '../../../assets/colors/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import Color, { Font, ShadowValues } from '../../../assets/colors/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectCountry.svg';
-import {Shadow} from 'react-native-shadow-2';
+import { Shadow } from 'react-native-shadow-2';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const SelectCountry = () => {
+const SelectCountry = ({ route }) => {
   const navigation = useNavigation();
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -37,6 +37,9 @@ const SelectCountry = () => {
   const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  
+  const selectGender=route?.params
+  const countryData = { country, number, dateOfBirth ,...selectGender}
 
   const countries = [
     'India',
@@ -51,7 +54,7 @@ const SelectCountry = () => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
-    setDateOfBirth(currentDate.toLocaleDateString('en-US')); 
+    setDateOfBirth(currentDate.toLocaleDateString('en-US'));
   };
 
   const handleNavigation = () => {
@@ -76,23 +79,23 @@ const SelectCountry = () => {
       Alert.alert(
         'Selection Required',
         message,
-        [{text: 'OK', style: 'cancel'}]
+        [{ text: 'OK', style: 'cancel' }]
       );
       return;
     }
-    navigation.navigate('GuestLogin');
+    navigation.navigate('GuestLogin',countryData);
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <GuestFlowHeader progress={'80%'} />
 
       <LeftIcon />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <LoginHeader style={{alignSelf: 'center'}} />
+        <LoginHeader style={{ alignSelf: 'center' }} />
 
         <View
-          style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
+          style={{ marginHorizontal: scale(16), marginTop: verticalScale(20) }}>
           <TouchableOpacity
             style={[
               styles.inputContainer,
@@ -104,7 +107,7 @@ const SelectCountry = () => {
             ]}
             onPress={() => setShowCountryDropdown(!showCountryDropdown)}>
             <Text
-              style={[styles.titleText, !country && {color: Color.textColor}]}>
+              style={[styles.titleText, !country && { color: Color.textColor }]}>
               {country || 'select country'}
             </Text>
             {showCountryDropdown ? (
@@ -125,13 +128,13 @@ const SelectCountry = () => {
                   key={item}
                   style={[
                     styles.dropdownItem,
-                    country === item && {backgroundColor: Color.primaryColor},
+                    country === item && { backgroundColor: Color.primaryColor },
                   ]}
                   onPress={() => {
                     setCountry(item);
                     setShowCountryDropdown(false);
                   }}>
-                  <Text style={{color: country === item ?  Color.white : Color.textColor}}>
+                  <Text style={{ color: country === item ? Color.white : Color.textColor }}>
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -161,7 +164,7 @@ const SelectCountry = () => {
             ]}
             onPress={() => setShowDatePicker(true)}>
             <Text
-              style={[styles.titleText, !dateOfBirth && {color: Color.textColor}]}>
+              style={[styles.titleText, !dateOfBirth && { color: Color.textColor }]}>
               {dateOfBirth || 'Date of Birth'}
             </Text>
             <MaterialCommunityIcons name="calendar" size={20} color={Color.primaryColor} />

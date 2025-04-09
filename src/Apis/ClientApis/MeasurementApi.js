@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetMeasurementData = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/client/measurements/${id}`;
+    const url = `${BASE_URL}client/measurements/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -17,7 +18,7 @@ export const GetMeasurementData = async (token, id) => {
 export const SetMeasurementData = async payload => {
   try {
     const {token, id, value, date, unit, measurementtype} = payload;
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/client/update-measurements/${id}`;
+    const url = `${BASE_URL}client/update-measurements/${id}`;
     const body = {
       date: date,
       value: value,

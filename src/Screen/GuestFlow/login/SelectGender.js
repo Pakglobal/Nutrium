@@ -39,7 +39,7 @@ const SelectGender = () => {
       );
       return;
     }
-    navigation.navigate('SelectProfession');
+    navigation.navigate('SelectProfession',{gender:selectedGender});
   };
 
   return (

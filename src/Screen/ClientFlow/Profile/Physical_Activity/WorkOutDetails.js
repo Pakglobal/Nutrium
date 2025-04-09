@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,8 +8,8 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Color from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
@@ -18,11 +18,11 @@ import {
   SetQuickAccess,
   UpdatePhysicalActivity,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
 
-const WorkOutDetails = ({route}) => {
+const WorkOutDetails = ({ route }) => {
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
@@ -91,7 +91,7 @@ const WorkOutDetails = ({route}) => {
 
       if (
         response.message ===
-          'Activity added successfully and updated in quick access' ||
+        'Activity added successfully and updated in quick access' ||
         response?.success === true
       ) {
         navigation.navigate('physicalActivity');
@@ -152,7 +152,10 @@ const WorkOutDetails = ({route}) => {
         loading={loading}
       /> */}
 
-      <Header
+
+      <Header screenheader={true} screenName={'Water intake'} handlePlus={handleSave} />
+
+      {/* <Header
         showIcon={'save'}
         backIcon={true}
         screenName="Physical activity"
@@ -161,7 +164,7 @@ const WorkOutDetails = ({route}) => {
         onPress={() =>
           navigation.navigate('logPhysicalActivity', {plusData: plusData})
         }
-      />
+      /> */}
 
       <View style={styles.content}>
         <Text style={styles.topTitle}>Workout Details</Text>

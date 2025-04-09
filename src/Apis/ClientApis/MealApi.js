@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const FetchMealPlanApi = async id => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/meal-plan/${id}`;
+    const url = `${BASE_URL}meal-plan/${id}`;
     const response = await axios.get(url);
     return response?.data;
   } catch (error) {

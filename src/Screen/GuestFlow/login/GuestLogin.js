@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   Modal,
   SafeAreaView,
@@ -9,27 +10,28 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, {Font, ShadowValues} from '../../../assets/colors/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import Color, { Font, ShadowValues } from '../../../assets/colors/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/GuestLogin.svg';
-import {Shadow} from 'react-native-shadow-2';
+import { Shadow } from 'react-native-shadow-2';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { GuestLOGin } from '../../../Apis/Login/AuthApis';
 
-const GuestLogin = () => {
+const GuestLogin = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -47,17 +49,62 @@ const GuestLogin = () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [login, setLogin] = useState([]);
 
+  const data = route?.params
+  const fullName = firstName + " " + lastName
+
+
+
+
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+
+
+  const guestLogin = async () => {
+    //  navigation.navigate('GuestLogin')
+
+    if (firstName == '' || lastName == '' || email == '' || password == '') {
+      Alert.alert('Please Enter All Deatils')
+    }
+
+    const body = {
+      fullName: fullName,
+      email: email,
+      password: password,
+      gender: data?.Gender,
+      country: data?.country,
+      dateOfBirth: data?.dateOfBirth,
+      phoneNumber: data?.number,
+      profession: data?.profession,
+      workplace: data?.workplace,
+      expertise: [
+        data?.expertise
+      ],
+    }
+
+    try {
+      const response = await GuestLOGin(body);
+;
+
+      if (response?.message == 'Login successful') {
+        navigation.navigate('BottomNavigation')
+      }else if(response?.message){
+        Alert.alert(response?.message)
+      }
+
+    } catch {
+
+    }
+  }
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <GuestFlowHeader progress={'100%'} />
 
       <LeftIcon />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <LoginHeader style={{alignSelf: 'center'}} />
+        <LoginHeader style={{ alignSelf: 'center' }} />
 
         <View
           style={{
@@ -70,7 +117,7 @@ const GuestLogin = () => {
               startColor={
                 firstNameError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
               }
-              style={{width: '100%', borderRadius: scale(5)}}>
+              style={{ width: '100%', borderRadius: scale(5) }}>
               <TextInput
                 value={firstName}
                 placeholder="First Name"
@@ -87,7 +134,7 @@ const GuestLogin = () => {
               startColor={
                 lastNameError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
               }
-              style={{width: '100%', borderRadius: scale(5)}}>
+              style={{ width: '100%', borderRadius: scale(5) }}>
               <TextInput
                 value={lastName}
                 placeholder="Last Name"
@@ -104,7 +151,7 @@ const GuestLogin = () => {
               startColor={
                 emailError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
               }
-              style={{width: '100%', borderRadius: scale(5)}}>
+              style={{ width: '100%', borderRadius: scale(5) }}>
               <TextInput
                 value={email}
                 placeholder="Email"
@@ -121,13 +168,13 @@ const GuestLogin = () => {
               startColor={
                 passwordError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
               }
-              style={{width: '100%', borderRadius: scale(5)}}>
+              style={{ width: '100%', borderRadius: scale(5) }}>
               <TextInput
                 value={password}
                 placeholder="Password"
                 onChangeText={p => setPassword(p)}
                 placeholderTextColor={Color.textColor}
-                style={[styles.input, {paddingRight: scale(35)}]}
+                style={[styles.input, { paddingRight: scale(35) }]}
                 secureTextEntry={!passwordVisible}
               />
               <TouchableOpacity
@@ -143,7 +190,7 @@ const GuestLogin = () => {
           </View>
         </View>
       </ScrollView>
-      <RightIcon onPress={() => navigation.navigate('GuestLogin')} />
+      <RightIcon onPress={guestLogin} />
     </SafeAreaView>
   );
 };

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetAdminProfileData = async token => {
   try {
-    const url = 'https://nutrium-back-end-1.onrender.com/api/v1/professionals';
+    const url = `${BASE_URL}professionals`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,

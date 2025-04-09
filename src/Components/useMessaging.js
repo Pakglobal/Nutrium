@@ -125,126 +125,36 @@ const MessageComponent = ({
     }),
   ).current;
 
-  // useEffect(() => {
-  //   const socket = connectSocket();
-  //   if (socket) {
-  //     // setLoading(true);
-  //   }
-  //   joinRoom(userId, otherUserId);
-
-  //   getChatHistory(userId, otherUserId, history => {
-  //     setMessages(history?.reverse());
-  //     // setLoading(false);
-
-  //     const unseenMessagesFromOther = history?.filter(
-  //       msg => !msg?.seen && msg.senderId !== userId && msg.receiverId === userId
-  //     );
-
-  //     if (unseenMessagesFromOther?.length > 0) {
-  //       const messageIds = unseenMessagesFromOther.map(msg => msg?._id).filter(Boolean);
-  //       socket.emit('messageSeen', { userId, otherUserId, messageIds });
-  //     }
-  //   });
-
-  //   const messageHandler = newMessage => {
-  //     console.log('newMessage', newMessage);
-
-  //     setMessages(prevMessages => {
-  //       const messageExists = prevMessages.some(msg =>
-  //         (msg._id && msg._id === newMessage._id) ||
-  //         (msg.tempId && msg.tempId === newMessage.tempId)
-  //       );
-
-  //       if (messageExists) {
-  //         return prevMessages.map(msg =>
-  //           ((msg._id && msg._id === newMessage._id) ||
-  //             (msg.tempId && msg.tempId === newMessage.tempId))
-  //             ? { ...newMessage, tempId: msg.tempId || newMessage.tempId }
-  //             : msg
-  //         );
-  //       }
-
-  //       return [newMessage, ...prevMessages];
-  //     });
-
-  //     if (newMessage?.senderId !== userId && newMessage?.receiverId === userId) {
-  //       markMessagesAsSeen([newMessage._id]);
-  //     }
-  //   };
-
-  //   onReceiveMessage(messageHandler);
-
-  //   const messagesSeenHandler = (data) => {
-  //     console.log('Messages seen by other user:', data);
-  //     if (data?.messageIds && data?.senderId === userId && data?.receiverId === otherUserId) {
-  //       console.log('Updating seen status for our messages:', data.messageIds);
-  //       setMessages(prevMessages =>
-  //         prevMessages.map(msg =>
-  //           data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg
-  //         )
-  //       );
-  //     }
-  //   };
-
-  //   onMessagesSeen(messagesSeenHandler);
-
-  //   const markMessagesAsSeen = (specificIds = null) => {
-  //     const unseenMessages = specificIds
-  //       ? messages.filter(msg => specificIds.includes(msg._id) && !msg?.seen && msg.receiverId === userId)
-  //       : messages.filter(msg => !msg?.seen && msg.senderId !== userId && msg.receiverId === userId);
-
-  //     if (unseenMessages.length > 0) {
-  //       const messageIds = unseenMessages.map(msg => msg?._id).filter(Boolean);
-  //       if (messageIds.length > 0) {
-  //         console.log('Marking messages as seen:', messageIds);
-  //         socket.emit('messageSeen', { userId, otherUserId, messageIds });
-  //       }
-  //     }
-  //   };
-
-  //   markMessagesAsSeen();
-
-  //   return () => {
-  //     socket.off('receiveMessage', messageHandler);
-  //     socket.off('messagesSeen', messagesSeenHandler);
-  //     socket.disconnect();
-  //   };
-  // }, [userId, otherUserId]);
-
-
   useEffect(() => {
     const socket = connectSocket();
+    if (socket) {
+      setLoading(true);
+    }
     joinRoom(userId, otherUserId);
-  
-    // 👇 Fetch and update messages asynchronously, without delaying UI
+
     getChatHistory(userId, otherUserId, history => {
-      const updatedHistory = history?.reverse() || [];
-  
-      setMessages(updatedHistory);
-  
-      const unseenMessagesFromOther = updatedHistory.filter(
-        msg =>
-          !msg?.seen &&
-          msg.senderId !== userId &&
-          msg.receiverId === userId
+      setMessages(history?.reverse());
+      setLoading(false);
+
+      const unseenMessagesFromOther = history?.filter(
+        msg => !msg?.seen && msg.senderId !== userId && msg.receiverId === userId
       );
-  
-      if (unseenMessagesFromOther.length > 0) {
+
+      if (unseenMessagesFromOther?.length > 0) {
         const messageIds = unseenMessagesFromOther.map(msg => msg?._id).filter(Boolean);
         socket.emit('messageSeen', { userId, otherUserId, messageIds });
       }
     });
-  
-    // ✅ Handler for incoming messages
+
     const messageHandler = newMessage => {
       console.log('newMessage', newMessage);
-  
+
       setMessages(prevMessages => {
         const messageExists = prevMessages.some(msg =>
           (msg._id && msg._id === newMessage._id) ||
           (msg.tempId && msg.tempId === newMessage.tempId)
         );
-  
+
         if (messageExists) {
           return prevMessages.map(msg =>
             ((msg._id && msg._id === newMessage._id) ||
@@ -253,23 +163,21 @@ const MessageComponent = ({
               : msg
           );
         }
-  
+
         return [newMessage, ...prevMessages];
       });
-  
+
       if (newMessage?.senderId !== userId && newMessage?.receiverId === userId) {
         markMessagesAsSeen([newMessage._id]);
       }
     };
-  
-    const messagesSeenHandler = data => {
+
+    onReceiveMessage(messageHandler);
+
+    const messagesSeenHandler = (data) => {
       console.log('Messages seen by other user:', data);
-  
-      if (
-        data?.messageIds &&
-        data?.senderId === userId &&
-        data?.receiverId === otherUserId
-      ) {
+      if (data?.messageIds && data?.senderId === userId && data?.receiverId === otherUserId) {
+        console.log('Updating seen status for our messages:', data.messageIds);
         setMessages(prevMessages =>
           prevMessages.map(msg =>
             data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg
@@ -277,22 +185,14 @@ const MessageComponent = ({
         );
       }
     };
-  
+
+    onMessagesSeen(messagesSeenHandler);
+
     const markMessagesAsSeen = (specificIds = null) => {
       const unseenMessages = specificIds
-        ? messages.filter(
-            msg =>
-              specificIds.includes(msg._id) &&
-              !msg?.seen &&
-              msg.receiverId === userId
-          )
-        : messages.filter(
-            msg =>
-              !msg?.seen &&
-              msg.senderId !== userId &&
-              msg.receiverId === userId
-          );
-  
+        ? messages.filter(msg => specificIds.includes(msg._id) && !msg?.seen && msg.receiverId === userId)
+        : messages.filter(msg => !msg?.seen && msg.senderId !== userId && msg.receiverId === userId);
+
       if (unseenMessages.length > 0) {
         const messageIds = unseenMessages.map(msg => msg?._id).filter(Boolean);
         if (messageIds.length > 0) {
@@ -301,19 +201,18 @@ const MessageComponent = ({
         }
       }
     };
-  
-    onReceiveMessage(messageHandler);
-    onMessagesSeen(messagesSeenHandler);
-  
+
     markMessagesAsSeen();
-  
+
     return () => {
       socket.off('receiveMessage', messageHandler);
       socket.off('messagesSeen', messagesSeenHandler);
       socket.disconnect();
     };
   }, [userId, otherUserId]);
-  
+
+
+
 
   const formatTime = isoString => {
     return moment(isoString).format('h.mm A');

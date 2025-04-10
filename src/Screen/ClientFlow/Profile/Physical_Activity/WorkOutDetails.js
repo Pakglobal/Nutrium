@@ -8,9 +8,9 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {useNavigation} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import {

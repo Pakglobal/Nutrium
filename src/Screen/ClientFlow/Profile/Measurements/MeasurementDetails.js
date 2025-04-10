@@ -14,7 +14,7 @@ import {
   useRoute,
 } from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import {LineChart} from 'react-native-chart-kit';
 import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';

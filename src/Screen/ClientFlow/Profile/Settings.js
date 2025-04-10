@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackHeader from '../../../Components/BackHeader';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {updateUnits} from '../../../redux/unit';

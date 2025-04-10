@@ -1,9 +1,10 @@
 import {scale} from 'react-native-size-matters';
-import Color from '../colors/Colors';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Color} from './Colors';
+import {Keyboard, StyleSheet, TouchableOpacity, View} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useEffect, useState } from 'react';
 
 const IconStyle = {
   drawerIconSize: scale(22),
@@ -25,18 +26,13 @@ export const IconBg = {
   // backgroundColor: 'red'
 };
 
-export const LeftIcon = () => {
-  const navigation = useNavigation();
+export const LeftIcon = ({onGoBack}) => {
   return (
     <TouchableOpacity
       style={[styles.buttonContainer, {alignSelf: 'flex-start'}]}
-      onPress={() => navigation.goBack()}>
-      <View style={[styles.button]}>
-      <AntDesign
-          name="arrowleft"
-          size={IconStyle.headerIconSize}
-          color={Color.white}
-        />
+      onPress={onGoBack}>
+      <View style={styles.button}>
+        <FontAwesome6 name="arrow-left" size={22} color={Color.white} />
       </View>
     </TouchableOpacity>
   );
@@ -45,20 +41,20 @@ export const LeftIcon = () => {
 export const RightIcon = ({onPress}) => {
   return (
     <TouchableOpacity
-      style={[styles.buttonContainer, {alignSelf: 'flex-end'}]}
+      style={[
+        styles.buttonContainer,
+        {
+          alignSelf: 'flex-end',
+          position: 'absolute',
+          bottom: scale(0),
+          right: scale(0),
+        },
+      ]}
       onPress={onPress}>
-      <View style={[styles.button]}>
-      <AntDesign
-          name="arrowright"
-          size={IconStyle.headerIconSize}
-          color={Color.white}
-        />
+      <View style={styles.button}>
+        <FontAwesome6 name="arrow-right" size={22} color={Color.white} />
       </View>
     </TouchableOpacity>
-
-    // <TouchableOpacity style={styles.button} onPress={onPress}>
-    //   <AntDesign name="arrowright" color={Color.white} size={scale(24)} />
-    // </TouchableOpacity>
   );
 };
 
@@ -66,19 +62,15 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: scale(7),
     backgroundColor: Color.primaryColor,
-    borderRadius: scale(25)
+    borderRadius: scale(25),
+    height: scale(32),
+    width: scale(32),
   },
   buttonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    margin: scale(10),
-    // backgroundColor: 'red'
-
-    // backgroundColor: Color.primaryColor,
-    // borderRadius: scale(25),
-    // padding: scale(10),
-    // alignSelf: 'flex-end',
+    margin: scale(12),
+    padding: scale(4),
   },
 });

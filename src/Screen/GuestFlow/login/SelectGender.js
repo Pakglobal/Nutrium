@@ -9,7 +9,7 @@ import {
 import React, {useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, {Font, ShadowValues} from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
@@ -20,9 +20,13 @@ import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
 import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
+import {useDispatch} from 'react-redux';
+import {setGuestMode} from '../../../redux/user';
+import { Font } from '../../../assets/styles/Fonts';
 
 const SelectGender = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [selectedGender, setSelectedGender] = useState(null);
 
   const handleSelect = gender => {
@@ -31,11 +35,10 @@ const SelectGender = () => {
 
   const handleNavigation = () => {
     if (!selectedGender) {
-      // Show alert if no gender is selected
       Alert.alert(
         'Selection Required',
         'Please select your gender to continue',
-        [{text: 'OK', style: 'cancel'}]
+        [{text: 'OK', style: 'cancel'}],
       );
       return;
     }
@@ -46,35 +49,26 @@ const SelectGender = () => {
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={'20%'} />
 
-      <LeftIcon />
+      <LeftIcon onGoBack={() => dispatch(setGuestMode())} />
+
+      <LoginHeader height={'45%'} width={'100%'} />
 
       <View
         style={{
-          height: '40%',
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <LoginHeader height={'100%'} width={'100%'} />
-      </View>
-
-      <View
-        style={{
-          height: '42%',
-          marginHorizontal: scale(16),
+          paddingHorizontal: scale(16),
         }}>
         <Text
           style={[
             styles.titleText,
-            {color: Color.primaryColor, marginTop: verticalScale(18)},
+            {color: Color.primaryColor, marginTop: verticalScale(20)},
           ]}>
           Hi
         </Text>
-        <Text style={[styles.titleText, {fontSize: scale(16), fontWeight: '600'}]}>
+        <Text
+          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600', fontFamily: Font.PoppinsMedium}]}>
           Select Gender
         </Text>
-        <Text
-          style={[styles.titleText, {fontSize: scale(12)}]}>
+        <Text style={[styles.titleText, {fontSize: scale(12)}]}>
           Please select your gender to continue
         </Text>
 
@@ -106,7 +100,7 @@ const SelectGender = () => {
             <Text
               style={[
                 styles.titleText,
-                {fontSize: scale(14)},
+                {fontSize: scale(13)},
                 selectedGender === 'female' && styles.selectedText,
               ]}>
               Female
@@ -140,7 +134,7 @@ const SelectGender = () => {
             <Text
               style={[
                 styles.titleText,
-                {fontSize: scale(14)},
+                {fontSize: scale(13), fontFamily: Font.PoppinsMedium},
                 selectedGender === 'male' && styles.selectedText,
               ]}>
               Male
@@ -163,7 +157,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontWeight: '500',
-    fontSize: scale(32),
+    fontSize: scale(28),
     color: Color.textColor,
     letterSpacing: 1,
     fontFamily: Font.Poppins,
@@ -196,8 +190,8 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: verticalScale(15),
-    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(12),
     borderRadius: scale(8),
     borderWidth: 1,
     borderColor: Color.primaryColor,

@@ -8,11 +8,12 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import Color, { Font } from '../../../assets/colors/Colors';
-import { LeftIcon, RightIcon } from '../../../assets/styles/Icon';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import {Color} from '../../../assets/styles/Colors';
+import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const SelectWorkspace = ({ route }) => {
   const navigation = useNavigation();
@@ -63,9 +64,11 @@ const SelectWorkspace = ({ route }) => {
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={'60%'} />
 
-      <LeftIcon />
-      <View style={{ height: '82%', marginHorizontal: scale(16) }}>
-        <Text style={[styles.sectionTitle, { fontWeight: '600' }]}>Workspace</Text>
+      <LeftIcon onGoBack={() => navigation.goBack()} />
+      <View style={{paddingHorizontal: scale(16)}}>
+        <Text style={[styles.sectionTitle, {fontWeight: '600'}]}>
+          Workspace
+        </Text>
         {workspaceOptions.map(item => (
           <TouchableOpacity
             key={item?.id}
@@ -92,7 +95,9 @@ const SelectWorkspace = ({ route }) => {
           </TouchableOpacity>
         ))}
 
-        <Text style={[styles.sectionTitle, { fontWeight: '600' }]}>Expertise</Text>
+        <Text style={[styles.sectionTitle, {fontWeight: '600'}]}>
+          Expertise
+        </Text>
         {expertiseOptions.map(item => (
           <TouchableOpacity
             key={item?.id}
@@ -142,7 +147,7 @@ const styles = StyleSheet.create({
     borderColor: Color.primaryColor,
     borderRadius: scale(6),
     marginBottom: verticalScale(10),
-    padding: scale(5),
+    padding: scale(4),
   },
 });
 

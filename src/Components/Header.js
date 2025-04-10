@@ -12,13 +12,15 @@ import {
 import { scale, verticalScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Color, { Font, ShadowValues } from '../assets/colors/Colors';
-import { useNavigation } from '@react-navigation/native';
+import {Color} from '../assets/styles/Colors';
+import {useNavigation} from '@react-navigation/native';
 import Logo from '../assets/Images/logoWhite.svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import { Shadow } from 'react-native-shadow-2';
-import IconStyle, { IconPadding } from '../assets/styles/Icon';
+import {Shadow} from 'react-native-shadow-2';
+import IconStyle, {IconPadding} from '../assets/styles/Icon';
+import { Font } from '../assets/styles/Fonts';
+import { ShadowValues } from '../assets/styles/Shadow';
 
 const Header = ({
   screenName,

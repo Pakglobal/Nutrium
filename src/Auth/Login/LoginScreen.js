@@ -16,7 +16,7 @@ import {
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
-import Color, {Font, ShadowValues} from '../../assets/colors/Colors';
+import {Color} from '../../assets/styles/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {GoogleLogin, Login} from '../../Apis/Login/AuthApis';
 import {
@@ -26,8 +26,6 @@ import {
 import {
   loginData,
   profileData,
-  setGuestMode,
-  setIsGuest,
   setToken,
 } from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
@@ -38,6 +36,8 @@ import LoginHeader from '../../assets/Images/loginHeader.svg';
 import IconStyle from '../../assets/styles/Icon';
 import {Shadow} from 'react-native-shadow-2';
 import Google from '../../assets/Icon/google.svg';
+import { Font } from '../../assets/styles/Fonts';
+import { ShadowValues } from '../../assets/styles/Shadow';
 
 const screenHeight = Dimensions.get('window').height;
 

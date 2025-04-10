@@ -681,14 +681,13 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { BarChart } from 'react-native-gifted-charts';
-import { scale, verticalScale } from 'react-native-size-matters';
-import Color, { Font, ShadowValues } from '../../../../assets/colors/Colors';
+import {BarChart} from 'react-native-gifted-charts';
+import {scale, verticalScale} from 'react-native-size-matters';
+import Color, { Font } from '../../../../assets/colors/Colors';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
-import { Shadow } from 'react-native-shadow-2';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -1281,8 +1280,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: verticalScale(4),
     color: Color.textColor,
-    fontFamily: Font.Poppins,
-    textAlign: "center"
+    fontFamily: Font.Dm
   },
   statLabel: {
     fontSize: scale(16),

@@ -2,13 +2,12 @@ import { Alert, PermissionsAndroid, StyleSheet } from 'react-native';
 import React, { useEffect } from 'react';
 import RootNavigation from './src/Navigation/RootNavigation';
 import messaging from '@react-native-firebase/messaging';
-import { firebaseApp } from './src/firebaseConfig';
-import { Provider, useSelector, useDispatch } from 'react-redux';
-import { setFcmToken } from './src/redux/user';
-import { store } from './src/redux/Store';
-console.log(firebaseApp, 'firebaseAppp');
- 
- 
+import {firebaseApp} from './src/firebaseConfig';
+import {Provider, useSelector, useDispatch} from 'react-redux';
+import {setFcmToken} from './src/redux/user';
+import {store} from './src/redux/Store';
+import SplashScreen from 'react-native-splash-screen'
+
 const AppContent = () => {
   const dispatch = useDispatch();
  
@@ -59,9 +58,17 @@ const AppContent = () => {
  
   useEffect(() => {
     requestUserPermission();
-  }, []);
- 
-  return <RootNavigation />;
+    fetchToken();
+  }, [FCMtoken]);
+
+  
+  useEffect(() => {
+    SplashScreen.hide();
+  }, [])
+
+  return (
+      <RootNavigation />
+  );
 };
  
 const App = () => {

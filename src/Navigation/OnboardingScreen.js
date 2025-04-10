@@ -7,7 +7,6 @@
 //   Dimensions,
 // } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-// import Color, {Font} from '../assets/colors/Colors';
 // import {scale, verticalScale} from 'react-native-size-matters';
 // import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -174,14 +173,15 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Color, {Font} from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
 import Onboarding1 from '../assets/Images/onBoarding1.svg';
 import Onboarding2 from '../assets/Images/onBoarding2.svg';
 import Onboarding3 from '../assets/Images/onBoarding3.svg';
+import { completeOnboarding } from '../redux/user';
+import { useDispatch } from 'react-redux';
+import { Font } from '../assets/styles/Fonts';
 
 const {width, height} = Dimensions.get('window');
 
@@ -207,19 +207,20 @@ const onboardingData = [
 const OnboardingScreen = ({navigation}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
+  const dispatch = useDispatch()
 
   const handleNext = async () => {
     if (currentIndex < onboardingData.length - 1) {
       flatListRef.current.scrollToIndex({index: currentIndex + 1});
     } else {
-      await AsyncStorage.setItem('onboardingCompleted', 'true');
-      navigation.replace('loginChoice');
+      dispatch(completeOnboarding());
+      navigation.navigate('loginChoice');
     }
   };
 
   const handleSkip = async () => {
-    await AsyncStorage.setItem('onboardingCompleted', 'true');
-    navigation.replace('loginChoice');
+    dispatch(completeOnboarding());
+    navigation.navigate('loginChoice');
   };
 
   const onViewableItemsChanged = useRef(({viewableItems}) => {
@@ -233,12 +234,14 @@ const OnboardingScreen = ({navigation}) => {
     return (
       <View style={styles.slide}>
         <SvgComponent
-          width={width * 0.9}
-          height={height * 0.4}
+          width={width}
+          height={height * 0.45}
           style={styles.svg}
         />
+        <View style={{paddingHorizontal: scale(22)}}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
+        </View>
       </View>
     );
   };
@@ -263,7 +266,6 @@ const OnboardingScreen = ({navigation}) => {
         }}
       />
 
-      <View style={styles.footer}>
         <View style={styles.dotsContainer}>
           {onboardingData.map((_, index) => (
             <View
@@ -284,7 +286,6 @@ const OnboardingScreen = ({navigation}) => {
         <TouchableOpacity style={styles.button} onPress={handleNext}>
           <AntDesign name="arrowright" color={Color.white} size={scale(24)} />
         </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(16),
   },
   skipText: {
-    fontSize: scale(16),
+    fontSize: scale(14),
     color: Color.textColor,
     fontFamily: Font.Poppins,
     fontWeight: '600',
@@ -314,22 +315,20 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(10),
   },
   title: {
-    fontSize: scale(22),
+    fontSize: scale(20),
     color: Color.textColor,
-    fontWeight: '600',
     textAlign: 'center',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsSemiBold,
     letterSpacing: -0.24,
-    marginBottom: verticalScale(5),
+    marginBottom: verticalScale(7),
   },
   description: {
     fontSize: scale(14),
     color: Color.textColor,
     textAlign: 'center',
-    fontWeight: '400',
     fontFamily: Font.Poppins,
     letterSpacing: -0.24,
-    marginHorizontal: scale(16),
+    
   },
   footer: {
     paddingHorizontal: scale(16),
@@ -339,7 +338,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    bottom: 150,
+    position: 'absolute',
+    bottom: '25%'
   },
   dot: {
     height: scale(8),
@@ -349,8 +349,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: Color.primaryColor,
     borderRadius: scale(25),
-    padding: scale(10),
     alignSelf: 'flex-end',
+    height: scale(32),
+    width: scale(32),
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 22,
+    bottom: 22
   },
 });
 

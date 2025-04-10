@@ -13,8 +13,8 @@ import {
 import React, { useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, { Font, ShadowValues } from '../../../assets/colors/Colors';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {Color} from '../../../assets/styles/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
@@ -29,6 +29,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {guestLoginData, setIsGuest} from '../../../redux/user';
+import { Font } from '../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../assets/styles/Shadow';
 import { GuestLOGin } from '../../../Apis/Login/AuthApis';
 
 const GuestLogin = ({ route }) => {
@@ -90,6 +93,8 @@ const GuestLogin = ({ route }) => {
       console.log('response', response)
       if (response?.message == 'Login successful') {
         navigation.navigate('BottomNavigation')
+        // dispatch(guestLoginData(guestData)); // Store guest data in Redux
+        // navigation.navigate('BottomNavigation');
       } else if (response?.message) {
         Alert.alert(response?.message)
       }
@@ -98,12 +103,24 @@ const GuestLogin = ({ route }) => {
 
     }
   }
+  // const handleGuestLogin = () => {
+  //   // Example guest data (replace with actual data from your flow)
+  //   const guestData = {
+  //     gender: 'Male', // Example: collected from SelectGender
+  //     profession: 'Developer', // Example: collected from SelectProfession
+  //     workspace: 'Office', // Example: collected from SelectWorkspace
+  //     country: 'USA', // Example: collected from SelectCountry
+  //   };
+
+    // dispatch(guestLoginData(guestData)); // Store guest data in Redux
+    // navigation.navigate('BottomNavigation'); // Navigate to main app screen
+  // };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <GuestFlowHeader progress={'100%'} />
 
-      <LeftIcon />
+      <LeftIcon onGoBack={() => navigation.goBack()} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <LoginHeader style={{ alignSelf: 'center' }} />
 

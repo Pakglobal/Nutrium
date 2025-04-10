@@ -12,7 +12,7 @@ import {
 import { scale, verticalScale } from 'react-native-size-matters';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CalenderHeader from '../../../../Components/CalenderHeader';
-import Color, { ShadowValues } from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import PhysicalActivity from '../../../../Components/PhysicalActivity';
 import { useStepTracking } from '../../../../Components/StepTrackingService';

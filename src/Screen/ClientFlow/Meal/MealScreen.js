@@ -13,7 +13,7 @@ import {
 import {FetchMealPlanApi} from '../../../Apis/ClientApis/MealApi';
 import Header from '../../../Components/Header';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useSelector} from 'react-redux';

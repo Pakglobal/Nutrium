@@ -43,11 +43,9 @@ import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
 import InformationScreen from '../Auth/Login/InformationScreen';
 import ClientDrawerContent from './ClientDrawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {View} from 'react-native';
 import LoginChoiceScreen from '../Auth/Login/LoginChoiceScreen';
 import OnboardingScreen from './OnboardingScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectWorkspace from '../Screen/GuestFlow/login/SelectWorkspace';
 import SelectCountry from '../Screen/GuestFlow/login/SelectCountry';
 import GuestLogin from '../Screen/GuestFlow/login/GuestLogin';
@@ -128,6 +126,7 @@ const AdminFlowStack = () => (
 
 const AuthStack = ({route}) => {
   const {onboardingCompleted} = route.params || {};
+
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {!onboardingCompleted ? (
@@ -135,13 +134,7 @@ const AuthStack = ({route}) => {
       ) : null}
       <Stack.Screen name="loginChoice" component={LoginChoiceScreen} />
       <Stack.Screen name="loginScreen" component={LoginScreen} />
-      <Stack.Screen name="SelectGender" component={SelectGender} />
-      <Stack.Screen name="SelectProfession" component={SelectProfession} />
-      <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} />
-      <Stack.Screen name="SelectCountry" component={SelectCountry} />
-      <Stack.Screen name="GuestLogin" component={GuestLogin} />
       <Stack.Screen name="information" component={InformationScreen} />
-      <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen
         name="registrationType"
         component={SelectRegistrationType}
@@ -184,36 +177,30 @@ const UserFlowStack = () => (
   </Stack.Navigator>
 );
 
-// const GuestStack = () => {
-//   const isGuest = useSelector(state => state?.user?.isGuest);
+const GuestStack = () => {
+  const isGuest = useSelector(state => state.user?.guestMode);  
 
-//   return (
-//     <Stack.Navigator screenOptions={{headerShown: false}}>
-//       {isGuest === true ? (
-//         <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-//       ) : (
-//         <>
-//           <Stack.Screen name="guestLogin" component={GuestLogin} />
-//           <Stack.Screen name="information" component={InformationScreen} />
-//         </>
-//       )}
-//     </Stack.Navigator>
-//   );
-// };
+  if (isGuest) {
+    return (
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="SelectGender" component={SelectGender} />
+        <Stack.Screen name="SelectProfession" component={SelectProfession} />
+        {/* <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} /> */}
+        <Stack.Screen name="SelectCountry" component={SelectCountry} />
+        <Stack.Screen name="GuestLogin" component={GuestLogin} />
+        <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+      </Stack.Navigator>
+    );
+  }
+
+  return null;
+};
 
 const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
-  const isGuest = useSelector(state => state.user?.isGuest);
-  const [onboardingCompleted, setOnboardingCompleted] = useState(null);
-
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      const completed = await AsyncStorage.getItem('onboardingCompleted');
-      setOnboardingCompleted(completed === 'true');
-    };
-    checkOnboarding();
-  }, []);
+  const isGuest = useSelector(state => state.user?.guestMode);
+  const onboardingCompleted = useSelector(state => state.user?.isCompleted);
 
   if (onboardingCompleted === null) {
     return null;
@@ -225,8 +212,8 @@ const MainStack = () => {
         <Stack.Screen name="AdminFlow" component={AdminFlowStack} />
       ) : role === 'Client' ? (
         <Stack.Screen name="UserFlow" component={UserFlowStack} />
-      // ) : isGuest ? (
-      //   <Stack.Screen name="GuestStack" component={GuestStack} />
+      ) : isGuest ? (
+        <Stack.Screen name="GuestStack" component={GuestStack} />
       ) : (
         <Stack.Screen
           name="AuthStack"

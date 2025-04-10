@@ -2,7 +2,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 
 const SighnUpHeader = ({onPressBack}) => {
   return (

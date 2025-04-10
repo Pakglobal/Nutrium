@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';

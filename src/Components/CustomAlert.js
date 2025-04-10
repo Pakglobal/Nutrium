@@ -1,6 +1,6 @@
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 
 const CustomAlert = ({

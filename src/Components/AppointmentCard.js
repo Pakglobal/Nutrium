@@ -15,14 +15,15 @@ import {
 import { useSelector } from 'react-redux';
 import Carousel from 'react-native-snap-carousel';
 import moment from 'moment';
-import { scale, verticalScale } from 'react-native-size-matters';
-import Color, { Font, ShadowValues } from '../assets/colors/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../assets/styles/Colors';
 import {
   GetAppointmentByClientId,
   UpdateAppointmentStatus,
 } from '../Apis/ClientApis/ClientAppointmentApi';
 import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { Font } from '../assets/styles/Fonts';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 

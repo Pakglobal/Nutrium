@@ -12,7 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Logo from '../assets/Images/logoGreen.svg';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color, {Font} from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -32,6 +32,7 @@ import {
 } from '../Apis/ClientApis/RecommendationApi';
 import {GetUserApi} from '../Apis/ClientApis/ProfileApi';
 import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
+import { Font } from '../assets/styles/Fonts';
 
 const ClientDrawerContent = props => {
   const {navigation} = props;
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily: Font.Sofia,
+    fontFamily: Font.Poppins,
     marginLeft: scale(8),
   },
   settingsButton: {
@@ -348,7 +349,7 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     color: Color.textColor,
     fontWeight: '500',
-    fontFamily: Font.Sofia,
+    fontFamily: Font.Poppins,
   },
   sectionHeader: {
     paddingTop: verticalScale(14),
@@ -358,7 +359,7 @@ const styles = StyleSheet.create({
     fontSize: scale(20),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily: Font.Sofia,
+    fontFamily: Font.Poppins,
   },
 });
 

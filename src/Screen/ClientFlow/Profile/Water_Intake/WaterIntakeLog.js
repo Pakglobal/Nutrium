@@ -16,7 +16,7 @@ import {
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import Color, { Font, ShadowValues } from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';

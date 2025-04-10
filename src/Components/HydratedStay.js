@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color, {Font, ShadowValues} from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import {useNavigation} from '@react-navigation/native';
 import HydratedView from './HydratedView';
 import {useSelector} from 'react-redux';
@@ -24,6 +24,8 @@ import Drop from '../assets/Images/drop.svg';
 import Bottle from '../assets/Images/bottel.svg';
 import Glass from '../assets/Images/glass.svg';
 import {Shadow} from 'react-native-shadow-2';
+import { Font } from '../assets/styles/Fonts';
+import { ShadowValues } from '../assets/styles/Shadow';
 
 const HydratedStay = () => {
   const navigation = useNavigation();
@@ -395,7 +397,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginTop: verticalScale(5),
     textAlign: 'center',
-    fontFamily: Font?.Sofia,
+    fontFamily: Font?.Poppins,
     fontSize: scale(14),
   },
   waterText: {

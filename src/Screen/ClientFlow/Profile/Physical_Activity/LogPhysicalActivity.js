@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
   GetPhysicalActivities,

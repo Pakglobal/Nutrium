@@ -2,7 +2,7 @@ import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 
 const HydratedView = ({onPress, img, valueText}) => {
   return (

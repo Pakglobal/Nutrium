@@ -4,9 +4,10 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert, 
+  Alert,
+  BackHandler,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Color} from '../../../assets/styles/Colors';
@@ -22,7 +23,9 @@ import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import {useDispatch} from 'react-redux';
 import {setGuestMode} from '../../../redux/user';
-import { Font } from '../../../assets/styles/Fonts';
+import {Font} from '../../../assets/styles/Fonts';
+import {Progress} from '../../../assets/styles/Progress';
+import {ShadowValues} from '../../../assets/styles/Shadow';
 
 const SelectGender = () => {
   const navigation = useNavigation();
@@ -45,13 +48,27 @@ const SelectGender = () => {
     navigation.navigate('SelectProfession');
   };
 
+  useEffect(() => {
+    const backAction = () => {
+      dispatch(setGuestMode());
+      return true; // Prevent default behavior (exit)
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove(); // Clean up
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
-      <GuestFlowHeader progress={'20%'} />
+      <GuestFlowHeader progress={Progress.selectGender} />
 
       <LeftIcon onGoBack={() => dispatch(setGuestMode())} />
 
-      <LoginHeader height={'45%'} width={'100%'} />
+      <LoginHeader height={'45%'} width={'100%'} style={{marginTop: 50}} />
 
       <View
         style={{
@@ -65,7 +82,14 @@ const SelectGender = () => {
           Hi
         </Text>
         <Text
-          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600', fontFamily: Font.PoppinsMedium}]}>
+          style={[
+            styles.titleText,
+            {
+              fontSize: scale(14),
+              fontWeight: '600',
+              fontFamily: Font.PoppinsMedium,
+            },
+          ]}>
           Select Gender
         </Text>
         <Text style={[styles.titleText, {fontSize: scale(12)}]}>
@@ -73,73 +97,91 @@ const SelectGender = () => {
         </Text>
 
         <View style={styles.selectionContainer}>
-          <TouchableOpacity
-            style={[
-              styles.option,
-              selectedGender === 'female' && styles.selected,
-            ]}
-            onPress={() => handleSelect('female')}>
-            <View
-              style={[
-                styles.iconContainer,
-                {
-                  backgroundColor:
-                    selectedGender === 'female'
-                      ? Color.white
-                      : Color.primaryColor,
-                },
-              ]}>
-              <FontAwesome5
-                name="female"
-                color={
-                  selectedGender === 'female' ? Color.primaryColor : Color.white
-                }
-                size={IconStyle.headerIconSize}
-              />
-            </View>
-            <Text
-              style={[
-                styles.titleText,
-                {fontSize: scale(13)},
-                selectedGender === 'female' && styles.selectedText,
-              ]}>
-              Female
-            </Text>
-          </TouchableOpacity>
+          <View style={{width: '48%'}}>
+            <Shadow
+              distance={ShadowValues.blackShadowDistance}
+              startColor={Color.primaryColor}
+              style={{width: '100%', borderRadius: scale(8)}}>
+              <TouchableOpacity
+                style={[
+                  styles.option,
+                  selectedGender === 'female' && styles.selected,
+                ]}
+                onPress={() => handleSelect('female')}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor:
+                        selectedGender === 'female'
+                          ? Color.white
+                          : Color.primaryColor,
+                    },
+                  ]}>
+                  <FontAwesome5
+                    name="female"
+                    color={
+                      selectedGender === 'female'
+                        ? Color.primaryColor
+                        : Color.white
+                    }
+                    size={IconStyle.headerIconSize}
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.titleText,
+                    {fontSize: scale(13)},
+                    selectedGender === 'female' && {color: Color.white},
+                  ]}>
+                  Female
+                </Text>
+              </TouchableOpacity>
+            </Shadow>
+          </View>
 
-          <TouchableOpacity
-            style={[
-              styles.option,
-              selectedGender === 'male' && styles.selected,
-            ]}
-            onPress={() => handleSelect('male')}>
-            <View
-              style={[
-                styles.iconContainer,
-                {
-                  backgroundColor:
-                    selectedGender === 'male'
-                      ? Color.white
-                      : Color.primaryColor,
-                },
-              ]}>
-              <FontAwesome5
-                name="male"
-                color={
-                  selectedGender === 'male' ? Color.primaryColor : Color.white
-                }
-                size={IconStyle.headerIconSize}
-              />
-            </View>
-            <Text
-              style={[
-                styles.titleText,
-                {fontSize: scale(13), fontFamily: Font.PoppinsMedium},
-                selectedGender === 'male' && styles.selectedText,
-              ]}>
-              Male
-            </Text>
-          </TouchableOpacity>
+          <View style={{width: '48%'}}>
+            <Shadow
+              distance={ShadowValues.blackShadowDistance}
+              startColor={Color.primaryColor}
+              style={{width: '100%', borderRadius: scale(8)}}>
+              <TouchableOpacity
+                style={[
+                  styles.option,
+                  selectedGender === 'male' && styles.selected,
+                ]}
+                onPress={() => handleSelect('male')}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor:
+                        selectedGender === 'male'
+                          ? Color.white
+                          : Color.primaryColor,
+                    },
+                  ]}>
+                  <FontAwesome5
+                    name="male"
+                    color={
+                      selectedGender === 'male'
+                        ? Color.primaryColor
+                        : Color.white
+                    }
+                    size={IconStyle.headerIconSize}
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.titleText,
+                    {fontSize: scale(13)},
+                    selectedGender === 'male' && {color: Color.white},
+                  ]}>
+                  Male
+                </Text>
+              </TouchableOpacity>
+            </Shadow>
+          </View>
         </View>
       </View>
 
@@ -162,24 +204,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontFamily: Font.Poppins,
   },
-  boxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: scale(10),
-  },
-  genderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: scale(20),
-    width: '100%',
-  },
-  genderItemWrapper: {
-    width: '48%',
-  },
-  shadowStyle: {
-    width: '100%',
-    borderRadius: scale(5),
-  },
   selectionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -192,17 +216,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: verticalScale(12),
     paddingHorizontal: scale(12),
-    borderRadius: scale(8),
-    borderWidth: 1,
+    borderRadius: scale(7),
     borderColor: Color.primaryColor,
-    flex: 1,
   },
   selected: {
     borderColor: Color.primaryColor,
     backgroundColor: Color.primaryColor,
-  },
-  selectedText: {
-    color: Color.white,
   },
   iconContainer: {
     width: scale(44),
@@ -210,11 +229,6 @@ const styles = StyleSheet.create({
     borderRadius: scale(30),
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
+    marginRight: scale(10),
   },
 });

@@ -29,7 +29,7 @@ export const IconBg = {
 export const LeftIcon = ({onGoBack}) => {
   return (
     <TouchableOpacity
-      style={[styles.buttonContainer, {alignSelf: 'flex-start'}]}
+      style={[styles.buttonContainer, {alignSelf: 'flex-start', position: 'absolute', zIndex: 1000, top: scale(16)}]}
       onPress={onGoBack}>
       <View style={styles.button}>
         <FontAwesome6 name="arrow-left" size={22} color={Color.white} />

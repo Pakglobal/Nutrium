@@ -1,5 +1,7 @@
 import {
+  Alert,
   FlatList,
+  Keyboard,
   Modal,
   SafeAreaView,
   ScrollView,
@@ -9,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Color} from '../../../assets/styles/Colors';
@@ -29,8 +31,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {guestLoginData, setIsGuest} from '../../../redux/user';
-import { Font } from '../../../assets/styles/Fonts';
-import { ShadowValues } from '../../../assets/styles/Shadow';
+import {Font} from '../../../assets/styles/Fonts';
+import {ShadowValues} from '../../../assets/styles/Shadow';
+import {Progress} from '../../../assets/styles/Progress';
 
 const GuestLogin = () => {
   const dispatch = useDispatch();
@@ -49,117 +52,257 @@ const GuestLogin = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [login, setLogin] = useState([]);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const validateFirstName = value => {
+    setFirstName(value);
+    if (!value) {
+      setFirstNameError('First name is required');
+    } else if (value.length < 3) {
+      setFirstNameError('First name must be at least 3 characters');
+    } else {
+      setFirstNameError('');
+    }
+  };
+
+  const validateLastName = value => {
+    setLastName(value);
+    if (!value) {
+      setLastNameError('Last name is required');
+    } else if (value.length < 3) {
+      setLastNameError('Last name must be at least 3 characters');
+    } else {
+      setLastNameError('');
+    }
+  };
+
+  const validateEmail = value => {
+    setEmail(value);
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (!value) {
+      setEmailError('Email is required');
+    } else if (!emailRegex.test(value)) {
+      setEmailError('Enter a valid email');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const validatePassword = value => {
+    setPassword(value);
+    if (!value) {
+      setPasswordError('Password is required');
+    } else if (value.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+    } else {
+      setPasswordError('');
+    }
+  };
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
   const handleGuestLogin = () => {
-    // Example guest data (replace with actual data from your flow)
-    const guestData = {
-      gender: 'Male', // Example: collected from SelectGender
-      profession: 'Developer', // Example: collected from SelectProfession
-      workspace: 'Office', // Example: collected from SelectWorkspace
-      country: 'USA', // Example: collected from SelectCountry
-    };
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
-    dispatch(guestLoginData(guestData)); // Store guest data in Redux
-    navigation.navigate('BottomNavigation'); // Navigate to main app screen
+    let emailError = '';
+    let passwordError = '';
+    let firstNameError = '';
+    let lastNameError = '';
+
+    if (!email) {
+      emailError = 'Email is required';
+    }
+    if (!password) {
+      passwordError = 'Password is required';
+    }
+    if (!firstName) {
+      firstNameError = 'Name is required';
+    }
+    if (!lastName) {
+      lastNameError = 'Name is required';
+    }
+
+    if (email && !emailRegex.test(email)) {
+      emailError = 'Enter a valid email';
+    }
+    if (password && password.length < 8) {
+      passwordError = 'Password must be at least 8 characters';
+    }
+    if (firstName && firstName.length < 3) {
+      firstNameError = 'First name must be at least 3 characters';
+    }
+    if (lastName && lastName.length < 3) {
+      lastNameError = 'First name must be at least 3 characters';
+    }
+
+    setEmailError(emailError);
+    setPasswordError(passwordError);
+    setFirstNameError(firstNameError);
+    setLastNameError(lastNameError);
+
+    if (emailError || passwordError || firstNameError || lastNameError) {
+      Alert.alert('Error', 'Please solve the error');
+      return;
+    }
+    navigation.navigate('BottomNavigation');
   };
 
-  return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
-      <GuestFlowHeader progress={'100%'} />
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
 
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <GuestFlowHeader progress={Progress.guestLogin} />
       <LeftIcon onGoBack={() => navigation.goBack()} />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <LoginHeader style={{alignSelf: 'center'}} />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{}}
+        contentContainerStyle={{paddingBottom: '31%'}}
+        keyboardShouldPersistTaps="handled">
+        <LoginHeader
+          style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+        />
 
         <View
           style={{
             marginHorizontal: scale(16),
             marginVertical: verticalScale(20),
           }}>
-          <View style={styles.inputContainer}>
-            <Shadow
-              distance={ShadowValues.distance}
-              startColor={
-                firstNameError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
-              }
-              style={{width: '100%', borderRadius: scale(5)}}>
-              <TextInput
-                value={firstName}
-                placeholder="First Name"
-                onChangeText={f => setFirstName(f)}
-                placeholderTextColor={Color.textColor}
-                style={styles.input}
-              />
-            </Shadow>
-          </View>
+          <Shadow
+            distance={ShadowValues.blackShadowDistance}
+            startColor={
+              firstNameError ? 'rgba(255,0,0,0.3)' : Color.primaryColor
+            }
+            style={{
+              width: '100%',
+              borderRadius: scale(5),
+              marginBottom: verticalScale(10),
+              paddingHorizontal: scale(5),
+            }}>
+            <TextInput
+              value={firstName}
+              placeholder="First Name"
+              onChangeText={validateFirstName}
+              placeholderTextColor={Color.textColor}
+              style={styles.titleText}
+            />
+          </Shadow>
 
-          <View style={styles.inputContainer}>
-            <Shadow
-              distance={ShadowValues.distance}
-              startColor={
-                lastNameError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
-              }
-              style={{width: '100%', borderRadius: scale(5)}}>
-              <TextInput
-                value={lastName}
-                placeholder="Last Name"
-                onChangeText={l => setLastName(l)}
-                placeholderTextColor={Color.textColor}
-                style={styles.input}
-              />
-            </Shadow>
-          </View>
+          <Shadow
+            distance={ShadowValues.blackShadowDistance}
+            startColor={
+              lastNameError ? 'rgba(255,0,0,0.3)' : Color.primaryColor
+            }
+            style={{
+              width: '100%',
+              borderRadius: scale(5),
+              marginBottom: verticalScale(10),
+              paddingHorizontal: scale(5),
+            }}>
+            <TextInput
+              value={lastName}
+              placeholder="Last Name"
+              onChangeText={validateLastName}
+              placeholderTextColor={Color.textColor}
+              style={styles.titleText}
+            />
+          </Shadow>
 
-          <View style={styles.inputContainer}>
-            <Shadow
-              distance={ShadowValues.distance}
-              startColor={
-                emailError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
-              }
-              style={{width: '100%', borderRadius: scale(5)}}>
-              <TextInput
-                value={email}
-                placeholder="Email"
-                onChangeText={e => setEmail(e)}
-                placeholderTextColor={Color.textColor}
-                style={styles.input}
-              />
-            </Shadow>
-          </View>
+          <Shadow
+            distance={ShadowValues.blackShadowDistance}
+            startColor={emailError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}
+            style={{
+              width: '100%',
+              borderRadius: scale(5),
+              marginBottom: verticalScale(10),
+              paddingHorizontal: scale(5),
+            }}>
+            <TextInput
+              value={email}
+              placeholder="Email"
+              onChangeText={validateEmail}
+              placeholderTextColor={Color.textColor}
+              style={styles.titleText}
+            />
+          </Shadow>
 
-          <View style={styles.inputContainer}>
-            <Shadow
-              distance={ShadowValues.distance}
-              startColor={
-                passwordError ? 'rgba(255,0,0,0.3)' : 'rgba(33, 151, 43,0.5)'
-              }
-              style={{width: '100%', borderRadius: scale(5)}}>
-              <TextInput
-                value={password}
-                placeholder="Password"
-                onChangeText={p => setPassword(p)}
-                placeholderTextColor={Color.textColor}
-                style={[styles.input, {paddingRight: scale(35)}]}
-                secureTextEntry={!passwordVisible}
+          <Shadow
+            distance={ShadowValues.blackShadowDistance}
+            startColor={
+              passwordError ? 'rgba(255,0,0,0.3)' : Color.primaryColor
+            }
+            style={{
+              width: '100%',
+              borderRadius: scale(5),
+              marginBottom: verticalScale(10),
+              paddingHorizontal: scale(5),
+            }}>
+            <TextInput
+              value={password}
+              placeholder="Password"
+              onChangeText={validatePassword}
+              placeholderTextColor={Color.textColor}
+              style={styles.titleText}
+              secureTextEntry={!passwordVisible}
+            />
+            <TouchableOpacity
+              onPress={handlePassword}
+              style={styles.eyeIconContainer}>
+              <Ionicons
+                name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+                color={Color?.primaryColor}
+                size={24}
               />
-              <TouchableOpacity
-                onPress={handlePassword}
-                style={styles.eyeIconContainer}>
-                <Ionicons
-                  name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
-                  color={Color?.primaryColor}
-                  size={24}
-                />
-              </TouchableOpacity>
-            </Shadow>
-          </View>
+            </TouchableOpacity>
+          </Shadow>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleGuestLogin}>
+            <FontAwesome6 name="arrow-right" size={22} color={Color.white} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
-      <RightIcon onPress={handleGuestLogin} />
     </SafeAreaView>
   );
 };
@@ -266,13 +409,27 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: verticalScale(2),
   },
-  button: {
-    borderColor: Color.primaryColor,
-    marginVertical: verticalScale(5),
-    borderRadius: scale(8),
-    height: verticalScale(42),
-    alignItems: 'center',
+  buttonContainer: {
     justifyContent: 'center',
-    marginHorizontal: scale(16),
+    alignSelf: 'flex-end',
+    margin: scale(12),
+    padding: scale(4),
+    position: 'absolute',
+    bottom: scale(0),
+    right: scale(0),
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Color.primaryColor,
+    borderRadius: scale(25),
+    height: scale(32),
+    width: scale(32),
+  },
+  titleText: {
+    fontWeight: '500',
+    letterSpacing: 1,
+    fontFamily: Font.PoppinsMedium,
+    color: Color.textColor,
   },
 });

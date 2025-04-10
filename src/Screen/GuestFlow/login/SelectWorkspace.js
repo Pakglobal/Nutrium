@@ -13,7 +13,7 @@ import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
-import { Font } from '../../../assets/styles/Fonts';
+import {Font} from '../../../assets/styles/Fonts';
 
 const SelectWorkspace = () => {
   const navigation = useNavigation();
@@ -44,12 +44,10 @@ const SelectWorkspace = () => {
       } else {
         message = 'Please select your expertise to continue';
       }
-      
-      Alert.alert(
-        'Selection Required',
-        message,
-        [{text: 'OK', style: 'cancel'}]
-      );
+
+      Alert.alert('Selection Required', message, [
+        {text: 'OK', style: 'cancel'},
+      ]);
       return;
     }
     navigation.navigate('SelectCountry');

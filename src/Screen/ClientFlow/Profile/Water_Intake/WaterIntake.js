@@ -22,12 +22,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {BarChart} from 'react-native-gifted-charts';
 import {scale, verticalScale} from 'react-native-size-matters';
-import {Color } from '../../../../assets/styles/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
-import { Font } from '../../../../assets/styles/Fonts';
+import {Font} from '../../../../assets/styles/Fonts';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -353,8 +353,13 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
-        navigation.navigate('waterIntakeLog', { plusData: plusData })} />
+      <Header
+        screenheader={true}
+        screenName={'Water intake'}
+        handlePlus={() =>
+          navigation.navigate('waterIntakeLog', {plusData: plusData})
+        }
+      />
 
       {/* <ScrollView
         horizontal
@@ -534,7 +539,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     height: verticalScale(0),
-    backgroundColor: 'red'
+    backgroundColor: 'red',
   },
   bottomContentContainer: {
     flex: 1,
@@ -580,7 +585,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: verticalScale(4),
     color: Color.textColor,
-    fontFamily: Font.Poppins
+    fontFamily: Font.Poppins,
   },
   statLabel: {
     fontSize: scale(16),

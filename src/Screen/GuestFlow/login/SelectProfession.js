@@ -24,7 +24,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {setGuestMode} from '../../../redux/user';
 import {useDispatch} from 'react-redux';
-import { Font } from '../../../assets/styles/Fonts';
+import {Font} from '../../../assets/styles/Fonts';
+import {Progress} from '../../../assets/styles/Progress';
 
 const SelectProfession = () => {
   const navigation = useNavigation();
@@ -106,17 +107,14 @@ const SelectProfession = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
-      <GuestFlowHeader progress={'40%'} />
+      <GuestFlowHeader progress={Progress.selectProfession} />
 
       <LeftIcon onGoBack={() => navigation.goBack()} />
 
-      <LoginHeader height={'40%'} width={'100%'} />
+      <LoginHeader height={'40%'} width={'100%'} style={{marginTop: 50}} />
 
       <View style={styles.formContainer}>
-        <Text
-          style={styles.titleText}>
-          What is your profession
-        </Text>
+        <Text style={styles.titleText}>What is your profession</Text>
         <View style={styles.optionsGrid}>
           {professions.map(item => (
             <TouchableOpacity
@@ -137,10 +135,7 @@ const SelectProfession = () => {
           ))}
         </View>
 
-        <Text
-          style={styles.titleText}>
-          What is your Goal
-        </Text>
+        <Text style={styles.titleText}>What is your Goal</Text>
         <View style={styles.optionsGrid}>
           {goals.map(item => (
             <TouchableOpacity
@@ -180,7 +175,8 @@ const styles = StyleSheet.create({
     color: Color.textColor,
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
-    marginVertical: scale(4),
+    marginBottom: scale(4),
+    marginTop: verticalScale(10),
   },
   formContainer: {
     paddingHorizontal: scale(16),
@@ -195,7 +191,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Color.primaryColor,
     borderRadius: scale(6),
-    padding: scale(5),
+    padding: scale(4),
     marginBottom: verticalScale(10),
     flexDirection: 'row',
     alignItems: 'center',

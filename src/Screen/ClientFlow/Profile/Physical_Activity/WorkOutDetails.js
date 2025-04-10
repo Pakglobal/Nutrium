@@ -153,7 +153,7 @@ const WorkOutDetails = ({ route }) => {
       /> */}
 
 
-      <Header screenheader={true} screenName={'Water intake'} handlePlus={handleSave} />
+      <Header screenheader={true} screenName={'Physical Activity'} plus={false} handleSave={handleSave} />
 
       {/* <Header
         showIcon={'save'}

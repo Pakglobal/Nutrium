@@ -12,13 +12,13 @@ import {
 import { scale, verticalScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Color} from '../assets/styles/Colors';
-import {useNavigation} from '@react-navigation/native';
+import { Color } from '../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
 import Logo from '../assets/Images/logoWhite.svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {Shadow} from 'react-native-shadow-2';
-import IconStyle, {IconPadding} from '../assets/styles/Icon';
+import { Shadow } from 'react-native-shadow-2';
+import IconStyle, { IconPadding } from '../assets/styles/Icon';
 import { Font } from '../assets/styles/Fonts';
 import { ShadowValues } from '../assets/styles/Shadow';
 
@@ -83,7 +83,7 @@ const Header = ({
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity
                   onPress={() => navigation.goBack()}
-                  style={{ padding: scale(5),alignSelf:"center" }}>
+                  style={{ padding: scale(5), alignSelf: "center" }}>
                   <AntDesign
                     name="arrowleft"
                     size={IconStyle.drawerIconSize}
@@ -94,7 +94,7 @@ const Header = ({
               </View>
 
               {
-                plus ?
+                plus == true ?
                   <TouchableOpacity
                     onPress={handlePlus}
                     style={{ padding: scale(8) }}>
@@ -103,12 +103,12 @@ const Header = ({
                       size={IconStyle.headerIconSize}
                       color={Color.white}
                     />
-                  </TouchableOpacity> :
-                  <TouchableOpacity
-                    onPress={handleSave}
-                    style={{ padding: scale(8) }}>
-                    <Text style={styles.saveStyle} >Save</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : plus == false ?
+                    <TouchableOpacity
+                      onPress={handleSave}
+                      style={{ padding: scale(8) }}>
+                      <Text style={styles.saveStyle} >Save</Text>
+                    </TouchableOpacity> : <></>
               }
 
             </View>

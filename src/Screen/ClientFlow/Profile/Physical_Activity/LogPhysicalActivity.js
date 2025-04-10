@@ -119,7 +119,7 @@ const LogPhysicalActivity = ({ route }) => {
       /> */}
 
 
-      <Header screenheader={true} screenName={'Water intake'}  />
+      <Header screenheader={true} screenName={'Physical Activity'}   />
 
 
       <View style={{ marginHorizontal: scale(16) }}>

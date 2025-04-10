@@ -13,8 +13,8 @@ import {
 import React, { useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
@@ -29,7 +29,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {guestLoginData, setIsGuest} from '../../../redux/user';
+import { guestLoginData, setIsGuest } from '../../../redux/user';
 import { Font } from '../../../assets/styles/Fonts';
 import { ShadowValues } from '../../../assets/styles/Shadow';
 import { GuestLOGin } from '../../../Apis/Login/AuthApis';
@@ -52,14 +52,9 @@ const GuestLogin = ({ route }) => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [login, setLogin] = useState([]);
 
-  const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
+  const token = useSelector(state => state?.user?.fcmToken);
 
   const data = route?.params
-  const fullName = firstName + " " + lastName
-
-
-
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -90,7 +85,7 @@ const GuestLogin = ({ route }) => {
     try {
       const response = await GuestLOGin(body);
 
-      console.log('response', response)
+      console.log('response', body, response)
       if (response?.message == 'Login successful') {
         navigation.navigate('BottomNavigation')
         // dispatch(guestLoginData(guestData)); // Store guest data in Redux
@@ -103,18 +98,7 @@ const GuestLogin = ({ route }) => {
 
     }
   }
-  // const handleGuestLogin = () => {
-  //   // Example guest data (replace with actual data from your flow)
-  //   const guestData = {
-  //     gender: 'Male', // Example: collected from SelectGender
-  //     profession: 'Developer', // Example: collected from SelectProfession
-  //     workspace: 'Office', // Example: collected from SelectWorkspace
-  //     country: 'USA', // Example: collected from SelectCountry
-  //   };
 
-    // dispatch(guestLoginData(guestData)); // Store guest data in Redux
-    // navigation.navigate('BottomNavigation'); // Navigate to main app screen
-  // };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>

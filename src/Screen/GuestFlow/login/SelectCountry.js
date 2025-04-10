@@ -299,6 +299,7 @@ import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {
   LeftIcon,
+  RightIcon,
 } from '../../../assets/styles/Icon';
 import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectCountry.svg';
@@ -318,6 +319,8 @@ const SelectCountry = ({ route }) => {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const selectGender=route?.params
+  const countryData = { country, number, dateOfBirth ,...selectGender}
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(

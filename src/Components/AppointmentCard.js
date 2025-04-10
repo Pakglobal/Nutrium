@@ -24,6 +24,7 @@ import {
 import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { Font } from '../assets/styles/Fonts';
+import { ShadowValues } from '../assets/styles/Shadow';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 

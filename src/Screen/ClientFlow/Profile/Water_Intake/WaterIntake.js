@@ -681,13 +681,16 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {BarChart} from 'react-native-gifted-charts';
-import {scale, verticalScale} from 'react-native-size-matters';
-import Color, { Font } from '../../../../assets/colors/Colors';
+import { BarChart } from 'react-native-gifted-charts';
+import { scale, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
+import { Font } from '../../../../assets/styles/Fonts';
+import { Color } from '../../../../assets/styles/Colors';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -1280,7 +1283,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: verticalScale(4),
     color: Color.textColor,
-    fontFamily: Font.Dm
+    fontFamily: Font.Poppins
   },
   statLabel: {
     fontSize: scale(16),
@@ -1316,7 +1319,7 @@ const styles = StyleSheet.create({
     fontSize: scale(15),
     color: Color.textColor,
     fontWeight: '500',
-    fontFamily:Font?.Poppins
+    fontFamily: Font?.Poppins
 
   },
   entryRight: {
@@ -1327,7 +1330,7 @@ const styles = StyleSheet.create({
   entryTime: {
     color: '#767878',
     fontSize: scale(15),
-    fontFamily:Font?.Poppins
+    fontFamily: Font?.Poppins
   },
 
   modalOverlay: {
@@ -1358,7 +1361,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: scale(12),
     color: Color.textColor,
-    fontWeight:"500",
-    fontFamily:Font?.Poppins
+    fontWeight: "500",
+    fontFamily: Font?.Poppins
   },
 });

@@ -23,6 +23,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
 import { Shadow } from 'react-native-shadow-2';
+import { Font } from '../../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
 
 const WaterIntakeLog = ({ route }) => {
   const navigation = useNavigation();

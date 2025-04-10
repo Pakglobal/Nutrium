@@ -31,7 +31,7 @@ const SelectProfession = ({ route }) => {
   const [profession, setProfession] = useState(null);
   const [goal, setGoal] = useState(null);
   const Gender = route?.params?.gender
-  const selectedGoal = { goal, profession ,Gender}
+  const selectedGoal = {goal,profession,Gender}
 
 
 
@@ -105,7 +105,7 @@ const SelectProfession = ({ route }) => {
       ]);
       return;
     }
-    navigation.navigate('SelectCountry');
+    navigation.navigate('SelectCountry',selectedGoal);
   };
 
   return (

@@ -13,7 +13,7 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import CameraPicker from '../../../Components/CameraPicker';
 import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
 import {useDispatch, useSelector} from 'react-redux';

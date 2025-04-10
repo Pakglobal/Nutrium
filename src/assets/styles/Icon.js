@@ -1,5 +1,5 @@
 import {scale} from 'react-native-size-matters';
-import Color from '../colors/Colors';
+import {Color} from './Colors';
 import {Keyboard, StyleSheet, TouchableOpacity, View} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {useNavigation} from '@react-navigation/native';
@@ -45,10 +45,9 @@ export const RightIcon = ({onPress}) => {
         styles.buttonContainer,
         {
           alignSelf: 'flex-end',
-          // position: 'absolute',
+          position: 'absolute',
           bottom: scale(0),
           right: scale(0),
-          zIndex: -10000
         },
       ]}
       onPress={onPress}>

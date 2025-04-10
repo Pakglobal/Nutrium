@@ -64,6 +64,7 @@
     "react-native-simple-toast": "^3.3.2",
     "react-native-size-matters": "^0.4.2",
     "react-native-snap-carousel": "^3.9.1",
+    "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^14.2.0",
     "react-native-svg-charts": "^5.4.0",
     "react-native-toast-message": "^2.2.1",

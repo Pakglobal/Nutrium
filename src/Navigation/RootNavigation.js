@@ -185,7 +185,7 @@ const GuestStack = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="SelectGender" component={SelectGender} />
         <Stack.Screen name="SelectProfession" component={SelectProfession} />
-        <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} />
+        {/* <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} /> */}
         <Stack.Screen name="SelectCountry" component={SelectCountry} />
         <Stack.Screen name="GuestLogin" component={GuestLogin} />
         <Stack.Screen name="BottomNavigation" component={BottomNavigation} />

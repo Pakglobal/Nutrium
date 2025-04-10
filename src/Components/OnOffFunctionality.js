@@ -11,8 +11,9 @@ import {
 import React, {useState} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color, {Font} from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Font } from '../assets/styles/Fonts';
 
 const OnOffFunctionality = ({title, hydrate = false}) => {
   const [showRevoke, setShowRevoke] = useState(false);
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginHorizontal: scale(8),
     fontSize: scale(14),
-    fontFamily: Font.Nunito,
+    fontFamily: Font.Poppins,
   },
   modalView: {
     flex: 1,

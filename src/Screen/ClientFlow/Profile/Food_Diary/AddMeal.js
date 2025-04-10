@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';

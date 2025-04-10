@@ -8,11 +8,12 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import Color, {Font} from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const SelectWorkspace = () => {
   const navigation = useNavigation();

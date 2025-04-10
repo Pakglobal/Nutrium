@@ -8,10 +8,12 @@ import {
 import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Color, {Font, ShadowValues} from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
 import Food from '../assets/Images/Food.svg';
+import { Font } from '../assets/styles/Fonts';
+import { ShadowValues } from '../assets/styles/Shadow';
 
 const MealsLikeInHome = () => {
   const navigation = useNavigation();

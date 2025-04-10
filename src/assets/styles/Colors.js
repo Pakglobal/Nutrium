@@ -1,4 +1,4 @@
-const Color = {
+export const Color = {
   headerBG: '#f5f8ff',
   secondary: '#E8966A',
   borderColor: '#C5C6D0',
@@ -14,19 +14,4 @@ const Color = {
   textColor: '#303233',
   grayshadow: '#e3dfde',
   subText: '#6E7071',
-};
-export default Color;
-
-export const Font = {
-  Poppins: 'Poppins-Regular',
-  Nunito: 'Nunito-Regular',
-  Sofia: 'SofiaSans-Regular',
-  Dm: 'DMSans-Regular',
-};
-
-export const ShadowValues = {
-  distance: 5,
-  blackShadowDistance: 3,
-  color: '#6BCB77',
-  blackShadow: 'rgba(0,0,0,0.35)',
 };

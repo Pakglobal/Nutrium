@@ -10,7 +10,7 @@ import {
 import React, {useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, {Font, ShadowValues} from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
@@ -23,6 +23,7 @@ import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import {useDispatch} from 'react-redux';
 import {setGuestMode} from '../../../redux/user';
+import { Font } from '../../../assets/styles/Fonts';
 
 const SelectGender = () => {
   const navigation = useNavigation();
@@ -65,10 +66,10 @@ const SelectGender = () => {
           Hi
         </Text>
         <Text
-          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
+          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600', fontFamily: Font.PoppinsMedium}]}>
           Select Gender
         </Text>
-        <Text style={[styles.titleText, {fontSize: scale(11)}]}>
+        <Text style={[styles.titleText, {fontSize: scale(12)}]}>
           Please select your gender to continue
         </Text>
 
@@ -134,7 +135,7 @@ const SelectGender = () => {
             <Text
               style={[
                 styles.titleText,
-                {fontSize: scale(13)},
+                {fontSize: scale(13), fontFamily: Font.PoppinsMedium},
                 selectedGender === 'male' && styles.selectedText,
               ]}>
               Male
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: verticalScale(12),
-    paddingHorizontal: scale(18),
+    paddingHorizontal: scale(12),
     borderRadius: scale(8),
     borderWidth: 1,
     borderColor: Color.primaryColor,

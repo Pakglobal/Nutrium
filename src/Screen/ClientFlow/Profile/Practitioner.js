@@ -4,7 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 
 const Practitioner = ({route}) => {
   const data = route?.params?.data;

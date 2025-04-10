@@ -16,7 +16,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Header from '../../../Components/Header';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   guestLoginData,

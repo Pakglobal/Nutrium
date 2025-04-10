@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import { verticalScale } from 'react-native-size-matters';
 
 const GuestFlowHeader = ({progress}) => {

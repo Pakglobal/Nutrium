@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import BottomNavigation from '../../../Navigation/BottomNavigation';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 
 const GuestHomeScreen = () => {
   return (

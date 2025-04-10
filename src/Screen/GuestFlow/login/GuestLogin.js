@@ -12,7 +12,7 @@ import {
 import React, {useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, {Font, ShadowValues} from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
@@ -29,6 +29,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {guestLoginData, setIsGuest} from '../../../redux/user';
+import { Font } from '../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../assets/styles/Shadow';
 
 const GuestLogin = () => {
   const dispatch = useDispatch();

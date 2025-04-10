@@ -2,11 +2,12 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import HeaderImage from '../../assets/Images/loginChoiceHeader.svg';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
-import Color, {Font} from '../../assets/colors/Colors';
+import {Color} from '../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {setGuestMode} from '../../redux/user';
+import { Font } from '../../assets/styles/Fonts';
 
 const LoginChoiceScreen = () => {
   const navigation = useNavigation();

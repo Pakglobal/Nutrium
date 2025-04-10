@@ -31,7 +31,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
 import moment from 'moment';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 
 const MessageComponent = ({
   userId,

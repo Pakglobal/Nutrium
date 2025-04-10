@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
-import Color, {ShadowValues} from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import PhysicalActivity from '../../../Components/PhysicalActivity';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Header from '../../../Components/Header';
@@ -22,6 +22,7 @@ import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
+import { ShadowValues } from '../../../assets/styles/Shadow';
 
 const HomeScreen = () => {
   const navigation = useNavigation();

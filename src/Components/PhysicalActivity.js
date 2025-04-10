@@ -8,11 +8,13 @@ import {
 } from 'react-native';
 import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color, {Font, ShadowValues} from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import {useStepTracking} from './StepTrackingService';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
+import { Font } from '../assets/styles/Fonts';
+import { ShadowValues } from '../assets/styles/Shadow';
 
 const PhysicalActivity = ({style}) => {
   const navigation = useNavigation();
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
     color: Color.primaryColor,
     fontWeight: '500',
     textAlign: 'center',
-    fontFamily: Font?.Sofia,
+    fontFamily: Font?.Poppins,
   },
   imageWrapper: {
     flex: 1,
@@ -249,7 +251,7 @@ const styles = StyleSheet.create({
     fontSize: scale(24),
     fontWeight: '500',
     paddingHorizontal: scale(10),
-    fontFamily: Font?.Sofia,
+    fontFamily: Font?.Poppins,
     textAlign: 'center',
   },
   waterText: {

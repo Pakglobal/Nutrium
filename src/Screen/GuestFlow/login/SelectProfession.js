@@ -9,7 +9,7 @@ import {
 import React, {useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color, {Font, ShadowValues} from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
@@ -24,6 +24,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {setGuestMode} from '../../../redux/user';
 import {useDispatch} from 'react-redux';
+import { Font } from '../../../assets/styles/Fonts';
 
 const SelectProfession = () => {
   const navigation = useNavigation();
@@ -101,7 +102,7 @@ const SelectProfession = () => {
       ]);
       return;
     }
-    navigation.navigate('SelectWorkspace');
+    navigation.navigate('SelectCountry');
   };
 
   return (
@@ -114,7 +115,7 @@ const SelectProfession = () => {
 
       <View style={styles.formContainer}>
         <Text
-          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
+          style={styles.titleText}>
           What is your profession
         </Text>
         <View style={styles.optionsGrid}>
@@ -138,7 +139,7 @@ const SelectProfession = () => {
         </View>
 
         <Text
-          style={[styles.titleText, {fontSize: scale(14), fontWeight: '600'}]}>
+          style={styles.titleText}>
           What is your Goal
         </Text>
         <View style={styles.optionsGrid}>
@@ -176,10 +177,10 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontWeight: '500',
-    fontSize: scale(32),
+    fontSize: scale(14),
     color: Color.textColor,
     letterSpacing: 1,
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
     marginVertical: scale(4),
   },
   formContainer: {

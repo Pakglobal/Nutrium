@@ -17,7 +17,7 @@ import HomeScreen from '../Screen/ClientFlow/Home/HomeScreen';
 import MealScreen from '../Screen/ClientFlow/Meal/MealScreen';
 import RecommendationScreen from '../Screen/ClientFlow/Recommend/RecommendationScreen';
 import ProfileMenuScreen from '../Screen/ClientFlow/Profile/ProfileMenuScreen';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import HomeGreen from '../assets/Icon/homeGreen.svg';
 import MealWhite from '../assets/Icon/mealWhite.svg';
 import RecommendationWhite from '../assets/Icon/recommendationWhite.svg';

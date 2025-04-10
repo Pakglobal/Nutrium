@@ -406,24 +406,24 @@ const SelectCountry = () => {
           style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled">
           <LoginHeader style={{ alignSelf: 'center' }} />
-
-          <View style={{ marginHorizontal: scale(16), marginTop: verticalScale(20) }}>
+  
+          <View style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
             <TouchableOpacity
-              style={styles.inputContainer}
-              onPress={() => {
-                Keyboard.dismiss();
-                setShowCountryDropdown(!showCountryDropdown);
-              }}>
+              style={[
+                styles.inputContainer,
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                },
+              ]}
+              onPress={() => setShowCountryDropdown(!showCountryDropdown)}>
               <Text
-                style={[styles.titleText, !country && { color: Color.textColor }]}>
-                {country || 'Select country'}
+                style={[styles.titleText, !country && {color: Color.textColor}]}>
+                {country || 'select country'}
               </Text>
               {showCountryDropdown ? (
-                <MaterialIcons
-                  name="keyboard-arrow-up"
-                  size={20}
-                  color={Color.primaryColor}
-                />
+                <MaterialIcons name="keyboard-arrow-up" size={20} color={Color.primaryColor} />
               ) : (
                 <MaterialIcons
                   name="keyboard-arrow-down"
@@ -432,7 +432,7 @@ const SelectCountry = () => {
                 />
               )}
             </TouchableOpacity>
-
+  
             {showCountryDropdown && (
               <View style={styles.dropdown}>
                 {countries.map(item => (
@@ -440,56 +440,52 @@ const SelectCountry = () => {
                     key={item}
                     style={[
                       styles.dropdownItem,
-                      country === item && { backgroundColor: Color.primaryColor },
+                      country === item && {backgroundColor: Color.primaryColor},
                     ]}
                     onPress={() => {
                       setCountry(item);
                       setShowCountryDropdown(false);
                     }}>
-                    <Text
-                      style={[
-                        styles.titleText,
-                        {
-                          color: country === item ? Color.white : Color.textColor,
-                        },
-                      ]}>
+                    <Text style={{color: country === item ? Color.white : Color.textColor}}>
                       {item}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
-
-            <TextInput
-              value={number}
-              placeholder="Number"
-              onChangeText={setNumber}
-              keyboardType="numeric"
-              placeholderTextColor={Color.textColor}
-              maxLength={10}
-              style={[styles.inputContainer, styles.titleText]}
-            />
-
+  
+            <View style={styles.inputContainer}>
+              <TextInput
+                value={number}
+                placeholder="Number"
+                onChangeText={setNumber}
+                keyboardType="numeric"
+                placeholderTextColor={Color.textColor}
+                maxLength={10}
+                style={[styles.inputContainer, styles.titleText]}
+              />
+            </View>
+  
             <TouchableOpacity
-              style={styles.inputContainer}
+              style={[
+                styles.inputContainer,
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                },
+              ]}
               onPress={() => {
                 Keyboard.dismiss();
                 setShowDatePicker(true);
               }}>
               <Text
-                style={[
-                  styles.titleText,
-                  !dateOfBirth && { color: Color.textColor },
-                ]}>
+                style={[styles.titleText, !dateOfBirth && {color: Color.textColor}]}>
                 {dateOfBirth || 'Date of Birth'}
               </Text>
-              <MaterialCommunityIcons
-                name="calendar"
-                size={20}
-                color={Color.primaryColor}
-              />
+              <MaterialCommunityIcons name="calendar" size={20} color={Color.primaryColor} />
             </TouchableOpacity>
-
+  
             {showDatePicker && (
               <DateTimePicker
                 value={date}
@@ -500,16 +496,9 @@ const SelectCountry = () => {
             )}
           </View>
         </ScrollView>
+  
+        <RightIcon onPress={handleNavigation} />
       </KeyboardAvoidingView>
-
-      {/* Button Container with dynamic positioning */}
-      <View style={[styles.buttonContainer, keyboardVisible && styles.buttonContainerWithKeyboard]}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleNavigation}>
-          <FontAwesome6 name="arrow-right" size={22} color={Color.white} />
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };

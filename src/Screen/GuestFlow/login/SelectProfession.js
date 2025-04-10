@@ -28,7 +28,6 @@ import { Font } from '../../../assets/styles/Fonts';
 
 const SelectProfession = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const [profession, setProfession] = useState(null);
   const [goal, setGoal] = useState(null);
 

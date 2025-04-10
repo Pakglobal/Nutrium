@@ -4,8 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert,
-  Dimensions,
+  Alert, 
 } from 'react-native';
 import React, {useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';

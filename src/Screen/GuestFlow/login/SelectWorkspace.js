@@ -44,10 +44,12 @@ const SelectWorkspace = () => {
       } else {
         message = 'Please select your expertise to continue';
       }
-
-      Alert.alert('Selection Required', message, [
-        {text: 'OK', style: 'cancel'},
-      ]);
+      
+      Alert.alert(
+        'Selection Required',
+        message,
+        [{text: 'OK', style: 'cancel'}]
+      );
       return;
     }
     navigation.navigate('SelectCountry');

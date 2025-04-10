@@ -12,7 +12,7 @@ import {
 import { scale, verticalScale } from 'react-native-size-matters';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CalenderHeader from '../../../../Components/CalenderHeader';
-import Color from '../../../../assets/colors/Colors';
+import Color, { ShadowValues } from '../../../../assets/colors/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import PhysicalActivity from '../../../../Components/PhysicalActivity';
 import { useStepTracking } from '../../../../Components/StepTrackingService';
@@ -26,6 +26,7 @@ import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
 import { ScrollView } from 'react-native-virtualized-view';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
+import { Shadow } from 'react-native-shadow-2';
 
 const PhysicalActivityy = () => {
   const navigation = useNavigation();
@@ -196,25 +197,9 @@ const PhysicalActivityy = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
-      {/* <BackHeader
-        titleName={'Physical activity'}
-        onPressBack={() => navigation.goBack()}
-        onPress={() =>
-          navigation.navigate('logPhysicalActivity', {plusData: plusData})
-        }
-      /> */}
 
       <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
-        navigation.navigate('logPhysicalActivity', { plusData: plusData })} />
-      {/* <Header
-        showIcon={false}
-        backIcon={true}
-        screenName="Physical activity"
-        iconStyle={{left: scale(-65)}}
-        onPress={() =>
-         
-        }
-      /> */}
+        navigation.navigate('logPhysicalActivity', { plusData: plusData })} plus={true} />
       {/* <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
@@ -222,102 +207,113 @@ const PhysicalActivityy = () => {
         disabled={dayOffset === 0}
         txtFunction={getDateString()}
       /> */}
-
-      <PhysicalActivity style={{ marginBottom: 0 }} />
-      <OnOffFunctionality
-        title={'Your workouts'}
-        style={{
-          marginTop: scale(8),
-          borderBottomWidth: 1,
-          paddingVertical: scale(10),
-          borderBottomColor: Color?.lightgray,
-        }}
-      />
-
-      {loading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
-      ) : physicalActivityData && physicalActivityData?.length > 0 ? (
-        <View style={styles.entriesContainer}>
-          <FlatList
-            data={physicalActivityData}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={styles.entryItem}>
-                <View style={{ width: '65%', marginLeft: scale(8) }}>
-                  <Text style={styles.activities}>{item?.activity}</Text>
-                  <Text style={styles.date}>{formatDate(item?.date)}</Text>
-                </View>
-                <View style={styles.rightEntry}>
-                  <View>
-                    <Text style={styles.rightEntryText}>
-                      {item?.time} {item?.timeunit}
-                    </Text>
-                    <Text style={styles.rightEntryText}>
-                      {item?.byactivity}
-                    </Text>
-                  </View>
-                  <View>
-                    <TouchableOpacity
-                      style={{ marginLeft: scale(15) }}
-                      onPress={() => {
-                        setSelectedEntry({
-                          id: item?._id,
-                          activity: item?.activity,
-                          time: item?.time,
-                          date: item?.date,
-                        });
-                        setModalVisible(true);
-                      }}>
-                      <Icon name="dots-vertical" size={20} color={Color.gray} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            )}
-            keyExtractor={(item, index) => `activity-${index}`}
-          />
-        </View>
-      ) : (
-        <View style={{ padding: verticalScale(10), marginTop: scale(10) }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              color: Color.textColor,
-              fontSize: scale(15),
-              fontWeight: '500',
-            }}>
-            There are no records of physical activity
-          </Text>
-        </View>
-      )}
-
-      {modalVisible && (
-        <Modal
-          transparent={true}
-          visible={modalVisible}
-          animationType="fade"
-          onRequestClose={() => setModalVisible(false)}>
-          <View style={styles.modalOptionContainer}>
-            <View style={styles.modalOptionContent}>
-              <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
-                <Text style={styles.modalText}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={handleDelete}>
-                <Text style={styles.modalText}>Delete</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => setModalVisible(false)}>
-                <Text style={styles.modalText}>Cancel</Text>
-              </TouchableOpacity>
+      <View style={{ paddingHorizontal: scale(10) }} >
+        <View
+          style={{ marginVertical: scale(10), }}>
+          <Shadow
+            distance={ShadowValues.distance}
+            startColor={ShadowValues.color}
+            style={{ width: '100%' }}>
+            <View style={styles.shadow}>
+              <PhysicalActivity />
             </View>
+          </Shadow>
+        </View>
+        <OnOffFunctionality
+          title={'Your workouts'}
+          style={{
+            marginTop: scale(8),
+            borderBottomWidth: 1,
+            paddingVertical: scale(10),
+            borderBottomColor: Color?.lightgray,
+          }}
+        />
+
+        {loading ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
-        </Modal>
-      )}
+        ) : physicalActivityData && physicalActivityData?.length > 0 ? (
+          <View style={styles.entriesContainer}>
+            <FlatList
+              data={physicalActivityData}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <View style={styles.entryItem}>
+                  <View style={{ width: '65%', marginLeft: scale(8) }}>
+                    <Text style={styles.activities}>{item?.activity}</Text>
+                    <Text style={styles.date}>{formatDate(item?.date)}</Text>
+                  </View>
+                  <View style={styles.rightEntry}>
+                    <View>
+                      <Text style={styles.rightEntryText}>
+                        {item?.time} {item?.timeunit}
+                      </Text>
+                      <Text style={styles.rightEntryText}>
+                        {item?.byactivity}
+                      </Text>
+                    </View>
+                    <View>
+                      <TouchableOpacity
+                        style={{ marginLeft: scale(15) }}
+                        onPress={() => {
+                          setSelectedEntry({
+                            id: item?._id,
+                            activity: item?.activity,
+                            time: item?.time,
+                            date: item?.date,
+                          });
+                          setModalVisible(true);
+                        }}>
+                        <Icon name="dots-vertical" size={20} color={Color.gray} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              )}
+              keyExtractor={(item, index) => `activity-${index}`}
+            />
+          </View>
+        ) : (
+          <View style={{ padding: verticalScale(10), marginTop: scale(10) }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: Color.textColor,
+                fontSize: scale(15),
+                fontWeight: '500',
+              }}>
+              There are no records of physical activity
+            </Text>
+          </View>
+        )}
+
+        {modalVisible && (
+          <Modal
+            transparent={true}
+            visible={modalVisible}
+            animationType="fade"
+            onRequestClose={() => setModalVisible(false)}>
+            <View style={styles.modalOptionContainer}>
+              <View style={styles.modalOptionContent}>
+                <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
+                  <Text style={styles.modalText}>Edit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={handleDelete}>
+                  <Text style={styles.modalText}>Delete</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => setModalVisible(false)}>
+                  <Text style={styles.modalText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -500,5 +496,9 @@ const styles = StyleSheet.create({
     color: Color.gray,
     marginTop: verticalScale(10),
     fontSize: scale(12),
+  },
+  shadow: {
+    borderRadius: scale(10),
+    backgroundColor: Color?.white,
   },
 });

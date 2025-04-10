@@ -20,7 +20,7 @@ const MealsLikeInHome = () => {
   };
 
   return (
-    <View style={{padding: scale(10)}}>
+    <View style={{ backgroundColor: Color?.white, padding: scale(10), borderRadius:scale(10)}} >
       <Text style={styles.title}>What were your meals like?</Text>
       <View style={styles.cardContainer}>
         <Food width={'100%'} height={verticalScale(170)} />
@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     borderRadius: scale(20),
     alignSelf: 'center',
     width: '100%',
-    backgroundColor: Color?.white,
+    backgroundColor: Color?.white      ,
+    borderRadius:scale(10)
   },
   card: {
     height: '100%',

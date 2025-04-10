@@ -14,7 +14,9 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
 
-const PhysicalActivity = ({style}) => {
+const PhysicalActivity = ({style,header,subHeader,
+  bottomButton
+}) => {
   const navigation = useNavigation();
   const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
 
@@ -36,19 +38,24 @@ const PhysicalActivity = ({style}) => {
         <View
           style={[
             styles.cardOverlay,
-            // { backgroundColor: 'rgba(137, 70, 146, 0.3)' },
           ]}>
           <View style={{}}>
+            {
+              header && 
             <Text style={[styles.description, {fontSize: scale(16)}]}>
               Your physical activity
             </Text>
-            <Text
+            }
+            {
+              subHeader &&
+              <Text
               style={[
                 styles.description,
                 {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
               ]}>
               Workouts this week
             </Text>
+            }
             <View style={{}}>
               <View
                 style={{
@@ -75,7 +82,7 @@ const PhysicalActivity = ({style}) => {
                           }}
                           numberOfLines={1}
                           adjustsFontSizeToFit={true}>
-                          {formatNumber(1500)}
+                          {formatNumber(100)}
                         </Text>
                       )}
                       <Text style={styles.dayText}>{day}</Text>
@@ -95,7 +102,7 @@ const PhysicalActivity = ({style}) => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginVertical: verticalScale(10),
+            // marginVertical: verticalScale(10),
             gap: scale(25),
           },
         ]}>
@@ -132,6 +139,8 @@ const PhysicalActivity = ({style}) => {
         </View>
       </View>
 
+      {
+        bottomButton &&
       <View style={{}}>
         <Shadow
           distance={ShadowValues.blackShadowDistance}
@@ -165,6 +174,8 @@ const PhysicalActivity = ({style}) => {
           </View>
         </Shadow>
       </View>
+      }
+
     </View>
   );
 };

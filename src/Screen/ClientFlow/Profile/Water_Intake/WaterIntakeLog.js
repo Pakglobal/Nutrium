@@ -16,7 +16,7 @@ import {
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import Color, { ShadowValues } from '../../../../assets/colors/Colors';
+import Color, { Font, ShadowValues } from '../../../../assets/colors/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -188,17 +188,11 @@ const WaterIntakeLog = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Header
-        showIcon={'save'}
-        backIcon={true}
-        screenName='Water intake log'
-        iconStyle={{ left: scale(-65) }}
-        onSave={() => {
-          handleSave()
-        }} /> */}
 
-      <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
-        handleSave()} />
+      <Header screenheader={true} screenName={'Water intake'}
+        plus={false}
+        handleSave={() =>
+          handleSave()} />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much water did you drink?</Text>
@@ -224,80 +218,88 @@ const WaterIntakeLog = ({ route }) => {
 
         <Text style={styles.quickLogTitle}>Quick log</Text>
         <View style={styles.hydrationButtons}>
-          <TouchableOpacity
-            style={styles.waterCardView}
-            onPress={() => setAmount(200)}>
-            <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end', }}>
-              {/* <AntDesign
-                name="pluscircleo"
-                color="#83bcff"
-                size={verticalScale(15)}
-                style={{ marginEnd: scale(10) }}
-              />
-               */}
-              <View style={styles.plusIcon}>
-                <Feather
-                  name="plus"
-                  color={Color?.primaryColor}
-                  style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
-                  }}
-                  size={verticalScale(15)}
-                />
-              </View>
-              <Text style={styles.waterTxt}>{'200mL'}</Text>
-            </View>
-          </TouchableOpacity>
+          <Shadow
+            distance={2}
+            startColor={ShadowValues.blackShadow}
+            style={{ width: '100%' }}>
 
-          <TouchableOpacity
-            style={styles.waterCardView}
-            onPress={() => setAmount(300)}>
-            <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-              <View style={[styles.plusIcon, { right: scale(-0.5) }]}>
-                <Feather
-                  name="plus"
-                  color={Color?.primaryColor}
-                  style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
-                  }}
-                  size={verticalScale(15)}
-                />
+            <TouchableOpacity
+              style={styles.waterCardView}
+              onPress={() => setAmount(200)}>
+              <Glass height={verticalScale(30)} width={scale(45)} />
+              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+                <View style={[styles.plusIcon]}>
+                  <Feather
+                    name="plus"
+                    color={Color?.primaryColor}
+                    style={{
+                      alignItems: "center",
+                      alignSelf: 'center'
+                    }}
+                    size={verticalScale(15)}
+                  />
+                </View>
+                <Text style={styles.waterTxt}>{'200mL'}</Text>
               </View>
-              <Text style={styles.waterTxt}>{'300mL'}</Text>
-            </View>
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.waterCardView}
-            onPress={() => setAmount(500)}>
-            <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-              <View style={styles.plusIcon}>
-                <Feather
-                  name="plus"
-                  color={Color?.primaryColor}
-                  style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
-                  }}
-                  size={verticalScale(15)}
-                />
+            </TouchableOpacity>
+          </Shadow>
+          <Shadow
+            distance={2}
+            startColor={ShadowValues.blackShadow}
+            style={{ width: '100%', }}>
+            <TouchableOpacity
+              style={styles.waterCardView}
+              onPress={() => setAmount(300)}>
+              <Glass height={verticalScale(30)} width={scale(45)} />
+              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+                <View style={[styles.plusIcon, { right: scale(-0.5) }]}>
+                  <Feather
+                    name="plus"
+                    color={Color?.primaryColor}
+                    style={{
+                      alignItems: "center",
+                      alignSelf: 'center'
+                    }}
+                    size={verticalScale(15)}
+                  />
+                </View>
+                <Text style={styles.waterTxt}>{'300mL'}</Text>
               </View>
-              <Text style={styles.waterTxt}>{'500mL'}</Text>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </Shadow>
+          <Shadow
+            distance={2}
+            startColor={ShadowValues.blackShadow}
+            style={{ width: '100%', }}>
+            <TouchableOpacity
+              style={styles.waterCardView}
+              onPress={() => setAmount(500)}>
+              <Glass height={verticalScale(30)} width={scale(45)} />
+              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+                <View style={styles.plusIcon}>
+                  <Feather
+                    name="plus"
+                    color={Color?.primaryColor}
+                    style={{
+                      alignItems: "center",
+                      alignSelf: 'center'
+                    }}
+                    size={verticalScale(15)}
+                  />
+                </View>
+                <Text style={styles.waterTxt}>{'500mL'}</Text>
+              </View>
+            </TouchableOpacity>
+          </Shadow>
         </View>
 
         <Text style={styles.label}>Date</Text>
-        {/* <View style={{ marginVertical: scale(10) }}>
+        <View style={{ marginHorizontal: scale(2) }}>
           <Shadow
-            distance={ShadowValues.distance}
-            startColor={ShadowValues.color}
-            style={{ width: '100%' }}>
+            distance={2}
+            startColor={ShadowValues.blackShadow}
+            style={{ width: '100%', }}>
 
             <View style={styles.pickerButton} >
               <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
@@ -308,16 +310,9 @@ const WaterIntakeLog = ({ route }) => {
               </TouchableOpacity>
             </View>
           </Shadow>
-        </View> */}
-        
-          <View style={styles.pickerButton} >
-            <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
-            <TouchableOpacity
-              style={{}}
-              onPress={() => setDateOpen(true)}>
-              <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
-            </TouchableOpacity>
-          </View>
+        </View>
+
+
 
         <DatePicker
           modal
@@ -334,23 +329,34 @@ const WaterIntakeLog = ({ route }) => {
         />
 
         <Text style={styles.label}>Hour</Text>
-        <View style={[styles.pickerButton, { marginBottom: scale(15) }]} >
-          <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>
-            {time
-              ?.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true,
-              })
-              ?.replace(/\s+/g, ' ')
-              ?.trim()}
-          </Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => setTimeOpen(true)}>
-            <MaterialCommunityIcons name='clock-time-four-outline' color={Color?.primaryColor} size={20} />
-          </TouchableOpacity>
+
+
+        <View style={{ marginHorizontal: scale(2), marginBottom: scale(10) }}>
+          <Shadow
+            distance={2}
+            startColor={ShadowValues.blackShadow}
+            style={{ width: '100%', }}>
+
+            <View style={[styles.pickerButton, {}]} >
+              <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>
+                {time
+                  ?.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                  })
+                  ?.replace(/\s+/g, ' ')
+                  ?.trim()}
+              </Text>
+              <TouchableOpacity
+                style={{}}
+                onPress={() => setTimeOpen(true)}>
+                <MaterialCommunityIcons name='clock-time-four-outline' color={Color?.primaryColor} size={20} />
+              </TouchableOpacity>
+            </View>
+          </Shadow>
         </View>
+
         <DatePicker
           modal
           mode="time"
@@ -377,13 +383,14 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.white,
   },
   scrollView: {
-    paddingHorizontal: scale(15),
+    paddingHorizontal: scale(10),
   },
   label: {
     fontSize: scale(17),
     color: Color?.textColor,
     marginTop: verticalScale(20),
     fontWeight: "500",
+    fontFamily: Font?.Poppins
   },
   inputContainer: {
     flexDirection: 'row',
@@ -411,25 +418,15 @@ const styles = StyleSheet.create({
     marginVertical: scale(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: scale(5)
+    paddingHorizontal: scale(5),
   },
   pickerButton: {
-    borderWidth: 1,
-    borderColor: '#ccc',
     padding: scale(10),
     borderRadius: scale(8),
     flexDirection: "row",
     justifyContent: "space-between",
-    shadowColor: Color?.black,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 8,
     backgroundColor: Color?.white,
-    width: "97%",
+    width: "100%",
     alignSelf: 'center',
   },
   errorText: {
@@ -439,26 +436,15 @@ const styles = StyleSheet.create({
     marginLeft: scale(5),
   },
   waterCardView: {
-    // marginHorizontal: scale(5),
     borderRadius: scale(8),
-    // height: scale(65),
     paddingTop: scale(10),
     paddingBottom: scale(5),
-    width: '30%',
+    width: scale(92),
+    height: scale(70),
     backgroundColor: Color?.white,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingVertical:scale(10),
-
   },
   waterImg: {
     height: verticalScale(40),
@@ -475,12 +461,13 @@ const styles = StyleSheet.create({
   },
   plusIcon: {
     backgroundColor: '#68A16C4D',
-    // position: "absolute",
-    top: scale(-10),
+    position: "absolute",
+    top: scale(-20),
     height: scale(18),
     width: scale(18),
     borderTopRightRadius: scale(7),
     borderBottomLeftRadius: scale(5),
     justifyContent: "center",
+
   }
 });

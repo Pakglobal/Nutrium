@@ -37,23 +37,25 @@ export const GuestLOGin = async data => {
 
   try {
     const body = {
-      fullName: data?.fullName,
+      firstName: data?.firstName,
+      lastName: data?.lastName,
       email: data?.email,
-      password:data?.password,
+      password: data?.password,
       gender: data?.gender,
       country: data?.country,
-      dateOfBirth: data?.dateOfBirth,
       phoneNumber: data?.phoneNumber,
-      profession: data?.profession,
-      workplace: data?.workplace,
-      expertise: [
-        data?.expertise
-      ],
-    };
-    const url = `${BASE_URL}sign_in`;
-    const response = await axios.post(url, body);
-    return response?.data;
-  } catch (error) {
-    return error?.response?.data;
-  }
+      dateOfBirth: data?.dateOfBirth,
+      deviceToken: data?.deviceToken,
+      isDemoClient: true
+  
+  };
+
+  const url = `${BASE_URL}demo-auth`;
+  const response = await axios.post(url, body);
+  console.log('====',response);
+  
+  return response?.data;
+} catch (error) {
+  return error?.response?.data;
+}
 };

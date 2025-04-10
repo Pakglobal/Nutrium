@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {
   RefreshControl,
   SafeAreaView,
   ImageBackground,
+  AppState,
 } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {
@@ -22,16 +23,18 @@ import {
   getChatHistory,
   onReceiveMessage,
   sendMessage,
+  onMessagesSeen,
 } from '../Components/SocketService';
 
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
+import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
 import Color from '../assets/colors/Colors';
+import uuid from 'react-native-uuid';
 
 const MessageComponent = ({
   userId,
@@ -45,10 +48,10 @@ const MessageComponent = ({
   const navigation = useNavigation();
 
   const userImage = image
-    ? {uri: image}
+    ? { uri: image }
     : gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -86,7 +89,7 @@ const MessageComponent = ({
 
           const distance = Math.sqrt(
             Math.pow(touch2.pageX - touch1.pageX, 2) +
-              Math.pow(touch2.pageY - touch1.pageY, 2),
+            Math.pow(touch2.pageY - touch1.pageY, 2),
           );
 
           const newScale = Math.max(1, Math.min(5, distance / 100));
@@ -132,27 +135,70 @@ const MessageComponent = ({
     getChatHistory(userId, otherUserId, history => {
       setMessages(history?.reverse());
       setLoading(false);
+
+      const unseenMessagesFromOther = history?.filter(
+        msg => !msg?.seen && msg.senderId !== userId && msg.receiverId === userId
+      );
+
+      if (unseenMessagesFromOther?.length > 0) {
+        const messageIds = unseenMessagesFromOther.map(msg => msg?._id).filter(Boolean);
+        socket.emit('messageSeen', { userId, otherUserId, messageIds });
+      }
     });
 
     const messageHandler = newMessage => {
-      setMessages(prevMessages => [newMessage, ...prevMessages]);
+      console.log('newMessage', newMessage);
+
+      setMessages(prevMessages => {
+        const messageExists = prevMessages.some(msg =>
+          (msg._id && msg._id === newMessage._id) ||
+          (msg.tempId && msg.tempId === newMessage.tempId)
+        );
+
+        if (messageExists) {
+          return prevMessages.map(msg =>
+            ((msg._id && msg._id === newMessage._id) ||
+              (msg.tempId && msg.tempId === newMessage.tempId))
+              ? { ...newMessage, tempId: msg.tempId || newMessage.tempId }
+              : msg
+          );
+        }
+
+        return [newMessage, ...prevMessages];
+      });
+
+      if (newMessage?.senderId !== userId && newMessage?.receiverId === userId) {
+        markMessagesAsSeen([newMessage._id]);
+      }
     };
 
     onReceiveMessage(messageHandler);
 
-    const markMessagesAsSeen = () => {
-      const unseenMessages = messages.filter(msg => !msg?.seen);
-
-      if (unseenMessages.length > 0) {
-        const messageIds = unseenMessages.map(msg => msg?._id);
-
-        socket.emit('messageSeen', {userId, otherUserId, messageIds});
-
+    const messagesSeenHandler = (data) => {
+      console.log('Messages seen by other user:', data);
+      if (data?.messageIds && data?.senderId === userId && data?.receiverId === otherUserId) {
+        console.log('Updating seen status for our messages:', data.messageIds);
         setMessages(prevMessages =>
           prevMessages.map(msg =>
-            messageIds.includes(msg.id) ? {...msg, seen: true} : msg,
-          ),
+            data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg
+          )
         );
+      }
+    };
+
+    onMessagesSeen(messagesSeenHandler);
+
+    const markMessagesAsSeen = (specificIds = null) => {
+      const unseenMessages = specificIds
+        ? messages.filter(msg => specificIds.includes(msg._id) && !msg?.seen && msg.receiverId === userId)
+        : messages.filter(msg => !msg?.seen && msg.senderId !== userId && msg.receiverId === userId);
+
+      if (unseenMessages.length > 0) {
+        const messageIds = unseenMessages.map(msg => msg?._id).filter(Boolean);
+        if (messageIds.length > 0) {
+          console.log('Marking messages as seen:', messageIds);
+          socket.emit('messageSeen', { userId, otherUserId, messageIds });
+        }
       }
     };
 
@@ -160,9 +206,13 @@ const MessageComponent = ({
 
     return () => {
       socket.off('receiveMessage', messageHandler);
+      socket.off('messagesSeen', messagesSeenHandler);
       socket.disconnect();
     };
   }, [userId, otherUserId]);
+
+
+
 
   const formatTime = isoString => {
     return moment(isoString).format('h.mm A');
@@ -170,12 +220,30 @@ const MessageComponent = ({
 
   const handleSend = () => {
     if (text?.trim() || selectedFile) {
-      sendMessage(userId, otherUserId, text, selectedFile?.url);
+      const tempId = uuid.v4();
+      const now = new Date().toISOString();
+
+      const tempMessage = {
+
+        tempId: tempId,
+        senderId: userId,
+        receiverId: otherUserId,
+        message: text,
+        file: selectedFile?.url,
+        seen: false,
+        createdAt: now,
+      };
+
+      setMessages((prevMessages) => [tempMessage, ...prevMessages]);
+
+      sendMessage(userId, otherUserId, text, selectedFile?.url, tempId)
+
+
+
       setText('');
       setSelectedFile(null);
     }
   };
-
   const closeImageViewer = () => {
     setImageViewerVisible(false);
     setSelectedImage(null);
@@ -261,7 +329,7 @@ const MessageComponent = ({
 
   const flatListData = createFlatListData(sortedMessages);
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     if (item.type === 'date') {
       return (
         <View style={styles.dateSeparator}>
@@ -271,7 +339,7 @@ const MessageComponent = ({
         </View>
       );
     } else {
-      return renderMessage({item});
+      return renderMessage({ item });
     }
   };
 
@@ -323,7 +391,7 @@ const MessageComponent = ({
           console.error('Upload failed:', error);
         } finally {
           setUploadingFiles(prev => {
-            const newState = {...prev};
+            const newState = { ...prev };
             delete newState[fileId];
             return newState;
           });
@@ -364,12 +432,13 @@ const MessageComponent = ({
     return await response.json();
   };
 
-  const renderMessage = ({item}) => {
+  const renderMessage = ({ item }) => {
     const isSender = item?.senderId === userId;
     const fileUrl = item?.file || item?.fileUrl;
     const time = formatTime(item?.createdAt || item?.timestamp);
-
     const isUploading = item.isTemp || uploadingFiles[item._id];
+    const isSeen = item?.seen;
+    const isTemp = item._id?.startsWith('temp-');
 
     return (
       <View
@@ -385,20 +454,51 @@ const MessageComponent = ({
               </View>
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                <Image source={{uri: fileUrl}} style={styles.image} />
+                <Image source={{ uri: fileUrl }} style={styles.image} />
+                <View style={styles.messageContent}>
+                  <Text style={styles.timestampText}>{time}</Text>
+                  <View style={styles.messageFooter}>
+                    {isSender && (
+                      <Ionicons
+                        name={isSeen ? 'checkmark-done' : 'checkmark'}
+                        size={16}
+                        color={isSeen ? Color.primaryColor : Color.gray}
+                        style={styles.readStatus}
+                      />
+                    )}
+                  </View>
+                </View>
               </TouchableOpacity>
             )}
           </View>
         )}
 
         {item?.message && (
-          <View style={styles.messageContent}>
+          <View>
             <Text style={styles.messageText}>{item?.message}</Text>
-            <Text style={styles.timestampText}>{time}</Text>
+            <View style={styles.messageContent}>
+              <Text style={styles.timestampText}>{time}</Text>
+              <View style={styles.messageFooter}>
+                {isSender && !isTemp && (
+                  <Ionicons
+                    name={isSeen ? 'checkmark-done' : 'checkmark'}
+                    size={16}
+                    color={isSeen ? Color.primaryColor : Color.gray}
+                    style={styles.readStatus}
+                  />
+                )}
+                {isSender && isTemp && (
+                  <Ionicons
+                    name="time-outline"
+                    size={16}
+                    color={Color.gray}
+                    style={styles.readStatus}
+                  />
+                )}
+              </View>
+            </View>
           </View>
         )}
-
-        {!item?.message && <Text style={styles.timestampText}>{time}</Text>}
       </View>
     );
   };
@@ -432,7 +532,7 @@ const MessageComponent = ({
           <Text style={styles.backTxt}>{userName}</Text>
         </View>
 
-        <TouchableOpacity style={{marginHorizontal: scaleSize(16)}}>
+        <TouchableOpacity style={{ marginHorizontal: scaleSize(16) }}>
           <Feather
             name="info"
             color={Color.primaryColor}
@@ -448,22 +548,17 @@ const MessageComponent = ({
       {renderHeader()}
 
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <ActivityIndicator size="large" color={Color.primaryColor} />
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" color={Color.primaryGreen} />
           </View>
         ) : (
           <FlatList
             data={flatListData}
             keyExtractor={item =>
-              item?.type === 'date' ? item?.id : item?._id?.toString()
+              item?.type === 'date' ? item?.id : (item?._id?.toString() || `msg-${item?.tempId}`)
             }
             renderItem={renderItem}
             inverted
@@ -505,7 +600,6 @@ const MessageComponent = ({
           </TouchableOpacity>
         </View>
       </ImageBackground>
-
       <Modal
         visible={imageViewerVisible}
         transparent={true}
@@ -532,9 +626,9 @@ const MessageComponent = ({
                 styles.imageViewerWrapper,
                 {
                   transform: [
-                    {scale: scale},
-                    {translateX: offsetX},
-                    {translateY: offsetY},
+                    { scale: scale },
+                    { translateX: offsetX },
+                    { translateY: offsetY },
                   ],
                 },
               ]}>
@@ -549,7 +643,7 @@ const MessageComponent = ({
                 }}
                 delayLongPress={200}>
                 <Animated.Image
-                  source={{uri: selectedImage}}
+                  source={{ uri: selectedImage }}
                   style={styles.fullScreenImage}
                   resizeMode="contain"
                 />
@@ -752,3 +846,5 @@ const styles = StyleSheet.create({
     marginHorizontal: scaleSize(7),
   },
 });
+
+

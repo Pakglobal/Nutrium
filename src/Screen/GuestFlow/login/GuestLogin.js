@@ -49,6 +49,9 @@ const GuestLogin = ({ route }) => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [login, setLogin] = useState([]);
 
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+
   const data = route?.params
   const fullName = firstName + " " + lastName
 
@@ -69,27 +72,25 @@ const GuestLogin = ({ route }) => {
     }
 
     const body = {
-      fullName: fullName,
+      firstName: firstName,
+      lastName: lastName,
       email: email,
       password: password,
       gender: data?.Gender,
       country: data?.country,
-      dateOfBirth: data?.dateOfBirth,
       phoneNumber: data?.number,
-      profession: data?.profession,
-      workplace: data?.workplace,
-      expertise: [
-        data?.expertise
-      ],
+      dateOfBirth: data?.dateOfBirth,
+      deviceToken: token,
+      isDemoClient: true
     }
 
     try {
       const response = await GuestLOGin(body);
-;
 
+      console.log('response', response)
       if (response?.message == 'Login successful') {
         navigation.navigate('BottomNavigation')
-      }else if(response?.message){
+      } else if (response?.message) {
         Alert.alert(response?.message)
       }
 

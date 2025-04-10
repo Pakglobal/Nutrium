@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,21 +12,21 @@ import {
   Alert,
   Animated,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Carousel from 'react-native-snap-carousel';
 import moment from 'moment';
-import {scale, verticalScale} from 'react-native-size-matters';
-import Color, {Font} from '../assets/colors/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import Color, { Font, ShadowValues } from '../assets/colors/Colors';
 import {
   GetAppointmentByClientId,
   UpdateAppointmentStatus,
 } from '../Apis/ClientApis/ClientAppointmentApi';
-import {Shadow} from 'react-native-shadow-2';
+import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const AppointmentCard = ({navigation}) => {
+const AppointmentCard = ({ navigation }) => {
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
@@ -151,7 +151,7 @@ const AppointmentCard = ({navigation}) => {
   const handleConfirm = async appointment => {
     try {
       const updatedAppointments = activeAppointments.map(app =>
-        app._id === appointment._id ? {...app, isLoading: true} : app,
+        app._id === appointment._id ? { ...app, isLoading: true } : app,
       );
       setActiveAppointments(updatedAppointments);
 
@@ -179,19 +179,19 @@ const AppointmentCard = ({navigation}) => {
 
   const handleViewDetails = appointment => {
     if (navigation) {
-      navigation.navigate('AppointmentDetails', {appointment});
+      navigation.navigate('AppointmentDetails', { appointment });
     }
     setModalVisible(false);
   };
 
   const handleReschedule = appointment => {
     if (navigation) {
-      navigation.navigate('RescheduleAppointment', {appointment});
+      navigation.navigate('RescheduleAppointment', { appointment });
     }
     setModalVisible(false);
   };
 
-  const renderAppointmentItem = ({item, index}) => {
+  const renderAppointmentItem = ({ item, index }) => {
     const date = formatDate(item?.start);
     const timeRange = `${formatTime(item?.start)}-${formatTime(item?.end)}`;
     const isPending = item?.status === 'not_confirmed';
@@ -206,12 +206,12 @@ const AppointmentCard = ({navigation}) => {
             alignSelf: 'center',
             width: '100%',
           },
-          {opacity: fadeAnim},
+          { opacity: fadeAnim },
         ]}>
         <Shadow
-          distance={3}
-          startColor={Color.primaryColor}
-          style={{width: '100%', borderRadius: scale(16)}}>
+          distance={ShadowValues.distance}
+          startColor={ShadowValues.color}
+          style={{ width: '100%', borderRadius: scale(10) }}>
           <View style={styles.cardContainer}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Appointment</Text>
@@ -222,10 +222,10 @@ const AppointmentCard = ({navigation}) => {
               <Image
                 source={
                   item?.image
-                    ? {uri: item?.image}
+                    ? { uri: item?.image }
                     : item?.gender === 'Female'
-                    ? require('../assets/Images/woman.png')
-                    : require('../assets/Images/man.png')
+                      ? require('../assets/Images/woman.png')
+                      : require('../assets/Images/man.png')
                 }
                 style={styles.avatar}
               />
@@ -234,7 +234,7 @@ const AppointmentCard = ({navigation}) => {
                 <Text style={styles.timeText}>{timeRange}</Text>
               </View>
               <TouchableOpacity
-                style={{padding: scale(10)}}
+                style={{ padding: scale(10) }}
                 onPress={() => {
                   setSelectedAppointment(item);
                   setModalVisible(true);

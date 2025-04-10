@@ -1031,10 +1031,11 @@ const WaterIntake = () => {
     });
   };
 
+
   return (
     <SafeAreaView style={styles.container}>
       <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
-        navigation.navigate('waterIntakeLog', { plusData: plusData })} />
+        navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
 
       <ScrollView
         horizontal
@@ -1086,25 +1087,30 @@ const WaterIntake = () => {
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
-          <Shadow
-            distance={2.5}
-            startColor={ShadowValues?.blackShadow}
-            style={{ width: '100%', borderRadius: scale(5) }}>
-            <View style={{ backgroundColor: Color?.white, borderRadius: scale(10), padding: scale(22), paddingHorizontal: scale(28) }}>
-              <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
-              <Text style={styles.statLabel}>Water intake</Text>
-            </View>
-          </Shadow>
+          <View style={{ width: '46%' }} >
 
-          <Shadow
-            distance={2.5}
-            startColor={ShadowValues?.blackShadow}
-            style={{ width: '100%', borderRadius: scale(5) }}>
-            <View style={{ backgroundColor: Color?.white, borderRadius: scale(10), padding: scale(22), paddingHorizontal: scale(28) }}>
-              <Text style={styles.statValue}>{dailyGoal} mL</Text>
-              <Text style={styles.statLabel}>Daily goal</Text>
-            </View>
-          </Shadow>
+            <Shadow
+              distance={2}
+              startColor={ShadowValues?.blackShadow}
+              style={{ width: '100%', borderRadius: scale(10) }}>
+              <View style={styles.mlContainer}>
+                <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
+                <Text style={styles.statLabel}>Water intake</Text>
+              </View>
+            </Shadow>
+          </View>
+          <View style={{ width: '46%' }} >
+
+            <Shadow
+              distance={2}
+              startColor={ShadowValues?.blackShadow}
+              style={{ width: '100%', borderRadius: scale(10) }}>
+              <View style={styles.mlContainer}>
+                <Text style={styles.statValue}>{dailyGoal} mL</Text>
+                <Text style={styles.statLabel}>Daily goal</Text>
+              </View>
+            </Shadow>
+          </View>
         </View>
         {loading ? (
           <View
@@ -1128,7 +1134,7 @@ const WaterIntake = () => {
                             color={Color?.primaryColor}
                           />
                           <Text style={styles.entryAmount}>
-                            {intake?.amount} mL
+                            {intake?.amount}
                           </Text>
                         </View>
 
@@ -1175,31 +1181,31 @@ const WaterIntake = () => {
         )}
       </View>
 
-      {/* Updated Modal to match the design in the image */}
+
       <Modal
         transparent={true}
         visible={modalVisible}
         animationType="fade"
         onRequestClose={() => setModalVisible(false)}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.modalOverlay}
-          activeOpacity={1} 
+          activeOpacity={1}
           onPress={() => setModalVisible(false)}>
-          <View 
+          <View
             style={[
               styles.modalContent,
-              { 
+              {
                 position: 'absolute',
                 right: 20,
-                top: menuPosition.y - 80, // Adjust based on your needs
+                top: menuPosition.y - 80,
               }
             ]}>
-            <TouchableOpacity 
-              style={styles.modalOption} 
+            <TouchableOpacity
+              style={styles.modalOption}
               onPress={handleEdit}>
-              <Text style={[styles.modalText, ]}>Edit</Text>
+              <Text style={[styles.modalText,]}>Edit</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={styles.modalOption}
               onPress={() => {
@@ -1208,7 +1214,7 @@ const WaterIntake = () => {
               }}>
               <Text style={styles.modalText}>Delete</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={styles.modalOption}
               onPress={() => setModalVisible(false)}>
@@ -1268,19 +1274,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: scale(16),
     marginVertical: verticalScale(10),
+    width: '100%'
   },
   statValue: {
     fontSize: scale(20),
     fontWeight: '600',
     marginBottom: verticalScale(4),
     color: Color.textColor,
-    fontFamily: Font.Dm,
+    fontFamily: Font.Poppins,
     textAlign: "center"
   },
   statLabel: {
     fontSize: scale(16),
     color: Color?.textColor,
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily: Font.Poppins,
+  },
+  mlContainer: {
+    backgroundColor: Color?.white,
+    borderRadius: scale(10),
+    padding: scale(10),
+    // paddingHorizontal: scale(25),
   },
   entriesContainer: {
     flex: 1,
@@ -1304,6 +1318,8 @@ const styles = StyleSheet.create({
     fontSize: scale(15),
     color: Color.textColor,
     fontWeight: '500',
+    fontFamily:Font?.Poppins
+
   },
   entryRight: {
     flexDirection: 'row',
@@ -1313,8 +1329,9 @@ const styles = StyleSheet.create({
   entryTime: {
     color: '#767878',
     fontSize: scale(15),
+    fontFamily:Font?.Poppins
   },
-  // Updated modal styles to match the image
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -1322,7 +1339,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: '#fff',
     borderRadius: scale(5),
-    width: scale(120),
+    width: scale(100),
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -1334,14 +1351,16 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   modalOption: {
-    paddingVertical: verticalScale(8),
+    paddingVertical: verticalScale(5),
     paddingHorizontal: scale(10),
     // borderBottomWidth: 1,
     // borderBottomColor: '#f0f0f0',
-    alignSelf:'center'
+    alignSelf: 'center'
   },
   modalText: {
-    fontSize: scale(14),
+    fontSize: scale(12),
     color: Color.textColor,
+    fontWeight:"500",
+    fontFamily:Font?.Poppins
   },
 });

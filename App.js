@@ -1,3 +1,4 @@
+
 // import { Alert, PermissionsAndroid, StyleSheet } from 'react-native';
 // import React, { useEffect } from 'react';
 // import RootNavigation from './src/Navigation/RootNavigation';
@@ -85,6 +86,7 @@
 
 
 
+
 import { Alert, PermissionsAndroid, StyleSheet } from 'react-native';
 import React, { useEffect } from 'react';
 import RootNavigation from './src/Navigation/RootNavigation';
@@ -97,24 +99,25 @@ console.log(firebaseApp, 'firebaseAppp');
 import SplashScreen from 'react-native-splash-screen'
 
 
-
 const AppContent = () => {
   const dispatch = useDispatch();
-
+ 
   const fetchToken = async () => {
-
+ 
     try {
       console.log("-=-=--=-=", !firebaseApp);
+ 
 
       if (!firebaseApp) {
         console.error('Firebase is not initialized. Retrying...');
         return;
       }
-
-
+      
+      
       const fcmToken = await messaging().getToken();
       console.log("===>");
       console.log('FCM Token:', fcmToken);
+ 
 
       if (fcmToken) {
         dispatch(setFcmToken(fcmToken));
@@ -131,19 +134,20 @@ const AppContent = () => {
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
+ 
     if (enabled) {
       console.log('Authorization status:', authStatus, enabled);
       fetchToken();
     }
   }
 
+ 
   messaging().onMessage(async remoteMessage => {
     console.log('remoteMessage', remoteMessage);
-
+ 
     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
   });
-
+ 
   messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background!', remoteMessage);
   });
@@ -152,9 +156,19 @@ const AppContent = () => {
     requestUserPermission();
   }, []);
 
-  return <RootNavigation />;
-};
 
+  
+  useEffect(() => {
+    SplashScreen.hide();
+  }, [])
+
+  return (
+      <RootNavigation />
+  );
+
+
+};
+ 
 const App = () => {
   return (
     <Provider store={store}>
@@ -162,7 +176,8 @@ const App = () => {
     </Provider>
   );
 };
-
+ 
 export default App;
-
+ 
 const styles = StyleSheet.create({});
+

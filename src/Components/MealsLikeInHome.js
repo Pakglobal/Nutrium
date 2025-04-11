@@ -22,7 +22,9 @@ const MealsLikeInHome = () => {
   };
 
   return (
-    <View style={{ backgroundColor: Color?.white, padding: scale(10), borderRadius:scale(10)}} >
+    <View style={{padding: scale(10)}}>
+
+
       <Text style={styles.title}>What were your meals like?</Text>
       <View style={styles.cardContainer}>
         <Food width={'100%'} height={verticalScale(170)} />

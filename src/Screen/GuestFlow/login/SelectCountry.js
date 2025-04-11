@@ -26,7 +26,7 @@ import {Progress} from '../../../assets/styles/Progress';
 import {Shadow} from 'react-native-shadow-2';
 import {ShadowValues} from '../../../assets/styles/Shadow';
 
-const SelectCountry = ({ route }) => {
+const SelectCountry = () => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -35,8 +35,6 @@ const SelectCountry = ({ route }) => {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const selectGender = route?.params
-  const countryData = { country, number, dateOfBirth, ...selectGender }
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -82,9 +80,10 @@ const SelectCountry = ({ route }) => {
     setDate(currentDate);
     setDateOfBirth(currentDate.toLocaleDateString('en-US'));
   };
-  console.log('dateOfBirth', dateOfBirth)
+
   const handleNavigation = () => {
     Keyboard.dismiss();
+
     if (!country || !number || !dateOfBirth) {
       let message = '';
       if (!country && !number && !dateOfBirth) {
@@ -107,11 +106,21 @@ const SelectCountry = ({ route }) => {
       }
 
       Alert.alert('Selection Required', message, [
-        { text: 'OK', style: 'cancel' },
+        {text: 'OK', style: 'cancel'},
       ]);
       return;
     }
-    navigation.navigate('GuestLogin', countryData);
+
+    if (number.length !== 10) {
+      Alert.alert(
+        'Invalid Number',
+        'Please enter a valid 10-digit mobile number to continue',
+        [{text: 'OK', style: 'cancel'}],
+      );
+      return;
+    }
+
+    navigation.navigate('GuestLogin');
   };
 
   useEffect(() => {
@@ -196,21 +205,6 @@ const SelectCountry = ({ route }) => {
             </View>
           )}
 
-          {/* <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={Color.primaryColor}
-            style={{width: '100%', borderRadius: scale(5), marginBottom: verticalScale(10), paddingHorizontal: scale(5),}}>
-            <TextInput
-              value={number}
-              placeholder="Number"
-              onChangeText={setNumber}
-              keyboardType="numeric"
-              placeholderTextColor={Color.textColor}
-              maxLength={10}
-              style={styles.titleText}
-            />
-          </Shadow> */}
-
           <Shadow
             distance={ShadowValues.blackShadowDistance}
             startColor={Color.primaryColor}
@@ -220,7 +214,7 @@ const SelectCountry = ({ route }) => {
               marginBottom: verticalScale(10),
               paddingHorizontal: scale(5),
             }}>
-            <View style={styles.numberContainer}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               {country && (
                 <Text style={[styles.titleText, styles.countryCode]}>
                   {countryCodes[country]}
@@ -347,3 +341,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

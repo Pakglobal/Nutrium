@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,14 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import {Color} from '../../../../assets/styles/Colors';
+import { Color } from '../../../../assets/styles/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,7 +26,7 @@ import { Shadow } from 'react-native-shadow-2';
 import { Font } from '../../../../assets/styles/Fonts';
 import { ShadowValues } from '../../../../assets/styles/Shadow';
 
-const WaterIntakeLog = ({route}) => {
+const WaterIntakeLog = ({ route }) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
@@ -190,15 +190,10 @@ const WaterIntakeLog = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        showIcon={'save'}
-        backIcon={true}
-        screenName="Water intake log"
-        iconStyle={{left: scale(-65)}}
-        onSave={() => {
-          handleSave();
-        }}
-      />
+      <Header screenheader={true} screenName={'Water intake'}
+        plus={false}
+        handleSave={() =>
+          handleSave()} />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much water did you drink?</Text>

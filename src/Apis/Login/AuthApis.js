@@ -34,10 +34,6 @@ export const GoogleLogin = async data => {
 
 
 export const GuestLOGin = async data => {
-
-  console.log('----', data);
-
-
   try {
     const body = {
       firstName: data?.firstName,
@@ -53,10 +49,12 @@ export const GuestLOGin = async data => {
       deviceToken: data?.deviceToken,
       isDemoClient: true
     }
-    console.log('body', body)
+
+    console.log('-----------',body);
+    
     const url = `${BASE_URL}demo-auth`;
     const response = await axios.post(url, body);
-    console.log('====', response);
+    console.log('====', response?.data);
 
     return response;
   } catch (error) {

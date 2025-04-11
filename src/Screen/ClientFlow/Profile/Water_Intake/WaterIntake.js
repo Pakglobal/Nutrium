@@ -691,6 +691,7 @@ import { Font } from '../../../../assets/styles/Fonts';
 import { Color } from '../../../../assets/styles/Colors';
 import { ShadowValues } from '../../../../assets/styles/Shadow';
 import { Shadow } from 'react-native-shadow-2';
+import ModalComponent from '../../../../Components/ModalComponent';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -1040,7 +1041,7 @@ const WaterIntake = () => {
         screenheader={true}
         screenName={'Water intake'}
         handlePlus={() =>
-          navigation.navigate('waterIntakeLog', {plusData: plusData})
+          navigation.navigate('waterIntakeLog', { plusData: plusData })
         }
       />
 
@@ -1188,8 +1189,21 @@ const WaterIntake = () => {
         )}
       </View>
 
-
-      <Modal
+      
+      <ModalComponent visible={modalVisible} handleEdit={handleEdit}
+        modalstyle={
+          {
+            position: 'absolute',
+            right: 20,
+            top: menuPosition.y - 80,
+          }
+        }
+        handleDelete={() => {
+          setModalVisible(false);
+          setDeleteModal(true);
+        }
+        } setModalVisible={() => setModalVisible(false)} />
+      {/* <Modal
         transparent={true}
         visible={modalVisible}
         animationType="fade"
@@ -1229,7 +1243,7 @@ const WaterIntake = () => {
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
-      </Modal>
+      </Modal> */}
 
       <CustomAlert
         visible={deleteModal}

@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
+import React, { useState } from 'react';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Font } from '../assets/styles/Fonts';
 
-const OnOffFunctionality = ({title, hydrate = false}) => {
+const OnOffFunctionality = ({ title, ShowTitle, hydrate = false }) => {
   const [showRevoke, setShowRevoke] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
 
@@ -51,7 +51,7 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
         Alert.alert(
           'Sign-in Error',
           'Failed to sign in with Google. Please try again.',
-          [{text: 'OK'}],
+          [{ text: 'OK' }],
         );
       }
     }
@@ -73,14 +73,29 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
 
   return (
     <SafeAreaView>
-      <View style={styles.header}>
+      <View style={[styles.header,
+      {
+        alignSelf: ShowTitle ? 'auto' : 'flex-end',
+        justifyContent: ShowTitle ? 'space-between' : 'space-between',
+        borderBottomColor: ShowTitle ? Color?.gray : Color?.white,
+        paddingBottom: ShowTitle ? scale(10) : 0,
+        borderBottomWidth: ShowTitle ? scale(0.5) : 0
+      }]}>
+        {
+          ShowTitle &&
+
+          <View style={{ alignSelf: 'center' }} >
+
+            <Text style={styles.titleTxt} >{title}</Text>
+          </View>
+        }
         <TouchableOpacity
           style={styles.buttonContainer}
           onPress={hydrate ? handleHydrateToggle : handleTrackingToggle}>
           <Text
             style={[
               styles.buttonText,
-              {color: isTracking ? Color.primaryColor : Color.gray},
+              { color: isTracking ? Color.primaryColor : Color.gray },
             ]}>
             {isTracking ? 'On' : 'Off'}
           </Text>
@@ -102,7 +117,7 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
             onPress={() => setShowRevoke(false)}
             style={styles.modalView}>
             <View style={styles.modalContainer}>
-              <View style={{marginHorizontal: scale(20)}}>
+              <View style={{ marginHorizontal: scale(20) }}>
                 <Text style={styles.modalTitle}>
                   Revoke Access to Physical Activity Data
                 </Text>
@@ -131,8 +146,12 @@ export default OnOffFunctionality;
 
 const styles = StyleSheet.create({
   header: {
-    alignSelf: 'flex-end',
+    // alignSelf: 'flex-end',
     marginVertical: verticalScale(7),
+    flexDirection: 'row',
+    // justifyContent:'space-between',
+    // backgroundColor:'red',
+    paddingHorizontal:scale(10)
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -183,4 +202,11 @@ const styles = StyleSheet.create({
     color: Color.gray,
     fontSize: scale(13),
   },
+  titleTxt: {
+    color: Color?.textColor,
+    fontFamily: Font?.Poppins,
+    fontWeight: '500',
+    fontSize: scale(16)
+  }
 });
+

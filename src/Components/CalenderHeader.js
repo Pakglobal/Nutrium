@@ -43,18 +43,18 @@ export default CalenderHeader;
 const styles = StyleSheet.create({
   headerContainer: {
     width: '100%',
-    backgroundColor: Color.white,
   },
   calenderView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: verticalScale(10),
+    
   },
   dateTxt: {
     fontSize: verticalScale(12),
-    color: Color.black,
+    color: Color.primaryColor,
     fontWeight: '600',
-    fontFamily:Font?.Poppins
+    fontFamily:Font?.Poppins,
   },
 });

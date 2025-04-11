@@ -16,7 +16,9 @@ import {Shadow} from 'react-native-shadow-2';
 import { Font } from '../assets/styles/Fonts';
 import { ShadowValues } from '../assets/styles/Shadow';
 
-const PhysicalActivity = ({style}) => {
+const PhysicalActivity = ({style,header,subHeader,
+  bottomButton,noData
+}) => {
   const navigation = useNavigation();
   const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
 
@@ -32,25 +34,121 @@ const PhysicalActivity = ({style}) => {
     }
   };
 
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginVertical: verticalScale(15),
+    },
+    workoutContainer: {
+      padding: scale(10),
+    },
+    title: {
+      fontSize: verticalScale(14),
+      fontWeight: '500',
+      color: Color.txt,
+      marginHorizontal: scale(16),
+    },
+    cardContainer: {
+      height: noData ? verticalScale(70):verticalScale(110),
+    },
+    cardOverlay: {
+      width: '100%',
+      borderRadius: scale(10),
+      position: 'absolute',
+      justifyContent: 'center',
+    },
+    description: {
+      color: Color.textColor,
+      fontWeight: '500',
+      fontFamily: Font?.Poppins,
+    },
+    txtIcon: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: verticalScale(10),
+    },
+    txt: {
+      fontSize: verticalScale(12),
+      fontWeight: '600',
+      color: Color.white,
+      marginTop: scale(8),
+    },
+    bgImage: {
+      height: '100%',
+      width: '100%',
+    },
+    dayContainer: {
+      borderRadius: scale(10),
+    },
+    day: {
+      borderRadius: scale(20),
+      backgroundColor: Color?.primaryColor,
+      marginVertical: verticalScale(8),
+      paddingVertical: verticalScale(15),
+      paddingHorizontal: scale(15),
+      shadowColor: Color?.black,
+      elevation: 5,
+    },
+    dayText: {
+      fontSize: scale(11),
+      color: Color.primaryColor,
+      fontWeight: '500',
+      textAlign: 'center',
+      fontFamily: Font?.Poppins,
+    },
+    imageWrapper: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: scale(1),
+      borderColor: Color?.primaryColor,
+      borderRadius: scale(5),
+      marginTop: verticalScale(10),
+    },
+    zero: {
+      color: Color.textColor,
+      fontSize: scale(24),
+      fontWeight: '500',
+      paddingHorizontal: scale(10),
+      fontFamily: Font?.Poppins,
+      textAlign: 'center',
+    },
+    waterText: {
+      fontSize: scale(12),
+      color: Color.primaryColor,
+      fontWeight: '500',
+      fontFamily: Font?.Poppins,
+      marginTop: verticalScale(2),
+      marginLeft: scale(5),
+    },
+  });
+
   return (
     <View style={[styles.workoutContainer, style]}>
       <View style={styles.cardContainer}>
         <View
           style={[
             styles.cardOverlay,
-            // { backgroundColor: 'rgba(137, 70, 146, 0.3)' },
           ]}>
           <View style={{}}>
+            {
+              header && 
             <Text style={[styles.description, {fontSize: scale(16)}]}>
               Your physical activity
             </Text>
-            <Text
+            }
+            {
+              subHeader &&
+              <Text
               style={[
                 styles.description,
                 {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
               ]}>
               Workouts this week
             </Text>
+            }
             <View style={{}}>
               <View
                 style={{
@@ -77,7 +175,7 @@ const PhysicalActivity = ({style}) => {
                           }}
                           numberOfLines={1}
                           adjustsFontSizeToFit={true}>
-                          {formatNumber(1500)}
+                          {formatNumber(100)}
                         </Text>
                       )}
                       <Text style={styles.dayText}>{day}</Text>
@@ -92,12 +190,12 @@ const PhysicalActivity = ({style}) => {
 
       <View
         style={[
-          styles.cardContainer,
+        
           {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginVertical: verticalScale(10),
+            // marginVertical: verticalScale(10),
             gap: scale(25),
           },
         ]}>
@@ -134,7 +232,9 @@ const PhysicalActivity = ({style}) => {
         </View>
       </View>
 
-      <View style={{}}>
+      {
+        bottomButton &&
+      <View style={{marginTop:scale(10)}}>
         <Shadow
           distance={ShadowValues.blackShadowDistance}
           startColor={ShadowValues.blackShadow}
@@ -167,99 +267,12 @@ const PhysicalActivity = ({style}) => {
           </View>
         </Shadow>
       </View>
+      }
+
     </View>
   );
 };
 
 export default PhysicalActivity;
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: verticalScale(15),
-  },
-  workoutContainer: {
-    padding: scale(10),
-  },
-  title: {
-    fontSize: verticalScale(14),
-    fontWeight: '500',
-    color: Color.txt,
-    marginHorizontal: scale(16),
-  },
-  cardContainer: {
-    height: verticalScale(110),
-  },
-  cardOverlay: {
-    width: '100%',
-    borderRadius: scale(10),
-    position: 'absolute',
-    justifyContent: 'center',
-  },
-  description: {
-    color: Color.textColor,
-    fontWeight: '500',
-    fontFamily: Font?.Poppins,
-  },
-  txtIcon: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: verticalScale(10),
-  },
-  txt: {
-    fontSize: verticalScale(12),
-    fontWeight: '600',
-    color: Color.white,
-    marginTop: scale(8),
-  },
-  bgImage: {
-    height: '100%',
-    width: '100%',
-  },
-  dayContainer: {
-    borderRadius: scale(10),
-  },
-  day: {
-    borderRadius: scale(20),
-    backgroundColor: Color?.primaryColor,
-    marginVertical: verticalScale(8),
-    paddingVertical: verticalScale(15),
-    paddingHorizontal: scale(15),
-    shadowColor: Color?.black,
-    elevation: 5,
-  },
-  dayText: {
-    fontSize: scale(11),
-    color: Color.primaryColor,
-    fontWeight: '500',
-    textAlign: 'center',
-    fontFamily: Font?.Poppins,
-  },
-  imageWrapper: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: scale(1),
-    borderColor: Color?.primaryColor,
-    borderRadius: scale(5),
-    marginTop: verticalScale(10),
-  },
-  zero: {
-    color: Color.textColor,
-    fontSize: scale(24),
-    fontWeight: '500',
-    paddingHorizontal: scale(10),
-    fontFamily: Font?.Poppins,
-    textAlign: 'center',
-  },
-  waterText: {
-    fontSize: scale(12),
-    color: Color.primaryColor,
-    fontWeight: '500',
-    fontFamily: Font?.Poppins,
-    marginTop: verticalScale(2),
-    marginLeft: scale(5),
-  },
-});
+

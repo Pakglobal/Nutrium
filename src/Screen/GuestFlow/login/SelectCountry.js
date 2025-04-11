@@ -26,7 +26,7 @@ import {Progress} from '../../../assets/styles/Progress';
 import {Shadow} from 'react-native-shadow-2';
 import {ShadowValues} from '../../../assets/styles/Shadow';
 
-const SelectCountry = () => {
+const SelectCountry = ({ route }) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -35,6 +35,8 @@ const SelectCountry = () => {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const selectGender = route?.params
+  const countryData = { country, number, dateOfBirth, ...selectGender }
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -80,7 +82,7 @@ const SelectCountry = () => {
     setDate(currentDate);
     setDateOfBirth(currentDate.toLocaleDateString('en-US'));
   };
-
+  console.log('dateOfBirth', dateOfBirth)
   const handleNavigation = () => {
     Keyboard.dismiss();
     if (!country || !number || !dateOfBirth) {
@@ -105,11 +107,11 @@ const SelectCountry = () => {
       }
 
       Alert.alert('Selection Required', message, [
-        {text: 'OK', style: 'cancel'},
+        { text: 'OK', style: 'cancel' },
       ]);
       return;
     }
-    navigation.navigate('GuestLogin');
+    navigation.navigate('GuestLogin', countryData);
   };
 
   useEffect(() => {

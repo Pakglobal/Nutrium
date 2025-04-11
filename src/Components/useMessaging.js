@@ -416,7 +416,7 @@ const MessageComponent = ({
     });
 
     const response = await fetch(
-      'https://nutrium-back-end-1.onrender.com/api/v1/upload',
+      '${BASE_URL}upload',
       {
         method: 'POST',
         body: formData,
@@ -464,6 +464,7 @@ const MessageComponent = ({
                         name={isSeen ? 'checkmark-done' : 'checkmark'}
                         size={16}
                         color={isSeen ? Color.primaryGreen : Color.gray}
+
                         style={styles.readStatus}
                       />
                     )}
@@ -552,8 +553,6 @@ const MessageComponent = ({
         style={{ flex: 1 }}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
-
-
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <ActivityIndicator size="large" color={Color.primaryGreen} />
           </View>

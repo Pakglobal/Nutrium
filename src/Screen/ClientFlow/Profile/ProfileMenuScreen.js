@@ -337,7 +337,6 @@ const ProfileMenuScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header logoHeader={true} />
-
       {isGuest === true ? (
         <View>
           <View style={{marginHorizontal: scale(16)}}>

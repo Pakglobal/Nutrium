@@ -69,7 +69,7 @@ const MoreFor = ({data}) => {
         style={styles.gradientBox}>
         <Text style={styles.description}>{data.text}</Text>
         <Shadow
-          distance={ShadowValues.blackShadowDistance}
+          distance={1}
           startColor={ShadowValues.blackShadow}
           style={{width: '100%'}}>
           <View style={styles.txtIcon}>

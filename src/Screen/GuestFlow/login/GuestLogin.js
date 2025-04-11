@@ -11,31 +11,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/GuestLogin.svg';
-import {Shadow} from 'react-native-shadow-2';
+import { Shadow } from 'react-native-shadow-2';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {guestLoginData, setIsGuest} from '../../../redux/user';
-import {Font} from '../../../assets/styles/Fonts';
-import {ShadowValues} from '../../../assets/styles/Shadow';
-import {Progress} from '../../../assets/styles/Progress';
+import { guestLoginData, setIsGuest } from '../../../redux/user';
+import { Font } from '../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../assets/styles/Shadow';
+import { Progress } from '../../../assets/styles/Progress';
 
-const GuestLogin = () => {
+const GuestLogin = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -119,11 +119,19 @@ const GuestLogin = () => {
     };
   }, []);
 
+  const token = useSelector(state => state?.user?.fcmToken);
+
+  const data = route?.params
+
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleGuestLogin = () => {
+
+
+  const handleGuestLogin = async () => {
+    //  navigation.navigate('GuestLogin')
+
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
     let emailError = '';
@@ -166,8 +174,37 @@ const GuestLogin = () => {
       Alert.alert('Error', 'Please solve the error');
       return;
     }
-    navigation.navigate('BottomNavigation');
-  };
+
+    const body = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password,
+      goal: data?.goal,
+      profession: data?.profession,
+      gender: data?.Gender,
+      country: data?.country,
+      phoneNumber: data?.number,
+      dateOfBirth: data?.dateOfBirth,
+      deviceToken: token,
+      isDemoClient: true
+    }
+    try {
+      const response = await GuestLOGin(body);
+
+      console.log('response', response)
+      if (response?.message == 'Login successful') {
+        navigation.navigate('BottomNavigation')
+        // dispatch(guestLoginData(guestData)); // Store guest data in Redux
+        // navigation.navigate('BottomNavigation');
+      } else if (response?.message) {
+        Alert.alert(response?.message)
+      }
+
+    } catch {
+
+    }
+  }
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -189,6 +226,9 @@ const GuestLogin = () => {
     };
   }, []);
 
+
+
+
   return (
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={Progress.guestLogin} />
@@ -197,10 +237,10 @@ const GuestLogin = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{}}
-        contentContainerStyle={{paddingBottom: '31%'}}
+        contentContainerStyle={{ paddingBottom: '31%' }}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
-          style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+          style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
         />
 
         <View
@@ -303,6 +343,7 @@ const GuestLogin = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
     </SafeAreaView>
   );
 };

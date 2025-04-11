@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetUserApi = async token => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/getUser`;
+    const url = `${BASE_URL}getUser`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -27,7 +28,7 @@ export const UpdateImage = async (token, id, imageUrl) => {
       type: imageUrl?.type || 'image/jpeg',
     });
 
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/client/${id}`;
+    const url = `${BASE_URL}client/${id}`;
 
     const response = await axios.put(url, formData, {
       headers: {

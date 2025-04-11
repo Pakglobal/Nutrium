@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetRecommendationApiData = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/get-other-recommendation/${id}`;
+    const url = `${BASE_URL}get-other-recommendation/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -17,7 +18,7 @@ export const GetRecommendationApiData = async (token, id) => {
 
 export const GetFoodAvoidApiData = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/get-food-avoid/${id}`;
+    const url = `${BASE_URL}get-food-avoid/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -31,7 +32,7 @@ export const GetFoodAvoidApiData = async (token, id) => {
 
 export const GetGoalsApiData = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/client/allGoals/${id}`;
+    const url = `${BASE_URL}client/allGoals/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,

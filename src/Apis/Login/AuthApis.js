@@ -35,27 +35,33 @@ export const GoogleLogin = async data => {
 
 export const GuestLOGin = async data => {
 
+  console.log('----', data);
+
+
   try {
     const body = {
       firstName: data?.firstName,
       lastName: data?.lastName,
       email: data?.email,
       password: data?.password,
+      goal: data?.goal,
+      profession: data?.profession,
       gender: data?.gender,
       country: data?.country,
       phoneNumber: data?.phoneNumber,
       dateOfBirth: data?.dateOfBirth,
       deviceToken: data?.deviceToken,
       isDemoClient: true
-  
-  };
+    }
+    console.log('body', body)
+    const url = `${BASE_URL}demo-auth`;
+    const response = await axios.post(url, body);
+    console.log('====', response);
 
-  const url = `${BASE_URL}demo-auth`;
-  const response = await axios.post(url, body);
-  console.log('====',response);
-  
-  return response?.data;
-} catch (error) {
-  return error?.response?.data;
-}
+    return response;
+  } catch (error) {
+    console.log('errrrr');
+    
+    return error?.response?.data;
+  }
 };

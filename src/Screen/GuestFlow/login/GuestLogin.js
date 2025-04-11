@@ -74,6 +74,8 @@ const GuestLogin = ({ route }) => {
       lastName: lastName,
       email: email,
       password: password,
+      goal: data?.goal,
+      profession: data?.profession,
       gender: data?.Gender,
       country: data?.country,
       phoneNumber: data?.number,
@@ -81,11 +83,10 @@ const GuestLogin = ({ route }) => {
       deviceToken: token,
       isDemoClient: true
     }
-
     try {
       const response = await GuestLOGin(body);
 
-      console.log('response', body, response)
+      console.log('response',  response)
       if (response?.message == 'Login successful') {
         navigation.navigate('BottomNavigation')
         // dispatch(guestLoginData(guestData)); // Store guest data in Redux

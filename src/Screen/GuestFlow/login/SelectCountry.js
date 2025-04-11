@@ -112,7 +112,7 @@
 //     <SafeAreaView style={styles.container}>
 //       <GuestFlowHeader progress={'80%'} />
 //       <LeftIcon onGoBack={() => navigation.goBack()} />
-      
+
 //       <ScrollView 
 //         showsVerticalScrollIndicator={false} 
 //         style={{flex: 1, flexGrow: 1}}
@@ -211,7 +211,7 @@
 //             />
 //           )}
 //         </View>
-        
+
 //         <View style={styles.buttonContainer}>
 //           <TouchableOpacity
 //             style={styles.button}
@@ -294,9 +294,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import React, { useState, useEffect } from 'react';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import {
   LeftIcon,
   RightIcon,
@@ -319,8 +319,8 @@ const SelectCountry = ({ route }) => {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const selectGender=route?.params
-  const countryData = { country, number, dateOfBirth ,...selectGender}
+  const selectGender = route?.params
+  const countryData = { country, number, dateOfBirth, ...selectGender }
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -357,7 +357,7 @@ const SelectCountry = ({ route }) => {
     setDate(currentDate);
     setDateOfBirth(currentDate.toLocaleDateString('en-US'));
   };
-
+  console.log('dateOfBirth', dateOfBirth)
   const handleNavigation = () => {
     Keyboard.dismiss();
     if (!country || !number || !dateOfBirth) {
@@ -382,11 +382,11 @@ const SelectCountry = ({ route }) => {
       }
 
       Alert.alert('Selection Required', message, [
-        {text: 'OK', style: 'cancel'},
+        { text: 'OK', style: 'cancel' },
       ]);
       return;
     }
-    navigation.navigate('GuestLogin',countryData);
+    navigation.navigate('GuestLogin', countryData);
   };
 
   useEffect(() => {
@@ -399,7 +399,7 @@ const SelectCountry = ({ route }) => {
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={'80%'} />
       <LeftIcon onGoBack={() => navigation.goBack()} />
-      
+
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -409,8 +409,8 @@ const SelectCountry = ({ route }) => {
           style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled">
           <LoginHeader style={{ alignSelf: 'center' }} />
-  
-          <View style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
+
+          <View style={{ marginHorizontal: scale(16), marginTop: verticalScale(20) }}>
             <TouchableOpacity
               style={[
                 styles.inputContainer,
@@ -422,7 +422,7 @@ const SelectCountry = ({ route }) => {
               ]}
               onPress={() => setShowCountryDropdown(!showCountryDropdown)}>
               <Text
-                style={[styles.titleText, !country && {color: Color.textColor}]}>
+                style={[styles.titleText, !country && { color: Color.textColor }]}>
                 {country || 'select country'}
               </Text>
               {showCountryDropdown ? (
@@ -435,7 +435,7 @@ const SelectCountry = ({ route }) => {
                 />
               )}
             </TouchableOpacity>
-  
+
             {showCountryDropdown && (
               <View style={styles.dropdown}>
                 {countries.map(item => (
@@ -443,20 +443,20 @@ const SelectCountry = ({ route }) => {
                     key={item}
                     style={[
                       styles.dropdownItem,
-                      country === item && {backgroundColor: Color.primaryColor},
+                      country === item && { backgroundColor: Color.primaryColor },
                     ]}
                     onPress={() => {
                       setCountry(item);
                       setShowCountryDropdown(false);
                     }}>
-                    <Text style={{color: country === item ? Color.white : Color.textColor}}>
+                    <Text style={{ color: country === item ? Color.white : Color.textColor }}>
                       {item}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
-  
+
             <View style={styles.inputContainer}>
               <TextInput
                 value={number}
@@ -468,7 +468,7 @@ const SelectCountry = ({ route }) => {
                 style={[styles.inputContainer, styles.titleText]}
               />
             </View>
-  
+
             <TouchableOpacity
               style={[
                 styles.inputContainer,
@@ -483,12 +483,12 @@ const SelectCountry = ({ route }) => {
                 setShowDatePicker(true);
               }}>
               <Text
-                style={[styles.titleText, !dateOfBirth && {color: Color.textColor}]}>
+                style={[styles.titleText, !dateOfBirth && { color: Color.textColor }]}>
                 {dateOfBirth || 'Date of Birth'}
               </Text>
               <MaterialCommunityIcons name="calendar" size={20} color={Color.primaryColor} />
             </TouchableOpacity>
-  
+
             {showDatePicker && (
               <DateTimePicker
                 value={date}
@@ -499,7 +499,7 @@ const SelectCountry = ({ route }) => {
             )}
           </View>
         </ScrollView>
-  
+
         <RightIcon onPress={handleNavigation} />
       </KeyboardAvoidingView>
     </SafeAreaView>

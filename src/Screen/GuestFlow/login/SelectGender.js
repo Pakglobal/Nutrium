@@ -28,6 +28,8 @@ const SelectGender = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [selectedGender, setSelectedGender] = useState(null);
+  console.log(selectedGender);
+  
 
   const handleSelect = gender => {
     setSelectedGender(gender);
@@ -76,15 +78,15 @@ const SelectGender = () => {
           <TouchableOpacity
             style={[
               styles.option,
-              selectedGender === 'female' && styles.selected,
+              selectedGender === 'Female' && styles.selected,
             ]}
-            onPress={() => handleSelect('female')}>
+            onPress={() => handleSelect('Female')}>
             <View
               style={[
                 styles.iconContainer,
                 {
                   backgroundColor:
-                    selectedGender === 'female'
+                    selectedGender === 'Female'
                       ? Color.white
                       : Color.primaryColor,
                 },
@@ -92,7 +94,7 @@ const SelectGender = () => {
               <FontAwesome5
                 name="female"
                 color={
-                  selectedGender === 'female' ? Color.primaryColor : Color.white
+                  selectedGender === 'Female' ? Color.primaryColor : Color.white
                 }
                 size={IconStyle.headerIconSize}
               />
@@ -101,7 +103,7 @@ const SelectGender = () => {
               style={[
                 styles.titleText,
                 {fontSize: scale(13)},
-                selectedGender === 'female' && styles.selectedText,
+                selectedGender === 'Female' && styles.selectedText,
               ]}>
               Female
             </Text>
@@ -110,15 +112,15 @@ const SelectGender = () => {
           <TouchableOpacity
             style={[
               styles.option,
-              selectedGender === 'male' && styles.selected,
+              selectedGender === 'Male' && styles.selected,
             ]}
-            onPress={() => handleSelect('male')}>
+            onPress={() => handleSelect('Male')}>
             <View
               style={[
                 styles.iconContainer,
                 {
                   backgroundColor:
-                    selectedGender === 'male'
+                    selectedGender === 'Male'
                       ? Color.white
                       : Color.primaryColor,
                 },
@@ -126,7 +128,7 @@ const SelectGender = () => {
               <FontAwesome5
                 name="male"
                 color={
-                  selectedGender === 'male' ? Color.primaryColor : Color.white
+                  selectedGender === 'Male' ? Color.primaryColor : Color.white
                 }
                 size={IconStyle.headerIconSize}
               />
@@ -135,7 +137,7 @@ const SelectGender = () => {
               style={[
                 styles.titleText,
                 {fontSize: scale(13), fontFamily: Font.PoppinsMedium},
-                selectedGender === 'male' && styles.selectedText,
+                selectedGender === 'Male' && styles.selectedText,
               ]}>
               Male
             </Text>

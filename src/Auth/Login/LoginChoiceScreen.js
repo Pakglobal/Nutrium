@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import HeaderImage from '../../assets/Images/loginChoiceHeader.svg';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
@@ -14,7 +14,7 @@ const LoginChoiceScreen = () => {
   const dispatch = useDispatch();
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <HeaderImage
         width="100%"
         height="56%"
@@ -32,7 +32,7 @@ const LoginChoiceScreen = () => {
         <NutriumLogo height={'100%'} width={'100%'} />
       </View>
 
-      <View style={{paddingHorizontal: scale(22)}}>
+      <View style={{paddingHorizontal: scale(16)}}>
         <Text style={styles.text}>
           Nutrium provides personalized meal plans and diet tracking for a healthier lifestyle.
         </Text>
@@ -44,7 +44,7 @@ const LoginChoiceScreen = () => {
           bottom: verticalScale(25),
           position: 'absolute',
           width: '100%',
-          paddingHorizontal: scale(22),
+          paddingHorizontal: scale(16),
         }}>
         <TouchableOpacity
           onPress={() => navigation.navigate('loginScreen')}
@@ -65,7 +65,7 @@ const LoginChoiceScreen = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
     lineHeight: scale(22)
   },
   buttonText: {
-    fontSize: scale(16),
+    fontSize: scale(14),
     fontWeight: '600',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
     textAlign: 'center',
     letterSpacing: 1,
     marginTop: verticalScale(2),

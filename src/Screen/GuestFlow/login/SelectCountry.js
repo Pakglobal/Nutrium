@@ -25,6 +25,7 @@ import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
 import {Shadow} from 'react-native-shadow-2';
 import {ShadowValues} from '../../../assets/styles/Shadow';
+import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 
 const SelectCountry = () => {
   const navigation = useNavigation();
@@ -34,27 +35,29 @@ const SelectCountry = () => {
   const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  // const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
+  // useKeyboardHandler()
 
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener(
+  //     'keyboardDidShow',
+  //     () => {
+  //       setKeyboardVisible(true);
+  //     },
+  //   );
+  //   const keyboardDidHideListener = Keyboard.addListener(
+  //     'keyboardDidHide',
+  //     () => {
+  //       setKeyboardVisible(false);
+  //     },
+  //   );
+
+  //   return () => {
+  //     keyboardDidShowListener.remove();
+  //     keyboardDidHideListener.remove();
+  //   };
+  // }, []);
 
   const countryCodes = {
     India: '+91',
@@ -123,11 +126,11 @@ const SelectCountry = () => {
     navigation.navigate('GuestLogin');
   };
 
-  useEffect(() => {
-    if (keyboardVisible) {
-      setShowCountryDropdown(false);
-    }
-  }, [keyboardVisible]);
+  // useEffect(() => {
+  //   if (keyboardVisible) {
+  //     setShowCountryDropdown(false);
+  //   }
+  // }, [keyboardVisible]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -34,6 +34,8 @@ import { guestLoginData, setIsGuest } from '../../../redux/user';
 import { Font } from '../../../assets/styles/Fonts';
 import { ShadowValues } from '../../../assets/styles/Shadow';
 import { Progress } from '../../../assets/styles/Progress';
+import { GuestLOGin } from '../../../Apis/Login/AuthApis';
+import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 
 const GuestLogin = ({ route }) => {
   const dispatch = useDispatch();
@@ -53,6 +55,8 @@ const GuestLogin = ({ route }) => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [login, setLogin] = useState([]);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useKeyboardHandler()
 
   const validateFirstName = value => {
     setFirstName(value);
@@ -99,25 +103,25 @@ const GuestLogin = ({ route }) => {
     }
   };
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener(
+  //     'keyboardDidShow',
+  //     () => {
+  //       setKeyboardVisible(true);
+  //     },
+  //   );
+  //   const keyboardDidHideListener = Keyboard.addListener(
+  //     'keyboardDidHide',
+  //     () => {
+  //       setKeyboardVisible(false);
+  //     },
+  //   );
 
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  //   return () => {
+  //     keyboardDidShowListener.remove();
+  //     keyboardDidHideListener.remove();
+  //   };
+  // }, []);
 
   const token = useSelector(state => state?.user?.fcmToken);
 
@@ -130,8 +134,6 @@ const GuestLogin = ({ route }) => {
 
 
   const handleGuestLogin = async () => {
-    //  navigation.navigate('GuestLogin')
-
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
     let emailError = '';

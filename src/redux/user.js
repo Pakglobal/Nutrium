@@ -39,9 +39,6 @@ const userSlice = createSlice({
     completeOnboarding(state) {
       state.isCompleted = true;
     },
-    resetOnboarding(state) {
-      state.isCompleted = false;
-    },
   },
 });
 

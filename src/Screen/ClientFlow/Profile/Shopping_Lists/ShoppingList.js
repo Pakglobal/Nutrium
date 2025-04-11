@@ -1,7 +1,7 @@
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import {scale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 

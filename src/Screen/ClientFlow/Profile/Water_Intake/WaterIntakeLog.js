@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,21 +9,21 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
 
-const WaterIntakeLog = ({ route }) => {
+const WaterIntakeLog = ({route}) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
@@ -190,11 +190,12 @@ const WaterIntakeLog = ({ route }) => {
       <Header
         showIcon={'save'}
         backIcon={true}
-        screenName='Water intake log'
-        iconStyle={{ left: scale(-65) }}
+        screenName="Water intake log"
+        iconStyle={{left: scale(-65)}}
         onSave={() => {
-          handleSave()
-        }} />
+          handleSave();
+        }}
+      />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much water did you drink?</Text>
@@ -224,7 +225,7 @@ const WaterIntakeLog = ({ route }) => {
             style={styles.waterCardView}
             onPress={() => setAmount(200)}>
             <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end', }}>
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
               {/* <AntDesign
                 name="pluscircleo"
                 color="#83bcff"
@@ -237,8 +238,8 @@ const WaterIntakeLog = ({ route }) => {
                   name="plus"
                   color={Color?.primaryColor}
                   style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
+                    alignItems: 'center',
+                    alignSelf: 'center',
                   }}
                   size={verticalScale(15)}
                 />
@@ -251,14 +252,14 @@ const WaterIntakeLog = ({ route }) => {
             style={styles.waterCardView}
             onPress={() => setAmount(300)}>
             <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-              <View style={[styles.plusIcon, { right: scale(-0.5) }]}>
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <View style={[styles.plusIcon, {right: scale(-0.5)}]}>
                 <Feather
                   name="plus"
                   color={Color?.primaryColor}
                   style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
+                    alignItems: 'center',
+                    alignSelf: 'center',
                   }}
                   size={verticalScale(15)}
                 />
@@ -271,14 +272,14 @@ const WaterIntakeLog = ({ route }) => {
             style={styles.waterCardView}
             onPress={() => setAmount(500)}>
             <Glass height={verticalScale(30)} width={scale(45)} />
-            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+            <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
               <View style={styles.plusIcon}>
                 <Feather
                   name="plus"
                   color={Color?.primaryColor}
                   style={{
-                    alignItems: "center",
-                    alignSelf: 'center'
+                    alignItems: 'center',
+                    alignSelf: 'center',
                   }}
                   size={verticalScale(15)}
                 />
@@ -289,12 +290,21 @@ const WaterIntakeLog = ({ route }) => {
         </View>
 
         <Text style={styles.label}>Date</Text>
-        <View style={styles.pickerButton} >
-          <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => setDateOpen(true)}>
-            <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
+        <View style={styles.pickerButton}>
+          <Text
+            style={{
+              color: Color.textColor,
+              fontWeight: '500',
+              fontSize: scale(13),
+            }}>
+            {date.toLocaleDateString()}
+          </Text>
+          <TouchableOpacity style={{}} onPress={() => setDateOpen(true)}>
+            <MaterialCommunityIcons
+              name="calendar-month"
+              color={Color?.primaryColor}
+              size={20}
+            />
           </TouchableOpacity>
         </View>
         <DatePicker
@@ -312,8 +322,13 @@ const WaterIntakeLog = ({ route }) => {
         />
 
         <Text style={styles.label}>Hour</Text>
-        <View style={[styles.pickerButton, { marginBottom: scale(15) }]} >
-          <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>
+        <View style={[styles.pickerButton, {marginBottom: scale(15)}]}>
+          <Text
+            style={{
+              color: Color.textColor,
+              fontWeight: '500',
+              fontSize: scale(13),
+            }}>
             {time
               ?.toLocaleTimeString('en-US', {
                 hour: 'numeric',
@@ -323,10 +338,12 @@ const WaterIntakeLog = ({ route }) => {
               ?.replace(/\s+/g, ' ')
               ?.trim()}
           </Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => setTimeOpen(true)}>
-            <MaterialCommunityIcons name='clock-time-four-outline' color={Color?.primaryColor} size={20} />
+          <TouchableOpacity style={{}} onPress={() => setTimeOpen(true)}>
+            <MaterialCommunityIcons
+              name="clock-time-four-outline"
+              color={Color?.primaryColor}
+              size={20}
+            />
           </TouchableOpacity>
         </View>
         <DatePicker
@@ -361,7 +378,7 @@ const styles = StyleSheet.create({
     fontSize: scale(17),
     color: Color?.textColor,
     marginTop: verticalScale(20),
-    fontWeight: "500",
+    fontWeight: '500',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -389,15 +406,15 @@ const styles = StyleSheet.create({
     marginVertical: scale(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: scale(5)
+    paddingHorizontal: scale(5),
   },
   pickerButton: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: scale(10),
     borderRadius: scale(8),
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     shadowColor: Color?.black,
     shadowOffset: {
       width: 0,
@@ -407,7 +424,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 8,
     backgroundColor: Color?.white,
-    width: "97%",
+    width: '97%',
     alignSelf: 'center',
   },
   errorText: {
@@ -436,7 +453,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     // paddingVertical:scale(10),
-
   },
   waterImg: {
     height: verticalScale(40),
@@ -449,7 +465,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginTop: verticalScale(20),
     marginEnd: scale(5),
-    fontSize: scale(11)
+    fontSize: scale(11),
   },
   plusIcon: {
     backgroundColor: '#68A16C4D',
@@ -459,6 +475,6 @@ const styles = StyleSheet.create({
     width: scale(18),
     borderTopRightRadius: scale(7),
     borderBottomLeftRadius: scale(5),
-    justifyContent: "center",
-  }
+    justifyContent: 'center',
+  },
 });

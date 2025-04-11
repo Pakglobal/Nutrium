@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {useEffect, useRef} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   accelerometer,
   setUpdateIntervalForType,
@@ -13,37 +13,37 @@ import {
   setIsTracking,
   resetSteps,
 } from '../redux/stepTracker';
- 
+
 const STORAGE_KEYS = {
   STEPS: 'steps',
   WORKOUTS: 'workouts',
   LAST_RESET: 'lastReset',
 };
- 
+
 const PEAK_THRESHOLD = 1.5;
-const VALLEY_THRESHOLD = -1.2; 
-const MIN_STEP_DELAY = 300; 
-const COOLDOWN_TIME = 500; 
+const VALLEY_THRESHOLD = -1.2;
+const MIN_STEP_DELAY = 300;
+const COOLDOWN_TIME = 500;
 const MOTION_THRESHOLD = 0.3;
- 
+
 export const useStepTracking = () => {
   const dispatch = useDispatch();
-  const { steps, workouts, currentDay, isTracking } = useSelector(
+  const {steps, workouts, currentDay, isTracking} = useSelector(
     state => state.stepTracker,
   );
- 
-  const lastAccelerationRef = useRef({ x: 0, y: 0, z: 0 });
+
+  const lastAccelerationRef = useRef({x: 0, y: 0, z: 0});
   const lastStepTimeRef = useRef(0);
   const isCooldownRef = useRef(false);
   const hasPeakedRef = useRef(false);
   const dayCheckIntervalRef = useRef(null);
   const motionDetectedRef = useRef(false);
- 
+
   const calculateCalories = stepCount => {
     const CALORIES_PER_STEP = 0.03;
     return Math.round(stepCount * CALORIES_PER_STEP);
   };
- 
+
   const loadData = async () => {
     try {
       const [stepsData, workoutsData, lastResetData] = await Promise.all([
@@ -51,16 +51,16 @@ export const useStepTracking = () => {
         AsyncStorage.getItem(STORAGE_KEYS.WORKOUTS),
         AsyncStorage.getItem(STORAGE_KEYS.LAST_RESET),
       ]);
- 
+
       if (stepsData) dispatch(setSteps(JSON.parse(stepsData)));
       if (workoutsData) dispatch(setWorkouts(JSON.parse(workoutsData)));
- 
+
       await checkDayChange();
     } catch (error) {
       console.error('Error loading data:', error);
     }
   };
- 
+
   const saveData = async () => {
     try {
       await Promise.all([
@@ -71,73 +71,77 @@ export const useStepTracking = () => {
       console.error('Error saving data:', error);
     }
   };
- 
+
   const checkDayChange = async () => {
     try {
       const now = new Date();
       const lastResetData = await AsyncStorage.getItem(STORAGE_KEYS.LAST_RESET);
-      const lastReset = lastResetData ? new Date(JSON.parse(lastResetData)) : new Date(0);
- 
+      const lastReset = lastResetData
+        ? new Date(JSON.parse(lastResetData))
+        : new Date(0);
+
       if (
         now.getDate() !== lastReset.getDate() ||
         now.getMonth() !== lastReset.getMonth() ||
         now.getFullYear() !== lastReset.getFullYear()
       ) {
         dispatch(resetSteps());
-        await AsyncStorage.setItem(STORAGE_KEYS.LAST_RESET, JSON.stringify(now.toISOString()));
+        await AsyncStorage.setItem(
+          STORAGE_KEYS.LAST_RESET,
+          JSON.stringify(now.toISOString()),
+        );
         console.log('Step counter reset for new day');
       }
     } catch (error) {
       console.error('Error checking day change:', error);
     }
   };
- 
+
   const calculateMagnitude = (x, y, z) => {
-    return Math.sqrt(x * x + y * y + z * z) - 9.8; 
+    return Math.sqrt(x * x + y * y + z * z) - 9.8;
   };
- 
-  const detectStep = ({ x, y, z }) => {
+
+  const detectStep = ({x, y, z}) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - lastStepTimeRef.current;
- 
+
     const magnitude = calculateMagnitude(x, y, z);
     const absMagnitude = Math.abs(magnitude);
- 
+
     if (absMagnitude > MOTION_THRESHOLD) {
       motionDetectedRef.current = true;
     } else {
       motionDetectedRef.current = false;
-      return; 
-    }
- 
-    if (isCooldownRef.current) {
-      lastAccelerationRef.current = { x, y, z };
       return;
     }
- 
+
+    if (isCooldownRef.current) {
+      lastAccelerationRef.current = {x, y, z};
+      return;
+    }
+
     if (!hasPeakedRef.current && magnitude > PEAK_THRESHOLD) {
       hasPeakedRef.current = true;
-    }
-    else if (hasPeakedRef.current && magnitude < VALLEY_THRESHOLD) {
+    } else if (hasPeakedRef.current && magnitude < VALLEY_THRESHOLD) {
       if (timeDiff > MIN_STEP_DELAY) {
         dispatch(incrementSteps());
         lastStepTimeRef.current = currentTime;
         isCooldownRef.current = true;
         hasPeakedRef.current = false;
- 
+
         setTimeout(() => {
           isCooldownRef.current = false;
         }, COOLDOWN_TIME);
       }
     }
- 
-    lastAccelerationRef.current = { x, y, z };
+
+    lastAccelerationRef.current = {x, y, z};
   };
- 
+
   useEffect(() => {
     loadData();
     let subscription;
- 
+
     const startTracking = async () => {
       try {
         setUpdateIntervalForType(SensorTypes.accelerometer, 100);
@@ -150,21 +154,22 @@ export const useStepTracking = () => {
         dispatch(setIsTracking(false));
       }
     };
- 
+
     startTracking();
- 
+
     dayCheckIntervalRef.current = setInterval(checkDayChange, 60000);
- 
+
     return () => {
       if (subscription) subscription.unsubscribe();
-      if (dayCheckIntervalRef.current) clearInterval(dayCheckIntervalRef.current);
+      if (dayCheckIntervalRef.current)
+        clearInterval(dayCheckIntervalRef.current);
     };
   }, []);
- 
+
   useEffect(() => {
     saveData();
   }, [steps, workouts]);
- 
+
   return {
     steps,
     calories: calculateCalories(steps),

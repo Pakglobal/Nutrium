@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -72,7 +72,7 @@ const MessageScreen = () => {
             alignItems: 'center',
             marginTop: verticalScale(10),
           }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : (
         <View
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     height: scale(40),
     borderRadius: 25,
     marginRight: 10,
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   clientName: {
     fontWeight: '500',

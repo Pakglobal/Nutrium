@@ -17,8 +17,8 @@ import {
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import NutriumLogo from '../../assets/Icon/NutriumLogo.svg';
-import Color from '../../assets/colors/Colors';
+import NutriumLogo from '../../assets/Images/logoGreen.svg';
+import {Color} from '../../assets/styles/Colors';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch, useSelector} from 'react-redux';

@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 
 const CalenderHeader = ({
   onPressLeft,
@@ -19,7 +19,7 @@ const CalenderHeader = ({
         <View style={styles.calenderView}>
           <AntDesign
             name="left"
-            color={Color.primaryGreen}
+            color={Color.primaryColor}
             size={verticalScale(16)}
             onPress={onPressLeft}
           />

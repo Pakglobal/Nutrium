@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {verticalScale, scale} from 'react-native-size-matters';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 
 const CameraPicker = ({visible, onClose, onImageSelect}) => {
   const requestCameraPermission = async () => {

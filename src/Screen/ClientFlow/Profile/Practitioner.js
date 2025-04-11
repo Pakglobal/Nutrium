@@ -4,7 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 
 const Practitioner = ({route}) => {
   const data = route?.params?.data;
@@ -60,7 +60,7 @@ const Practitioner = ({route}) => {
               <Ionicons
                 name={item?.icon}
                 size={scale(20)}
-                color={Color.primaryGreen}
+                color={Color.primaryColor}
               />
             </View>
             <View style={{marginLeft: scale(20)}}>

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import {useDispatch, useSelector} from 'react-redux';
 import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
@@ -255,7 +255,7 @@ const Measurements = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : (
         <View style={styles.contentContainer}>

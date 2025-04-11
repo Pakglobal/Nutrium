@@ -31,7 +31,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
 import moment from 'moment';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 
 const MessageComponent = ({
   userId,
@@ -381,7 +381,7 @@ const MessageComponent = ({
           <View style={styles.imageContainer}>
             {isUploading ? (
               <View style={styles.loadingImageContainer}>
-                <ActivityIndicator size="large" color={Color.primaryGreen} />
+                <ActivityIndicator size="large" color={Color.primaryColor} />
               </View>
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
@@ -435,7 +435,7 @@ const MessageComponent = ({
         <TouchableOpacity style={{marginHorizontal: scaleSize(16)}}>
           <Feather
             name="info"
-            color={Color.primaryGreen}
+            color={Color.primaryColor}
             size={verticalScale(22)}
           />
         </TouchableOpacity>
@@ -457,7 +457,7 @@ const MessageComponent = ({
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <ActivityIndicator size="large" color={Color.primaryGreen} />
+            <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
         ) : (
           <FlatList
@@ -498,7 +498,7 @@ const MessageComponent = ({
               size={20}
               color={
                 text.trim() || (selectedFile && !fileUploading)
-                  ? Color.primaryGreen
+                  ? Color.primaryColor
                   : Color.gray
               }
             />

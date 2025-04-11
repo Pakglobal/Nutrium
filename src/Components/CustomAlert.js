@@ -1,6 +1,6 @@
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 
 const CustomAlert = ({
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   showButton: {
     padding: 10,
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     borderRadius: 5,
   },
   showButtonText: {color: 'white', fontSize: 16},
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     color: Color.black,
   },
   button: {
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     padding: 10,
     borderRadius: 5,
     marginTop: 10,

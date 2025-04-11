@@ -6,6 +6,7 @@ import {firebaseApp} from './src/firebaseConfig';
 import {Provider, useSelector, useDispatch} from 'react-redux';
 import {setFcmToken} from './src/redux/user';
 import {store} from './src/redux/Store';
+import SplashScreen from 'react-native-splash-screen'
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -30,10 +31,6 @@ const AppContent = () => {
     }
   };
 
-  useEffect(() => {
-    fetchToken();
-  }, [FCMtoken]);
-
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -57,8 +54,13 @@ const AppContent = () => {
 
   useEffect(() => {
     requestUserPermission();
-  }, []);
+    fetchToken();
+  }, [FCMtoken]);
+
   
+  useEffect(() => {
+    SplashScreen.hide();
+  }, [])
 
   return (
       <RootNavigation />

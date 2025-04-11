@@ -18,7 +18,7 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CalenderHeader from '../../../../Components/CalenderHeader';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import {FetchFoodDiary} from '../../../../Apis/ClientApis/FoodDiaryApi';
 import {useDispatch, useSelector} from 'react-redux';
@@ -148,17 +148,22 @@ const FoodDiary = () => {
         onPressBack={() => navigation.goBack()}
         onPress={() => navigation.navigate('addMeal')}
       /> */}
-      <Header showIcon={false} backIcon={true} screenName='Food diary' iconStyle={{ left: scale(-80)}}  />
+      <Header
+        showIcon={false}
+        backIcon={true}
+        screenName="Food diary"
+        iconStyle={{left: scale(-80)}}
+      />
       <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
-        rightColor={dayOffset === 0 ? Color.txt : Color.primaryGreen}
+        rightColor={dayOffset === 0 ? Color.txt : Color.primaryColor}
         disabled={dayOffset === 0}
         txtFunction={getDateString()}
       />
       {loading ? (
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : diaryData && diaryData?.length > 0 ? (
         <FlatList

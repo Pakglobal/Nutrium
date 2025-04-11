@@ -9,7 +9,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../assets/colors/Colors';
+import {Color} from '../assets/styles/Colors';
 
 const BackHeader = ({
   onPressBack,
@@ -47,7 +47,7 @@ const BackHeader = ({
                     }}>
                     <ActivityIndicator
                       size="small"
-                      color={Color.primaryGreen}
+                      color={Color.primaryColor}
                     />
                   </View>
                 ) : (
@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
   },
   plus: {
     padding: scale(5),
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     borderRadius: scale(20),
   },
   save: {
-    color: Color.primaryGreen,
+    color: Color.primaryColor,
     fontWeight: '600',
     fontSize: scale(15),
   },

@@ -40,11 +40,45 @@ import ShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/ShoppingLi
 import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShoppingList';
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
-import GuestLogin from '../Auth/Login/GuestLogin';
 import InformationScreen from '../Auth/Login/InformationScreen';
+import ClientDrawerContent from './ClientDrawer';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {View} from 'react-native';
+import LoginChoiceScreen from '../Auth/Login/LoginChoiceScreen';
+import OnboardingScreen from './OnboardingScreen';
+import SelectWorkspace from '../Screen/GuestFlow/login/SelectWorkspace';
+import SelectCountry from '../Screen/GuestFlow/login/SelectCountry';
+import GuestLogin from '../Screen/GuestFlow/login/GuestLogin';
+import SelectGender from '../Screen/GuestFlow/login/SelectGender';
+import SelectProfession from '../Screen/GuestFlow/login/SelectProfession';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
+const ClientDrawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
+
+const ClientHomeWithDrawer = () => {
+  return (
+    <View style={{flex: 1}}>
+      <BottomNavigation />
+    </View>
+  );
+};
+
+const ClientDrawerNavigator = () => {
+  return (
+    <ClientDrawer.Navigator
+      drawerContent={props => <ClientDrawerContent {...props} />}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          width: '70%',
+        },
+      }}>
+      <ClientDrawer.Screen name="ClientHome" component={ClientHomeWithDrawer} />
+    </ClientDrawer.Navigator>
+  );
+};
 
 const MyDrawer = () => {
   const [selectedScreen, setSelectedScreen] = useState('MESSAGES');
@@ -90,24 +124,35 @@ const AdminFlowStack = () => (
   </Stack.Navigator>
 );
 
-const AuthStack = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name="loginScreen" component={LoginScreen} />
-    <Stack.Screen name="guestLogin" component={GuestLogin} />
-    <Stack.Screen name="information" component={InformationScreen} />
-    <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-    <Stack.Screen name="registrationType" component={SelectRegistrationType} />
-    <Stack.Screen name="registration" component={Registration} />
-    <Stack.Screen name="unlockAccess" component={UnlockAccess} />
-    <Stack.Screen name="getAccess" component={GetAccess} />
-    <Stack.Screen name="helpForRegistration" component={HelpForRegistration} />
-  </Stack.Navigator>
-);
+const AuthStack = ({route}) => {
+  const {onboardingCompleted} = route.params || {};
+
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      {!onboardingCompleted ? (
+        <Stack.Screen name="onBoarding" component={OnboardingScreen} />
+      ) : null}
+      <Stack.Screen name="loginChoice" component={LoginChoiceScreen} />
+      <Stack.Screen name="loginScreen" component={LoginScreen} />
+      <Stack.Screen name="information" component={InformationScreen} />
+      <Stack.Screen
+        name="registrationType"
+        component={SelectRegistrationType}
+      />
+      <Stack.Screen name="registration" component={Registration} />
+      <Stack.Screen name="unlockAccess" component={UnlockAccess} />
+      <Stack.Screen name="getAccess" component={GetAccess} />
+      <Stack.Screen
+        name="helpForRegistration"
+        component={HelpForRegistration}
+      />
+    </Stack.Navigator>
+  );
+};
 
 const UserFlowStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-    <Stack.Screen name="userFlow" component={HomeScreen} />
+    <Stack.Screen name="ClientDrawer" component={ClientDrawerNavigator} />
     <Stack.Screen name="mainProfile" component={MainProfile} />
     <Stack.Screen name="practitioner" component={Practitioner} />
     <Stack.Screen name="settings" component={Settings} />
@@ -133,26 +178,33 @@ const UserFlowStack = () => (
 );
 
 const GuestStack = () => {
-  const isGuest = useSelector(state => state?.user?.isGuest);
+  const isGuest = useSelector(state => state.user?.guestMode);  
 
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      {isGuest === true ? (
+  if (isGuest) {
+    return (
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="SelectGender" component={SelectGender} />
+        <Stack.Screen name="SelectProfession" component={SelectProfession} />
+        {/* <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} /> */}
+        <Stack.Screen name="SelectCountry" component={SelectCountry} />
+        <Stack.Screen name="GuestLogin" component={GuestLogin} />
         <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-      ) : (
-        <>
-          <Stack.Screen name="guestLogin" component={GuestLogin} />
-          <Stack.Screen name="information" component={InformationScreen} />
-        </>
-      )}
-    </Stack.Navigator>
-  );
+      </Stack.Navigator>
+    );
+  }
+
+  return null;
 };
 
 const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
-  const isGuest = useSelector(state => state.user?.isGuest);
+  const isGuest = useSelector(state => state.user?.guestMode);
+  const onboardingCompleted = useSelector(state => state.user?.isCompleted);
+
+  if (onboardingCompleted === null) {
+    return null;
+  }
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -163,7 +215,11 @@ const MainStack = () => {
       ) : isGuest ? (
         <Stack.Screen name="GuestStack" component={GuestStack} />
       ) : (
-        <Stack.Screen name="AuthStack" component={AuthStack} />
+        <Stack.Screen
+          name="AuthStack"
+          component={AuthStack}
+          initialParams={{onboardingCompleted}}
+        />
       )}
     </Stack.Navigator>
   );

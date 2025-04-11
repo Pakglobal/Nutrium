@@ -10,11 +10,11 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
   GetPhysicalActivities,
@@ -22,7 +22,7 @@ import {
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
 import Header from '../../../../Components/Header';
 
-const LogPhysicalActivity = ({route}) => {
+const LogPhysicalActivity = ({ route }) => {
   const token = route?.params?.plusData?.token;
   const id = route?.params?.plusData?.id;
   const plus = route?.params?.plusData?.press === 'plus';
@@ -101,24 +101,29 @@ const LogPhysicalActivity = ({route}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       {/* <BackHeader
         titleName={'Log physical activity'}
         backText={'Physical activity'}
         onPressBack={() => navigation.goBack()}
         showRightButton={false}
       /> */}
-      <Header
+      {/* <Header
         showIcon={{}}
         backIcon={true}
-        screenName='Physical activity'
-        iconStyle={{ left: scale(-170) }}
+        screenName="Physical activity"
+        iconStyle={{left: scale(-170)}}
         onPress={() =>
           navigation.navigate('logPhysicalActivity', {plusData: plusData})
-        } />
+        }
+      /> */}
 
-      <View style={{marginHorizontal: scale(16)}}>
-        <Text style={styles.topTitle} >Log Physical Activity</Text>
+
+      <Header screenheader={true} screenName={'Physical Activity'}   />
+
+
+      <View style={{ marginHorizontal: scale(16) }}>
+        <Text style={styles.topTitle}>Log Physical Activity</Text>
         <View style={styles.searchContainer}>
           <TextInput
             placeholder="Search for an activity..."
@@ -150,7 +155,7 @@ const LogPhysicalActivity = ({route}) => {
         <FlatList
           data={filteredData}
           ListHeaderComponent={
-            <View style={{marginHorizontal: scale(16)}}>
+            <View style={{ marginHorizontal: scale(16) }}>
               {quickAccessData?.length > 0 && (
                 <View>
                   <Text style={styles.title}>Quick access</Text>
@@ -172,10 +177,10 @@ const LogPhysicalActivity = ({route}) => {
               <Text style={styles.title}>All physical activities</Text>
             </View>
           }
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handlePressItem(item?.activity)}
-              style={{marginHorizontal: scale(16)}}>
+              style={{ marginHorizontal: scale(16) }}>
               <Text style={styles.name}>{item?.activity}</Text>
             </TouchableOpacity>
           )}
@@ -219,13 +224,13 @@ const styles = StyleSheet.create({
       width: 5,
       height: 5,
     },
-marginBottom:scale(10)
+    marginBottom: scale(10),
   },
-  topTitle:{
-    color:Color?.textColor,
-    marginTop:scale(10),
-    fontSize:scale(17),
-    fontWeight:'500'
+  topTitle: {
+    color: Color?.textColor,
+    marginTop: scale(10),
+    fontSize: scale(17),
+    fontWeight: '500',
   },
   inputView: {
     // marginStart: scale(10),
@@ -233,8 +238,7 @@ marginBottom:scale(10)
     fontWeight: '600',
     color: Color.txt,
     width: '85%',
-    marginHorizontal:scale(8)
-
+    marginHorizontal: scale(8),
   },
   clearButton: {
     marginEnd: scale(10),
@@ -245,11 +249,11 @@ marginBottom:scale(10)
     marginBottom: verticalScale(10),
     fontSize: scale(16),
     color: Color.textColor,
-    fontWeight:'500'
+    fontWeight: '500',
   },
   name: {
     fontSize: scale(14),
-    fontWeight:'500',
+    fontWeight: '500',
     paddingVertical: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
@@ -257,7 +261,7 @@ marginBottom:scale(10)
   },
   activity: {
     fontSize: scale(14),
-    fontWeight:'500',
+    fontWeight: '500',
     color: '#675A5A',
     paddingTop: verticalScale(10),
   },

@@ -8,9 +8,9 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {useNavigation} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import {
@@ -153,18 +153,21 @@ const WorkOutDetails = ({ route }) => {
       /> */}
 
 
-      <Header
+      <Header screenheader={true} screenName={'Physical Activity'} plus={false} handleSave={handleSave} />
+
+      {/* <Header
         showIcon={'save'}
         backIcon={true}
-        screenName='Physical activity'
-        iconStyle={{ left: scale(-65) }}
+        screenName="Physical activity"
+        iconStyle={{left: scale(-65)}}
         onSave={handleSave}
         onPress={() =>
-          navigation.navigate('logPhysicalActivity', { plusData: plusData })
-        } />
+          navigation.navigate('logPhysicalActivity', {plusData: plusData})
+        }
+      /> */}
 
       <View style={styles.content}>
-        <Text style={styles.topTitle} >Workout Details</Text>
+        <Text style={styles.topTitle}>Workout Details</Text>
         <Text style={styles.label}>Physical activity</Text>
         <View style={styles.inputContainer}>
           <TextInput
@@ -253,7 +256,7 @@ const styles = StyleSheet.create({
       width: 5,
       height: 5,
     },
-    backgroundColor: Color?.white
+    backgroundColor: Color?.white,
   },
   unit: {
     marginLeft: 5,
@@ -288,7 +291,7 @@ const styles = StyleSheet.create({
       width: 5,
       height: 5,
     },
-    backgroundColor: Color?.white
+    backgroundColor: Color?.white,
   },
   dateText: {
     color: Color.black,
@@ -303,7 +306,7 @@ const styles = StyleSheet.create({
     color: Color?.textColor,
     marginTop: scale(10),
     fontSize: scale(17),
-    fontWeight: '500'
+    fontWeight: '500',
   },
 });
 

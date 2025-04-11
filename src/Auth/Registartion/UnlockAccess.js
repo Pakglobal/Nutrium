@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import SighnUpHeader from '../../Components/SighnUpHeader';
-import Color from '../../assets/colors/Colors';
+import {Color} from '../../assets/styles/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 

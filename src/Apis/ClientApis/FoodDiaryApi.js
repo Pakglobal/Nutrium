@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const FetchFoodDiary = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/food-diary/12123`;
+    const url = `${BASE_URL}food-diary/12123`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -17,7 +18,7 @@ export const FetchFoodDiary = async (token, id) => {
 export const AddMealInFoodDiary = async payload => {
   try {
     const {token, registrationDate, mealType, time, foodId, comments} = payload;
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/food-diary-add-meal/12123`;
+    const url = `${BASE_URL}food-diary-add-meal/12123`;
     const body = {
       registrationDate: registrationDate,
       mealType: mealType,
@@ -40,7 +41,7 @@ export const AddMealInFoodDiary = async payload => {
 
 export const SearchFoodApi = async token => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/search-foods`;
+    const url = `${BASE_URL}search-foods`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -56,7 +57,7 @@ export const DeleteMealInFoodDiary = async payload => {
   try {
     const {token, registrationDate, scheduleId} = payload;
 
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/food-diary/12123/delete-meal-schedule`;
+    const url = `${BASE_URL}food-diary/12123/delete-meal-schedule`;
     const response = await axios.delete(url, {
       headers: {
         Authorization: token,
@@ -75,7 +76,7 @@ export const DeleteMealInFoodDiary = async payload => {
 export const DeleteSpecificMealInFoodDiary = async payload => {
   try {
     const {token, registrationDate, scheduleId, foodIndex} = payload;
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/food-diary/12123/delete-food`;
+    const url = `${BASE_URL}food-diary/12123/delete-food`;
 
     const response = await axios.delete(url, {
       headers: {

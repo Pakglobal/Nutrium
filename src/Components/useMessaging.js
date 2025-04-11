@@ -33,8 +33,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
-import Color from '../assets/colors/Colors';
-import uuid from 'react-native-uuid';
+import {Color} from '../assets/styles/Colors';
 
 const MessageComponent = ({
   userId,
@@ -415,7 +414,7 @@ const MessageComponent = ({
     });
 
     const response = await fetch(
-      'https://nutrium-back-end-1.onrender.com/api/v1/upload',
+      '${BASE_URL}upload',
       {
         method: 'POST',
         body: formData,
@@ -450,7 +449,7 @@ const MessageComponent = ({
           <View style={styles.imageContainer}>
             {isUploading ? (
               <View style={styles.loadingImageContainer}>
-                <ActivityIndicator size="large" color={Color.primaryGreen} />
+                <ActivityIndicator size="large" color={Color.primaryColor} />
               </View>
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
@@ -462,7 +461,7 @@ const MessageComponent = ({
                       <Ionicons
                         name={isSeen ? 'checkmark-done' : 'checkmark'}
                         size={16}
-                        color={isSeen ? Color.primaryGreen : Color.gray}
+                        color={isSeen ? Color.primaryColor : Color.gray}
                         style={styles.readStatus}
                       />
                     )}
@@ -483,7 +482,7 @@ const MessageComponent = ({
                   <Ionicons
                     name={isSeen ? 'checkmark-done' : 'checkmark'}
                     size={16}
-                    color={isSeen ? Color.primaryGreen : Color.gray}
+                    color={isSeen ? Color.primaryColor : Color.gray}
                     style={styles.readStatus}
                   />
                 )}
@@ -535,7 +534,7 @@ const MessageComponent = ({
         <TouchableOpacity style={{ marginHorizontal: scaleSize(16) }}>
           <Feather
             name="info"
-            color={Color.primaryGreen}
+            color={Color.primaryColor}
             size={verticalScale(22)}
           />
         </TouchableOpacity>
@@ -593,7 +592,7 @@ const MessageComponent = ({
               size={20}
               color={
                 text.trim() || (selectedFile && !fileUploading)
-                  ? Color.primaryGreen
+                  ? Color.primaryColor
                   : Color.gray
               }
             />

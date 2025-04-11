@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const Login = async data => {
   try {
@@ -8,8 +9,8 @@ export const Login = async data => {
       deviceToken: data?.deviceToken,
     };
 
-    const url = 'https://nutrium-back-end-1.onrender.com/api/v1/sign_in';
-    const response = await axios.post(url, body);    
+    const url = `${BASE_URL}sign_in`;
+    const response = await axios.post(url, body);
     return response?.data;
   } catch (error) {
     return error?.response?.data;
@@ -23,10 +24,44 @@ export const GoogleLogin = async data => {
       email: data?.email,
       deviceToken: data?.deviceToken,
     };
-    const url = 'https://nutrium-back-end-1.onrender.com/api/v1/verify-google';
-    const response = await axios.post(url, body);    
+    const url = `${BASE_URL}verify-google`;
+    const response = await axios.post(url, body);
     return response?.data;
   } catch (error) {
+    return error?.response?.data;
+  }
+};
+
+
+export const GuestLOGin = async data => {
+
+  console.log('----', data);
+
+
+  try {
+    const body = {
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      email: data?.email,
+      password: data?.password,
+      goal: data?.goal,
+      profession: data?.profession,
+      gender: data?.gender,
+      country: data?.country,
+      phoneNumber: data?.phoneNumber,
+      dateOfBirth: data?.dateOfBirth,
+      deviceToken: data?.deviceToken,
+      isDemoClient: true
+    }
+    console.log('body', body)
+    const url = `${BASE_URL}demo-auth`;
+    const response = await axios.post(url, body);
+    console.log('====', response);
+
+    return response;
+  } catch (error) {
+    console.log('errrrr');
+    
     return error?.response?.data;
   }
 };

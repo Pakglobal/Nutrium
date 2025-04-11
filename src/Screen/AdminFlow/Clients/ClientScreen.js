@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -103,7 +103,7 @@ const ClientScreen = () => {
             alignItems: 'center',
             marginTop: verticalScale(10),
           }}>
-          <ActivityIndicator size="large" color={Color.primaryGreen} />
+          <ActivityIndicator size="large" color={Color.primaryColor} />
         </View>
       ) : (
         <View
@@ -146,7 +146,7 @@ const ClientScreen = () => {
                           marginTop: verticalScale(3),
                         }}>
                         <View style={styles.locationIcon}>
-                          <Entypo name="location" color={Color.primaryGreen} />
+                          <Entypo name="location" color={Color.primaryColor} />
                         </View>
                         <Text style={styles.type}> {item?.workplace}</Text>
                       </View>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     height: scale(40),
     borderRadius: 25,
     marginRight: 10,
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   clientName: {
     fontWeight: '500',

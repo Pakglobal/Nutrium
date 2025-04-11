@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetAllClientData = async token => {
   try {
-    const url = 'https://nutrium-back-end-1.onrender.com/api/v1/client';
+    const url = `${BASE_URL}client`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -16,7 +17,7 @@ export const GetAllClientData = async token => {
 
 export const GetClientData = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/client/${id}`;
+    const url = `${BASE_URL}client/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,

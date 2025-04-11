@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../assets/colors/Colors';
+import {Color} from '../../assets/styles/Colors';
 
 const TypesCard = ({item, selectedOption, onSelect}) => {
   const handleSelect = () => {

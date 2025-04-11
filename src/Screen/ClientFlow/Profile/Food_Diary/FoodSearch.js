@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {SearchFoodApi} from '../../../../Apis/ClientApis/FoodDiaryApi';
@@ -75,7 +75,7 @@ const FoodSearch = () => {
             <AntDesign
               name="closecircle"
               size={verticalScale(22)}
-              color={Color.primaryGreen}
+              color={Color.primaryColor}
             />
           </Pressable>
         </View>

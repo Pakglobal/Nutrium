@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, Button} from 'react-native';
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Color from '../../assets/colors/Colors';
+import {Color} from '../../assets/styles/Colors';
 import SighnUpHeader from '../../Components/SighnUpHeader';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';

@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
 
 const ClientProfileScreen = ({route}) => {
@@ -166,7 +166,7 @@ const ClientProfileScreen = ({route}) => {
                 styles.optionText,
                 {
                   borderBottomColor:
-                    item?.id === selected ? Color.primaryGreen : Color.black,
+                    item?.id === selected ? Color.primaryColor : Color.black,
                   borderBottomWidth: item?.id === selected ? 2 : 0,
                   color: item?.id === selected ? Color.black : Color.gray,
                 },
@@ -186,7 +186,7 @@ const ClientProfileScreen = ({route}) => {
                   <Ionicons
                     name={item?.icon}
                     size={scaleSize(20)}
-                    color={Color.primaryGreen}
+                    color={Color.primaryColor}
                   />
                 </View>
                 <View style={styles.textContainer}>
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   header: {
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
     paddingVertical: verticalScale(20),
     paddingHorizontal: scaleSize(16),
   },
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     height: scaleSize(40),
     borderRadius: 25,
     marginRight: 10,
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   image: {
     width: scaleSize(200),

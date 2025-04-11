@@ -1,56 +1,3 @@
-// import React from 'react';
-// import {
-//   View,
-//   TouchableOpacity,
-//   LogBox,
-//   Text,
-//   StyleSheet,
-//   SafeAreaView,
-//   Pressable,
-// } from 'react-native';
-// import {scale, verticalScale} from 'react-native-size-matters';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import NutriumLogo from '../assets/Icon/NutriumLogo.svg';
-// import Color from '../assets/colors/Colors';
-
-// const Header = ({headerText, showIcon}) => {
-//   return (
-//     <SafeAreaView style={{backgroundColor: Color.common}}>
-//       <View
-//         style={{
-//           alignItems: 'flex-end',
-//           flexDirection: 'row',
-//           justifyContent: 'space-between',
-//           marginVertical: verticalScale(12),
-//         }}>
-//         <NutriumLogo height={scale(25)} width={scale(150)} />
-//         {showIcon === true ? (
-//           <Pressable style={{marginHorizontal: scale(16)}}>
-//             <MaterialCommunityIcons
-//               name="email-outline"
-//               color={Color.gray}
-//               size={scale(22)}
-//             />
-//           </Pressable>
-//         ) : null}
-//       </View>
-//       {headerText ? <Text style={styles.titleTxt}>{headerText}</Text> : null}
-//     </SafeAreaView>
-//   );
-// };
-
-// export default Header;
-// const styles = StyleSheet.create({
-//   titleTxt: {
-//     fontSize: scale(19),
-//     color: Color.black,
-//     fontWeight: '600',
-//     marginTop: verticalScale(25),
-//     marginBottom: verticalScale(10),
-//     marginHorizontal: scale(16),
-//   },
-// });
-
 import React from 'react';
 import {
   View,
@@ -62,26 +9,27 @@ import {
   Pressable,
   Image,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Color } from '../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
+import Logo from '../assets/Images/logoWhite.svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Color, {Font} from '../assets/colors/Colors';
-import {useNavigation} from '@react-navigation/native';
-import Logo from '../assets/Icon/logo.svg';
-import Menu from '../assets/Icon/menu.svg';
-import {Shadow} from 'react-native-shadow-2';
+
+import { Shadow } from 'react-native-shadow-2';
+import IconStyle, { IconPadding } from '../assets/styles/Icon';
+import { Font } from '../assets/styles/Fonts';
+import { ShadowValues } from '../assets/styles/Shadow';
 
 const Header = ({
-  headerText,
-  showIcon,
-  backIcon,
-  logo,
   screenName,
-  iconStyle,
-  onPress,
-  onSave,
   logoHeader,
   screenheader,
+  handlePlus,
+  plus,
+  handleMenu,
+  handleSave
 }) => {
   const navigation = useNavigation();
   return (
@@ -89,9 +37,9 @@ const Header = ({
       {logoHeader && (
         <>
           <Shadow
-            distance={4}
-            startColor={'rgba(0,0,0,0.25)'}
-            style={{width: '100%'}}>
+            distance={ShadowValues.distance}
+            startColor={ShadowValues.blackShadow}
+            style={{ width: '100%' }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -101,61 +49,97 @@ const Header = ({
                 paddingVertical: verticalScale(15),
                 borderBottomLeftRadius: scale(12),
                 borderBottomRightRadius: scale(12),
+                marginHorizontal: scale(8),
               }}>
               <Logo />
-              <Menu />
+              <TouchableOpacity onPress={handleMenu} style={{}}>
+                <MaterialCommunityIcons
+                  style={IconPadding}
+                  name="menu"
+                  color={Color.white}
+                  size={24}
+                />
+              </TouchableOpacity>
             </View>
           </Shadow>
         </>
       )}
-      
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          padding: scale(10),
-          paddingVertical: verticalScale(15)
-        }}>
-        {backIcon ? <TouchableOpacity style={{ alignSelf: "center" }} onPress={() => navigation.goBack()} >
-          <AntDesign name='arrowleft' size={20} color={Color?.white} style={{ alignSelf: 'center' }} />
-        </TouchableOpacity> : null}
-        {screenName ? <Text style={[styles.titleTxt, iconStyle]}>{screenName}</Text> : null}
-        {logo ? <Image source={require('../../src/assets/Images/LOGO.png')} style={{ height: scale(25), width: '40%' }} resizeMode='contain' /> : null}
-        {showIcon === true ? (
-          <Pressable style={{ alignSelf: "center" }}>
-            <Entypo name="menu" color={Color?.white} size={scale(22)} />
-          </Pressable>
-        ) : showIcon === false ? (
-          <TouchableOpacity style={{ alignSelf: "center" }} onPress={onPress}>
-            <AntDesign name="pluscircle" color={Color?.white} size={scale(22)} />
-          </TouchableOpacity>
-        ) : showIcon == 'save' ? (
-          <TouchableOpacity onPress={onSave} >
-            <Text style={styles.titleTxt}>save</Text>
-          </TouchableOpacity>
-        ) : null}
+      {screenheader && (
+        <>
+          <Shadow
+            distance={ShadowValues.distance}
+            startColor={ShadowValues.blackShadow}
+            style={{ width: '100%' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingVertical: verticalScale(8),
+                borderBottomLeftRadius: scale(12),
+                borderBottomRightRadius: scale(12),
+                marginHorizontal: scale(8),
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{ padding: scale(5), alignSelf: "center" }}>
+                  <AntDesign
+                    name="arrowleft"
+                    size={IconStyle.drawerIconSize}
+                    color={Color.white}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.screenName}>{screenName}</Text>
+              </View>
 
-      </View>
-      {headerText ? <Text style={styles.titleTxt}>{headerText}</Text> : null} */}
+              {
+                plus == true ?
+                  <TouchableOpacity
+                    onPress={handlePlus}
+                    style={{ padding: scale(8) }}>
+                    <AntDesign
+                      name="pluscircle"
+                      size={IconStyle.headerIconSize}
+                      color={Color.white}
+                    />
+                  </TouchableOpacity> : plus == false ?
+                    <TouchableOpacity
+                      onPress={handleSave}
+                      style={{ padding: scale(8) }}>
+                      <Text style={styles.saveStyle} >Save</Text>
+                    </TouchableOpacity> : <></>
+              }
+
+            </View>
+          </Shadow>
+        </>
+      )}
     </SafeAreaView>
   );
 };
 
 export default Header;
 const styles = StyleSheet.create({
-  titleTxt: {
-    fontSize: scale(18),
-    color: Color.white,
-    fontWeight: '500',
-    fontFamily: Font?.Sofia,
-  },
   header: {
     backgroundColor: Color?.primaryColor,
     borderBottomLeftRadius: scale(12),
     borderBottomRightRadius: scale(12),
     shadowColor: Color?.black,
     shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
   },
+  screenName: {
+    fontSize: scale(18),
+    fontWeight: '500',
+    fontFamily: Font.Poppins,
+    color: Color.white,
+  },
+  saveStyle: {
+    color: Color?.white,
+    fontSize: scale(18),
+    fontWeight: '500',
+    fontFamily: Font.Poppins,
+  }
 });

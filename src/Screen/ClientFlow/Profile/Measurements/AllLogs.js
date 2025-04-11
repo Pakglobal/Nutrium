@@ -4,7 +4,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {format} from 'date-fns';
 import BackHeader from '../../../../Components/BackHeader';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 
 const AllLogs = () => {
   const route = useRoute();

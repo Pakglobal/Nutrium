@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const SetPhysicalActivityDetails = async payload => {
   try {
     const {id, time, token, activity, byactivity, timeunit} = payload;
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/clientSidePhysicalActivity/${id}`;
+    const url = `${BASE_URL}clientSidePhysicalActivity/${id}`;
     const body = {
       physicalActivity: [
         {
@@ -29,7 +30,7 @@ export const SetPhysicalActivityDetails = async payload => {
 
 export const GetPhysicalActivityDetails = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/client-physical-activity/${id}`;
+    const url = `${BASE_URL}client-physical-activity/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -44,7 +45,7 @@ export const GetPhysicalActivityDetails = async (token, id) => {
 export const DeletePhysicalActivity = async payload => {
   try {
     const {clientId, activityId, token} = payload;
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/delete-physical-activity/${clientId}/${activityId}`;
+    const url = `${BASE_URL}delete-physical-activity/${clientId}/${activityId}`;
 
     const response = await axios.delete(url, {
       headers: {
@@ -70,7 +71,7 @@ export const UpdatePhysicalActivity = async payload => {
       activity,
     } = payload;
 
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/update-physical-activity/${clientId}/${activityId}`;
+    const url = `${BASE_URL}update-physical-activity/${clientId}/${activityId}`;
     const body = {
       time: time,
       timeunit: timeunit,
@@ -93,7 +94,7 @@ export const UpdatePhysicalActivity = async payload => {
 
 export const GetPhysicalActivities = async () => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/activities`;
+    const url = `${BASE_URL}activities`;
     const response = await axios.get(url);
     return response?.data;
   } catch (error) {
@@ -103,7 +104,7 @@ export const GetPhysicalActivities = async () => {
 
 export const GetQuickAccess = async (token, id) => {
   try {
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/get-quick-access-activity/${id}`;
+    const url = `${BASE_URL}get-quick-access-activity/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -119,7 +120,7 @@ export const GetQuickAccess = async (token, id) => {
 export const SetQuickAccess = async payload => {
   try {
     const {id, time, token, timeunit, byactivity, activity} = payload;
-    const url = `https://nutrium-back-end-1.onrender.com/api/v1/recommendations/${id}`;
+    const url = `${BASE_URL}recommendations/${id}`;
     const body = {
       physicalActivity: [
         {

@@ -1036,8 +1036,13 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
-        navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
+      <Header
+        screenheader={true}
+        screenName={'Water intake'}
+        handlePlus={() =>
+          navigation.navigate('waterIntakeLog', {plusData: plusData})
+        }
+      />
 
       <ScrollView
         horizontal
@@ -1283,7 +1288,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: verticalScale(4),
     color: Color.textColor,
-    fontFamily: Font.Poppins
+    fontFamily: Font.Poppins,
   },
   statLabel: {
     fontSize: scale(16),

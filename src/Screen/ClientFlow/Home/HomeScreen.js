@@ -22,7 +22,7 @@ import { GetUserApi } from '../../../Apis/ClientApis/ProfileApi';
 import { GetAppointmentByClientId } from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
-import { ShadowValues } from '../../../assets/styles/Shadow';
+import {ShadowValues} from '../../../assets/styles/Shadow';
 
 const HomeScreen = () => {
   const navigation = useNavigation();

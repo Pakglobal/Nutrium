@@ -13,7 +13,7 @@ import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
-import { Font } from '../../../assets/styles/Fonts';
+import {Font} from '../../../assets/styles/Fonts';
 
 const SelectWorkspace = ({ route }) => {
   const navigation = useNavigation();

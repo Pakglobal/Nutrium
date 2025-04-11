@@ -17,7 +17,7 @@ import IconStyle, {
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
 import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
@@ -26,13 +26,13 @@ import {setGuestMode} from '../../../redux/user';
 import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
 import {ShadowValues} from '../../../assets/styles/Shadow';
+import useAndroidBack from '../../../Navigation/useAndroidBack';
 
 const SelectGender = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [selectedGender, setSelectedGender] = useState(null);
-  
-
+  useAndroidBack();
   const handleSelect = gender => {
     setSelectedGender(gender);
   };
@@ -46,28 +46,26 @@ const SelectGender = () => {
       );
       return;
     }
-    navigation.navigate('SelectProfession',{gender:selectedGender});
+    navigation.navigate('SelectProfession', {gender: selectedGender});
   };
 
-  useEffect(() => {
-    const backAction = () => {
-      dispatch(setGuestMode());
-      return true; // Prevent default behavior (exit)
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove(); // Clean up
-  }, []);
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     // dispatch(setGuestMode());
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={Progress.selectGender} />
 
-      <LeftIcon onGoBack={() => dispatch(setGuestMode())} />
+      <LeftIcon onGoBack={() => navigation.goBack()} />
 
       <LoginHeader height={'45%'} width={'100%'} style={{marginTop: 50}} />
 

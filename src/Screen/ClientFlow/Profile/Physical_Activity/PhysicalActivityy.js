@@ -504,8 +504,7 @@
 //   },
 // });
 
-
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -516,30 +515,32 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import CalenderHeader from '../../../../Components/CalenderHeader';
-import { Color } from '../../../../assets/styles/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import PhysicalActivity from '../../../../Components/PhysicalActivity';
-import { useStepTracking } from '../../../../Components/StepTrackingService';
+import {useStepTracking} from '../../../../Components/StepTrackingService';
 import {
   DeletePhysicalActivity,
   GetPhysicalActivityDetails,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
-import { Shadow } from 'react-native-shadow-2';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
+import {Shadow} from 'react-native-shadow-2';
+import {ShadowValues} from '../../../../assets/styles/Shadow';
 
 const PhysicalActivityScreen = () => {
   const navigation = useNavigation();
-  const { steps, calories, workouts, currentDay } = useStepTracking();
+  const {steps, calories, workouts, currentDay} = useStepTracking();
 
   const [dayOffset, setDayOffset] = useState(0);
-  const [physicalActivity, setPhysicalActivity] = useState({ physicalActivity: [] });
+  const [physicalActivity, setPhysicalActivity] = useState({
+    physicalActivity: [],
+  });
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -595,7 +596,7 @@ const PhysicalActivityScreen = () => {
   useFocusEffect(
     useCallback(() => {
       fetchPhysicalActivityData();
-    }, [fetchPhysicalActivityData])
+    }, [fetchPhysicalActivityData]),
   );
 
   const formatDate = date => {
@@ -634,7 +635,7 @@ const PhysicalActivityScreen = () => {
   };
 
   const handleDelete = async () => {
-    setModalVisible(false)
+    setModalVisible(false);
 
     if (!selectedEntry?.id) {
       showToast('No entry selected for deletion');
@@ -684,7 +685,7 @@ const PhysicalActivityScreen = () => {
     });
   }, [physicalActivity, dayOffset]);
 
-  const sortActivitiesByDate = useCallback((activities) => {
+  const sortActivitiesByDate = useCallback(activities => {
     if (!activities?.length) return [];
 
     return [...activities].sort((a, b) => {
@@ -694,7 +695,7 @@ const PhysicalActivityScreen = () => {
 
   const physicalActivityData = sortActivitiesByDate(filterActivitiesByWeek());
 
-  const handleSelectEntry = (item) => {
+  const handleSelectEntry = item => {
     setSelectedEntry({
       id: item?._id,
       activity: item?.activity,
@@ -710,10 +711,10 @@ const PhysicalActivityScreen = () => {
       token,
       id,
     };
-    navigation.navigate('logPhysicalActivity', { plusData });
+    navigation.navigate('logPhysicalActivity', {plusData});
   };
 
-  const renderActivityItem = ({ item }) => (
+  const renderActivityItem = ({item}) => (
     // <Shadow
     //   distance={4}
     //   startColor={'rgba(0, 0, 0, 0.1)'}
@@ -733,8 +734,7 @@ const PhysicalActivityScreen = () => {
         </View>
         <TouchableOpacity
           style={styles.menuButton}
-          onPress={() => handleSelectEntry(item)}
-        >
+          onPress={() => handleSelectEntry(item)}>
           <Icon name="dots-vertical" size={20} color={Color.gray} />
         </TouchableOpacity>
       </View>
@@ -755,8 +755,7 @@ const PhysicalActivityScreen = () => {
       transparent={true}
       visible={modalVisible}
       animationType="fade"
-      onRequestClose={() => setModalVisible(false)}
-    >
+      onRequestClose={() => setModalVisible(false)}>
       <View style={styles.modalOptionContainer}>
         <View style={styles.modalOptionContent}>
           <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
@@ -765,16 +764,12 @@ const PhysicalActivityScreen = () => {
           <TouchableOpacity
             style={styles.modalOption}
             onPress={handleDelete}
-            disabled={deleteLoading}
-          >
-
+            disabled={deleteLoading}>
             <Text style={styles.modalText}>Delete</Text>
-
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.modalOption}
-            onPress={() => setModalVisible(false)}
-          >
+            onPress={() => setModalVisible(false)}>
             <Text style={styles.modalText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -804,10 +799,8 @@ const PhysicalActivityScreen = () => {
           <Shadow
             distance={ShadowValues.distance}
             startColor={ShadowValues.color}
-            style={styles.fullWidth}
-          >
+            style={styles.fullWidth}>
             <View style={styles.shadow}>
-
               <PhysicalActivity noData={true} />
             </View>
           </Shadow>
@@ -891,7 +884,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     borderWidth: 1,
     borderColor: Color?.gray,
-    marginTop: scale(5)
+    marginTop: scale(5),
   },
   entryLeftSection: {
     width: '65%',

@@ -4,7 +4,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
-import { Font } from '../assets/styles/Fonts';
+import {Font} from '../assets/styles/Fonts';
 
 const CalenderHeader = ({
   onPressLeft,
@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(12),
     color: Color.black,
     fontWeight: '600',
-    fontFamily:Font?.Poppins
+    fontFamily: Font?.Poppins,
   },
 });

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL } from '../Base_Url/Baseurl';
+import {BASE_URL} from '../Base_Url/Baseurl';
 
 export const Login = async data => {
   try {
@@ -32,11 +32,8 @@ export const GoogleLogin = async data => {
   }
 };
 
-
 export const GuestLOGin = async data => {
-
   console.log('----', data);
-
 
   try {
     const body = {
@@ -51,9 +48,9 @@ export const GuestLOGin = async data => {
       phoneNumber: data?.phoneNumber,
       dateOfBirth: data?.dateOfBirth,
       deviceToken: data?.deviceToken,
-      isDemoClient: true
-    }
-    console.log('body', body)
+      isDemoClient: true,
+    };
+    console.log('body', body);
     const url = `${BASE_URL}demo-auth`;
     const response = await axios.post(url, body);
     console.log('====', response);
@@ -61,7 +58,7 @@ export const GuestLOGin = async data => {
     return response;
   } catch (error) {
     console.log('errrrr');
-    
+
     return error?.response?.data;
   }
 };

@@ -133,7 +133,10 @@ const AuthStack = ({route}) => {
         <Stack.Screen name="onBoarding" component={OnboardingScreen} />
       ) : null}
       <Stack.Screen name="loginChoice" component={LoginChoiceScreen} />
+      <Stack.Screen name="GuestFlow" component={GuestStack} />
+      <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen name="loginScreen" component={LoginScreen} />
+
       <Stack.Screen name="information" component={InformationScreen} />
       <Stack.Screen
         name="registrationType"
@@ -178,22 +181,22 @@ const UserFlowStack = () => (
 );
 
 const GuestStack = () => {
-  const isGuest = useSelector(state => state.user?.guestMode);  
+  // const isGuest = useSelector(state => state.user?.guestMode);
 
-  if (isGuest) {
-    return (
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="SelectGender" component={SelectGender} />
-        <Stack.Screen name="SelectProfession" component={SelectProfession} />
-        {/* <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} /> */}
-        <Stack.Screen name="SelectCountry" component={SelectCountry} />
-        <Stack.Screen name="GuestLogin" component={GuestLogin} />
-        <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-      </Stack.Navigator>
-    );
-  }
+  // if (isGuest) {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="SelectGender" component={SelectGender} />
+      <Stack.Screen name="SelectProfession" component={SelectProfession} />
+      {/* <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} /> */}
+      <Stack.Screen name="SelectCountry" component={SelectCountry} />
+      <Stack.Screen name="GuestLogin" component={GuestLogin} />
+      <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+    </Stack.Navigator>
+  );
+  // }
 
-  return null;
+  // return null;
 };
 
 const MainStack = () => {
@@ -212,8 +215,6 @@ const MainStack = () => {
         <Stack.Screen name="AdminFlow" component={AdminFlowStack} />
       ) : role === 'Client' ? (
         <Stack.Screen name="UserFlow" component={UserFlowStack} />
-      ) : isGuest ? (
-        <Stack.Screen name="GuestStack" component={GuestStack} />
       ) : (
         <Stack.Screen
           name="AuthStack"

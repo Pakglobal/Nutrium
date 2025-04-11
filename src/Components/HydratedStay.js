@@ -24,8 +24,8 @@ import Drop from '../assets/Images/drop.svg';
 import Bottle from '../assets/Images/bottel.svg';
 import Glass from '../assets/Images/glass.svg';
 import {Shadow} from 'react-native-shadow-2';
-import { Font } from '../assets/styles/Fonts';
-import { ShadowValues } from '../assets/styles/Shadow';
+import {Font} from '../assets/styles/Fonts';
+import {ShadowValues} from '../assets/styles/Shadow';
 
 const HydratedStay = () => {
   const navigation = useNavigation();
@@ -384,7 +384,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.white,
 
     justifyContent: 'center',
-
 
     borderWidth: scale(1),
     borderColor: Color?.primaryColor,

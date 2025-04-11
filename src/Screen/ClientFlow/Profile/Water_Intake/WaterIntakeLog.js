@@ -22,9 +22,9 @@ import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
-import { Shadow } from 'react-native-shadow-2';
-import { Font } from '../../../../assets/styles/Fonts';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
+import {Shadow} from 'react-native-shadow-2';
+import {Font} from '../../../../assets/styles/Fonts';
+import {ShadowValues} from '../../../../assets/styles/Shadow';
 
 const WaterIntakeLog = ({route}) => {
   const navigation = useNavigation();
@@ -227,45 +227,43 @@ const WaterIntakeLog = ({route}) => {
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%' }}>
-
+            style={{width: '100%'}}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(200)}>
               <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+              <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
                 <View style={[styles.plusIcon]}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
                     style={{
-                      alignItems: "center",
-                      alignSelf: 'center'
+                      alignItems: 'center',
+                      alignSelf: 'center',
                     }}
                     size={verticalScale(15)}
                   />
                 </View>
                 <Text style={styles.waterTxt}>{'200mL'}</Text>
               </View>
-
             </TouchableOpacity>
           </Shadow>
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
+            style={{width: '100%'}}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(300)}>
               <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                <View style={[styles.plusIcon, { right: scale(-0.5) }]}>
+              <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+                <View style={[styles.plusIcon, {right: scale(-0.5)}]}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
                     style={{
-                      alignItems: "center",
-                      alignSelf: 'center'
+                      alignItems: 'center',
+                      alignSelf: 'center',
                     }}
                     size={verticalScale(15)}
                   />
@@ -277,19 +275,19 @@ const WaterIntakeLog = ({route}) => {
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
+            style={{width: '100%'}}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(500)}>
               <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+              <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
                 <View style={styles.plusIcon}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
                     style={{
-                      alignItems: "center",
-                      alignSelf: 'center'
+                      alignItems: 'center',
+                      alignSelf: 'center',
                     }}
                     size={verticalScale(15)}
                   />
@@ -301,24 +299,30 @@ const WaterIntakeLog = ({route}) => {
         </View>
 
         <Text style={styles.label}>Date</Text>
-        <View style={{ marginHorizontal: scale(2) }}>
+        <View style={{marginHorizontal: scale(2)}}>
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
-
-            <View style={styles.pickerButton} >
-              <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
-              <TouchableOpacity
-                style={{}}
-                onPress={() => setDateOpen(true)}>
-                <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
+            style={{width: '100%'}}>
+            <View style={styles.pickerButton}>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontWeight: '500',
+                  fontSize: scale(13),
+                }}>
+                {date.toLocaleDateString()}
+              </Text>
+              <TouchableOpacity style={{}} onPress={() => setDateOpen(true)}>
+                <MaterialCommunityIcons
+                  name="calendar-month"
+                  color={Color?.primaryColor}
+                  size={20}
+                />
               </TouchableOpacity>
             </View>
           </Shadow>
         </View>
-
-
 
         <DatePicker
           modal
@@ -336,15 +340,18 @@ const WaterIntakeLog = ({route}) => {
 
         <Text style={styles.label}>Hour</Text>
 
-
-        <View style={{ marginHorizontal: scale(2), marginBottom: scale(10) }}>
+        <View style={{marginHorizontal: scale(2), marginBottom: scale(10)}}>
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
-
-            <View style={[styles.pickerButton, {}]} >
-              <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>
+            style={{width: '100%'}}>
+            <View style={[styles.pickerButton, {}]}>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontWeight: '500',
+                  fontSize: scale(13),
+                }}>
                 {time
                   ?.toLocaleTimeString('en-US', {
                     hour: 'numeric',
@@ -354,10 +361,12 @@ const WaterIntakeLog = ({route}) => {
                   ?.replace(/\s+/g, ' ')
                   ?.trim()}
               </Text>
-              <TouchableOpacity
-                style={{}}
-                onPress={() => setTimeOpen(true)}>
-                <MaterialCommunityIcons name='clock-time-four-outline' color={Color?.primaryColor} size={20} />
+              <TouchableOpacity style={{}} onPress={() => setTimeOpen(true)}>
+                <MaterialCommunityIcons
+                  name="clock-time-four-outline"
+                  color={Color?.primaryColor}
+                  size={20}
+                />
               </TouchableOpacity>
             </View>
           </Shadow>
@@ -395,8 +404,8 @@ const styles = StyleSheet.create({
     fontSize: scale(17),
     color: Color?.textColor,
     marginTop: verticalScale(20),
-    fontWeight: "500",
-    fontFamily: Font?.Poppins
+    fontWeight: '500',
+    fontFamily: Font?.Poppins,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -429,10 +438,10 @@ const styles = StyleSheet.create({
   pickerButton: {
     padding: scale(10),
     borderRadius: scale(8),
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     backgroundColor: Color?.white,
-    width: "100%",
+    width: '100%',
     alignSelf: 'center',
   },
   errorText: {
@@ -467,13 +476,12 @@ const styles = StyleSheet.create({
   },
   plusIcon: {
     backgroundColor: '#68A16C4D',
-    position: "absolute",
+    position: 'absolute',
     top: scale(-20),
     height: scale(18),
     width: scale(18),
     borderTopRightRadius: scale(7),
     borderBottomLeftRadius: scale(5),
-    justifyContent: "center",
-
-  }
+    justifyContent: 'center',
+  },
 });

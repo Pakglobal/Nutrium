@@ -13,12 +13,10 @@ import {useStepTracking} from './StepTrackingService';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
-import { Font } from '../assets/styles/Fonts';
-import { ShadowValues } from '../assets/styles/Shadow';
+import {Font} from '../assets/styles/Fonts';
+import {ShadowValues} from '../assets/styles/Shadow';
 
-const PhysicalActivity = ({style,header,subHeader,
-  bottomButton,noData
-}) => {
+const PhysicalActivity = ({style, header, subHeader, bottomButton, noData}) => {
   const navigation = useNavigation();
   const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
 
@@ -51,7 +49,7 @@ const PhysicalActivity = ({style,header,subHeader,
       marginHorizontal: scale(16),
     },
     cardContainer: {
-      height: noData ? verticalScale(70):verticalScale(110),
+      height: noData ? verticalScale(70) : verticalScale(110),
     },
     cardOverlay: {
       width: '100%',
@@ -128,27 +126,22 @@ const PhysicalActivity = ({style,header,subHeader,
   return (
     <View style={[styles.workoutContainer, style]}>
       <View style={styles.cardContainer}>
-        <View
-          style={[
-            styles.cardOverlay,
-          ]}>
+        <View style={[styles.cardOverlay]}>
           <View style={{}}>
-            {
-              header && 
-            <Text style={[styles.description, {fontSize: scale(16)}]}>
-              Your physical activity
-            </Text>
-            }
-            {
-              subHeader &&
+            {header && (
+              <Text style={[styles.description, {fontSize: scale(16)}]}>
+                Your physical activity
+              </Text>
+            )}
+            {subHeader && (
               <Text
-              style={[
-                styles.description,
-                {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
-              ]}>
-              Workouts this week
-            </Text>
-            }
+                style={[
+                  styles.description,
+                  {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
+                ]}>
+                Workouts this week
+              </Text>
+            )}
             <View style={{}}>
               <View
                 style={{
@@ -190,7 +183,6 @@ const PhysicalActivity = ({style,header,subHeader,
 
       <View
         style={[
-        
           {
             flexDirection: 'row',
             alignItems: 'center',
@@ -232,47 +224,43 @@ const PhysicalActivity = ({style,header,subHeader,
         </View>
       </View>
 
-      {
-        bottomButton &&
-      <View style={{marginTop:scale(10)}}>
-        <Shadow
-          distance={ShadowValues.blackShadowDistance}
-          startColor={ShadowValues.blackShadow}
-          style={{width: '100%'}}>
-          <View
-            style={{
-              borderRadius: scale(5),
-              backgroundColor: Color?.white,
-            }}>
-            <Pressable
-              style={styles.logButton}
-              onPress={() => navigation.navigate('physicalActivity')}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  padding: scale(6),
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <Text style={styles.waterText}>
-                  See All Physical Activity Stats
-                </Text>
-                <Entypo
-                  name="chevron-right"
-                  size={24}
-                  color={Color.primaryColor}
-                />
-              </View>
-            </Pressable>
-          </View>
-        </Shadow>
-      </View>
-      }
-
+      {bottomButton && (
+        <View style={{marginTop: scale(10)}}>
+          <Shadow
+            distance={ShadowValues.blackShadowDistance}
+            startColor={ShadowValues.blackShadow}
+            style={{width: '100%'}}>
+            <View
+              style={{
+                borderRadius: scale(5),
+                backgroundColor: Color?.white,
+              }}>
+              <Pressable
+                style={styles.logButton}
+                onPress={() => navigation.navigate('physicalActivity')}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    padding: scale(6),
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.waterText}>
+                    See All Physical Activity Stats
+                  </Text>
+                  <Entypo
+                    name="chevron-right"
+                    size={24}
+                    color={Color.primaryColor}
+                  />
+                </View>
+              </Pressable>
+            </View>
+          </Shadow>
+        </View>
+      )}
     </View>
   );
 };
 
 export default PhysicalActivity;
-
-

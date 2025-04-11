@@ -32,7 +32,7 @@ import {
 } from '../Apis/ClientApis/RecommendationApi';
 import {GetUserApi} from '../Apis/ClientApis/ProfileApi';
 import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
-import { Font } from '../assets/styles/Fonts';
+import {Font} from '../assets/styles/Fonts';
 
 const ClientDrawerContent = props => {
   const {navigation} = props;

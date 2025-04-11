@@ -51,7 +51,7 @@ export const {
   setGuestMode,
   guestLoginData,
   completeOnboarding,
-  resetOnboarding
+  resetOnboarding,
 } = userSlice.actions;
 
 export default userSlice.reducer;

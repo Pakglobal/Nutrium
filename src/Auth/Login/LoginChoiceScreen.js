@@ -1,4 +1,10 @@
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import HeaderImage from '../../assets/Images/loginChoiceHeader.svg';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
@@ -7,7 +13,7 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {setGuestMode} from '../../redux/user';
-import { Font } from '../../assets/styles/Fonts';
+import {Font} from '../../assets/styles/Fonts';
 
 const LoginChoiceScreen = () => {
   const navigation = useNavigation();
@@ -34,7 +40,8 @@ const LoginChoiceScreen = () => {
 
       <View style={{paddingHorizontal: scale(16)}}>
         <Text style={styles.text}>
-          Nutrium provides personalized meal plans and diet tracking for a healthier lifestyle.
+          Nutrium provides personalized meal plans and diet tracking for a
+          healthier lifestyle.
         </Text>
       </View>
 
@@ -54,11 +61,15 @@ const LoginChoiceScreen = () => {
 
         <TouchableOpacity
           onPress={() => {
-            dispatch(setGuestMode(true));
+            navigation.navigate('GuestFlow');
           }}
           style={[
             styles.button,
-            {backgroundColor: Color.white, borderWidth: 2, marginTop: verticalScale(8)},
+            {
+              backgroundColor: Color.white,
+              borderWidth: 2,
+              marginTop: verticalScale(8),
+            },
           ]}>
           <Text style={[styles.buttonText, {color: Color.primaryColor}]}>
             Continue As Guest
@@ -79,7 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Font.Poppins,
     textAlign: 'center',
-    lineHeight: scale(22)
+    lineHeight: scale(22),
   },
   buttonText: {
     fontSize: scale(14),

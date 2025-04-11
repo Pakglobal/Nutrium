@@ -1,4 +1,3 @@
-
 import React, {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -41,7 +40,6 @@ const MainProfile = ({route}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [fullscreenImageVisible, setFullscreenImageVisible] = useState(false);
-
 
   const handleImageSelect = async imageResponse => {
     if (imageResponse) {

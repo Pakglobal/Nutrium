@@ -5,20 +5,21 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  BackHandler,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { Color } from '../../../assets/styles/Colors';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {Color} from '../../../assets/styles/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import { useNavigation } from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectProfession.svg';
-import { Shadow } from 'react-native-shadow-2';
+import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -26,16 +27,15 @@ import {setGuestMode} from '../../../redux/user';
 import {useDispatch} from 'react-redux';
 import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
+import useAndroidBack from '../../../Navigation/useAndroidBack';
 
-const SelectProfession = ({ route }) => {
+const SelectProfession = ({route}) => {
   const navigation = useNavigation();
   const [profession, setProfession] = useState(null);
   const [goal, setGoal] = useState(null);
-  const Gender = route?.params?.gender
-  const selectedGoal = { goal, profession, Gender }
-
-
-
+  const Gender = route?.params?.gender;
+  const selectedGoal = {goal, profession, Gender};
+  useAndroidBack();
   const professions = [
     {
       id: 'student',
@@ -84,10 +84,10 @@ const SelectProfession = ({ route }) => {
   ];
 
   const goals = [
-    { id: 'weight_loss', label: 'Weight Loss' },
-    { id: 'muscle_gain', label: 'Muscle Gain' },
-    { id: 'maintain_weight', label: 'Maintain Weight' },
-    { id: 'better_digestion', label: 'Better Digestion' },
+    {id: 'weight_loss', label: 'Weight Loss'},
+    {id: 'muscle_gain', label: 'Muscle Gain'},
+    {id: 'maintain_weight', label: 'Maintain Weight'},
+    {id: 'better_digestion', label: 'Better Digestion'},
   ];
 
   const handleNavigation = () => {
@@ -102,7 +102,7 @@ const SelectProfession = ({ route }) => {
       }
 
       Alert.alert('Selection Required', message, [
-        { text: 'OK', style: 'cancel' },
+        {text: 'OK', style: 'cancel'},
       ]);
       return;
     }

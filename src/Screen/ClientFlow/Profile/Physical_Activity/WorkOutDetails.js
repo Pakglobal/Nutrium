@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -18,11 +18,11 @@ import {
   SetQuickAccess,
   UpdatePhysicalActivity,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
 
-const WorkOutDetails = ({ route }) => {
+const WorkOutDetails = ({route}) => {
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
@@ -91,7 +91,7 @@ const WorkOutDetails = ({ route }) => {
 
       if (
         response.message ===
-        'Activity added successfully and updated in quick access' ||
+          'Activity added successfully and updated in quick access' ||
         response?.success === true
       ) {
         navigation.navigate('physicalActivity');
@@ -152,8 +152,12 @@ const WorkOutDetails = ({ route }) => {
         loading={loading}
       /> */}
 
-
-      <Header screenheader={true} screenName={'Physical Activity'} plus={false} handleSave={handleSave} />
+      <Header
+        screenheader={true}
+        screenName={'Physical Activity'}
+        plus={false}
+        handleSave={handleSave}
+      />
 
       {/* <Header
         showIcon={'save'}

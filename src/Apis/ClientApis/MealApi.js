@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL } from '../Base_Url/Baseurl';
+import {BASE_URL} from '../Base_Url/Baseurl';
 
 export const FetchMealPlanApi = async id => {
   try {

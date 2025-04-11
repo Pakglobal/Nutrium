@@ -45,7 +45,7 @@ export const disconnectSocket = () => {
 
 export const joinRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
-    socket.emit('join', { userId, otherUserId });
+    socket.emit('join', {userId, otherUserId});
   } else {
     console.error('Cannot join room: Socket not connected');
     const newSocket = connectSocket();
@@ -69,19 +69,18 @@ export const markMessagesAsSeen = (messageIds, senderId, receiverId) => {
   }
 
   console.log('📢 Marking messages as seen:', messageIds);
-  socket.emit('messagesSeen', { messageIds, senderId, receiverId });
+  socket.emit('messagesSeen', {messageIds, senderId, receiverId});
   return true;
 };
 
-export const onMessagesSeen = (callback) => {
+export const onMessagesSeen = callback => {
   if (!socket || !socket.connected) {
     console.warn('⚠️ Cannot set messages seen listener: Socket not connected');
     return false;
   }
-  
-  
+
   socket.off('messagesSeen');
-  socket.on('messagesSeen', (data) => {
+  socket.on('messagesSeen', data => {
     console.log('✅ Messages marked as seen:', data);
     callback(data);
   });
@@ -89,21 +88,29 @@ export const onMessagesSeen = (callback) => {
   return true;
 };
 
-export const onUnreadMessages = (callback) => {
+export const onUnreadMessages = callback => {
   if (!socket || !socket.connected) {
-    console.warn('⚠️ Cannot set unread messages listener: Socket not connected');
+    console.warn(
+      '⚠️ Cannot set unread messages listener: Socket not connected',
+    );
     return false;
   }
 
   socket.off('unreadMessages');
-  socket.on('unreadMessages', (data) => {
+  socket.on('unreadMessages', data => {
     console.log('📩 Received unread messages:', data);
     callback(data);
   });
 
   return true;
 };
-export const sendMessage = async (senderId, receiverId, message, fileUri, tempId,) => {
+export const sendMessage = async (
+  senderId,
+  receiverId,
+  message,
+  fileUri,
+  tempId,
+) => {
   const socket = getSocket();
 
   try {
@@ -114,9 +121,9 @@ export const sendMessage = async (senderId, receiverId, message, fileUri, tempId
       message: message || '',
       file: fileUrl,
       tempId,
-      seen:false
+      seen: false,
     };
-    console.log("messageDatamessageData", messageData);
+    console.log('messageDatamessageData', messageData);
 
     if (socket && socket.connected) {
       socket.emit('sendMessage', messageData);
@@ -143,12 +150,8 @@ export const getChatHistory = (userId, otherUserId, callback) => {
     callback(history);
   });
 
-  socket.emit('getHistory', { userId, otherUserId });
+  socket.emit('getHistory', {userId, otherUserId});
 };
-
-
-
-
 
 export const onReceiveMessage = callback => {
   if (!socket) {
@@ -163,16 +166,13 @@ export const onReceiveMessage = callback => {
   });
 };
 
-
 export const leaveRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
     console.log(`📢 Leaving room: ${userId}-${otherUserId}`);
-    socket.emit('leave', { userId, otherUserId });
+    socket.emit('leave', {userId, otherUserId});
     return true;
   } else {
     console.error('❌ Cannot leave room: Socket not connected');
     return false;
   }
 };
-
-

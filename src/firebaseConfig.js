@@ -1,7 +1,6 @@
 // import {initializeApp, getApps, getApp} from '@react-native-firebase/app';
 // import '@react-native-firebase/messaging'
 
-
 // const firebaseConfig = {
 //   apiKey: 'AIzaSyA-Gxy3Q3gNC7epdR8ndoU77PeXplskAMY',
 //   authDomain: 'nutrium-app.firebaseapp.com',
@@ -21,7 +20,6 @@
 // }
 
 // export {firebaseApp};
-
 
 import {initializeApp, getApps, getApp} from '@react-native-firebase/app';
 

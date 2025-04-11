@@ -36,28 +36,28 @@
 // ];
 
 // const OnboardingScreen = ({navigation}) => {
-  // const [currentIndex, setCurrentIndex] = useState(0);
+// const [currentIndex, setCurrentIndex] = useState(0);
 
-  // const handleNext = async () => {
-  //   if (currentIndex < onboardingData.length - 1) {
-  //     setCurrentIndex(currentIndex + 1);
-  //   } else {
-  //     await AsyncStorage.setItem('onboardingCompleted', 'true');
-  //     navigation.replace('loginChoice');
-  //   }
-  // };
+// const handleNext = async () => {
+//   if (currentIndex < onboardingData.length - 1) {
+//     setCurrentIndex(currentIndex + 1);
+//   } else {
+//     await AsyncStorage.setItem('onboardingCompleted', 'true');
+//     navigation.replace('loginChoice');
+//   }
+// };
 
-  // const handleSkip = async () => {
-  //   await AsyncStorage.setItem('onboardingCompleted', 'true');
-  //   navigation.replace('loginChoice');
-  // };
+// const handleSkip = async () => {
+//   await AsyncStorage.setItem('onboardingCompleted', 'true');
+//   navigation.replace('loginChoice');
+// };
 
 //   const currentScreen = onboardingData[currentIndex];
 
-  // const renderSvg = () => {
-  //   const SvgComponent = currentScreen.svgComponent;
-  //   return <SvgComponent width={'100%'} height={'50%'} style={styles.svg} />;
-  // };
+// const renderSvg = () => {
+//   const SvgComponent = currentScreen.svgComponent;
+//   return <SvgComponent width={'100%'} height={'50%'} style={styles.svg} />;
+// };
 
 //   return (
 //     <View style={styles.container}>
@@ -65,28 +65,28 @@
 //         <Text style={styles.skipText}>Skip</Text>
 //       </TouchableOpacity>
 
-      // <View style={styles.content}>
-      //   {renderSvg()}
-      //   <Text style={styles.title}>{currentScreen.title}</Text>
-      //   <Text style={styles.description}>{currentScreen.description}</Text>
-      //   <View style={styles.dotsContainer}>
-      //     {onboardingData.map((_, index) => (
-      //       <View
-      //         key={index}
-      //         style={[
-      //           styles.dot,
-      //           {
-      //             backgroundColor:
-      //               index === currentIndex
-      //                 ? Color.primaryColor
-      //                 : Color.primaryLight,
-      //             width: index === currentIndex ? scale(20) : scale(12),
-      //           },
-      //         ]}
-      //       />
-      //     ))}
-      //   </View>
-      // </View>
+// <View style={styles.content}>
+//   {renderSvg()}
+//   <Text style={styles.title}>{currentScreen.title}</Text>
+//   <Text style={styles.description}>{currentScreen.description}</Text>
+//   <View style={styles.dotsContainer}>
+//     {onboardingData.map((_, index) => (
+//       <View
+//         key={index}
+//         style={[
+//           styles.dot,
+//           {
+//             backgroundColor:
+//               index === currentIndex
+//                 ? Color.primaryColor
+//                 : Color.primaryLight,
+//             width: index === currentIndex ? scale(20) : scale(12),
+//           },
+//         ]}
+//       />
+//     ))}
+//   </View>
+// </View>
 
 //       <TouchableOpacity style={styles.button} onPress={handleNext}>
 //         <AntDesign name="arrowright" color={Color.white} size={scale(24)} />
@@ -216,13 +216,13 @@ const OnboardingScreen = ({navigation}) => {
     if (currentIndex < onboardingData.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      dispatch(completeOnboarding())
+      dispatch(completeOnboarding());
       navigation.replace('loginChoice');
     }
   };
 
   const handleSkip = async () => {
-    dispatch(completeOnboarding())
+    dispatch(completeOnboarding());
     navigation.replace('loginChoice');
   };
 
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     marginHorizontal: scale(16),
-    marginTop: verticalScale(8)
+    marginTop: verticalScale(8),
   },
   skipText: {
     fontSize: scale(16),
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     height: scale(34),
     width: scale(34),
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
 });
 

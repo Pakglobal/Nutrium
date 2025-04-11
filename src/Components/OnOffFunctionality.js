@@ -13,7 +13,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Font } from '../assets/styles/Fonts';
+import {Font} from '../assets/styles/Fonts';
 
 const OnOffFunctionality = ({title, hydrate = false}) => {
   const [showRevoke, setShowRevoke] = useState(false);

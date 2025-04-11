@@ -12,8 +12,8 @@ import {Color} from '../assets/styles/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
 import Food from '../assets/Images/Food.svg';
-import { Font } from '../assets/styles/Fonts';
-import { ShadowValues } from '../assets/styles/Shadow';
+import {Font} from '../assets/styles/Fonts';
+import {ShadowValues} from '../assets/styles/Shadow';
 
 const MealsLikeInHome = () => {
   const navigation = useNavigation();
@@ -23,8 +23,6 @@ const MealsLikeInHome = () => {
 
   return (
     <View style={{padding: scale(10)}}>
-
-
       <Text style={styles.title}>What were your meals like?</Text>
       <View style={styles.cardContainer}>
         <Food width={'100%'} height={verticalScale(170)} />
@@ -67,8 +65,8 @@ const styles = StyleSheet.create({
     borderRadius: scale(20),
     alignSelf: 'center',
     width: '100%',
-    backgroundColor: Color?.white      ,
-    borderRadius:scale(10)
+    backgroundColor: Color?.white,
+    borderRadius: scale(10),
   },
   card: {
     height: '100%',

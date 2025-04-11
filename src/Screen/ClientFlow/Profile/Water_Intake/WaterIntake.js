@@ -1037,13 +1037,15 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
+      {/* <Header
         screenheader={true}
         screenName={'Water intake'}
         handlePlus={() =>
           navigation.navigate('waterIntakeLog', { plusData: plusData })
         }
-      />
+      /> */}
+      <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
+        navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
 
       <ScrollView
         horizontal
@@ -1189,7 +1191,7 @@ const WaterIntake = () => {
         )}
       </View>
 
-      
+
       <ModalComponent visible={modalVisible} handleEdit={handleEdit}
         modalstyle={
           {

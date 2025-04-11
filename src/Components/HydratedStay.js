@@ -41,6 +41,7 @@ const HydratedStay = () => {
 
   const totalGoal = waterIntake?.waterIntakeData?.waterIntakeLimit || 2;
 
+
   const bothL = sevenL + seventeenL;
 
   const widthAnimation = useRef(new Animated.Value(0)).current;
@@ -319,7 +320,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(5),
     borderRadius: scale(20),
-    elevation: 1,
   },
   buttonText: {
     color: Color.primaryColor,
@@ -412,3 +412,5 @@ const styles = StyleSheet.create({
     marginLeft: scale(5),
   },
 });
+
+

@@ -88,8 +88,6 @@ const PhysicalActivity = ({style,header,subHeader,
       marginVertical: verticalScale(8),
       paddingVertical: verticalScale(15),
       paddingHorizontal: scale(15),
-      shadowColor: Color?.black,
-      elevation: 5,
     },
     dayText: {
       fontSize: scale(11),

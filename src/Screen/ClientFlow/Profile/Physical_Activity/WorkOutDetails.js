@@ -8,9 +8,9 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import {
@@ -21,6 +21,9 @@ import {
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
+import { Font } from '../../../../assets/styles/Fonts';
+import { Shadow } from 'react-native-shadow-2';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
 
 const WorkOutDetails = ({ route }) => {
   const showToast = message => {
@@ -143,49 +146,36 @@ const WorkOutDetails = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <BackHeader
-        titleName={'Workout details'}
-        backText={'Physical activity'}
-        onPressBack={() => navigation.navigate('physicalActivity')}
-        onPress={handleSave}
-        onSave={true}
-        loading={loading}
-      /> */}
-
-
       <Header screenheader={true} screenName={'Physical Activity'} plus={false} handleSave={handleSave} />
-
-      {/* <Header
-        showIcon={'save'}
-        backIcon={true}
-        screenName="Physical activity"
-        iconStyle={{left: scale(-65)}}
-        onSave={handleSave}
-        onPress={() =>
-          navigation.navigate('logPhysicalActivity', {plusData: plusData})
-        }
-      /> */}
-
       <View style={styles.content}>
         <Text style={styles.topTitle}>Workout Details</Text>
         <Text style={styles.label}>Physical activity</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter activity"
-            value={activity}
-            placeholderTextColor={Color.gray}
-            editable={false}
-          />
-        </View>
+        <Shadow
+          distance={ShadowValues.blackShadowDistance}
+          startColor={ShadowValues.color}
+          style={{ width: '100%' }}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter activity"
+              value={activity}
+              placeholderTextColor={Color.gray}
+              editable={false}
+            />
+          </View>
+        </Shadow>
 
         <Text style={styles.label}>Date</Text>
-        <TouchableOpacity
-          style={styles.pickerButton}
-          onPress={() => setDateOpen(true)}>
-          <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
-        </TouchableOpacity>
-
+        <Shadow
+          distance={ShadowValues.blackShadowDistance}
+          startColor={ShadowValues.color}
+          style={{ width: '100%' }}>
+          <TouchableOpacity
+            style={styles.pickerButton}
+            onPress={() => setDateOpen(true)}>
+            <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
+          </TouchableOpacity>
+        </Shadow>
         <DatePicker
           modal
           mode="date"
@@ -199,35 +189,43 @@ const WorkOutDetails = ({ route }) => {
             setDateOpen(false);
           }}
         />
-
         <View>
           <Text style={styles.label}>Duration</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter duration"
-              keyboardType="numeric"
-              value={duration}
-              onChangeText={setDuration}
-              placeholderTextColor={Color.black}
-            />
-            <Text style={styles.unit}>min</Text>
-          </View>
+          <Shadow
+            distance={ShadowValues.blackShadowDistance}
+            startColor={ShadowValues.color}
+            style={{ width: '100%' }}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter duration"
+                keyboardType="numeric"
+                value={duration}
+                onChangeText={setDuration}
+                placeholderTextColor={Color.black}
+              />
+              <Text style={styles.unit}>min</Text>
+            </View>
+          </Shadow>
           {errorMessage ? (
             <Text style={styles.error}>{errorMessage}</Text>
           ) : null}
         </View>
-
         <Text style={styles.label}>Energy</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            editable={false}
-            value={calories}
-            placeholderTextColor={Color.gray}
-          />
-          <Text style={styles.unit}>kcal</Text>
-        </View>
+        <Shadow
+          distance={ShadowValues.blackShadowDistance}
+          startColor={ShadowValues.color}
+          style={{ width: '100%' }}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              editable={false}
+              value={calories}
+              placeholderTextColor={Color.gray}
+            />
+            <Text style={styles.unit}>kcal</Text>
+          </View>
+        </Shadow>
       </View>
     </SafeAreaView>
   );
@@ -244,28 +242,22 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: scale(0.5),
-    borderColor: Color?.primaryColor,
     paddingHorizontal: scale(10),
     borderRadius: scale(6),
-    elevation: 7,
-    shadowColor: Color?.primaryColor,
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    shadowOffset: {
-      width: 5,
-      height: 5,
-    },
     backgroundColor: Color?.white,
   },
   unit: {
     marginLeft: 5,
-    color: Color.black,
+    color: Color.textColor,
+    fontWeight: '500'
   },
   input: {
     flex: 1,
     paddingVertical: verticalScale(5),
-    color: Color.black,
+    color: Color.textColor,
+    fontFamily: Font?.Poppins,
+    fontWeight: '500'
+
   },
   label: {
     fontSize: scale(14),
@@ -273,28 +265,19 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: verticalScale(15),
     marginBottom: verticalScale(5),
+    fontFamily: Font?.Poppins
+
   },
   pickerButton: {
     padding: scale(10),
-
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    borderWidth: scale(0.5),
-    borderColor: Color?.primaryColor,
     paddingHorizontal: scale(10),
     borderRadius: scale(6),
-    elevation: 7,
-    shadowColor: Color?.primaryColor,
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    shadowOffset: {
-      width: 5,
-      height: 5,
-    },
     backgroundColor: Color?.white,
   },
   dateText: {
-    color: Color.black,
+    color: Color.textColor,
+    fontFamily: Font?.Poppins,
+    fontWeight: '500'
   },
   error: {
     color: 'red',
@@ -307,6 +290,8 @@ const styles = StyleSheet.create({
     marginTop: scale(10),
     fontSize: scale(17),
     fontWeight: '500',
+    fontFamily: Font?.Poppins
+
   },
 });
 

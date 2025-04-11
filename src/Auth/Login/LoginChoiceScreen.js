@@ -1,12 +1,12 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import HeaderImage from '../../assets/Images/loginChoiceHeader.svg';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
-import {Color} from '../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
-import {setGuestMode} from '../../redux/user';
+import { Color } from '../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { setGuestMode } from '../../redux/user';
 import { Font } from '../../assets/styles/Fonts';
 
 const LoginChoiceScreen = () => {
@@ -14,7 +14,7 @@ const LoginChoiceScreen = () => {
   const dispatch = useDispatch();
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <View style={{ flex: 1, backgroundColor: Color.white }}>
       <HeaderImage
         width="100%"
         height="56%"
@@ -32,7 +32,7 @@ const LoginChoiceScreen = () => {
         <NutriumLogo height={'100%'} width={'100%'} />
       </View>
 
-      <View style={{paddingHorizontal: scale(22)}}>
+      <View style={{ paddingHorizontal: scale(22) }}>
         <Text style={styles.text}>
           Nutrium provides personalized meal plans and diet tracking for a healthier lifestyle.
         </Text>
@@ -48,19 +48,19 @@ const LoginChoiceScreen = () => {
         }}>
         <TouchableOpacity
           onPress={() => navigation.navigate('loginScreen')}
-          style={[styles.button, {backgroundColor: Color.primaryColor}]}>
-          <Text style={[styles.buttonText, {color: Color.white}]}>Login</Text>
+          style={[styles.button, { backgroundColor: Color.primaryColor }]}>
+          <Text style={[styles.buttonText, { color: Color.white }]}>Login</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={() => {
-            dispatch(setGuestMode(true));
+            navigation.navigate('GuestFlow')
           }}
           style={[
             styles.button,
-            {backgroundColor: Color.white, borderWidth: 2, marginTop: verticalScale(8)},
+            { backgroundColor: Color.white, borderWidth: 2, marginTop: verticalScale(8) },
           ]}>
-          <Text style={[styles.buttonText, {color: Color.primaryColor}]}>
+          <Text style={[styles.buttonText, { color: Color.primaryColor }]}>
             Continue As Guest
           </Text>
         </TouchableOpacity>

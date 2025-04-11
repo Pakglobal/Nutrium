@@ -34,6 +34,7 @@ import { guestLoginData, setIsGuest } from '../../../redux/user';
 import { Font } from '../../../assets/styles/Fonts';
 import { ShadowValues } from '../../../assets/styles/Shadow';
 import { Progress } from '../../../assets/styles/Progress';
+import useAndroidBack from '../../../Navigation/useAndroidBack';
 import { GuestLOGin } from '../../../Apis/Login/AuthApis';
 
 const GuestLogin = ({ route }) => {
@@ -60,6 +61,7 @@ const GuestLogin = ({ route }) => {
 
   const data = route?.params
 
+  useAndroidBack()
   const validateFirstName = value => {
     setFirstName(value);
     if (!value) {

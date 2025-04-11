@@ -10,21 +10,22 @@ import {
   Keyboard,
   Platform,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {LeftIcon} from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { LeftIcon } from '../../../assets/styles/Icon';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectCountry.svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import {Font} from '../../../assets/styles/Fonts';
-import {Progress} from '../../../assets/styles/Progress';
-import {Shadow} from 'react-native-shadow-2';
-import {ShadowValues} from '../../../assets/styles/Shadow';
+import { Font } from '../../../assets/styles/Fonts';
+import { Progress } from '../../../assets/styles/Progress';
+import { Shadow } from 'react-native-shadow-2';
+import { ShadowValues } from '../../../assets/styles/Shadow';
+import useAndroidBack from '../../../Navigation/useAndroidBack';
 
 const SelectCountry = ({route}) => {
   const navigation = useNavigation();
@@ -40,6 +41,7 @@ const SelectCountry = ({route}) => {
   const countryData = { country, number, dateOfBirth ,...selectGender}
 
 
+  useAndroidBack()
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -125,7 +127,7 @@ const SelectCountry = ({route}) => {
       }
 
       Alert.alert('Selection Required', message, [
-        {text: 'OK', style: 'cancel'},
+        { text: 'OK', style: 'cancel' },
       ]);
       return;
     }
@@ -134,7 +136,7 @@ const SelectCountry = ({route}) => {
       Alert.alert(
         'Invalid Number',
         'Please enter a valid 10-digit mobile number to continue',
-        [{text: 'OK', style: 'cancel'}],
+        [{ text: 'OK', style: 'cancel' }],
       );
       return;
     }
@@ -156,20 +158,20 @@ const SelectCountry = ({route}) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{}}
-        contentContainerStyle={{paddingBottom: '50%'}}
+        contentContainerStyle={{ paddingBottom: '50%' }}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
-          style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+          style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
         />
 
         <View
-          style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
+          style={{ marginHorizontal: scale(16), marginTop: verticalScale(20) }}>
           <Shadow
             distance={ShadowValues.blackShadowDistance}
             startColor={Color.primaryColor}
-            style={{width: '100%', borderRadius: scale(5)}}>
+            style={{ width: '100%', borderRadius: scale(5) }}>
             <TouchableOpacity
-              style={[styles.inputContainer, {marginBottom: verticalScale(10)}]}
+              style={[styles.inputContainer, { marginBottom: verticalScale(10) }]}
               onPress={() => {
                 Keyboard.dismiss();
                 setShowCountryDropdown(!showCountryDropdown);
@@ -177,7 +179,7 @@ const SelectCountry = ({route}) => {
               <Text
                 style={[
                   styles.titleText,
-                  !country && {color: Color.textColor},
+                  !country && { color: Color.textColor },
                 ]}>
                 {country || 'Select country'}
               </Text>
@@ -204,7 +206,7 @@ const SelectCountry = ({route}) => {
                   key={item}
                   style={[
                     styles.dropdownItem,
-                    country === item && {backgroundColor: Color.primaryColor},
+                    country === item && { backgroundColor: Color.primaryColor },
                   ]}
                   onPress={() => {
                     setCountry(item);
@@ -233,7 +235,7 @@ const SelectCountry = ({route}) => {
               marginBottom: verticalScale(10),
               paddingHorizontal: scale(5),
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               {country && (
                 <Text style={[styles.titleText, styles.countryCode]}>
                   {countryCodes[country]}
@@ -246,7 +248,7 @@ const SelectCountry = ({route}) => {
                 keyboardType="numeric"
                 placeholderTextColor={Color.textColor}
                 maxLength={10}
-                style={[styles.titleText, {flex: 1}]}
+                style={[styles.titleText, { flex: 1 }]}
               />
             </View>
           </Shadow>
@@ -254,7 +256,7 @@ const SelectCountry = ({route}) => {
           <Shadow
             distance={ShadowValues.blackShadowDistance}
             startColor={Color.primaryColor}
-            style={{width: '100%', borderRadius: scale(5)}}>
+            style={{ width: '100%', borderRadius: scale(5) }}>
             <TouchableOpacity
               style={styles.inputContainer}
               onPress={() => {
@@ -264,7 +266,7 @@ const SelectCountry = ({route}) => {
               <Text
                 style={[
                   styles.titleText,
-                  !dateOfBirth && {color: Color.textColor},
+                  !dateOfBirth && { color: Color.textColor },
                 ]}>
                 {dateOfBirth || 'Date of Birth'}
               </Text>

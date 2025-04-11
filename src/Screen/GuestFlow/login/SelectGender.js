@@ -31,7 +31,6 @@ const SelectGender = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [selectedGender, setSelectedGender] = useState(null);
-  console.log(selectedGender);
   
 
   const handleSelect = gender => {

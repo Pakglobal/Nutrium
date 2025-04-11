@@ -21,6 +21,7 @@ import {
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
 import {clientInfoData} from '../../../redux/admin';
+import {connectSocket} from '../../../Components/SocketService';
 
 const MessageScreen = () => {
   const navigation = useNavigation();
@@ -36,6 +37,15 @@ const MessageScreen = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchSocket = async () => {
+        await connectSocket();
+      };
+      fetchSocket();
+    }, []),
+  );
 
   const fetchData = async () => {
     try {

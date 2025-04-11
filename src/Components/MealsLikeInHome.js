@@ -23,6 +23,7 @@ const MealsLikeInHome = () => {
 
   return (
     <View style={{padding: scale(10)}}>
+
       <Text style={styles.title}>What were your meals like?</Text>
       <View style={styles.cardContainer}>
         <Food width={'100%'} height={verticalScale(170)} />

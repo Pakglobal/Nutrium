@@ -382,7 +382,10 @@ const styles = StyleSheet.create({
     height: verticalScale(70),
     // width: '30%',
     backgroundColor: Color?.white,
+
     justifyContent: 'center',
+
+
     borderWidth: scale(1),
     borderColor: Color?.primaryColor,
   },

@@ -7,32 +7,32 @@ import {
   Alert,
   BackHandler,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
-import {Shadow} from 'react-native-shadow-2';
+import { Shadow } from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
-import {useDispatch} from 'react-redux';
-import {setGuestMode} from '../../../redux/user';
-import {Font} from '../../../assets/styles/Fonts';
-import {Progress} from '../../../assets/styles/Progress';
-import {ShadowValues} from '../../../assets/styles/Shadow';
+import { useDispatch } from 'react-redux';
+import { setGuestMode } from '../../../redux/user';
+import { Font } from '../../../assets/styles/Fonts';
+import { Progress } from '../../../assets/styles/Progress';
+import { ShadowValues } from '../../../assets/styles/Shadow';
+import useAndroidBack from '../../../Navigation/useAndroidBack';
 
 const SelectGender = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [selectedGender, setSelectedGender] = useState(null);
-  
-
+  useAndroidBack()
   const handleSelect = gender => {
     setSelectedGender(gender);
   };
@@ -42,34 +42,32 @@ const SelectGender = () => {
       Alert.alert(
         'Selection Required',
         'Please select your gender to continue',
-        [{text: 'OK', style: 'cancel'}],
+        [{ text: 'OK', style: 'cancel' }],
       );
       return;
     }
-    navigation.navigate('SelectProfession',{gender:selectedGender});
+    navigation.navigate('SelectProfession', { gender: selectedGender });
   };
 
-  useEffect(() => {
-    const backAction = () => {
-      dispatch(setGuestMode());
-      return true; // Prevent default behavior (exit)
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove(); // Clean up
-  }, []);
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     // dispatch(setGuestMode());
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={Progress.selectGender} />
 
-      <LeftIcon onGoBack={() => dispatch(setGuestMode())} />
+      <LeftIcon onGoBack={() => navigation.goBack()} />
 
-      <LoginHeader height={'45%'} width={'100%'} style={{marginTop: 50}} />
+      <LoginHeader height={'45%'} width={'100%'} style={{ marginTop: 50 }} />
 
       <View
         style={{
@@ -78,7 +76,7 @@ const SelectGender = () => {
         <Text
           style={[
             styles.titleText,
-            {color: Color.primaryColor, marginTop: verticalScale(20)},
+            { color: Color.primaryColor, marginTop: verticalScale(20) },
           ]}>
           Hi
         </Text>
@@ -93,16 +91,16 @@ const SelectGender = () => {
           ]}>
           Select Gender
         </Text>
-        <Text style={[styles.titleText, {fontSize: scale(12)}]}>
+        <Text style={[styles.titleText, { fontSize: scale(12) }]}>
           Please select your gender to continue
         </Text>
 
         <View style={styles.selectionContainer}>
-          <View style={{width: '48%'}}>
+          <View style={{ width: '48%' }}>
             <Shadow
               distance={ShadowValues.blackShadowDistance}
               startColor={Color.primaryColor}
-              style={{width: '100%', borderRadius: scale(8)}}>
+              style={{ width: '100%', borderRadius: scale(8) }}>
               <TouchableOpacity
                 style={[
                   styles.option,
@@ -132,8 +130,8 @@ const SelectGender = () => {
                 <Text
                   style={[
                     styles.titleText,
-                    {fontSize: scale(13)},
-                    selectedGender === 'Female' && {color: Color.white},
+                    { fontSize: scale(13) },
+                    selectedGender === 'Female' && { color: Color.white },
                   ]}>
                   Female
                 </Text>
@@ -141,11 +139,11 @@ const SelectGender = () => {
             </Shadow>
           </View>
 
-          <View style={{width: '48%'}}>
+          <View style={{ width: '48%' }}>
             <Shadow
               distance={ShadowValues.blackShadowDistance}
               startColor={Color.primaryColor}
-              style={{width: '100%', borderRadius: scale(8)}}>
+              style={{ width: '100%', borderRadius: scale(8) }}>
               <TouchableOpacity
                 style={[
                   styles.option,
@@ -175,8 +173,8 @@ const SelectGender = () => {
                 <Text
                   style={[
                     styles.titleText,
-                    {fontSize: scale(13)},
-                    selectedGender === 'Male' && {color: Color.white},
+                    { fontSize: scale(13) },
+                    selectedGender === 'Male' && { color: Color.white },
                   ]}>
                   Male
                 </Text>

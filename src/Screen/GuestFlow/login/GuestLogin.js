@@ -34,6 +34,8 @@ import { guestLoginData, setIsGuest } from '../../../redux/user';
 import { Font } from '../../../assets/styles/Fonts';
 import { ShadowValues } from '../../../assets/styles/Shadow';
 import { Progress } from '../../../assets/styles/Progress';
+import useAndroidBack from '../../../Navigation/useAndroidBack';
+import { GuestLOGin } from '../../../Apis/Login/AuthApis';
 
 const GuestLogin = ({ route }) => {
   const dispatch = useDispatch();
@@ -53,7 +55,7 @@ const GuestLogin = ({ route }) => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [login, setLogin] = useState([]);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-
+  useAndroidBack()
   const validateFirstName = value => {
     setFirstName(value);
     if (!value) {

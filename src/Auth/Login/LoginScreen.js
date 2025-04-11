@@ -113,6 +113,7 @@ const LoginScreen = () => {
     try {
       setLoading(true);
       const response = await Login(body);
+      
       setLogin(response);
 
       const storeTokenId = {
@@ -210,7 +211,7 @@ const LoginScreen = () => {
     <SafeAreaView style={styles.container}>
       <CustomAlert
         visible={alertVisible}
-        message={login.message}
+        message={login?.message}
         onClose={() => setAlertVisible(false)}
         singleButton={true}
       />

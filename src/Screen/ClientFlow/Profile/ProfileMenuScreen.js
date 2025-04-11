@@ -1,3 +1,4 @@
+
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -38,6 +39,7 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../../../Apis/ClientApis/RecommendationApi';
+import {connectSocket} from '../../../Components/SocketService';
 
 const ProfileMenuScreen = () => {
   const navigation = useNavigation();
@@ -50,8 +52,6 @@ const ProfileMenuScreen = () => {
 
   const isGuest = useSelector(state => state.user?.guestMode);
   const guestData = useSelector(state => state.user?.guestUserData);
-  console.log(profileData);
-  
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = getToken?.user?.image || getToken?.userData?.image;
@@ -97,6 +97,15 @@ const ProfileMenuScreen = () => {
       },
     ]);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchSocket = async () => {
+        await connectSocket();
+      };
+      fetchSocket();
+    }, []),
+  );
 
   const handleSyncInfo = async () => {
     setAsyncLoading(true);
@@ -327,7 +336,7 @@ const ProfileMenuScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-        <Header showIcon={true} logo={true} />
+      <Header />
       {isGuest === true ? (
         <View>
           <View style={{marginHorizontal: scale(16)}}>
@@ -358,7 +367,7 @@ const ProfileMenuScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <ActivityIndicator size="large" color={Color.primaryColor} />
+              <ActivityIndicator size="large" color={Color.primaryGreen} />
             </View>
           ) : (
             <View style={styles.scrollView}>
@@ -449,5 +458,6 @@ const styles = StyleSheet.create({
   signOutText: {
     fontSize: scale(15),
     fontWeight: '600',
+    color: Color.white,
   },
 });

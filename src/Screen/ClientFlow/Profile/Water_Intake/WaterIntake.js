@@ -10,23 +10,24 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { BarChart } from 'react-native-gifted-charts';
-import { scale, verticalScale } from 'react-native-size-matters';
-import Color from '../../../../assets/colors/Colors';
+import {BarChart} from 'react-native-gifted-charts';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
+import {Font} from '../../../../assets/styles/Fonts';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -39,7 +40,6 @@ const WaterIntake = () => {
   const [waterIntake, setWaterIntake] = useState([]);
   const [loading, setLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
@@ -113,7 +113,7 @@ const WaterIntake = () => {
         dates.push({
           fullDate: date,
           day: date.getDate(),
-          month: date.toLocaleString('default', { month: 'short' }),
+          month: date.toLocaleString('default', {month: 'short'}),
         });
       }
       return dates;
@@ -227,7 +227,7 @@ const WaterIntake = () => {
       if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
 
       return dateLabels.map(dateObj => {
-        if (!dateObj?.fullDate) return { value: 0, frontColor: '#2196F3' };
+        if (!dateObj?.fullDate) return {value: 0, frontColor: '#2196F3'};
 
         const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
         const dailyIntake = calculateDailyIntake(
@@ -291,7 +291,7 @@ const WaterIntake = () => {
 
   const handleDelete = async () => {
     // setModalVisible(false);
-    setDeleteModal(false)
+    setDeleteModal(false);
     try {
       setLoading(true);
       const payload = {
@@ -321,16 +321,16 @@ const WaterIntake = () => {
   useEffect(() => {
     setTimeout(() => {
       if (scrollRef.current) {
-        scrollRef.current.scrollToEnd({ animated: true });
+        scrollRef.current.scrollToEnd({animated: true});
       }
     }, 100);
   }, []);
 
   const selectedDateIntake = selectedDate
     ? calculateDailyIntake(
-      selectedDate,
-      waterIntake?.waterIntakeData?.waterIntakeRecords,
-    )
+        selectedDate,
+        waterIntake?.waterIntakeData?.waterIntakeRecords,
+      )
     : 0;
 
   const plusData = {
@@ -353,13 +353,15 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-    
-      <Header showIcon={false} backIcon={true} screenName='Water Intake' iconStyle={{ left: scale(-80) }} onPress={() =>
-        navigation.navigate('waterIntakeLog', { plusData: plusData })
-      } />
+      <Header
+        screenheader={true}
+        screenName={'Water intake'}
+        handlePlus={() =>
+          navigation.navigate('waterIntakeLog', {plusData: plusData})
+        }
+      />
 
-
-      <ScrollView
+      {/* <ScrollView
         horizontal
         ref={scrollRef}
         scrollEventThrottle={16}
@@ -378,7 +380,7 @@ const WaterIntake = () => {
                 style={styles.singleDateChart}
                 onPress={() => handleDate(date)}>
                 <BarChart
-                  data={[{ value: formatChartData()[index]?.value || 0 }]}
+                  data={[{value: formatChartData()[index]?.value || 0}]}
                   width={40}
                   height={150}
                   barWidth={20}
@@ -404,7 +406,7 @@ const WaterIntake = () => {
             );
           })}
         </View>
-      </ScrollView>
+      </ScrollView> */}
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
@@ -420,18 +422,18 @@ const WaterIntake = () => {
 
         {loading ? (
           <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
         ) : selectedIntake && selectedIntake?.length > 0 ? (
           <View style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
-              renderItem={({ item: record, index: recordIndex }) => (
+              renderItem={({item: record, index: recordIndex}) => (
                 <View>
                   <FlatList
                     data={record?.waterIntakeAmount}
-                    renderItem={({ item: intake, index: intakeIndex }) => (
+                    renderItem={({item: intake, index: intakeIndex}) => (
                       <View style={styles.entryItem}>
                         <View style={styles.entryLeft}>
                           <Ionicons
@@ -482,8 +484,8 @@ const WaterIntake = () => {
             />
           </View>
         ) : (
-          <View style={{ padding: verticalScale(16) }}>
-            <Text style={{ textAlign: 'center', color: Color.gray }}>
+          <View style={{padding: verticalScale(16)}}>
+            <Text style={{textAlign: 'center', color: Color.gray}}>
               There are no records of water intake
             </Text>
           </View>
@@ -500,10 +502,12 @@ const WaterIntake = () => {
             <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
               <Text style={styles.modalText}>Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.modalOption]} onPress={() => {
-              setModalVisible(false)
-              setDeleteModal(true)
-            }}>
+            <TouchableOpacity
+              style={[styles.modalOption]}
+              onPress={() => {
+                setModalVisible(false);
+                setDeleteModal(true);
+              }}>
               <Text style={styles.modalText}>Delete</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -522,8 +526,6 @@ const WaterIntake = () => {
         // singleButton={true}
         doubleButton={true}
       />
-
-
     </SafeAreaView>
   );
 };
@@ -537,6 +539,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     height: verticalScale(0),
+    backgroundColor: 'red',
   },
   bottomContentContainer: {
     flex: 1,
@@ -544,6 +547,7 @@ const styles = StyleSheet.create({
   chartWithDates: {
     flexDirection: 'row',
     alignItems: 'flex-end',
+    // backgroundColor: 'white'
   },
   singleDateChart: {
     alignItems: 'center',
@@ -573,18 +577,19 @@ const styles = StyleSheet.create({
     padding: scale(16),
     borderRadius: scale(12),
     alignItems: 'center',
-    borderColor:Color?.lightgray,
-    borderWidth:scale(1)
+    borderColor: Color?.lightgray,
+    borderWidth: scale(1),
   },
   statValue: {
-    fontSize: scale(18),
-    fontWeight: 'bold',
+    fontSize: scale(20),
+    fontWeight: '600',
     marginBottom: verticalScale(4),
-    color: Color.black,
+    color: Color.textColor,
+    fontFamily: Font.Poppins,
   },
   statLabel: {
-    fontSize: scale(15),
-    color:Color?.textColor,
+    fontSize: scale(16),
+    color: Color?.textColor,
   },
   entriesContainer: {
     flex: 1,
@@ -607,7 +612,7 @@ const styles = StyleSheet.create({
   entryAmount: {
     fontSize: scale(15),
     color: Color.textColor,
-    fontWeight:"500"
+    fontWeight: '500',
   },
   entryRight: {
     flexDirection: 'row',
@@ -636,7 +641,7 @@ const styles = StyleSheet.create({
   modalOption: {
     paddingVertical: verticalScale(10),
     // backgroundColor:"red",
-    width: '100%'
+    width: '100%',
   },
   modalText: {
     fontSize: scale(15),

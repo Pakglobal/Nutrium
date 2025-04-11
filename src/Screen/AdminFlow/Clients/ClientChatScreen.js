@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import Color from '../../../assets/colors/Colors';
+import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
@@ -21,11 +21,7 @@ const ClientChatScreen = () => {
       <View style={styles.header}>
         <View style={styles.leftSection}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons
-              name="arrow-back"
-              color={Color.white}
-              size={scale(22)}
-            />
+            <Ionicons name="arrow-back" color={Color.white} size={scale(22)} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Example conversation</Text>
         </View>
@@ -63,7 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: scale(8),
     height: scale(50),
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   leftSection: {
     flexDirection: 'row',

@@ -9,7 +9,7 @@ export const Login = async data => {
     };
 
     const url = 'https://nutrium-back-end-1.onrender.com/api/v1/sign_in';
-    const response = await axios.post(url, body);    
+    const response = await axios.post(url, body);
     return response?.data;
   } catch (error) {
     return error?.response?.data;
@@ -24,7 +24,7 @@ export const GoogleLogin = async data => {
       deviceToken: data?.deviceToken,
     };
     const url = 'https://nutrium-back-end-1.onrender.com/api/v1/verify-google';
-    const response = await axios.post(url, body);    
+    const response = await axios.post(url, body);
     return response?.data;
   } catch (error) {
     return error?.response?.data;

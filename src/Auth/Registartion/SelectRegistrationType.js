@@ -14,7 +14,7 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import TypesCard from './TypesCard';
-import Color from '../../assets/colors/Colors';
+import {Color} from '../../assets/styles/Colors';
 import SighnUpHeader from '../../Components/SighnUpHeader';
 LogBox.ignoreAllLogs();
 

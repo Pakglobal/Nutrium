@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Color from '../../../assets/colors/Colors';
-import NutriumLogo from '../../../assets/Icon/logo.svg';
+import {Color} from '../../../assets/styles/Colors';
+import NutriumLogo from '../../../assets/Images/logoWhite.svg';
 import MessageScreen from '../Message/MessageScreen';
 import ClientScreen from '../Clients/ClientScreen';
 import AppointmentScreen from '../Appointments/AppointmentScreen';
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   headerContainer: {
-    backgroundColor: Color.primaryGreen,
+    backgroundColor: Color.primaryColor,
   },
   header: {
     marginHorizontal: scale(16),

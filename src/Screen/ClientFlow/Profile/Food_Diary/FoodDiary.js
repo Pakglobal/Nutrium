@@ -86,9 +86,7 @@ const FoodDiary = () => {
   };
 
   const renderDiaryDataItem = ({item: diary}) => {
-    // if (!diary?.meal || diary?.meal?.length === 0) {
-    //   return null;
-    // }
+
 
     return (
       <Pressable

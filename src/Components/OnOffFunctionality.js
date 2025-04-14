@@ -146,11 +146,8 @@ export default OnOffFunctionality;
 
 const styles = StyleSheet.create({
   header: {
-    // alignSelf: 'flex-end',
     marginVertical: verticalScale(7),
     flexDirection: 'row',
-    // justifyContent:'space-between',
-    // backgroundColor:'red',
     paddingHorizontal:scale(10)
   },
   buttonContainer: {

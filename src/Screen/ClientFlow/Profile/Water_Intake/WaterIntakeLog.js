@@ -164,9 +164,6 @@ const WaterIntakeLog = ({ route }) => {
       };
       const response = await SetWaterIntakeDetails(payload);
 
-      // if(response) {
-      //   navigation.goBack();
-      // }
       if (
         response?.message === 'Water intake recorded successfully.' ||
         response?.success === true

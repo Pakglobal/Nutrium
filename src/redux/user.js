@@ -6,7 +6,6 @@ const initialState = {
   fcmToken: {},
   token: {},
   guestUserData: {},
-  // isGuest: false,
   guestMode: false,
   isCompleted: false,
 };
@@ -27,9 +26,6 @@ const userSlice = createSlice({
     setToken: (state, action) => {
       state.token = action.payload;
     },
-    // setIsGuest: (state, action) => {
-    //   state.isGuest = action.payload;
-    // },
     setGuestMode: (state, action) => {
       state.guestMode = action.payload;
     },

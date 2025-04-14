@@ -80,12 +80,7 @@ const SelectCountry = ({route}) => {
     'Canada',
   ];
 
-  // const onDateChange = (event, selectedDate) => {
-  //   const currentDate = selectedDate || date;
-  //   setShowDatePicker(false);
-  //   setDate(currentDate);
-  //   setDateOfBirth(currentDate.toLocaleDateString('en-US'));
-  // };
+
 
 
   const onDateChange = (event, selectedDate) => {

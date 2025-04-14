@@ -4,7 +4,3 @@ module.exports = {
     './src/assets/fonts/'
   ],
 };
-
-// module.exports = {
-//   assets: ['./assets/fonts/'],
-// };

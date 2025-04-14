@@ -33,9 +33,6 @@ const MainProfile = ({route}) => {
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = data?.image;
 
-  // const showToast = message => {
-  //   Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  // };
 
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
@@ -60,12 +57,12 @@ const MainProfile = ({route}) => {
           dispatch(setImage(response?.client?.image));
           setLoading(false);
         } else {
-          // showToast(response?.message);
+     
           setLoading(false);
         }
         setLoading(false);
       } catch (error) {
-        // showToast(error);
+      
         setLoading(false);
       }
     }

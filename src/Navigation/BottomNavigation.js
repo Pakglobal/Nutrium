@@ -139,10 +139,6 @@ const BottomNavigation = () => {
       <TouchableOpacity
         style={styles.plusBtn}
         onPress={() => setModalVisible(true)}>
-        {/* <Image
-          source={require('../assets/Icon/bottom.png')}
-          // style={{height: scale(80), width: scale(80)}}
-        /> */}
 
         <BottomPlus height={80} width={60} resizeMode="cover" />
       </TouchableOpacity>
@@ -208,7 +204,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: verticalScale(38),
     alignSelf: 'center',
-    // backgroundColor: 'red',
     alignItems: 'center',
     justifyContent: 'center',
   },

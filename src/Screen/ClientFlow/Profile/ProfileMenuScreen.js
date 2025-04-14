@@ -367,7 +367,7 @@ const ProfileMenuScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <ActivityIndicator size="large" color={Color.primaryGreen} />
+              <ActivityIndicator size="large" color={Color.primaryColor} />
             </View>
           ) : (
             <View style={styles.scrollView}>

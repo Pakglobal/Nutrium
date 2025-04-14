@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   clientAppointmentInfo: {},
@@ -6,6 +6,7 @@ const initialState = {
   mealInfo: {},
   addInfo: {},
   imageInfo: {},
+  waterData: {},
 };
 
 const clientSlice = createSlice({
@@ -24,12 +25,15 @@ const clientSlice = createSlice({
     setImage: (state, action) => {
       state.imageInfo = action.payload;
     },
+    addWaterData: (state, action) => {
+      state.waterData = action.payload;
+    },
     updateAppointmentStatus: (state, action) => {
-      const {appointmentId, status} = action.payload;
+      const { appointmentId, status } = action.payload;
       state.clientAppointmentInfo = state.clientAppointmentInfo.map(
         appointment =>
           appointment._id === appointmentId
-            ? {...appointment, status}
+            ? { ...appointment, status }
             : appointment,
       );
     },
@@ -43,6 +47,7 @@ export const {
   waterIntakeData,
   addData,
   setImage,
+  addWaterData,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

@@ -49,17 +49,6 @@ const SelectGender = () => {
     navigation.navigate('SelectProfession', { gender: selectedGender });
   };
 
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     // dispatch(setGuestMode());
-  //     return true;
-  //   };
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-  //   return () => backHandler.remove();
-  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -135,8 +135,7 @@ const GuestLogin = ({ route }) => {
 
 
   const handleGuestLogin = async () => {
-    //  navigation.navigate('GuestLogin')
-
+ 
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
     let emailError = '';

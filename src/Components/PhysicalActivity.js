@@ -193,7 +193,6 @@ const PhysicalActivity = ({style,header,subHeader,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            // marginVertical: verticalScale(10),
             gap: scale(25),
           },
         ]}>

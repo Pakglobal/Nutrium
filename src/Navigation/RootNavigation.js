@@ -196,7 +196,6 @@ const GuestStack = () => {
   );
   // }
 
-  // return null;
 };
 
 const MainStack = () => {

@@ -9,9 +9,15 @@ export const GetAppointmentByClientId = async (token, id) => {
         Authorization: token,
       },
     });
+
     return response?.data;
   } catch (error) {
-    console.error('Error fetching get appointment by client', error);
+    if (error?.response?.status === 404) {
+      return [];
+    } else {
+      console.error('Error fetching get appointment by client:', error);
+      throw error;
+    }
   }
 };
 

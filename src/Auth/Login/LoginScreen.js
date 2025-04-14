@@ -113,9 +113,12 @@ const LoginScreen = () => {
       deviceToken: FCMtoken,
     };
 
+    console.log(body, '-p-=odaesofkiosk');
+
     try {
       setLoading(true);
       const response = await Login(body);
+      console.log('response', response);
 
       setLogin(response);
 

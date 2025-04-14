@@ -26,6 +26,7 @@ import Glass from '../assets/Images/glass.svg';
 import {Shadow} from 'react-native-shadow-2';
 import {Font} from '../assets/styles/Fonts';
 import {ShadowValues} from '../assets/styles/Shadow';
+import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
 const HydratedStay = () => {
   const navigation = useNavigation();
@@ -168,8 +169,7 @@ const HydratedStay = () => {
           </View>
         </View>
 
-        <View style={styles.bottomContainer}>
-          {/* <View style={styles.hydrationButtons}> */}
+        <View>
           <View style={styles.hydrationButtons}>
             <View style={{width: '30%'}}>
               <TouchableOpacity
@@ -235,35 +235,10 @@ const HydratedStay = () => {
           </View>
         </View>
 
-        <View style={{marginTop: scale(10)}}>
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={ShadowValues.blackShadow}
-            style={{width: '100%'}}>
-            <View
-              style={{
-                borderRadius: scale(5),
-                backgroundColor: Color?.white,
-              }}>
-              <Pressable onPress={() => navigation.navigate('waterIntake')}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    padding: scale(6),
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.waterText}>See All Water Logs</Text>
-                  <Entypo
-                    name="chevron-right"
-                    size={24}
-                    color={Color.primaryColor}
-                  />
-                </View>
-              </Pressable>
-            </View>
-          </Shadow>
-        </View>
+        <CustomHomeButtonNavigation
+          text={'See All Water Logs'}
+          onPress={() => navigation.navigate('waterIntake')}
+        />
       </View>
     </SafeAreaView>
   );
@@ -276,7 +251,7 @@ const styles = StyleSheet.create({
     padding: scale(10),
   },
   plusIcon: {
-    backgroundColor: '#68A16C4D',
+    backgroundColor: Color.primaryLight,
     position: 'absolute',
     right: scale(5),
     top: scale(5),
@@ -356,10 +331,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     zIndex: 1,
   },
-  bottomContainer: {
-    // backgroundColor: '#d3e5ff',
-    // paddingVertical: verticalScale(10),
-  },
   hydrationButtons: {
     marginVertical: scale(12),
     flexDirection: 'row',
@@ -380,12 +351,9 @@ const styles = StyleSheet.create({
   waterCardView: {
     borderRadius: scale(5),
     height: verticalScale(70),
-    // width: '30%',
     backgroundColor: Color?.white,
-
     justifyContent: 'center',
-
-    borderWidth: scale(1),
+    borderWidth: scale(1.6),
     borderColor: Color?.primaryColor,
   },
   waterImg: {

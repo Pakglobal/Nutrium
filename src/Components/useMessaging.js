@@ -475,7 +475,7 @@ const MessageComponent = ({
                       <Ionicons
                         name={isSeen ? 'checkmark-done' : 'checkmark'}
                         size={16}
-                        color={isSeen ? Color.primaryGreen : Color.gray}
+                        color={isSeen ? Color.primaryColor : Color.gray}
                         style={styles.readStatus}
                       />
                     )}
@@ -496,7 +496,7 @@ const MessageComponent = ({
                   <Ionicons
                     name={isSeen ? 'checkmark-done' : 'checkmark'}
                     size={16}
-                    color={isSeen ? Color.primaryGreen : Color.gray}
+                    color={isSeen ? Color.primaryColor : Color.gray}
                     style={styles.readStatus}
                   />
                 )}
@@ -566,7 +566,7 @@ const MessageComponent = ({
         {loading ? (
           <View
             style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicator size="large" color={Color.primaryGreen} />
+            <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
         ) : (
           <FlatList

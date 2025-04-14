@@ -22,7 +22,7 @@ import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
-import {ShadowValues} from '../../../assets/styles/Shadow';
+import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
 
 const HomeScreen = () => {
@@ -104,7 +104,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
-      <Header logoHeader={true} handleMenu={() => navigation.openDrawer()} />
+      <Header logoHeader={true} />
 
       {isGuest ? (
         <ScrollView
@@ -140,40 +140,35 @@ const HomeScreen = () => {
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
-              style={{
-                backgroundColor: Color.white,
-                paddingHorizontal: scale(5),
-                marginTop: verticalScale(5),
-              }}
               showsVerticalScrollIndicator={false}>
-              <AppointmentCard
-                refreshAppointments={FetchAppointmentData}
-                activeAppointments={activeAppointments}
-                setActiveAppointments={setActiveAppointments}
-                selectedAppointment={selectedAppointment}
-                setSelectedAppointment={setSelectedAppointment}
-              />
-              <View style={{paddingHorizontal: scale(10), marginTop: scale(7)}}>
-                <CustomShadow style={{width: '100%', borderRadius: scale(10)}}>
+              <View
+                style={{
+                  paddingHorizontal: scale(16),
+                  marginTop: verticalScale(12),
+                }}>
+                <AppointmentCard
+                  refreshAppointments={FetchAppointmentData}
+                  activeAppointments={activeAppointments}
+                  setActiveAppointments={setActiveAppointments}
+                  selectedAppointment={selectedAppointment}
+                  setSelectedAppointment={setSelectedAppointment}
+                />
+
+                <CustomShadow style={shadowStyle}>
                   <MealsLikeInHome />
                 </CustomShadow>
 
                 <MoreForYou />
                 <OnOffFunctionality />
 
-                <View style={{marginVertical: scale(10)}}>
-                  <CustomShadow
-                    style={{width: '100%', borderRadius: scale(10)}}>
-                    <HydratedStay />
-                  </CustomShadow>
-                </View>
+                <CustomShadow style={shadowStyle}>
+                  <HydratedStay />
+                </CustomShadow>
 
                 <OnOffFunctionality />
 
-                <View
-                  style={{marginVertical: scale(10), marginBottom: scale(100)}}>
-                  <CustomShadow
-                    style={{width: '100%', borderRadius: scale(10)}}>
+                <View style={{marginBottom: verticalScale(100)}}>
+                  <CustomShadow style={shadowStyle}>
                     <PhysicalActivity
                       header={true}
                       subHeader={true}

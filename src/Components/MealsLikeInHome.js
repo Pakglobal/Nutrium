@@ -7,19 +7,16 @@ import {
 } from 'react-native';
 import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {Color} from '../assets/styles/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
 import Food from '../assets/Images/Food.svg';
 import {Font} from '../assets/styles/Fonts';
 import {ShadowValues} from '../assets/styles/Shadow';
+import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
 const MealsLikeInHome = () => {
   const navigation = useNavigation();
-  const handleGoFoodDiary = () => {
-    navigation.navigate('foodDiary');
-  };
 
   return (
     <View style={{padding: scale(10)}}>
@@ -31,29 +28,10 @@ const MealsLikeInHome = () => {
         </Text>
       </View>
 
-      <View style={{marginTop: scale(8)}}>
-        <Shadow
-          distance={ShadowValues.blackShadowDistance}
-          startColor={ShadowValues.blackShadow}
-          style={{width: '100%'}}>
-          <View
-            style={{
-              borderRadius: scale(5),
-              backgroundColor: Color?.white,
-            }}>
-            <TouchableOpacity
-              style={styles.DiaryBtn}
-              onPress={handleGoFoodDiary}>
-              <Text style={styles.txt}>Go to Food Diary</Text>
-              <Entypo
-                name="chevron-right"
-                size={24}
-                color={Color.primaryColor}
-              />
-            </TouchableOpacity>
-          </View>
-        </Shadow>
-      </View>
+      <CustomHomeButtonNavigation
+        text={'Go to Food Diary'}
+        onPress={() => navigation.navigate('foodDiary')}
+      />
     </View>
   );
 };
@@ -100,7 +78,6 @@ const styles = StyleSheet.create({
   DiaryBtn: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: scale(6),
     alignItems: 'center',
   },
 });

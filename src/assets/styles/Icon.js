@@ -1,4 +1,4 @@
-import {scale} from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from './Colors';
 import {Keyboard, StyleSheet, TouchableOpacity, View} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -14,7 +14,8 @@ const IconStyle = {
 export default IconStyle;
 
 export const IconPadding = {
-  padding: scale(5),
+  paddingVertical: verticalScale(5),
+  paddingHorizontal: scale(7),
   // backgroundColor: 'red'
 };
 

@@ -801,7 +801,7 @@ const PhysicalActivityScreen = () => {
             startColor={ShadowValues.color}
             style={styles.fullWidth}>
             <View style={styles.shadow}>
-              <PhysicalActivity noData={true} />
+              <PhysicalActivity />
             </View>
           </Shadow>
         </View>

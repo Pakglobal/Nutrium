@@ -1,7 +1,5 @@
 import {
   Alert,
-  Modal,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -14,6 +12,7 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Font} from '../assets/styles/Fonts';
+import CustomModal from './CustomModal';
 
 const OnOffFunctionality = ({title, hydrate = false}) => {
   const [showRevoke, setShowRevoke] = useState(false);
@@ -92,37 +91,15 @@ const OnOffFunctionality = ({title, hydrate = false}) => {
         </TouchableOpacity>
       </View>
 
-      {showRevoke && (
-        <Modal
-          transparent={true}
-          animationType="slide"
-          visible={showRevoke}
-          onRequestClose={() => setShowRevoke(false)}>
-          <Pressable
-            onPress={() => setShowRevoke(false)}
-            style={styles.modalView}>
-            <View style={styles.modalContainer}>
-              <View style={{marginHorizontal: scale(20)}}>
-                <Text style={styles.modalTitle}>
-                  Revoke Access to Physical Activity Data
-                </Text>
-                <Text style={styles.description}>
-                  Revoke authorization forsynchronizing activities through
-                  Google Fit.
-                </Text>
-              </View>
-              <View style={styles.modalBtnView}>
-                <TouchableOpacity onPress={() => setShowRevoke(false)}>
-                  <Text style={styles.modalBtnTxt}>NOT NOW</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleRevokeAccess}>
-                  <Text style={styles.modalBtnTxt}>CONTINUE</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Pressable>
-        </Modal>
-      )}
+      <CustomModal
+        visible={showRevoke}
+        onClose={() => setShowRevoke(false)}
+        onConfirm={handleRevokeAccess}
+        title="Revoke Access to Physical Activity Data"
+        message="Revoke authorization for synchronizing activities through Google Fit."
+        confirmText="CONTINUE"
+        cancelText="NOT NOW"
+      />
     </SafeAreaView>
   );
 };
@@ -132,55 +109,21 @@ export default OnOffFunctionality;
 const styles = StyleSheet.create({
   header: {
     alignSelf: 'flex-end',
-    marginVertical: verticalScale(7),
+    marginVertical: verticalScale(12),
   },
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: scale(10),
-    paddingVertical: verticalScale(5),
+    paddingVertical: verticalScale(3),
     borderRadius: scale(10),
-    backgroundColor: 'rgba(104, 161, 108, 0.3)',
+    backgroundColor: Color.primaryLight,
   },
   buttonText: {
     color: Color.gray,
     fontWeight: '600',
-    marginHorizontal: scale(8),
-    fontSize: scale(14),
-    fontFamily: Font.Poppins,
-  },
-  modalView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(100,100,100,0.5)',
-  },
-  modalContainer: {
-    width: '80%',
-    paddingVertical: verticalScale(20),
-    backgroundColor: Color.white,
-    borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: scale(16),
-    color: Color.black,
-  },
-  modalBtnView: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: verticalScale(10),
-    marginHorizontal: scale(15),
-  },
-  modalBtnTxt: {
-    letterSpacing: 1,
-    fontSize: scale(12),
-    color: Color.primaryColor,
-    fontWeight: '600',
     marginHorizontal: scale(5),
-  },
-  description: {
-    paddingVertical: verticalScale(5),
-    color: Color.gray,
-    fontSize: scale(13),
+    fontSize: scale(12),
+    fontFamily: Font.PoppinsMedium,
   },
 });

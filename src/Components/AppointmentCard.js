@@ -64,6 +64,7 @@ const AppointmentCard = ({navigation}) => {
   const FetchAppointmentData = async () => {
     try {
       setLoading(true);
+
       const response = await GetAppointmentByClientId(token, id);
 
       if (response && response.length > 0) {
@@ -72,21 +73,17 @@ const AppointmentCard = ({navigation}) => {
           ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
 
         setActiveAppointments(active);
-
-        if (active.length > 0) {
-          setSelectedAppointment(active[0]);
-        }
+        setSelectedAppointment(active.length > 0 ? active[0] : null);
       } else {
+        console.log('No active appointments found.');
         setActiveAppointments([]);
         setSelectedAppointment(null);
       }
-
-      setLoading(false);
     } catch (error) {
-      console.error('Error fetching appointments:', error);
-
+      console.error('Error fetching appointments:', error.message || error);
       setActiveAppointments([]);
       setSelectedAppointment(null);
+    } finally {
       setLoading(false);
     }
   };
@@ -320,9 +317,8 @@ const AppointmentCard = ({navigation}) => {
           />
           {renderPagination()}
         </>
-      ) : (
-        renderEmptyState()
-      )}
+      ) : // renderEmptyState()
+      null}
 
       <Modal
         visible={isModalVisible}
@@ -388,7 +384,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     padding: scale(10),
-    borderRadius: scale(16),
+    borderRadius: scale(10),
     backgroundColor: Color.white,
   },
   cardHeader: {
@@ -454,7 +450,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: verticalScale(3),
-    paddingBottom: verticalScale(10),
+    paddingBottom: verticalScale(20),
   },
   paginationDot: {
     height: scale(8),

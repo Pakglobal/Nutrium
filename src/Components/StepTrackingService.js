@@ -39,6 +39,11 @@ export const useStepTracking = () => {
   const dayCheckIntervalRef = useRef(null);
   const motionDetectedRef = useRef(false);
 
+  const getCurrentDayIndex = () => {
+    const day = new Date().getDay();
+    return day === 0 ? 6 : day - 1; // Remap Sunday (0) to 6, and shift others back by 1
+  };
+
   const calculateCalories = stepCount => {
     const CALORIES_PER_STEP = 0.03;
     return Math.round(stepCount * CALORIES_PER_STEP);
@@ -174,7 +179,7 @@ export const useStepTracking = () => {
     steps,
     calories: calculateCalories(steps),
     workouts,
-    currentDay,
+    currentDay: getCurrentDayIndex(),
     isTracking,
   };
 };

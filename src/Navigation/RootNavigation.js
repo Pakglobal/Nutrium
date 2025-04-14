@@ -51,11 +51,30 @@ import SelectCountry from '../Screen/GuestFlow/login/SelectCountry';
 import GuestLogin from '../Screen/GuestFlow/login/GuestLogin';
 import SelectGender from '../Screen/GuestFlow/login/SelectGender';
 import SelectProfession from '../Screen/GuestFlow/login/SelectProfession';
+import CustomTabBar from './BottomNavigation';
+import MealScreen from '../Screen/ClientFlow/Meal/MealScreen';
+import RecommendationScreen from '../Screen/ClientFlow/Recommend/RecommendationScreen';
+import ProfileMenuScreen from '../Screen/ClientFlow/Profile/ProfileMenuScreen';
+import Deo from './Deo';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const ClientDrawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
+
+// const BottomNavigation = () => {
+//   return (
+//     <NavigationContainer>
+//       <Tab.Navigator tabBar={props => <CustomTabBar {...props} />} screenOptions={{headerShown: false}}>
+//         <Tab.Screen name="home" component={HomeScreen} />
+//         <Tab.Screen name="meal" component={MealScreen} />
+//         <Tab.Screen name="deo" component={Deo} />
+//         <Tab.Screen name="recommendation" component={RecommendationScreen} />
+//         <Tab.Screen name="profileMenu" component={ProfileMenuScreen} />
+//       </Tab.Navigator>
+//     </NavigationContainer>
+//   );
+// };
 
 const ClientHomeWithDrawer = () => {
   return (

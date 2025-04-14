@@ -8,7 +8,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Modal,
   FlatList,
   Animated,
   TouchableWithoutFeedback,

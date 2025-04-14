@@ -40,7 +40,6 @@ export const GoogleLogin = async data => {
 };
 
 export const GuestLOGin = async data => {
-  console.log('----', data);
 
   try {
     const body = {
@@ -58,9 +57,10 @@ export const GuestLOGin = async data => {
       isDemoClient: true,
     };
     console.log('body', body);
+
     const url = `${BASE_URL}demo-auth`;
     const response = await axios.post(url, body);
-    console.log('====', response);
+    console.log('====', response?.data);
 
     return response;
   } catch (error) {

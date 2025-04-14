@@ -29,7 +29,7 @@ import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
 
-const SelectCountry = () => {
+const SelectCountry = ({route}) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -37,7 +37,11 @@ const SelectCountry = () => {
   const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
+  const selectGender=route?.params
+  const countryData = { country, number, dateOfBirth ,...selectGender}
+  
   useKeyboardHandler();
   useAndroidBack();
 
@@ -59,12 +63,22 @@ const SelectCountry = () => {
     'Canada',
   ];
 
+
+
+
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
-    setDateOfBirth(currentDate.toLocaleDateString('en-US'));
+  
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = currentDate.getFullYear();
+  
+    const formattedDate = `${day}/${month}/${year}`;
+    setDateOfBirth(formattedDate);
   };
+  
 
   const handleNavigation = () => {
     Keyboard.dismiss();
@@ -105,7 +119,7 @@ const SelectCountry = () => {
       return;
     }
 
-    navigation.navigate('GuestLogin');
+    navigation.navigate('GuestLogin',countryData);
   };
 
   return (

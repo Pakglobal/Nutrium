@@ -14,7 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Font} from '../assets/styles/Fonts';
 import CustomModal from './CustomModal';
 
-const OnOffFunctionality = ({title, hydrate = false}) => {
+const OnOffFunctionality = ({hydrate = false}) => {
   const [showRevoke, setShowRevoke] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
 
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   header: {
     alignSelf: 'flex-end',
     marginVertical: verticalScale(12),
+    flexDirection: 'row',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -125,5 +126,11 @@ const styles = StyleSheet.create({
     marginHorizontal: scale(5),
     fontSize: scale(12),
     fontFamily: Font.PoppinsMedium,
+  },
+  titleTxt: {
+    color: Color?.textColor,
+    fontFamily: Font?.Poppins,
+    fontWeight: '500',
+    fontSize: scale(16),
   },
 });

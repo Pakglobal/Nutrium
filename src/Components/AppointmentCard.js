@@ -161,7 +161,6 @@ const AppointmentCard = ({navigation}) => {
 
       await refreshAppointments();
 
-      // Alert.alert('Success', 'Appointment confirmed successfully!');
     } catch (error) {
       console.error('Error confirming appointment:', error);
       Alert.alert(

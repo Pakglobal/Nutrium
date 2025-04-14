@@ -308,8 +308,11 @@ const styles = StyleSheet.create({
     padding: scale(10),
     borderRadius: scale(30),
   },
-  customButtonContainer: {
-    top: -40,
+  plusBtn: {
+    position: 'absolute',
+    bottom: verticalScale(38),
+    alignSelf: 'center',
+    alignItems: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },

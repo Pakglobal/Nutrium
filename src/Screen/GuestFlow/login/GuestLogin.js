@@ -60,6 +60,12 @@ const GuestLogin = ({route}) => {
   useKeyboardHandler();
 
   useAndroidBack();
+
+  const token = useSelector(state => state?.user?.fcmToken);
+
+  const data = route?.params
+
+  useAndroidBack()
   const validateFirstName = value => {
     setFirstName(value);
     if (!value) {
@@ -125,9 +131,6 @@ const GuestLogin = ({route}) => {
   //   };
   // }, []);
 
-  const token = useSelector(state => state?.user?.fcmToken);
-
-  const data = route?.params;
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -193,12 +196,9 @@ const GuestLogin = ({route}) => {
     };
     try {
       const response = await GuestLOGin(body);
-
-      console.log('response', response);
-      if (response?.message == 'Login successful') {
-        navigation.navigate('BottomNavigation');
-        // dispatch(guestLoginData(guestData)); // Store guest data in Redux
-        // navigation.navigate('BottomNavigation');
+      if (response?.data?.message == 'Signup successful') {
+        navigation.navigate('BottomNavigation')
+        // dispatch(guestLoginData(guestData));
       } else if (response?.message) {
         Alert.alert(response?.message);
       }

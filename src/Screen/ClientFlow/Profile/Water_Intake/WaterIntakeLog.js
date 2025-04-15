@@ -13,6 +13,7 @@ import { scale, verticalScale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
+  GetWaterIntakeDetails,
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
@@ -22,9 +23,9 @@ import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
-import {Shadow} from 'react-native-shadow-2';
-import {Font} from '../../../../assets/styles/Fonts';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
+import { Font } from '../../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
 
 const WaterIntakeLog = ({ route }) => {
   const navigation = useNavigation();
@@ -163,7 +164,6 @@ const WaterIntakeLog = ({ route }) => {
         date: date,
       };
       const response = await SetWaterIntakeDetails(payload);
-
       if (
         response?.message === 'Water intake recorded successfully.' ||
         response?.success === true
@@ -219,12 +219,12 @@ const WaterIntakeLog = ({ route }) => {
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{width: '100%'}}>
+            style={{ width: '100%' }}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(200)}>
               <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
                 <View style={[styles.plusIcon]}>
                   <Feather
                     name="plus"
@@ -243,13 +243,13 @@ const WaterIntakeLog = ({ route }) => {
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{width: '100%'}}>
+            style={{ width: '100%' }}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(300)}>
               <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
-                <View style={[styles.plusIcon, {right: scale(-0.5)}]}>
+              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+                <View style={[styles.plusIcon, { right: scale(-0.5) }]}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
@@ -267,12 +267,12 @@ const WaterIntakeLog = ({ route }) => {
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{width: '100%'}}>
+            style={{ width: '100%' }}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(500)}>
               <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
                 <View style={styles.plusIcon}>
                   <Feather
                     name="plus"
@@ -291,11 +291,11 @@ const WaterIntakeLog = ({ route }) => {
         </View>
 
         <Text style={styles.label}>Date</Text>
-        <View style={{marginHorizontal: scale(2)}}>
+        <View style={{ marginHorizontal: scale(2) }}>
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{width: '100%'}}>
+            style={{ width: '100%' }}>
             <View style={styles.pickerButton}>
               <Text
                 style={{
@@ -332,11 +332,11 @@ const WaterIntakeLog = ({ route }) => {
 
         <Text style={styles.label}>Hour</Text>
 
-        <View style={{marginHorizontal: scale(2), marginBottom: scale(10)}}>
+        <View style={{ marginHorizontal: scale(2), marginBottom: scale(10) }}>
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{width: '100%'}}>
+            style={{ width: '100%' }}>
             <View style={[styles.pickerButton, {}]}>
               <Text
                 style={{

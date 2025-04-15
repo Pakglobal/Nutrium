@@ -702,7 +702,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
   received: {
-    backgroundColor: Color.primaryColor,
+    backgroundColor: Color.white,
     alignSelf: 'flex-start',
     borderBottomLeftRadius: 0,
   },

@@ -17,13 +17,18 @@ import AppointmentCard from '../../../Components/AppointmentCard';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  GetProfileImageApi,
+  GetUserApi,
+} from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
 import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
+import {profileData} from '../../../redux/user';
+import {setImage} from '../../../redux/client';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -40,15 +45,35 @@ const HomeScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
+  
+
+  const dispatch = useDispatch();
 
   const [refreshing, setRefreshing] = useState(false);
 
   const GetUserApiData = async () => {
     try {
       const response = await GetUserApi(token);
-      setUserData(response?.data);
+      if (response) {
+        setUserData(response?.data);
+        dispatch(profileData(response?.data));
+      }
     } catch (error) {
       console.error('Error fetching user data', error);
+    }
+  };
+
+  const GetProfileImage = async () => {
+    try {
+      const response = await GetProfileImageApi(token, id);
+
+
+      if (response) {
+         dispatch(loginData(response));
+        dispatch(setImage(response[0]?.image));
+      }
+    } catch (error) {
+      console.error('Error fetching profile image data', error);
     }
   };
 
@@ -87,12 +112,15 @@ const HomeScreen = () => {
       return;
     } else {
       FetchAppointmentData();
+      GetProfileImage();
+      GetUserApiData();
     }
   }, [token, id]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     GetUserApiData();
+    GetProfileImage();
     FetchAppointmentData()
       .then(() => {
         setRefreshing(false);
@@ -167,7 +195,7 @@ const HomeScreen = () => {
 
                 <OnOffFunctionality />
 
-                <View style={{marginBottom: verticalScale(100)}}>
+                <View style={{marginBottom: verticalScale(160)}}>
                   <CustomShadow style={shadowStyle}>
                     <PhysicalActivity
                       header={true}

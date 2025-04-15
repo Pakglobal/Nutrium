@@ -43,7 +43,6 @@ export const {
   profileData,
   setFcmToken,
   setToken,
-  // setIsGuest,
   setGuestMode,
   guestLoginData,
   completeOnboarding,

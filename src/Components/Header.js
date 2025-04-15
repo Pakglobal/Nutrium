@@ -34,6 +34,7 @@ const Header = ({
   handleSave,
   handleNotification,
   handleAward,
+  rightHeaderButton = true
 }) => {
   const navigation = useNavigation();
   return (
@@ -97,10 +98,14 @@ const Header = ({
         )}
         {screenheader && (
           <>
-            <Shadow
-              distance={ShadowValues.distance}
-              startColor={ShadowValues.blackShadow}
-              style={{width: '100%'}}>
+            <CustomShadow
+              style={[
+                shadowStyle,
+                {
+                  borderBottomLeftRadius: scale(12),
+                  borderBottomRightRadius: scale(12),
+                },
+              ]}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -114,7 +119,7 @@ const Header = ({
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <TouchableOpacity
                     onPress={() => navigation.goBack()}
-                    style={{padding: scale(5), alignSelf: 'center'}}>
+                    style={{padding: scale(5), alignSelf: 'center', marginRight: scale(5)}}>
                     <AntDesign
                       name="arrowleft"
                       size={IconStyle.drawerIconSize}
@@ -124,27 +129,26 @@ const Header = ({
                   <Text style={styles.screenName}>{screenName}</Text>
                 </View>
 
-                {plus == true ? (
-                  <TouchableOpacity
-                    onPress={handlePlus}
-                    style={{padding: scale(8)}}>
-                    <AntDesign
-                      name="pluscircle"
-                      size={IconStyle.headerIconSize}
-                      color={Color.white}
-                    />
-                  </TouchableOpacity>
-                ) : plus == false ? (
-                  <TouchableOpacity
-                    onPress={handleSave}
-                    style={{padding: scale(8)}}>
-                    <Text style={styles.saveStyle}>Save</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <></>
-                )}
+                {rightHeaderButton &&
+                  (plus ? (
+                    <TouchableOpacity
+                      onPress={handlePlus}
+                      style={{padding: scale(8)}}>
+                      <AntDesign
+                        name="pluscircle"
+                        size={IconStyle.headerIconSize}
+                        color={Color.white}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={handleSave}
+                      style={{padding: scale(8)}}>
+                      <Text style={styles.saveStyle}>Save</Text>
+                    </TouchableOpacity>
+                  ))}
               </View>
-            </Shadow>
+            </CustomShadow>
           </>
         )}
       </View>
@@ -172,7 +176,7 @@ const styles = StyleSheet.create({
   },
   saveStyle: {
     color: Color?.white,
-    fontSize: scale(18),
+    fontSize: scale(16),
     fontWeight: '500',
     fontFamily: Font.Poppins,
   },

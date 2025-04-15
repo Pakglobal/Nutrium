@@ -18,7 +18,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
 import {Color} from '../../assets/styles/Colors';
 import {useDispatch, useSelector} from 'react-redux';
-import {GoogleLogin, Login} from '../../Apis/Login/AuthApis';
+import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -44,14 +44,16 @@ const LoginScreen = () => {
   useKeyboardHandler();
 
   const [loading, setLoading] = useState(false);
-  const [isAgree, setIsAgree] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isAgree, setIsAgree] = useState(true);
+  const [email, setEmail] = useState('vatsal.r.lakhani2626+878@gmail.com');
+  const [password, setPassword] = useState('password123#');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [login, setLogin] = useState([]);
+  const [passwordAlertVisible, setPasswordAlertVisible] = useState(false);
+  const [loginAlert, setLoginAlert] = useState([]);
+  const [forgotPassword, setForgotPassword] = useState([]);
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -113,14 +115,10 @@ const LoginScreen = () => {
       deviceToken: FCMtoken,
     };
 
-    console.log(body, '-p-=odaesofkiosk');
-
     try {
       setLoading(true);
       const response = await Login(body);
-      console.log('response', response);
-
-      setLogin(response);
+      setLoginAlert(response?.message);
 
       const storeTokenId = {
         token: response?.token,
@@ -130,15 +128,6 @@ const LoginScreen = () => {
       if (response?.message == 'Login successful' || response?.token) {
         dispatch(loginData(response));
         dispatch(setToken(storeTokenId));
-
-        if (response) {
-          const token = response?.token;
-          const getProfileData = await GetAdminProfileData(token);
-
-          dispatch(profileData(getProfileData));
-          setLoading(false);
-        }
-        setLoading(false);
       } else {
         setAlertVisible(true);
         setLoading(false);
@@ -176,7 +165,7 @@ const LoginScreen = () => {
       };
 
       const response = await GoogleLogin(body);
-      setLogin(response);
+      setLoginAlert(response?.message);
 
       const storeTokenId = {
         token: response?.token,
@@ -186,13 +175,6 @@ const LoginScreen = () => {
       if (response?.message == 'Login successfully' || response?.token) {
         dispatch(loginData(response));
         dispatch(setToken(storeTokenId));
-
-        if (response) {
-          const token = response?.token;
-          const getProfileData = await GetAdminProfileData(token);
-
-          dispatch(profileData(getProfileData));
-        }
       } else {
         setAlertVisible(true);
         setLoading(false);
@@ -203,14 +185,41 @@ const LoginScreen = () => {
     }
   };
 
+  const alertMessage = () => {
+    if (loginAlert === undefined) {
+      return 'Network Error';
+    } else {
+      return loginAlert;
+    }
+  };
+
+  const showToast = () => {
+    ToastAndroid.show(forgotPassword?.message, ToastAndroid.SHORT);
+  };
+
+  const handleForgetPassword = async () => {
+    const body = {
+      email: email,
+    };
+    try {
+      const response = await ForgotPasswordApi(body);
+      setForgotPassword(response);
+      setPasswordAlertVisible(true);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomAlert
         visible={alertVisible}
-        message={login?.message}
+        message={alertMessage()}
         onClose={() => setAlertVisible(false)}
         singleButton={true}
       />
+      {passwordAlertVisible && showToast()}
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}
@@ -313,7 +322,7 @@ const LoginScreen = () => {
               </View>
             </CustomShadow>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleForgetPassword()}>
               <Text style={styles.forgotText}>Forgot Password ?</Text>
             </TouchableOpacity>
 

@@ -187,7 +187,7 @@ const WaterIntakeLog = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header screenheader={true} screenName={'Water intake'}
+      <Header screenheader={true} screenName={'Water Intake Log'}
         plus={false}
         handleSave={() =>
           handleSave()} />

@@ -65,7 +65,6 @@ const GuestLogin = ({route}) => {
 
   const data = route?.params
 
-  useAndroidBack()
   const validateFirstName = value => {
     setFirstName(value);
     if (!value) {

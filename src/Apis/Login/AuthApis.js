@@ -2,7 +2,6 @@ import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
 
 export const Login = async data => {
-  console.log('data', data);
 
   try {
     const body = {
@@ -10,16 +9,12 @@ export const Login = async data => {
       password: data?.password,
       deviceToken: data?.deviceToken,
     };
-    console.log('=============>', body);
 
     const url = `${BASE_URL}sign_in`;
     const response = await axios.post(url, body);
-    console.log(response);
 
     return response?.data;
   } catch (error) {
-    console.log('eeeeeeeeeeeeeee', error);
-
     return error?.response?.data;
   }
 };
@@ -69,3 +64,21 @@ export const GuestLOGin = async data => {
     return error?.response?.data;
   }
 };
+
+
+export const ForgotPasswordApi = async(data) => {
+  console.log(data, 'data');
+  
+  try {
+    const body = {
+      email: data?.email,
+    };
+
+    const url = `${BASE_URL}forget-password`;
+    const response = await axios.post(url, body);
+
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+}

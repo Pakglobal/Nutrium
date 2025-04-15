@@ -26,6 +26,8 @@ import Glass from '../assets/Images/glass.svg';
 import {Shadow} from 'react-native-shadow-2';
 import { Font } from '../assets/styles/Fonts';
 import { ShadowValues } from '../assets/styles/Shadow';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
 const HydratedStay = () => {
   const navigation = useNavigation();
@@ -60,7 +62,7 @@ const HydratedStay = () => {
     setSevenL(0);
     setSevenTeenL(0);
     setCurrentProgress(0);
-    widthAnimation.setValue(0);
+    widthAnimation.setValue(0); 
   };
 
   const loadLocalWaterData = async () => {
@@ -233,35 +235,10 @@ const HydratedStay = () => {
           </View>
         </View>
 
-        <View style={{marginTop: scale(10)}}>
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={ShadowValues.blackShadow}
-            style={{width: '100%'}}>
-            <View
-              style={{
-                borderRadius: scale(5),
-                backgroundColor: Color?.white,
-              }}>
-              <Pressable onPress={() => navigation.navigate('waterIntake')}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    padding: scale(6),
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.waterText}>See All Water Logs</Text>
-                  <Entypo
-                    name="chevron-right"
-                    size={24}
-                    color={Color.primaryColor}
-                  />
-                </View>
-              </Pressable>
-            </View>
-          </Shadow>
-        </View>
+        <CustomHomeButtonNavigation
+          text={'See All Water Logs'}
+          onPress={() => navigation.navigate('waterIntake')}
+        />
       </View>
     </SafeAreaView>
   );

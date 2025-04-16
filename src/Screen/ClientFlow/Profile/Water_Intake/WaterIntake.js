@@ -288,31 +288,31 @@ const WaterIntake = () => {
     }
   };
 
-  const handleDelete = async () => {
-    setDeleteModal(false);
-    try {
-      setLoading(true);
-      const payload = {
-        waterIntakeId: selectedEntry?.waterIntakeId,
-        waterRecordId: selectedEntry?.waterRecordId,
-        waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-        token: token,
-      };
-      const response = await DeleteWaterIntake(payload);
-      if (
-        response?.message === 'Water intake data deleted successfully.' ||
-        response?.success === true
-      ) {
-        getWaterIntakeData();
-      } else {
-        showToast(response?.message || 'Failed to delete entry');
-      }
-      setLoading(false);
-    } catch (error) {
-      showToast('An error occurred while deleting');
-      setLoading(false);
-    }
-  };
+  // const handleDelete = async () => {
+  //   setDeleteModal(false);
+  //   try {
+  //     setLoading(true);
+  //     const payload = {
+  //       waterIntakeId: selectedEntry?.waterIntakeId,
+  //       waterRecordId: selectedEntry?.waterRecordId,
+  //       waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+  //       token: token,
+  //     };
+  //     const response = await DeleteWaterIntake(payload);
+  //     if (
+  //       response?.message === 'Water intake data deleted successfully.' ||
+  //       response?.success === true
+  //     ) {
+  //       getWaterIntakeData();
+  //     } else {
+  //       showToast(response?.message || 'Failed to delete entry');
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     showToast('An error occurred while deleting');
+  //     setLoading(false);
+  //   }
+  // };
 
   const scrollRef = React.createRef();
 
@@ -368,14 +368,8 @@ const WaterIntake = () => {
   return (
     <SafeAreaView style={styles.container}>
 
-      <Header
-        screenheader={true}
-        screenName={'Water intake'}
-        handlePlus={() =>
-          navigation.navigate('waterIntakeLog', {plusData: plusData})
-        }
-        plus={true}
-      />
+      <Header onPress={()=> navigation.goBack({selectedDate:selectedDate})} screenheader={true} screenName={'Water intake'} handlePlus={() =>
+        navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
 
       <View style={{height: verticalScale(220)}}>
         <ScrollView
@@ -522,28 +516,91 @@ const WaterIntake = () => {
         )}
       </View>
 
-      <ModalComponent
-        visible={modalVisible}
-        handleEdit={handleEdit}
-        modalstyle={{
-          position: 'absolute',
-          right: 20,
-          top: menuPosition.y - 80,
-        }}
-        handleDelete={() => {
-          setModalVisible(false);
-          setDeleteModal(true);
-        }}
-        setModalVisible={() => setModalVisible(false)}
-      />
 
-      <CustomAlert
+      <ModalComponent visible={modalVisible} handleEdit={handleEdit}
+        modalstyle={
+          {
+            position: 'absolute',
+            right: 20,
+            top: menuPosition.y - 80,
+          }
+        }
+        handleDelete={async () => {
+          setModalVisible(false);
+          try {
+            setLoading(true);
+            const payload = {
+              waterIntakeId: selectedEntry?.waterIntakeId,
+              waterRecordId: selectedEntry?.waterRecordId,
+              waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+              token: token,
+            };
+            const response = await DeleteWaterIntake(payload);
+            if (
+              response?.message === 'Water intake data deleted successfully.' ||
+              response?.success === true
+            ) {
+              getWaterIntakeData();
+            } else {
+              showToast(response?.message || 'Failed to delete entry');
+            }
+            setLoading(false);
+          } catch (error) {
+            showToast('An error occurred while deleting');
+            setLoading(false);
+          }
+
+          // setDeleteModal(true);
+        }
+        } setModalVisible={() => setModalVisible(false)} />
+      {/* <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setModalVisible(false)}>
+          <View
+            style={[
+              styles.modalContent,
+              {
+                position: 'absolute',
+                right: 20,
+                top: menuPosition.y - 80,
+              },
+            ]}>
+            <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
+              <Text style={[styles.modalText]}>Edit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => {
+                setModalVisible(false);
+                setDeleteModal(true);
+              }}>
+              <Text style={styles.modalText}>Delete</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal> */}
+
+
+      {/* <CustomAlert
         visible={deleteModal}
         message={'Are You Sure?'}
         onChange={handleDelete}
         onClose={() => setDeleteModal(false)}
         doubleButton={true}
-      />
+      /> */}
     </SafeAreaView>
   );
 };

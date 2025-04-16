@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(12),
     color: Color.primaryColor,
     fontWeight: '600',
-    fontFamily: Font?.Poppins,
+    fontFamily: Font?.PoppinsMedium,
+    marginTop: verticalScale(2)
   },
 });

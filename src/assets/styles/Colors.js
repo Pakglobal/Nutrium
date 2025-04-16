@@ -9,10 +9,10 @@ export const Color = {
   lightGreen: '#e0f9f2',
   common: 'rgba(210, 233, 254, 0.6)',
   primaryColor: '#21972b',
-  primaryLight: '#6BCB77',
+  primaryLight: 'rgba(107, 203, 119, 0.6)',
   white: '#fff',
   textColor: '#303233',
   grayshadow: '#e3dfde',
   subText: '#6E7071',
-  blackShadow: 'rgba(0,0,0,0.35)',
+  blackShadow: 'rgba(0,0,0,0.025)',
 };

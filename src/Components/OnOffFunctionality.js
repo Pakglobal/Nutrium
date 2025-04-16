@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     marginHorizontal: scale(5),
     fontSize: scale(12),
     fontFamily: Font.PoppinsMedium,
+    marginTop: verticalScale(2)
   },
   titleTxt: {
     color: Color?.textColor,

@@ -7,13 +7,12 @@ import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import {Shadow} from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 import CustomShadow from './CustomShadow';
+import DropShadow from 'react-native-drop-shadow';
 
 const CustomHomeButtonNavigation = ({text, onPress}) => {
   return (
     <View style={{marginTop: scale(10)}}>
-      <CustomShadow
-        style={[shadowStyle, {borderRadius: scale(6)}]}
-        color={Color.blackShadow}>
+      <CustomShadow color={Color.lightgray}>
         <View
           style={{
             borderRadius: scale(6),
@@ -32,7 +31,7 @@ const CustomHomeButtonNavigation = ({text, onPress}) => {
                   fontSize: scale(12),
                   color: Color.primaryColor,
                   fontWeight: '500',
-                  fontFamily: Font?.Poppins,
+                  fontFamily: Font?.PoppinsMedium,
                   marginTop: verticalScale(2),
                   marginLeft: scale(5),
                 }}>

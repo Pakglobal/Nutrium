@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,25 +9,26 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
   GetWaterIntakeDetails,
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import { Color } from '../../../../assets/styles/Colors';
+import {Color} from '../../../../assets/styles/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
-import { Shadow } from 'react-native-shadow-2';
-import { Font } from '../../../../assets/styles/Fonts';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
+import {Shadow} from 'react-native-shadow-2';
+import {Font} from '../../../../assets/styles/Fonts';
+import {ShadowValues} from '../../../../assets/styles/Shadow';
+import CustomShadow from '../../../../Components/CustomShadow';
 
-const WaterIntakeLog = ({ route }) => {
+const WaterIntakeLog = ({route}) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
@@ -187,134 +188,119 @@ const WaterIntakeLog = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header screenheader={true} screenName={'Water Intake Log'}
-        plus={false}
-        handleSave={() =>
-          handleSave()} />
+      <Header
+        screenheader={true}
+        screenName={'Water Intake Log'}
+        handleSave={() => handleSave()}
+      />
 
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.label}>How much water did you drink?</Text>
-        <View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder=""
-              keyboardType="numeric"
-              value={num.toString()}
-              onChangeText={e => {
-                setNum(Number(e) || 0);
-                setErrorMessage('');
-              }}
-              placeholderTextColor={Color.black}
-            />
-            <Text style={styles.unit}>mL</Text>
-          </View>
+        <Text style={styles.label}>How much Water Did You Drink ?</Text>
+        <View style={{marginVertical: verticalScale(10)}}>
+        <CustomShadow color={Color.lightgray}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder=""
+                keyboardType="numeric"
+                value={num.toString()}
+                onChangeText={e => {
+                  setNum(Number(e) || 0);
+                  setErrorMessage('');
+                }}
+                placeholderTextColor={Color.black}
+              />
+              <Text style={styles.unit}>mL</Text>
+            </View>
+          </CustomShadow>
           {errorMessage ? (
             <Text style={styles.errorText}>{errorMessage}</Text>
           ) : null}
         </View>
 
-        <Text style={styles.quickLogTitle}>Quick log</Text>
         <View style={styles.hydrationButtons}>
-          <Shadow
-            distance={2}
-            startColor={ShadowValues.blackShadow}
-            style={{ width: '100%' }}>
-            <TouchableOpacity
-              style={styles.waterCardView}
-              onPress={() => setAmount(200)}>
-              <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                <View style={[styles.plusIcon]}>
-                  <Feather
-                    name="plus"
-                    color={Color?.primaryColor}
-                    style={{
-                      alignItems: 'center',
-                      alignSelf: 'center',
-                    }}
-                    size={verticalScale(15)}
-                  />
+          <View style={{width: '30%'}}>
+          <CustomShadow color={Color.lightgray}>
+              <TouchableOpacity onPress={() => setAmount(200)}>
+                <View style={styles.waterCardView}>
+                  <View style={{marginTop: verticalScale(20)}}>
+                    <Glass height={verticalScale(30)} width={scale(45)} />
+                  </View>
+                  <Text style={styles.waterTxt}>{'200mL'}</Text>
                 </View>
-                <Text style={styles.waterTxt}>{'200mL'}</Text>
-              </View>
-            </TouchableOpacity>
-          </Shadow>
-          <Shadow
-            distance={2}
-            startColor={ShadowValues.blackShadow}
-            style={{ width: '100%' }}>
-            <TouchableOpacity
-              style={styles.waterCardView}
-              onPress={() => setAmount(300)}>
-              <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                <View style={[styles.plusIcon, { right: scale(-0.5) }]}>
-                  <Feather
-                    name="plus"
-                    color={Color?.primaryColor}
-                    style={{
-                      alignItems: 'center',
-                      alignSelf: 'center',
-                    }}
-                    size={verticalScale(15)}
-                  />
-                </View>
-                <Text style={styles.waterTxt}>{'300mL'}</Text>
-              </View>
-            </TouchableOpacity>
-          </Shadow>
-          <Shadow
-            distance={2}
-            startColor={ShadowValues.blackShadow}
-            style={{ width: '100%' }}>
-            <TouchableOpacity
-              style={styles.waterCardView}
-              onPress={() => setAmount(500)}>
-              <Glass height={verticalScale(30)} width={scale(45)} />
-              <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
                 <View style={styles.plusIcon}>
                   <Feather
                     name="plus"
                     color={Color?.primaryColor}
-                    style={{
-                      alignItems: 'center',
-                      alignSelf: 'center',
-                    }}
                     size={verticalScale(15)}
                   />
                 </View>
-                <Text style={styles.waterTxt}>{'500mL'}</Text>
-              </View>
-            </TouchableOpacity>
-          </Shadow>
+              </TouchableOpacity>
+            </CustomShadow>
+          </View>
+
+          <View style={{width: '30%'}}>
+          <CustomShadow color={Color.lightgray}>
+              <TouchableOpacity onPress={() => setAmount(300)}>
+                <View style={styles.waterCardView}>
+                  <View style={{marginTop: verticalScale(20)}}>
+                    <Glass height={verticalScale(30)} width={scale(45)} />
+                  </View>
+                  <Text style={styles.waterTxt}>{'300mL'}</Text>
+                </View>
+                <View style={styles.plusIcon}>
+                  <Feather
+                    name="plus"
+                    color={Color?.primaryColor}
+                    size={verticalScale(15)}
+                  />
+                </View>
+              </TouchableOpacity>
+            </CustomShadow>
+          </View>
+
+          <View style={{width: '30%'}}>
+          <CustomShadow color={Color.lightgray}>
+              <TouchableOpacity onPress={() => setAmount(500)}>
+                <View style={styles.waterCardView}>
+                  <View style={{marginTop: verticalScale(20)}}>
+                    <Glass height={verticalScale(30)} width={scale(45)} />
+                  </View>
+                  <Text style={styles.waterTxt}>{'500mL'}</Text>
+                </View>
+                <View style={styles.plusIcon}>
+                  <Feather
+                    name="plus"
+                    color={Color?.primaryColor}
+                    size={verticalScale(15)}
+                  />
+                </View>
+              </TouchableOpacity>
+            </CustomShadow>
+          </View>
         </View>
 
         <Text style={styles.label}>Date</Text>
-        <View style={{ marginHorizontal: scale(2) }}>
-          <Shadow
-            distance={2}
-            startColor={ShadowValues.blackShadow}
-            style={{ width: '100%' }}>
-            <View style={styles.pickerButton}>
-              <Text
-                style={{
-                  color: Color.textColor,
-                  fontWeight: '500',
-                  fontSize: scale(13),
-                }}>
-                {date.toLocaleDateString()}
-              </Text>
-              <TouchableOpacity style={{}} onPress={() => setDateOpen(true)}>
-                <MaterialCommunityIcons
-                  name="calendar-month"
-                  color={Color?.primaryColor}
-                  size={20}
-                />
-              </TouchableOpacity>
-            </View>
-          </Shadow>
-        </View>
+
+        <CustomShadow color={Color.lightgray}>
+          <View style={styles.pickerButton}>
+            <Text
+              style={{
+                color: Color.textColor,
+                fontWeight: '500',
+                fontSize: scale(13),
+              }}>
+              {date.toLocaleDateString()}
+            </Text>
+            <TouchableOpacity style={{}} onPress={() => setDateOpen(true)}>
+              <MaterialCommunityIcons
+                name="calendar-month"
+                color={Color?.primaryColor}
+                size={20}
+              />
+            </TouchableOpacity>
+          </View>
+        </CustomShadow>
 
         <DatePicker
           modal
@@ -332,37 +318,32 @@ const WaterIntakeLog = ({ route }) => {
 
         <Text style={styles.label}>Hour</Text>
 
-        <View style={{ marginHorizontal: scale(2), marginBottom: scale(10) }}>
-          <Shadow
-            distance={2}
-            startColor={ShadowValues.blackShadow}
-            style={{ width: '100%' }}>
-            <View style={[styles.pickerButton, {}]}>
-              <Text
-                style={{
-                  color: Color.textColor,
-                  fontWeight: '500',
-                  fontSize: scale(13),
-                }}>
-                {time
-                  ?.toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true,
-                  })
-                  ?.replace(/\s+/g, ' ')
-                  ?.trim()}
-              </Text>
-              <TouchableOpacity style={{}} onPress={() => setTimeOpen(true)}>
-                <MaterialCommunityIcons
-                  name="clock-time-four-outline"
-                  color={Color?.primaryColor}
-                  size={20}
-                />
-              </TouchableOpacity>
-            </View>
-          </Shadow>
-        </View>
+        <CustomShadow color={Color.lightgray}>
+          <View style={styles.pickerButton}>
+            <Text
+              style={{
+                color: Color.textColor,
+                fontWeight: '500',
+                fontSize: scale(13),
+              }}>
+              {time
+                ?.toLocaleTimeString('en-US', {
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true,
+                })
+                ?.replace(/\s+/g, ' ')
+                ?.trim()}
+            </Text>
+            <TouchableOpacity style={{}} onPress={() => setTimeOpen(true)}>
+              <MaterialCommunityIcons
+                name="clock-time-four-outline"
+                color={Color?.primaryColor}
+                size={20}
+              />
+            </TouchableOpacity>
+          </View>
+        </CustomShadow>
 
         <DatePicker
           modal
@@ -390,26 +371,29 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.white,
   },
   scrollView: {
-    paddingHorizontal: scale(10),
+    paddingHorizontal: scale(16),
   },
   label: {
-    fontSize: scale(17),
+    fontSize: scale(14),
     color: Color?.textColor,
     marginTop: verticalScale(20),
     fontWeight: '500',
-    fontFamily: Font?.Poppins,
+    fontFamily: Font?.PoppinsMedium,
+    marginHorizontal: scale(5)
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
     paddingHorizontal: verticalScale(10),
-    borderRadius: scale(20),
+    borderRadius: scale(10),
+    width: '98%',
+    alignSelf: 'center',
+    backgroundColor: Color.white,
   },
   unit: {
     marginLeft: scale(5),
     color: '#555',
+    fontFamily: Font.PoppinsMedium,
   },
   input: {
     flex: 1,
@@ -422,7 +406,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(15),
   },
   hydrationButtons: {
-    marginVertical: scale(12),
+    marginTop: scale(20),
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: scale(5),
@@ -433,8 +417,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: Color?.white,
-    width: '100%',
-    alignSelf: 'center',
+    margin: scale(5),
   },
   errorText: {
     color: 'red',
@@ -444,36 +427,24 @@ const styles = StyleSheet.create({
   },
   waterCardView: {
     borderRadius: scale(8),
-    paddingTop: scale(10),
-    paddingBottom: scale(5),
-    width: scale(92),
     height: scale(70),
     backgroundColor: Color?.white,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  waterImg: {
-    height: verticalScale(40),
-    width: scale(30),
-    resizeMode: 'stretch',
-    marginStart: scale(8),
   },
   waterTxt: {
-    color: Color.gray,
+    color: Color.textColor,
     fontWeight: '400',
-    marginTop: verticalScale(20),
     marginEnd: scale(5),
-    fontSize: scale(11),
+    fontSize: scale(10),
+    alignSelf: 'flex-end',
+    fontFamily: Font.Poppins,
   },
   plusIcon: {
-    backgroundColor: '#68A16C4D',
     position: 'absolute',
-    top: scale(-20),
-    height: scale(18),
-    width: scale(18),
-    borderTopRightRadius: scale(7),
-    borderBottomLeftRadius: scale(5),
-    justifyContent: 'center',
+    right: 0,
+    top: 0,
+    backgroundColor: Color.primaryLight,
+    borderTopRightRadius: scale(8),
+    padding: scale(3),
+    borderBottomLeftRadius: scale(8),
   },
 });

@@ -580,10 +580,9 @@ import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { addWaterData, getWaterIntake } from '../redux/client';
+import {  getWaterIntake } from '../redux/client';
 
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
-import {addWaterData} from '../redux/client';
 import CustomShadow from './CustomShadow';
 
 

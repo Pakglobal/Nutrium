@@ -1,4 +1,3 @@
-
 import {
   StyleSheet,
   Text,
@@ -27,10 +26,10 @@ import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
-import { Font } from '../../../../assets/styles/Fonts';
-import { Color } from '../../../../assets/styles/Colors';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
-import { Shadow } from 'react-native-shadow-2';
+import {Font} from '../../../../assets/styles/Fonts';
+import {Color} from '../../../../assets/styles/Colors';
+import {ShadowValues} from '../../../../assets/styles/Shadow';
+import {Shadow} from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
 import { getWaterIntake } from '../../../../redux/client';
 
@@ -47,7 +46,7 @@ const WaterIntake = () => {
   const [loading, setLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
 
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
@@ -108,7 +107,7 @@ const WaterIntake = () => {
   const getLast10Days = () => {
     try {
       const dates = [];
-      for (let i = 9; i >= 0; i--) {
+      for (let i = 7; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         dates.push({
@@ -352,12 +351,9 @@ const WaterIntake = () => {
     }
   };
 
-
   const handleDotMenuPress = (event, entry) => {
-
     event.target.measure((x, y, width, height, pageX, pageY) => {
-
-      setMenuPosition({ x: pageX, y: pageY });
+      setMenuPosition({x: pageX, y: pageY});
       setSelectedEntry({
         waterIntakeId: waterIntake?.waterIntakeData?._id,
         waterRecordId: entry.recordId,
@@ -372,11 +368,18 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header screenheader={true} screenName={'Water intake'} handlePlus={() =>
-        navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
+
+      <Header
+        screenheader={true}
+        screenName={'Water intake'}
+        handlePlus={() =>
+          navigation.navigate('waterIntakeLog', {plusData: plusData})
+        }
+        plus={true}
+      />
 
       <ScrollView
-        horizontal
+        // horizontal
         ref={scrollRef}
         scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}
@@ -409,7 +412,9 @@ const WaterIntake = () => {
                     dailyGoal,
                     ...formatChartData().map(item => item.value || 0),
                   )}
-                  frontColor={isSelected ? Color?.primaryColor : '#6BCB77'}
+                  frontColor={
+                    isSelected ? Color?.primaryColor : Color.primaryLight
+                  }
                 />
                 <View style={styles.dateBox}>
                   <Text style={styles.dateText}>{date.day}</Text>
@@ -517,59 +522,20 @@ const WaterIntake = () => {
         )}
       </View>
 
-
-      <ModalComponent visible={modalVisible} handleEdit={handleEdit}
-        modalstyle={
-          {
-            position: 'absolute',
-            right: 20,
-            top: menuPosition.y - 80,
-          }
-        }
+      <ModalComponent
+        visible={modalVisible}
+        handleEdit={handleEdit}
+        modalstyle={{
+          position: 'absolute',
+          right: 20,
+          top: menuPosition.y - 80,
+        }}
         handleDelete={() => {
           setModalVisible(false);
           setDeleteModal(true);
-        }
-        } setModalVisible={() => setModalVisible(false)} />
-      {/* <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}>
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setModalVisible(false)}>
-          <View
-            style={[
-              styles.modalContent,
-              {
-                position: 'absolute',
-                right: 20,
-                top: menuPosition.y - 80,
-              },
-            ]}>
-            <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
-              <Text style={[styles.modalText]}>Edit</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => {
-                setModalVisible(false);
-                setDeleteModal(true);
-              }}>
-              <Text style={styles.modalText}>Delete</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal> */}
+        }}
+        setModalVisible={() => setModalVisible(false)}
+      />
 
       <CustomAlert
         visible={deleteModal}
@@ -591,6 +557,8 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     height: verticalScale(0),
+    backgroundColor: 'red',
+
   },
   bottomContentContainer: {
     flex: 1,
@@ -630,6 +598,7 @@ const styles = StyleSheet.create({
     color: Color.textColor,
     fontFamily: Font.Poppins,
     textAlign: 'center'
+
   },
   statLabel: {
     fontSize: scale(16),
@@ -644,7 +613,6 @@ const styles = StyleSheet.create({
   },
   entriesContainer: {
     flex: 1,
-    marginVertical: verticalScale(5),
   },
   entryItem: {
     marginHorizontal: scale(16),

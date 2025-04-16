@@ -215,10 +215,8 @@ const BottomNavigation = () => {
         screenOptions={({route}) => ({
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarStyle: [
-            styles.tabBarStyle,
-            {display: route.name === 'deo' ? 'none' : 'flex'},
-          ],
+          tabBarHideOnKeyboard: true,
+          tabBarStyle: [styles.tabBarStyle, {display: 'flex'}, null],
           tabBarIcon: ({focused, color, size}) => {
             let iconName;
             switch (route.name) {
@@ -270,10 +268,7 @@ const BottomNavigation = () => {
               </View>
             );
           },
-        })}
-        tabBarOptions={{
-          keyboardHidesTabBar: true,
-        }}>
+        })}>
         <Tab.Screen name="home" component={HomeScreen} />
         <Tab.Screen name="meal" component={MealScreen} />
         <Tab.Screen
@@ -294,7 +289,7 @@ export default BottomNavigation;
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    position: 'relative',
+    position: 'absolute',
     bottom: verticalScale(10),
     height: verticalScale(65),
     borderRadius: 30,

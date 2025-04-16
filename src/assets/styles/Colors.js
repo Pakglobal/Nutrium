@@ -9,7 +9,7 @@ export const Color = {
   lightGreen: '#e0f9f2',
   common: 'rgba(210, 233, 254, 0.6)',
   primaryColor: '#21972b',
-  primaryLight: 'rgba(33, 151, 43,0.3)',
+  primaryLight: '#6BCB77',
   white: '#fff',
   textColor: '#303233',
   grayshadow: '#e3dfde',

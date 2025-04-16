@@ -24,6 +24,7 @@ import Header from '../../../../Components/Header';
 import { Shadow } from 'react-native-shadow-2';
 import { ShadowValues } from '../../../../assets/styles/Shadow';
 import { Font } from '../../../../assets/styles/Fonts';
+import CustomShadow from '../../../../Components/CustomShadow';
 
 const LogPhysicalActivity = ({route}) => {
   const token = route?.params?.plusData?.token;
@@ -110,10 +111,7 @@ const LogPhysicalActivity = ({route}) => {
 
       <View style={{marginHorizontal: scale(16)}}>
         <Text style={styles.topTitle}>Log Physical Activity</Text>
-        <Shadow
-          distance={3}
-          startColor={ShadowValues.color}
-          style={{ width: '100%' }}>
+        <CustomShadow>
           <View style={styles.searchContainer}>
             <TextInput
               placeholder="Search for an activity..."
@@ -130,7 +128,7 @@ const LogPhysicalActivity = ({route}) => {
               />
             </Pressable>
           </View>
-        </Shadow>
+        </CustomShadow>
       </View>
 
       {loading ? (

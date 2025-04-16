@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
+import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetUserApi = async token => {
   try {
@@ -42,3 +42,18 @@ export const UpdateImage = async (token, id, imageUrl) => {
     return error?.message?.data;
   }
 };
+
+
+export const GetProfileImageApi = async (token, id) => {
+  try {
+    const url = `${BASE_URL}client/${id}`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    return response?.data;
+  } catch (error) {
+    console.error('Error fetching get user', error);
+  }
+}

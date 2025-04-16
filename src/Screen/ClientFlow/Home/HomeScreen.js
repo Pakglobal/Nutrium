@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,27 +8,28 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-import {Shadow} from 'react-native-shadow-2';
-import {Color} from '../../../assets/styles/Colors';
+import { Shadow } from 'react-native-shadow-2';
+import { Color } from '../../../assets/styles/Colors';
 import PhysicalActivity from '../../../Components/PhysicalActivity';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Header from '../../../Components/Header';
 import AppointmentCard from '../../../Components/AppointmentCard';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GetProfileImageApi,
   GetUserApi,
 } from '../../../Apis/ClientApis/ProfileApi';
-import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
+import { GetAppointmentByClientId } from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
-import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
+import { shadowStyle, ShadowValues } from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
-import {loginData, profileData} from '../../../redux/user';
-import {setImage} from '../../../redux/client';
+import { loginData, profileData } from '../../../redux/user';
+import { setImage } from '../../../redux/client';
+import { TouchableOpacity } from 'react-native';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -126,24 +127,41 @@ const HomeScreen = () => {
         setRefreshing(false);
       });
   }, []);
-
+  const handleGoToChallenge = () => {
+    navigation.navigate('ChallengesScreen')
+  };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <Header logoHeader={true} />
-
+      <TouchableOpacity
+        style={{
+          backgroundColor: 'green', // Your theme color
+          paddingVertical: 12,
+          paddingHorizontal: 20,
+          borderRadius: 10,
+          alignItems: 'center',
+          marginVertical: 16,
+          marginHorizontal: 20,
+        }}
+        onPress={handleGoToChallenge}
+      >
+        <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
+          Go to Challenge
+        </Text>
+      </TouchableOpacity>
       {isGuest ? (
         <ScrollView
-          style={{backgroundColor: Color.white, paddingHorizontal: scale(8)}}>
-          <View style={{paddingHorizontal: scale(10)}}>
-            <View style={{marginVertical: scale(10)}}>
-              <CustomShadow style={{width: '100%', borderRadius: scale(10)}}>
+          style={{ backgroundColor: Color.white, paddingHorizontal: scale(8) }}>
+          <View style={{ paddingHorizontal: scale(10) }}>
+            <View style={{ marginVertical: scale(10) }}>
+              <CustomShadow style={{ width: '100%', borderRadius: scale(10) }}>
                 <MealsLikeInHome />
               </CustomShadow>
             </View>
 
             <MoreForYou />
-            <View style={{marginVertical: scale(10)}}>
-              <CustomShadow style={{width: '100%', borderRadius: scale(10)}}>
+            <View style={{ marginVertical: scale(10) }}>
+              <CustomShadow style={{ width: '100%', borderRadius: scale(10) }}>
                 <HydratedStay />
               </CustomShadow>
             </View>
@@ -178,21 +196,21 @@ const HomeScreen = () => {
                   selectedAppointment={selectedAppointment}
                   setSelectedAppointment={setSelectedAppointment}
                 />
-                  <CustomShadow radius={4}>
-                    <MealsLikeInHome />
-                  </CustomShadow>
+                <CustomShadow radius={4}>
+                  <MealsLikeInHome />
+                </CustomShadow>
 
                 <MoreForYou />
                 <OnOffFunctionality />
 
-                <CustomShadow  radius={4}>
+                <CustomShadow radius={4}>
                   <HydratedStay />
                 </CustomShadow>
 
                 <OnOffFunctionality />
 
-                <View style={{marginBottom: verticalScale(160)}}>
-                  <CustomShadow  radius={4}>
+                <View style={{ marginBottom: verticalScale(160) }}>
+                  <CustomShadow radius={4}>
                     <PhysicalActivity
                       header={true}
                       subHeader={true}

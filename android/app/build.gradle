@@ -149,6 +149,11 @@ android {
             }
         }
     }
+     configurations.all {
+        resolutionStrategy {
+            force 'androidx.viewpager2:viewpager2:1.0.0'
+        }
+    }
 }
 
 dependencies {

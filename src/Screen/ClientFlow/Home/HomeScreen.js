@@ -27,7 +27,7 @@ import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
 import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
-import {profileData} from '../../../redux/user';
+import {loginData, profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
 
 const HomeScreen = () => {
@@ -45,7 +45,6 @@ const HomeScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
-  
 
   const dispatch = useDispatch();
 
@@ -67,9 +66,7 @@ const HomeScreen = () => {
     try {
       const response = await GetProfileImageApi(token, id);
 
-
       if (response) {
-         dispatch(loginData(response));
         dispatch(setImage(response[0]?.image));
       }
     } catch (error) {
@@ -181,22 +178,21 @@ const HomeScreen = () => {
                   selectedAppointment={selectedAppointment}
                   setSelectedAppointment={setSelectedAppointment}
                 />
-
-                <CustomShadow style={shadowStyle}>
-                  <MealsLikeInHome />
-                </CustomShadow>
+                  <CustomShadow radius={4}>
+                    <MealsLikeInHome />
+                  </CustomShadow>
 
                 <MoreForYou />
                 <OnOffFunctionality />
 
-                <CustomShadow style={shadowStyle}>
+                <CustomShadow  radius={4}>
                   <HydratedStay />
                 </CustomShadow>
 
                 <OnOffFunctionality />
 
                 <View style={{marginBottom: verticalScale(160)}}>
-                  <CustomShadow style={shadowStyle}>
+                  <CustomShadow  radius={4}>
                     <PhysicalActivity
                       header={true}
                       subHeader={true}

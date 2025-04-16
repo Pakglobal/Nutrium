@@ -40,7 +40,6 @@ import ShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/ShoppingLi
 import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShoppingList';
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
-import InformationScreen from '../Auth/Login/InformationScreen';
 import ClientDrawerContent from './ClientDrawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View} from 'react-native';
@@ -56,12 +55,12 @@ import MealScreen from '../Screen/ClientFlow/Meal/MealScreen';
 import RecommendationScreen from '../Screen/ClientFlow/Recommend/RecommendationScreen';
 import ProfileMenuScreen from '../Screen/ClientFlow/Profile/ProfileMenuScreen';
 import Deo from './Deo';
-
+ 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const ClientDrawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
-
+ 
 // const BottomNavigation = () => {
 //   return (
 //     <NavigationContainer>
@@ -75,7 +74,7 @@ const Tab = createBottomTabNavigator();
 //     </NavigationContainer>
 //   );
 // };
-
+ 
 const ClientHomeWithDrawer = () => {
   return (
     <View style={{flex: 1}}>
@@ -83,7 +82,7 @@ const ClientHomeWithDrawer = () => {
     </View>
   );
 };
-
+ 
 const ClientDrawerNavigator = () => {
   return (
     <ClientDrawer.Navigator
@@ -98,16 +97,16 @@ const ClientDrawerNavigator = () => {
     </ClientDrawer.Navigator>
   );
 };
-
+ 
 const MyDrawer = () => {
   const [selectedScreen, setSelectedScreen] = useState('MESSAGES');
-
+ 
   const options = [
     {id: 0, label: 'MESSAGES'},
     {id: 1, label: 'CLIENTS'},
     {id: 2, label: 'APPOINTMENTS'},
   ];
-
+ 
   return (
     <Drawer.Navigator
       drawerContent={props => (
@@ -132,7 +131,7 @@ const MyDrawer = () => {
     </Drawer.Navigator>
   );
 };
-
+ 
 const AdminFlowStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="adminFlow" component={MyDrawer} />
@@ -142,10 +141,10 @@ const AdminFlowStack = () => (
     <Stack.Screen name="Messages" component={MessageClient} />
   </Stack.Navigator>
 );
-
+ 
 const AuthStack = ({route}) => {
   const {onboardingCompleted} = route.params || {};
-
+ 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {!onboardingCompleted ? (
@@ -155,8 +154,6 @@ const AuthStack = ({route}) => {
       <Stack.Screen name="GuestFlow" component={GuestStack} />
       <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen name="loginScreen" component={LoginScreen} />
-
-      <Stack.Screen name="information" component={InformationScreen} />
       <Stack.Screen
         name="registrationType"
         component={SelectRegistrationType}
@@ -171,7 +168,7 @@ const AuthStack = ({route}) => {
     </Stack.Navigator>
   );
 };
-
+ 
 const UserFlowStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="ClientDrawer" component={ClientDrawerNavigator} />
@@ -198,10 +195,10 @@ const UserFlowStack = () => (
     <Stack.Screen name="myLists" component={MyList} />
   </Stack.Navigator>
 );
-
+ 
 const GuestStack = () => {
   // const isGuest = useSelector(state => state.user?.guestMode);
-
+ 
   // if (isGuest) {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -214,19 +211,19 @@ const GuestStack = () => {
     </Stack.Navigator>
   );
   // }
-
+ 
 };
-
+ 
 const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const isGuest = useSelector(state => state.user?.guestMode);
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
-
+ 
   if (onboardingCompleted === null) {
     return null;
   }
-
+ 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {role === 'Admin' ? (
@@ -243,7 +240,7 @@ const MainStack = () => {
     </Stack.Navigator>
   );
 };
-
+ 
 const RootNavigation = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
@@ -253,5 +250,5 @@ const RootNavigation = () => (
     </PersistGate>
   </Provider>
 );
-
+ 
 export default RootNavigation;

@@ -33,15 +33,14 @@ const SelectCountry = ({route}) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [country, setCountry] = useState('');
-  const [number, setNumber] = useState('');
+  const [country, setCountry] = useState('India');
+  const [number, setNumber] = useState('9856235263');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  const selectGender=route?.params
-  const countryData = { country, number, dateOfBirth ,...selectGender}
-  
+  const selectGender = route?.params;
+  const countryData = {country, number, dateOfBirth, ...selectGender};
+
   useKeyboardHandler();
   useAndroidBack();
 
@@ -63,22 +62,18 @@ const SelectCountry = ({route}) => {
     'Canada',
   ];
 
-
-
-
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
-  
+
     const day = currentDate.getDate().toString().padStart(2, '0');
     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
     const year = currentDate.getFullYear();
-  
+
     const formattedDate = `${day}/${month}/${year}`;
     setDateOfBirth(formattedDate);
   };
-  
 
   const handleNavigation = () => {
     Keyboard.dismiss();
@@ -119,7 +114,7 @@ const SelectCountry = ({route}) => {
       return;
     }
 
-    navigation.navigate('GuestLogin',countryData);
+    navigation.navigate('GuestLogin', countryData);
   };
 
   return (
@@ -138,12 +133,9 @@ const SelectCountry = ({route}) => {
 
         <View
           style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={Color.primaryColor}
-            style={{width: '100%', borderRadius: scale(5)}}>
+          <CustomShadow>
             <TouchableOpacity
-              style={[styles.inputContainer, {marginBottom: verticalScale(10)}]}
+              style={styles.inputContainer}
               onPress={() => {
                 Keyboard.dismiss();
                 setShowCountryDropdown(!showCountryDropdown);
@@ -169,7 +161,7 @@ const SelectCountry = ({route}) => {
                 />
               )}
             </TouchableOpacity>
-          </Shadow>
+          </CustomShadow>
 
           {showCountryDropdown && (
             <View style={styles.dropdown}>
@@ -198,41 +190,8 @@ const SelectCountry = ({route}) => {
             </View>
           )}
 
-          <CustomShadow
-            style={{
-              width: '100%',
-              borderRadius: scale(5),
-              marginBottom: verticalScale(10),
-            }}>
-            <View
-              style={{
-                height: verticalScale(38),
-                justifyContent: 'center',
-                paddingHorizontal: scale(5),
-              }}>
-              <TextInput
-                value={number}
-                placeholder="Number"
-                onChangeText={setNumber}
-                placeholderTextColor={Color.textColor}
-                style={styles.titleText}
-                multiline={false}
-                keyboardType="numeric"
-                maxLength={10}
-              />
-            </View>
-          </CustomShadow>
-
-          {/* <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={Color.primaryColor}
-            style={{
-              width: '100%',
-              borderRadius: scale(5),
-              marginBottom: verticalScale(10),
-              paddingHorizontal: scale(5),
-            }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <CustomShadow>
+            <View style={styles.inputContainer}>
               {country && (
                 <Text style={[styles.titleText, styles.countryCode]}>
                   {countryCodes[country]}
@@ -248,12 +207,9 @@ const SelectCountry = ({route}) => {
                 style={[styles.titleText, {flex: 1}]}
               />
             </View>
-          </Shadow> */}
+          </CustomShadow>
 
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={Color.primaryColor}
-            style={{width: '100%', borderRadius: scale(5)}}>
+          <CustomShadow>
             <TouchableOpacity
               style={styles.inputContainer}
               onPress={() => {
@@ -273,7 +229,7 @@ const SelectCountry = ({route}) => {
                 color={Color.primaryColor}
               />
             </TouchableOpacity>
-          </Shadow>
+          </CustomShadow>
 
           {showDatePicker && (
             <DateTimePicker
@@ -317,6 +273,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: Color.white,
+    marginVertical: verticalScale(6)
   },
   dropdown: {
     borderRadius: scale(4),
@@ -339,6 +297,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: scale(0),
     right: scale(0),
+    marginBottom: verticalScale(25),
   },
   button: {
     justifyContent: 'center',

@@ -8,9 +8,9 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { Color } from '../../../../assets/styles/Colors';
+import {useNavigation} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import {
@@ -21,9 +21,10 @@ import {
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
-import { Font } from '../../../../assets/styles/Fonts';
-import { Shadow } from 'react-native-shadow-2';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
+import {Font} from '../../../../assets/styles/Fonts';
+import {Shadow} from 'react-native-shadow-2';
+import {ShadowValues} from '../../../../assets/styles/Shadow';
+import CustomShadow from '../../../../Components/CustomShadow';
 
 const WorkOutDetails = ({route}) => {
   const showToast = message => {
@@ -146,14 +147,17 @@ const WorkOutDetails = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header screenheader={true} screenName={'Physical Activity'} plus={false} handleSave={handleSave} />
+      <Header
+        screenheader={true}
+        screenName={'Physical Activity'}
+        plus={false}
+        handleSave={handleSave}
+      />
       <View style={styles.content}>
         <Text style={styles.topTitle}>Workout Details</Text>
+
         <Text style={styles.label}>Physical activity</Text>
-        <Shadow
-          distance={ShadowValues.blackShadowDistance}
-          startColor={ShadowValues.color}
-          style={{ width: '100%' }}>
+        <CustomShadow>
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
@@ -163,19 +167,16 @@ const WorkOutDetails = ({route}) => {
               editable={false}
             />
           </View>
-        </Shadow>
+        </CustomShadow>
 
         <Text style={styles.label}>Date</Text>
-        <Shadow
-          distance={ShadowValues.blackShadowDistance}
-          startColor={ShadowValues.color}
-          style={{ width: '100%' }}>
+        <CustomShadow>
           <TouchableOpacity
-            style={styles.pickerButton}
+            style={styles.inputContainer}
             onPress={() => setDateOpen(true)}>
             <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
           </TouchableOpacity>
-        </Shadow>
+        </CustomShadow>
         <DatePicker
           modal
           mode="date"
@@ -189,12 +190,10 @@ const WorkOutDetails = ({route}) => {
             setDateOpen(false);
           }}
         />
+
         <View>
           <Text style={styles.label}>Duration</Text>
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={ShadowValues.color}
-            style={{ width: '100%' }}>
+          <CustomShadow>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
@@ -206,16 +205,14 @@ const WorkOutDetails = ({route}) => {
               />
               <Text style={styles.unit}>min</Text>
             </View>
-          </Shadow>
+          </CustomShadow>
           {errorMessage ? (
             <Text style={styles.error}>{errorMessage}</Text>
           ) : null}
         </View>
+
         <Text style={styles.label}>Energy</Text>
-        <Shadow
-          distance={ShadowValues.blackShadowDistance}
-          startColor={ShadowValues.color}
-          style={{ width: '100%' }}>
+        <CustomShadow>
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
@@ -225,7 +222,7 @@ const WorkOutDetails = ({route}) => {
             />
             <Text style={styles.unit}>kcal</Text>
           </View>
-        </Shadow>
+        </CustomShadow>
       </View>
     </SafeAreaView>
   );
@@ -245,28 +242,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(10),
     borderRadius: scale(6),
     backgroundColor: Color?.white,
+    height: verticalScale(38),
   },
   unit: {
     marginLeft: 5,
     color: Color.textColor,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   input: {
     flex: 1,
     paddingVertical: verticalScale(5),
     color: Color.textColor,
     fontFamily: Font?.Poppins,
-    fontWeight: '500'
-
+    fontWeight: '500',
   },
   label: {
-    fontSize: scale(14),
+    fontSize: scale(12),
     color: '#646D73',
     fontWeight: '500',
     marginTop: verticalScale(15),
     marginBottom: verticalScale(5),
-    fontFamily: Font?.Poppins
-
+    fontFamily: Font?.PoppinsMedium,
   },
   pickerButton: {
     padding: scale(10),
@@ -277,7 +273,7 @@ const styles = StyleSheet.create({
   dateText: {
     color: Color.textColor,
     fontFamily: Font?.Poppins,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   error: {
     color: 'red',
@@ -287,11 +283,10 @@ const styles = StyleSheet.create({
   },
   topTitle: {
     color: Color?.textColor,
-    marginTop: scale(10),
-    fontSize: scale(17),
+    marginTop: verticalScale(15),
+    fontSize: scale(16),
     fontWeight: '500',
-    fontFamily: Font?.Poppins
-
+    fontFamily: Font?.PoppinsMedium,
   },
 });
 

@@ -31,8 +31,24 @@ import useAndroidBack from '../../../Navigation/useAndroidBack';
 const SelectGender = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [selectedGender, setSelectedGender] = useState(null);
-  useAndroidBack();
+  const [selectedGender, setSelectedGender] = useState('Female');
+  useAndroidBack()
+
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     dispatch(setGuestMode());
+  //     return true; 
+  //   };
+
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+
+  //   return () => backHandler.remove(); 
+  // }, []);
+
+  
   const handleSelect = gender => {
     setSelectedGender(gender);
   };
@@ -54,7 +70,7 @@ const SelectGender = () => {
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={Progress.selectGender} />
 
-      <LeftIcon onGoBack={() => navigation.goBack()} />
+      <LeftIcon onGoBack={() => dispatch(setGuestMode())} />
 
       <LoginHeader height={'45%'} width={'100%'} style={{marginTop: 50}} />
 

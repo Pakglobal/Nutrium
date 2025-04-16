@@ -31,7 +31,6 @@ import {Color} from '../../../../assets/styles/Colors';
 import {ShadowValues} from '../../../../assets/styles/Shadow';
 import {Shadow} from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
-import { getWaterIntake } from '../../../../redux/client';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -107,7 +106,7 @@ const WaterIntake = () => {
   const getLast10Days = () => {
     try {
       const dates = [];
-      for (let i = 7; i >= 0; i--) {
+      for (let i = 10; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         dates.push({
@@ -289,31 +288,31 @@ const WaterIntake = () => {
     }
   };
 
-  const handleDelete = async () => {
-    setDeleteModal(false);
-    try {
-      setLoading(true);
-      const payload = {
-        waterIntakeId: selectedEntry?.waterIntakeId,
-        waterRecordId: selectedEntry?.waterRecordId,
-        waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-        token: token,
-      };
-      const response = await DeleteWaterIntake(payload);
-      if (
-        response?.message === 'Water intake data deleted successfully.' ||
-        response?.success === true
-      ) {
-        getWaterIntakeData();
-      } else {
-        showToast(response?.message || 'Failed to delete entry');
-      }
-      setLoading(false);
-    } catch (error) {
-      showToast('An error occurred while deleting');
-      setLoading(false);
-    }
-  };
+  // const handleDelete = async () => {
+  //   setDeleteModal(false);
+  //   try {
+  //     setLoading(true);
+  //     const payload = {
+  //       waterIntakeId: selectedEntry?.waterIntakeId,
+  //       waterRecordId: selectedEntry?.waterRecordId,
+  //       waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+  //       token: token,
+  //     };
+  //     const response = await DeleteWaterIntake(payload);
+  //     if (
+  //       response?.message === 'Water intake data deleted successfully.' ||
+  //       response?.success === true
+  //     ) {
+  //       getWaterIntakeData();
+  //     } else {
+  //       showToast(response?.message || 'Failed to delete entry');
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     showToast('An error occurred while deleting');
+  //     setLoading(false);
+  //   }
+  // };
 
   const scrollRef = React.createRef();
 
@@ -369,27 +368,22 @@ const WaterIntake = () => {
   return (
     <SafeAreaView style={styles.container}>
 
-      <Header
-        screenheader={true}
-        screenName={'Water intake'}
-        handlePlus={() =>
-          navigation.navigate('waterIntakeLog', {plusData: plusData})
-        }
-        plus={true}
-      />
+      <Header onPress={()=> navigation.goBack({selectedDate:selectedDate})} screenheader={true} screenName={'Water intake'} handlePlus={() =>
+        navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
 
-      <ScrollView
-        // horizontal
-        ref={scrollRef}
-        scrollEventThrottle={16}
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollContainer}>
-        <View style={styles.chartWithDates}>
-          {dateLabels.map((date, index) => {
-            if (!date?.fullDate) return null;
+      <View style={{height: verticalScale(220)}}>
+        <ScrollView
+          horizontal
+          ref={scrollRef}
+          scrollEventThrottle={16}
+          showsHorizontalScrollIndicator={false}
+          style={styles.scrollContainer}>
+          <View style={styles.chartWithDates}>
+            {dateLabels.map((date, index) => {
+              if (!date?.fullDate) return null;
 
-            const formattedDate = date.fullDate.toISOString().split('T')[0];
-            const isSelected = selectedDate === formattedDate;
+              const formattedDate = date.fullDate.toISOString().split('T')[0];
+              const isSelected = selectedDate === formattedDate;
 
             return (
               <TouchableOpacity
@@ -397,7 +391,7 @@ const WaterIntake = () => {
                 style={styles.singleDateChart}
                 onPress={() => handleDate(date)}>
                 <BarChart
-                  data={[{ value: formatChartData()[index]?.value || 0 }]}
+                  data={[{value: formatChartData()[index]?.value || 0}]}
                   width={50}
                   height={150}
                   barWidth={35}
@@ -430,27 +424,27 @@ const WaterIntake = () => {
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
-          <View style={{ width: '46%' }}>
+          <View style={{width: '46%'}}>
             <Shadow
               distance={2}
               startColor={ShadowValues?.blackShadow}
-              style={{ width: '100%', borderRadius: scale(10) }}>
+              style={{width: '100%', borderRadius: scale(10)}}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
                 <Text style={styles.statLabel}>Water intake</Text>
               </View>
-            </Shadow>
+            </CustomShadow>
           </View>
-          <View style={{ width: '46%' }}>
+          <View style={{width: '46%'}}>
             <Shadow
               distance={2}
               startColor={ShadowValues?.blackShadow}
-              style={{ width: '100%', borderRadius: scale(10) }}>
+              style={{width: '100%', borderRadius: scale(10)}}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{dailyGoal} mL</Text>
                 <Text style={styles.statLabel}>Daily goal</Text>
               </View>
-            </Shadow>
+            </CustomShadow>
           </View>
         </View>
         {loading ? (
@@ -495,7 +489,7 @@ const WaterIntake = () => {
                             }}>
                             <Icon
                               name="dots-vertical"
-                              size={20}
+                              size={24}
                               color={Color.primaryColor}
                             />
                           </TouchableOpacity>
@@ -522,28 +516,91 @@ const WaterIntake = () => {
         )}
       </View>
 
-      <ModalComponent
-        visible={modalVisible}
-        handleEdit={handleEdit}
-        modalstyle={{
-          position: 'absolute',
-          right: 20,
-          top: menuPosition.y - 80,
-        }}
-        handleDelete={() => {
-          setModalVisible(false);
-          setDeleteModal(true);
-        }}
-        setModalVisible={() => setModalVisible(false)}
-      />
 
-      <CustomAlert
+      <ModalComponent visible={modalVisible} handleEdit={handleEdit}
+        modalstyle={
+          {
+            position: 'absolute',
+            right: 20,
+            top: menuPosition.y - 80,
+          }
+        }
+        handleDelete={async () => {
+          setModalVisible(false);
+          try {
+            setLoading(true);
+            const payload = {
+              waterIntakeId: selectedEntry?.waterIntakeId,
+              waterRecordId: selectedEntry?.waterRecordId,
+              waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+              token: token,
+            };
+            const response = await DeleteWaterIntake(payload);
+            if (
+              response?.message === 'Water intake data deleted successfully.' ||
+              response?.success === true
+            ) {
+              getWaterIntakeData();
+            } else {
+              showToast(response?.message || 'Failed to delete entry');
+            }
+            setLoading(false);
+          } catch (error) {
+            showToast('An error occurred while deleting');
+            setLoading(false);
+          }
+
+          // setDeleteModal(true);
+        }
+        } setModalVisible={() => setModalVisible(false)} />
+      {/* <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setModalVisible(false)}>
+          <View
+            style={[
+              styles.modalContent,
+              {
+                position: 'absolute',
+                right: 20,
+                top: menuPosition.y - 80,
+              },
+            ]}>
+            <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
+              <Text style={[styles.modalText]}>Edit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => {
+                setModalVisible(false);
+                setDeleteModal(true);
+              }}>
+              <Text style={styles.modalText}>Delete</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal> */}
+
+
+      {/* <CustomAlert
         visible={deleteModal}
         message={'Are You Sure?'}
         onChange={handleDelete}
         onClose={() => setDeleteModal(false)}
         doubleButton={true}
-      />
+      /> */}
     </SafeAreaView>
   );
 };
@@ -557,8 +614,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     height: verticalScale(0),
-    backgroundColor: 'red',
-
   },
   bottomContentContainer: {
     flex: 1,
@@ -571,12 +626,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dateText: {
-    fontSize: scale(13),
+    fontSize: scale(12),
     fontWeight: 'bold',
     color: '#000',
   },
   monthText: {
-    fontSize: scale(11),
+    fontSize: scale(10),
     color: '#888',
   },
   dateBox: {
@@ -588,7 +643,8 @@ const styles = StyleSheet.create({
     gap: scale(16),
     justifyContent: 'space-between',
     paddingHorizontal: scale(16),
-    marginVertical: verticalScale(10),
+    marginTop: verticalScale(40),
+    marginBottom: verticalScale(20),
     width: '100%',
   },
   statValue: {
@@ -629,10 +685,11 @@ const styles = StyleSheet.create({
     gap: scale(12),
   },
   entryAmount: {
-    fontSize: scale(15),
+    fontSize: scale(14),
     color: Color.textColor,
     fontWeight: '500',
     fontFamily: Font?.Poppins,
+    marginTop: verticalScale(2),
   },
   entryRight: {
     flexDirection: 'row',
@@ -641,8 +698,9 @@ const styles = StyleSheet.create({
   },
   entryTime: {
     color: '#767878',
-    fontSize: scale(15),
+    fontSize: scale(14),
     fontFamily: Font?.Poppins,
+    marginTop: verticalScale(2),
   },
 
   modalOverlay: {
@@ -666,8 +724,6 @@ const styles = StyleSheet.create({
   modalOption: {
     paddingVertical: verticalScale(5),
     paddingHorizontal: scale(10),
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#f0f0f0',
     alignSelf: 'center',
   },
   modalText: {

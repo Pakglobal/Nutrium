@@ -34,78 +34,72 @@ const Header = ({
   handleSave,
   handleNotification,
   handleAward,
-  rightHeaderButton = true
+  rightHeaderButton = true,  onPress
+
 }) => {
   const navigation = useNavigation();
   return (
     <SafeAreaView style={{backgroundColor: Color.white, zIndex: 1}}>
-      <View style={styles.header}>
-        {logoHeader && (
-          <>
-            <CustomShadow
-              style={[
-                shadowStyle,
-                {
-                  borderBottomLeftRadius: scale(12),
-                  borderBottomRightRadius: scale(12),
-                },
-              ]}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: scale(10),
-                  paddingVertical: verticalScale(15),
-                  borderBottomLeftRadius: scale(12),
-                  borderBottomRightRadius: scale(12),
-                }}>
-                <Logo style={{marginLeft: scale(7)}} />
+      <CustomShadow radius={4}>
+        <View style={styles.header}>
+          {logoHeader && (
+            <>
+              <CustomShadow
+                style={[
+                  shadowStyle,
+                  {
+                    borderBottomLeftRadius: scale(12),
+                    borderBottomRightRadius: scale(12),
+                  },
+                ]}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: scale(10),
+                    paddingVertical: verticalScale(15),
+                    borderBottomLeftRadius: scale(12),
+                    borderBottomRightRadius: scale(12),
+                  }}>
+                  <Logo style={{marginLeft: scale(7)}} />
 
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <TouchableOpacity onPress={handleAward} style={{}}>
-                    <FontAwesome5
-                      style={IconPadding}
-                      name="award"
-                      color={Color.white}
-                      size={24}
-                    />
-                  </TouchableOpacity>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <TouchableOpacity onPress={handleAward} style={{}}>
+                      <FontAwesome5
+                        style={IconPadding}
+                        name="award"
+                        color={Color.white}
+                        size={24}
+                      />
+                    </TouchableOpacity>
 
-                  <TouchableOpacity onPress={handleNotification} style={{}}>
-                    <Ionicons
-                      style={IconPadding}
-                      name="notifications"
-                      color={Color.white}
-                      size={24}
-                    />
-                  </TouchableOpacity>
+                    <TouchableOpacity onPress={handleNotification} style={{}}>
+                      <Ionicons
+                        style={IconPadding}
+                        name="notifications"
+                        color={Color.white}
+                        size={24}
+                      />
+                    </TouchableOpacity>
 
-                  <TouchableOpacity
-                    onPress={() => navigation.openDrawer()}
-                    style={{}}>
-                    <MaterialCommunityIcons
-                      style={IconPadding}
-                      name="menu"
-                      color={Color.white}
-                      size={24}
-                    />
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => navigation.openDrawer()}
+                      style={{}}>
+                      <MaterialCommunityIcons
+                        style={IconPadding}
+                        name="menu"
+                        color={Color.white}
+                        size={24}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </CustomShadow>
-          </>
-        )}
-        {screenheader && (
-          <>
-            <CustomShadow
-              style={[
-                shadowStyle,
-                {
-                  borderBottomLeftRadius: scale(12),
-                  borderBottomRightRadius: scale(12),
-                },
-              ]}>
+              </CustomShadow>
+            </>
+          )}
+          {screenheader && (
+            <View style={{}}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -118,8 +112,10 @@ const Header = ({
                 }}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={{padding: scale(5), alignSelf: 'center', marginRight: scale(5)}}>
+
+                    onPress={() => {navigation.goBack(),onPress}}
+                    style={{padding: scale(5), alignSelf: 'center'}}>
+
                     <AntDesign
                       name="arrowleft"
                       size={IconStyle.drawerIconSize}
@@ -148,10 +144,10 @@ const Header = ({
                     </TouchableOpacity>
                   ))}
               </View>
-            </CustomShadow>
-          </>
-        )}
-      </View>
+            </View>
+          )}
+        </View>
+      </CustomShadow>
     </SafeAreaView>
   );
 };
@@ -169,10 +165,11 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   screenName: {
-    fontSize: scale(18),
+    fontSize: scale(16),
     fontWeight: '500',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
     color: Color.white,
+    marginTop: verticalScale(2)
   },
   saveStyle: {
     color: Color?.white,

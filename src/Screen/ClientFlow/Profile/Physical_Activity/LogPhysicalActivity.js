@@ -150,6 +150,7 @@ const LogPhysicalActivity = ({route}) => {
                   <Text style={styles.title}>Quick access</Text>
                   {quickAccessData?.map((item, index) => (
                     <TouchableOpacity
+                    style={{marginVertical: verticalScale(5)}}
                       key={index}
                       onPress={() =>
                         handlePressItem(item?.activity, item?.time)
@@ -202,61 +203,56 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: verticalScale(10)
   },
   topTitle: {
     color: Color?.textColor,
-    marginTop: scale(10),
-    fontSize: scale(17),
+    marginVertical: verticalScale(15),
+    fontSize: scale(16),
     fontWeight: '500',
-    marginBottom:scale(10),
-    fontFamily:Font?.Poppins
+    fontFamily:Font?.PoppinsMedium,
   },
   inputView: {
-    fontSize: scale(13),
+    fontSize: scale(12),
     fontWeight: '600',
-    color: Color.txt,
+    color: Color.textColor,
     width: '85%',
     marginHorizontal: scale(8),
-    fontFamily:Font?.Poppins
+    fontFamily:Font?.PoppinsMedium,
+    marginTop: verticalScale(2)
   },
   clearButton: {
     marginEnd: scale(10),
   },
   title: {
-    marginTop: verticalScale(20),
-    marginBottom: verticalScale(10),
+    marginVertical: verticalScale(10),
     fontSize: scale(16),
     color: Color.textColor,
     fontWeight: '500',
     fontFamily:Font?.Poppins
-
   },
   name: {
-    fontSize: scale(14),
+    fontSize: scale(12),
     fontWeight: '500',
     paddingVertical: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
-    color: '#675A5A',
+    color:'#675A5A',
     fontFamily:Font?.Poppins
-
   },
   activity: {
-    fontSize: scale(14),
+    fontSize: scale(12),
     fontWeight: '500',
-    color: '#675A5A',
-    paddingTop: verticalScale(10),
-    fontFamily:Font?.Poppins
-
+    color: Color.textColor,
+    fontFamily:Font?.PoppinsMedium
   },
   time: {
-    fontSize: scale(12),
-    paddingBottom: verticalScale(10),
+    fontSize: scale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
     color: '#999595',
-    fontFamily:Font?.Poppins
-
+    fontFamily:Font?.Poppins,
+    paddingBottom: verticalScale(5)
   },
   emptyContainer: {
     padding: scale(20),

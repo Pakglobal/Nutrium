@@ -7,6 +7,7 @@ const initialState = {
   addInfo: {},
   imageInfo: {},
   waterData: {},
+  waterIntake: 0,
 };
 
 const clientSlice = createSlice({
@@ -28,6 +29,9 @@ const clientSlice = createSlice({
     addWaterData: (state, action) => {
       state.waterData = action.payload;
     },
+    getWaterIntake: (state, action) => {
+      state.waterIntake = action.payload;
+    },
     updateAppointmentStatus: (state, action) => {
       const { appointmentId, status } = action.payload;
       state.clientAppointmentInfo = state.clientAppointmentInfo.map(
@@ -48,6 +52,7 @@ export const {
   addData,
   setImage,
   addWaterData,
+  getWaterIntake,
 } = clientSlice.actions;
 
 export default clientSlice.reducer;

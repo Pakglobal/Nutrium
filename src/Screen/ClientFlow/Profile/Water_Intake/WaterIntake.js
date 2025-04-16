@@ -10,18 +10,18 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {BarChart} from 'react-native-gifted-charts';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { BarChart } from 'react-native-gifted-charts';
+import { scale, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
@@ -31,9 +31,11 @@ import {Color} from '../../../../assets/styles/Colors';
 import {ShadowValues} from '../../../../assets/styles/Shadow';
 import {Shadow} from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
+import { getWaterIntake } from '../../../../redux/client';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [dateLabels, setDateLabels] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIntake, setSelectedIntake] = useState([]);
@@ -111,7 +113,7 @@ const WaterIntake = () => {
         dates.push({
           fullDate: date,
           day: date.getDate(),
-          month: date.toLocaleString('default', {month: 'short'}),
+          month: date.toLocaleString('default', { month: 'short' }),
         });
       }
       return dates;
@@ -225,7 +227,7 @@ const WaterIntake = () => {
       if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
 
       return dateLabels.map(dateObj => {
-        if (!dateObj?.fullDate) return {value: 0, frontColor: '#2196F3'};
+        if (!dateObj?.fullDate) return { value: 0, frontColor: '#2196F3' };
 
         const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
         const dailyIntake = calculateDailyIntake(
@@ -318,17 +320,18 @@ const WaterIntake = () => {
   useEffect(() => {
     setTimeout(() => {
       if (scrollRef.current) {
-        scrollRef.current.scrollToEnd({animated: true});
+        scrollRef.current.scrollToEnd({ animated: true });
       }
     }, 100);
   }, []);
 
   const selectedDateIntake = selectedDate
     ? calculateDailyIntake(
-        selectedDate,
-        waterIntake?.waterIntakeData?.waterIntakeRecords,
-      )
+      selectedDate,
+      waterIntake?.waterIntakeData?.waterIntakeRecords,
+    )
     : 0;
+  dispatch(getWaterIntake(selectedDateIntake))
 
   const plusData = {
     clientId: id,
@@ -365,6 +368,7 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+
       <Header
         screenheader={true}
         screenName={'Water intake'}
@@ -393,7 +397,7 @@ const WaterIntake = () => {
                 style={styles.singleDateChart}
                 onPress={() => handleDate(date)}>
                 <BarChart
-                  data={[{value: formatChartData()[index]?.value || 0}]}
+                  data={[{ value: formatChartData()[index]?.value || 0 }]}
                   width={50}
                   height={150}
                   barWidth={35}
@@ -426,22 +430,22 @@ const WaterIntake = () => {
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
-          <View style={{width: '46%'}}>
+          <View style={{ width: '46%' }}>
             <Shadow
               distance={2}
               startColor={ShadowValues?.blackShadow}
-              style={{width: '100%', borderRadius: scale(10)}}>
+              style={{ width: '100%', borderRadius: scale(10) }}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
                 <Text style={styles.statLabel}>Water intake</Text>
               </View>
             </Shadow>
           </View>
-          <View style={{width: '46%'}}>
+          <View style={{ width: '46%' }}>
             <Shadow
               distance={2}
               startColor={ShadowValues?.blackShadow}
-              style={{width: '100%', borderRadius: scale(10)}}>
+              style={{ width: '100%', borderRadius: scale(10) }}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{dailyGoal} mL</Text>
                 <Text style={styles.statLabel}>Daily goal</Text>
@@ -451,18 +455,18 @@ const WaterIntake = () => {
         </View>
         {loading ? (
           <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
         ) : selectedIntake && selectedIntake?.length > 0 ? (
           <View style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
-              renderItem={({item: record, index: recordIndex}) => (
+              renderItem={({ item: record, index: recordIndex }) => (
                 <View>
                   <FlatList
                     data={record?.waterIntakeAmount}
-                    renderItem={({item: intake, index: intakeIndex}) => (
+                    renderItem={({ item: intake, index: intakeIndex }) => (
                       <View style={styles.entryItem}>
                         <View style={styles.entryLeft}>
                           <Ionicons
@@ -510,8 +514,8 @@ const WaterIntake = () => {
             />
           </View>
         ) : (
-          <View style={{padding: verticalScale(16)}}>
-            <Text style={{textAlign: 'center', color: Color.gray}}>
+          <View style={{ padding: verticalScale(16) }}>
+            <Text style={{ textAlign: 'center', color: Color.gray }}>
               There are no records of water intake
             </Text>
           </View>
@@ -593,7 +597,8 @@ const styles = StyleSheet.create({
     // marginBottom: verticalScale(4),
     color: Color.textColor,
     fontFamily: Font.Poppins,
-    textAlign: 'center',
+    textAlign: 'center'
+
   },
   statLabel: {
     fontSize: scale(16),

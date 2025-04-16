@@ -12,13 +12,15 @@ import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
 import Food from '../assets/Images/Food.svg';
 import {Font} from '../assets/styles/Fonts';
-import {ShadowValues} from '../assets/styles/Shadow';
+import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
 const MealsLikeInHome = () => {
   const navigation = useNavigation();
 
   return (
+    <View style={shadowStyle}>
+
     <View style={{padding: scale(10)}}>
       <Text style={styles.title}>What were your meals like?</Text>
       <View style={styles.cardContainer}>
@@ -32,6 +34,7 @@ const MealsLikeInHome = () => {
         text={'Go to Food Diary'}
         onPress={() => navigation.navigate('foodDiary')}
       />
+    </View>
     </View>
   );
 };
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(14),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily: Font?.Poppins,
+    fontFamily: Font?.PoppinsMedium,
   },
   DiaryBtn: {
     flexDirection: 'row',

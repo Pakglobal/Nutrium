@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -24,10 +24,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
-import { Shadow } from 'react-native-shadow-2';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
-import { Font } from '../../../../assets/styles/Fonts';
+import {Shadow} from 'react-native-shadow-2';
+import {ShadowValues} from '../../../../assets/styles/Shadow';
+import {Font} from '../../../../assets/styles/Fonts';
 import ModalComponent from '../../../../Components/ModalComponent';
+import CustomShadow from '../../../../Components/CustomShadow';
 
 const PhysicalActivityScreen = () => {
   const navigation = useNavigation();
@@ -193,10 +194,10 @@ const PhysicalActivityScreen = () => {
 
   const handleSelectEntry = item => {
     setSelectedEntry({
-  id: item?._id,
-  activity: item?.activity,
-  time: item?.time,
-  date: item?.date,
+      id: item?._id,
+      activity: item?.activity,
+      time: item?.time,
+      date: item?.date,
     });
     setModalVisible(true);
   };
@@ -210,39 +211,29 @@ const PhysicalActivityScreen = () => {
     navigation.navigate('logPhysicalActivity', {plusData});
   };
 
-
-
-  const renderActivityItem = ({ item }) => (
-    <View style={{ marginTop: scale(10), marginHorizontal: scale(4) }} >
-      <Shadow
-        distance={3}
-        startColor={ShadowValues.blackShadow}
-        style={styles.fullWidth}
-      >
+  const renderActivityItem = ({item}) => (
+    <View style={{marginTop: scale(10), marginHorizontal: scale(4)}}>
+      <CustomShadow color={Color.lightgray}>
         <View style={styles.entryItem}>
-          <View style={styles.entryLeftSection}>
-            <Text style={styles.activities}>{item?.activity}</Text>
-            <Text style={styles.date}>{formatDate(item?.date)}</Text>
+          <View style={{width: '60%'}}>
+            <Text style={styles.upFont}>{item?.activity}</Text>
+            <Text style={styles.downFont}>{formatDate(item?.date)}</Text>
           </View>
-          <View style={styles.rightEntry}>
-            <View>
-              <Text style={styles.activities}>
-                {item?.time} {item?.timeunit}
-              </Text>
-              <Text style={styles.rightEntryText}>{item?.byactivity}</Text>
-            </View>
-            <View>
-              <TouchableOpacity
-                style={styles.menuButton}
-                onPress={() => handleSelectEntry(item)}
-              >
-
-                <Icon name="dots-vertical" size={20} color={Color.primaryColor} />
-              </TouchableOpacity>
-            </View>
+          <View style={{width: '35%',}}>
+            <Text style={styles.upFont}>
+              {item?.time} {item?.timeunit}
+            </Text>
+            <Text style={styles.downFont}>{item?.byactivity}</Text>
+          </View>
+          <View style={{width: '5%'}}>
+            <TouchableOpacity
+              style={styles.menuButton}
+              onPress={() => handleSelectEntry(item)}>
+              <Icon name="dots-vertical" size={22} color={Color.primaryColor} />
+            </TouchableOpacity>
           </View>
         </View>
-      </Shadow>
+      </CustomShadow>
     </View>
   );
 
@@ -253,7 +244,6 @@ const PhysicalActivityScreen = () => {
       </Text>
     </View>
   );
-
 
   const renderActionModal = () => (
     <Modal
@@ -280,8 +270,6 @@ const PhysicalActivityScreen = () => {
         </View>
       </View>
     </Modal>
-
-
   );
 
   return (
@@ -292,32 +280,44 @@ const PhysicalActivityScreen = () => {
         handlePlus={navigateToLogActivity}
         plus={true}
       />
-
-      <CalenderHeader
-        onPressLeft={() => setDayOffset(dayOffset - 1)}
-        onPressRight={() => setDayOffset(dayOffset + 1)}
-        rightColor={dayOffset === 0 ? Color.txt : Color.primaryColor}
-        disabled={dayOffset === 0}
-        txtFunction={getDateString()}
-      />
+      <View style={{marginVertical: verticalScale(10)}}>
+        <CalenderHeader
+          onPressLeft={() => setDayOffset(dayOffset - 1)}
+          onPressRight={() => setDayOffset(dayOffset + 1)}
+          rightColor={dayOffset === 0 ? Color.txt : Color.primaryColor}
+          disabled={dayOffset === 0}
+          txtFunction={getDateString()}
+        />
+      </View>
 
       <View style={styles.contentContainer}>
-        <View style={styles.summaryContainer}>
-          <Shadow
-            distance={4}
-            startColor={ShadowValues.color}
-            style={styles.fullWidth}>
-            <View style={styles.shadow}>
-              <PhysicalActivity />
-            </View>
-          </Shadow>
-        </View>
+        <CustomShadow radius={4}>
+          <PhysicalActivity />
+        </CustomShadow>
 
-        <OnOffFunctionality
-          ShowTitle={true}
-          title={'Your workouts'}
-          style={styles.sectionHeader}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginVertical: verticalScale(10),
+            borderBottomColor: 'rgba(0,0,0,0.2)',
+            borderBottomWidth: 1,
+          }}>
+          <Text
+            style={{
+              color: Color.textColor,
+              fontFamily: Font.PoppinsMedium,
+              fontSize: scale(14),
+            }}>
+            Your Workouts
+          </Text>
+          <OnOffFunctionality
+            ShowTitle={true}
+            title={'Your workouts'}
+            style={styles.sectionHeader}
+          />
+        </View>
 
         {loading ? (
           <View style={styles.loadingContainer}>
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    // paddingHorizontal: scale(10),
+    paddingHorizontal: scale(16),
   },
   summaryContainer: {
     marginVertical: scale(10),
@@ -375,7 +375,6 @@ const styles = StyleSheet.create({
   },
   entriesContainer: {
     flex: 1,
-    paddingHorizontal: scale(10),
   },
   flatListContent: {
     paddingBottom: scale(20),
@@ -391,51 +390,18 @@ const styles = StyleSheet.create({
     padding: scale(10),
     borderRadius: scale(6),
     backgroundColor: Color.white,
-    borderWidth: 1,
-    borderColor: Color?.gray,
-    marginTop: scale(5),
-  },
-  entryLeftSection: {
-    width: '60%',
-  },
-  activities: {
-    fontWeight: '500',
-    color: Color.black,
-    fontSize: scale(13),
-    fontFamily: Font?.Poppins
-  },
-  date: {
-    color: Color.gray,
-    fontSize: scale(12),
-    fontFamily: Font?.Poppins
-
-  },
-  rightEntry: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '35%',
-    justifyContent: 'space-between',
-  },
-  rightEntryText: {
-    fontSize: scale(12),
-    color: Color.black,
-    fontFamily: Font?.Poppins
-
-  },
-  menuButton: {
+    width: '100%',
   },
   emptyStateContainer: {
-    padding: verticalScale(10),
-    marginTop: scale(10),
+    margin: scale(10),
     alignItems: 'center',
+    marginTop: verticalScale(20),
   },
   emptyStateText: {
     textAlign: 'center',
-    color: '#5D6163',
-    fontSize: scale(15),
-    fontWeight: '500',
-    fontFamily: Font?.Poppins
-
+    color: Color.textColor,
+    fontSize: scale(12),
+    fontFamily: Font?.PoppinsMedium,
   },
   modalOptionContainer: {
     flex: 1,
@@ -460,6 +426,16 @@ const styles = StyleSheet.create({
     fontSize: scale(15),
     textAlign: 'center',
     color: Color.black,
+  },
+  upFont: {
+    fontSize: scale(12),
+    color: Color.textColor,
+    fontFamily: Font.PoppinsMedium,
+  },
+  downFont: {
+    color: '#5D6163',
+    fontSize: scale(12),
+    fontFamily: Font.Poppins,
   },
 });
 

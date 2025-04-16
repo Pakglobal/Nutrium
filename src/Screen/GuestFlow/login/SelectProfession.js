@@ -31,10 +31,11 @@ import useAndroidBack from '../../../Navigation/useAndroidBack';
 
 const SelectProfession = ({route}) => {
   const navigation = useNavigation();
-  const [profession, setProfession] = useState(null);
-  const [goal, setGoal] = useState(null);
+  const [profession, setProfession] = useState('student');
+  const [goal, setGoal] = useState('weight_loss');
   const Gender = route?.params?.gender;
   const selectedGoal = {goal, profession, Gender};
+
   useAndroidBack();
   const professions = [
     {

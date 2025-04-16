@@ -17,7 +17,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {loginData} from '../redux/user';
+import {loginData, setToken} from '../redux/user';
 import {setImage, updateUserInfo} from '../redux/client';
 import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
 import {
@@ -82,6 +82,7 @@ const ClientDrawerContent = props => {
         onPress: async () => {
           const success = await dispatch(loginData());
           dispatch(setImage(''));
+          dispatch(setToken())
 
           if (success) {
             navigation.reset({

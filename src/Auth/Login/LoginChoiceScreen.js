@@ -61,7 +61,8 @@ const LoginChoiceScreen = () => {
 
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('GuestFlow');
+            dispatch(setGuestMode(true))
+            // navigation.navigate('GuestFlow');
           }}
           style={[
             styles.button,

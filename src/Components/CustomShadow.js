@@ -4,12 +4,26 @@ import {ShadowValues} from '../assets/styles/Shadow';
 import {Shadow} from 'react-native-shadow-2';
 import {Color} from '../assets/styles/Colors';
 import DropShadow from 'react-native-drop-shadow';
+import { scale } from 'react-native-size-matters';
 
-const CustomShadow = ({style, children, color}) => {
+const CustomShadow = ({style, children, color, radius}) => {
   return (
-    <Shadow distance={4} startColor={color || Color.primaryColor} style={style}>
+    // <Shadow distance={6} startColor={color || Color.primaryLight} style={style}>
+    //   {children}
+    // </Shadow>
+    <DropShadow
+      style={{
+        shadowColor: color || Color.primaryColor,
+        shadowOffset: {
+          width: 0,
+          height: 0,
+        },
+        shadowOpacity: 1,
+        shadowRadius:  radius || 2,
+      }}
+    >
       {children}
-    </Shadow>
+    </DropShadow>
   );
 };
 

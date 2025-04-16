@@ -128,7 +128,7 @@ const LoginScreen = () => {
         id: response?.userData?._id,
       };
 
-      if (response?.message == 'Login successful' || response?.token) {
+      if (response) {
         dispatch(loginData(response));
         dispatch(setToken(storeTokenId));
       } else {
@@ -201,6 +201,7 @@ const LoginScreen = () => {
   };
 
   const handleForgetPassword = async () => {
+    navigation.navigate('forgotPassword', {data: email})
     const body = {
       email: email,
     };
@@ -213,6 +214,9 @@ const LoginScreen = () => {
       console.log(error);
     }
   };
+
+  console.log(passwordVisible);
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -260,7 +264,7 @@ const LoginScreen = () => {
               style={{
                 width: '100%',
                 borderRadius: scale(5),
-                marginBottom: verticalScale(10),
+                marginBottom: verticalScale(13),
               }}
               color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View

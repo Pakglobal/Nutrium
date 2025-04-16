@@ -24,7 +24,7 @@ import {
 import {Shadow} from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Font} from '../assets/styles/Fonts';
-import {ShadowValues} from '../assets/styles/Shadow';
+import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -160,7 +160,6 @@ const AppointmentCard = ({navigation}) => {
       });
 
       await refreshAppointments();
-
     } catch (error) {
       console.error('Error confirming appointment:', error);
       Alert.alert(
@@ -207,54 +206,56 @@ const AppointmentCard = ({navigation}) => {
           },
           {opacity: fadeAnim},
         ]}>
-        <CustomShadow style={{width: '100%', borderRadius: scale(10)}}>
-          <View style={styles.cardContainer}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>Appointment</Text>
-              <Text style={styles.statusText}>{statusText}</Text>
-            </View>
-
-            <View style={styles.appointmentDetails}>
-              <Image
-                source={
-                  item?.image
-                    ? {uri: item?.image}
-                    : item?.gender === 'Female'
-                    ? require('../assets/Images/woman.png')
-                    : require('../assets/Images/man.png')
-                }
-                style={styles.avatar}
-              />
-              <View style={styles.dateTimeContainer}>
-                <Text style={styles.dateText}>{date}</Text>
-                <Text style={styles.timeText}>{timeRange}</Text>
+        <CustomShadow radius={4}>
+          <View style={shadowStyle}>
+            <View style={{padding: scale(10)}}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Appointment</Text>
+                <Text style={styles.statusText}>{statusText}</Text>
               </View>
-              <TouchableOpacity
-                style={{padding: scale(10)}}
-                onPress={() => {
-                  setSelectedAppointment(item);
-                  setModalVisible(true);
-                }}>
-                <Entypo
-                  name="dots-three-vertical"
-                  size={24}
-                  color={Color.primaryColor}
-                />
-              </TouchableOpacity>
-            </View>
 
-            {isPending && (
-              <TouchableOpacity
-                style={styles.confirmButton}
-                onPress={() => handleConfirm(item)}
-                disabled={item.isLoading}>
-                {item.isLoading ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <Text style={styles.confirmButtonText}>Confirm</Text>
-                )}
-              </TouchableOpacity>
-            )}
+              <View style={styles.appointmentDetails}>
+                <Image
+                  source={
+                    item?.image
+                      ? {uri: item?.image}
+                      : item?.gender === 'Female'
+                      ? require('../assets/Images/woman.png')
+                      : require('../assets/Images/man.png')
+                  }
+                  style={styles.avatar}
+                />
+                <View style={styles.dateTimeContainer}>
+                  <Text style={styles.dateText}>{date}</Text>
+                  <Text style={styles.timeText}>{timeRange}</Text>
+                </View>
+                <TouchableOpacity
+                  style={{padding: scale(5)}}
+                  onPress={() => {
+                    setSelectedAppointment(item);
+                    setModalVisible(true);
+                  }}>
+                  <Entypo
+                    name="dots-three-vertical"
+                    size={22}
+                    color={Color.primaryColor}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {isPending && (
+                <TouchableOpacity
+                  style={styles.confirmButton}
+                  onPress={() => handleConfirm(item)}
+                  disabled={item.isLoading}>
+                  {item.isLoading ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.confirmButtonText}>Confirm</Text>
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </CustomShadow>
       </Animated.View>
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     padding: scale(10),
-    borderRadius: scale(10),
+    borderRadius: scale(8),
     backgroundColor: Color.white,
   },
   cardHeader: {
@@ -396,12 +397,12 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
   statusText: {
     fontSize: scale(14),
     fontWeight: '500',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
     color: Color.primaryColor,
   },
   appointmentDetails: {
@@ -422,8 +423,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily: Font.Poppins,
-    marginBottom: verticalScale(4),
+    fontFamily: Font.PoppinsMedium,
   },
   timeText: {
     fontSize: scale(12),

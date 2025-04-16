@@ -37,6 +37,7 @@ import {Progress} from '../../../assets/styles/Progress';
 import {GuestLOGin} from '../../../Apis/Login/AuthApis';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
+import CustomShadow from '../../../Components/CustomShadow';
 
 const GuestLogin = ({route}) => {
   const dispatch = useDispatch();
@@ -44,10 +45,10 @@ const GuestLogin = ({route}) => {
 
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('ujgh');
+  const [lastName, setLastName] = useState('hfghf');
+  const [email, setEmail] = useState('hgfgfd@hgfgh.fhfg');
+  const [password, setPassword] = useState('grytyregxt');
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -63,7 +64,7 @@ const GuestLogin = ({route}) => {
 
   const token = useSelector(state => state?.user?.fcmToken);
 
-  const data = route?.params
+  const data = route?.params;
 
   const validateFirstName = value => {
     setFirstName(value);
@@ -130,7 +131,6 @@ const GuestLogin = ({route}) => {
   //   };
   // }, []);
 
-
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -196,7 +196,7 @@ const GuestLogin = ({route}) => {
     try {
       const response = await GuestLOGin(body);
       if (response?.data?.message == 'Signup successful') {
-        navigation.navigate('BottomNavigation')
+        navigation.navigate('BottomNavigation');
         // dispatch(guestLoginData(guestData));
       } else if (response?.message) {
         Alert.alert(response?.message);
@@ -243,93 +243,63 @@ const GuestLogin = ({route}) => {
             marginHorizontal: scale(16),
             marginVertical: verticalScale(20),
           }}>
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={
-              firstNameError ? 'rgba(255,0,0,0.3)' : Color.primaryColor
-            }
-            style={{
-              width: '100%',
-              borderRadius: scale(5),
-              marginBottom: verticalScale(10),
-              paddingHorizontal: scale(5),
-            }}>
-            <TextInput
-              value={firstName}
-              placeholder="First Name"
-              onChangeText={validateFirstName}
-              placeholderTextColor={Color.textColor}
-              style={styles.titleText}
-            />
-          </Shadow>
-
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={
-              lastNameError ? 'rgba(255,0,0,0.3)' : Color.primaryColor
-            }
-            style={{
-              width: '100%',
-              borderRadius: scale(5),
-              marginBottom: verticalScale(10),
-              paddingHorizontal: scale(5),
-            }}>
-            <TextInput
-              value={lastName}
-              placeholder="Last Name"
-              onChangeText={validateLastName}
-              placeholderTextColor={Color.textColor}
-              style={styles.titleText}
-            />
-          </Shadow>
-
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={emailError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}
-            style={{
-              width: '100%',
-              borderRadius: scale(5),
-              marginBottom: verticalScale(10),
-              paddingHorizontal: scale(5),
-            }}>
-            <TextInput
-              value={email}
-              placeholder="Email"
-              onChangeText={validateEmail}
-              placeholderTextColor={Color.textColor}
-              style={styles.titleText}
-            />
-          </Shadow>
-
-          <Shadow
-            distance={ShadowValues.blackShadowDistance}
-            startColor={
-              passwordError ? 'rgba(255,0,0,0.3)' : Color.primaryColor
-            }
-            style={{
-              width: '100%',
-              borderRadius: scale(5),
-              marginBottom: verticalScale(10),
-              paddingHorizontal: scale(5),
-            }}>
-            <TextInput
-              value={password}
-              placeholder="Password"
-              onChangeText={validatePassword}
-              placeholderTextColor={Color.textColor}
-              style={styles.titleText}
-              secureTextEntry={!passwordVisible}
-            />
-            <TouchableOpacity
-              onPress={handlePassword}
-              style={styles.eyeIconContainer}>
-              <Ionicons
-                name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
-                color={Color?.primaryColor}
-                size={24}
+          <CustomShadow>
+            <View style={styles.shadowView}>
+              <TextInput
+                value={firstName}
+                placeholder="First Name"
+                onChangeText={validateFirstName}
+                placeholderTextColor={Color.textColor}
+                style={styles.titleText}
               />
-            </TouchableOpacity>
-          </Shadow>
+            </View>
+          </CustomShadow>
+
+          <CustomShadow>
+            <View style={styles.shadowView}>
+              <TextInput
+                value={lastName}
+                placeholder="Last Name"
+                onChangeText={validateLastName}
+                placeholderTextColor={Color.textColor}
+                style={styles.titleText}
+              />
+            </View>
+          </CustomShadow>
+
+          <CustomShadow>
+            <View style={styles.shadowView}>
+              <TextInput
+                value={email}
+                placeholder="Email"
+                onChangeText={validateEmail}
+                placeholderTextColor={Color.textColor}
+                style={styles.titleText}
+              />
+            </View>
+          </CustomShadow>
+
+          <CustomShadow>
+            <View style={styles.shadowView}>
+              <TextInput
+                value={password}
+                placeholder="Password"
+                onChangeText={validatePassword}
+                placeholderTextColor={Color.textColor}
+                style={styles.titleText}
+                secureTextEntry={!passwordVisible}
+              />
+              <TouchableOpacity
+                onPress={handlePassword}
+                style={styles.eyeIconContainer}>
+                <Ionicons
+                  name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+                  color={Color?.primaryColor}
+                  size={24}
+                />
+              </TouchableOpacity>
+            </View>
+          </CustomShadow>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -452,6 +422,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: scale(0),
     right: scale(0),
+    marginBottom: verticalScale(25),
   },
   button: {
     justifyContent: 'center',
@@ -467,4 +438,10 @@ const styles = StyleSheet.create({
     fontFamily: Font.PoppinsMedium,
     color: Color.textColor,
   },
+  shadowView: {
+    backgroundColor: Color.white,
+borderRadius: scale(8),
+marginVertical: verticalScale(6),
+paddingHorizontal: scale(5)
+  }
 });

@@ -1,10 +1,10 @@
-import {scale} from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from './Colors';
 import {Keyboard, StyleSheet, TouchableOpacity, View} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 
 const IconStyle = {
   drawerIconSize: scale(22),
@@ -14,7 +14,8 @@ const IconStyle = {
 export default IconStyle;
 
 export const IconPadding = {
-  padding: scale(5),
+  paddingVertical: verticalScale(5),
+  paddingHorizontal: scale(7),
   // backgroundColor: 'red'
 };
 
@@ -29,7 +30,15 @@ export const IconBg = {
 export const LeftIcon = ({onGoBack}) => {
   return (
     <TouchableOpacity
-      style={[styles.buttonContainer, {alignSelf: 'flex-start', position: 'absolute', zIndex: 1000, top: scale(16)}]}
+      style={[
+        styles.buttonContainer,
+        {
+          alignSelf: 'flex-start',
+          position: 'absolute',
+          zIndex: 1000,
+          top: scale(16),
+        },
+      ]}
       onPress={onGoBack}>
       <View style={styles.button}>
         <FontAwesome6 name="arrow-left" size={22} color={Color.white} />

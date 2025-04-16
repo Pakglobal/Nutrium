@@ -6,8 +6,8 @@ import {useNavigation} from '@react-navigation/native';
 
 const Message = ({route}) => {
   const navigation = useNavigation();
-  const getId = useSelector(state => state?.user?.userInfo);
-  const userId = getId?.userData?._id || getId?.user?._id;
+  const getId = useSelector(state => state?.user?.token);  
+  const userId = getId?.id;
   const otherUserId = route?.params?.data?._id;
   const userName = route?.params?.data?.fullName;
   const userImage = route?.params?.data?.image;

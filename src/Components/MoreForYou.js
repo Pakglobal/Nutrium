@@ -17,8 +17,9 @@ import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Shadow} from 'react-native-shadow-2';
-import { Font } from '../assets/styles/Fonts';
-import { ShadowValues } from '../assets/styles/Shadow';
+import {Font} from '../assets/styles/Fonts';
+import {ShadowValues} from '../assets/styles/Shadow';
+import CustomShadow from './CustomShadow';
 
 const {width} = Dimensions.get('window');
 
@@ -61,24 +62,27 @@ const MoreFor = ({data}) => {
   };
 
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={handlePress}>
+    <View style={styles.cardContainer}>
       <LinearGradient
         colors={['#21972B', '#6BCB77']}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
         style={styles.gradientBox}>
         <Text style={styles.description}>{data.text}</Text>
-        <Shadow
+        <CustomShadow
           distance={1}
           startColor={ShadowValues.blackShadow}
           style={{width: '100%'}}>
-          <View style={styles.txtIcon}>
+          <TouchableOpacity
+            style={styles.txtIcon}
+            onPress={handlePress}
+            activeOpacity={0.9}>
             <Text style={styles.txt}>{data.buttonText} </Text>
             <Entypo name="plus" size={24} color={Color.primaryColor} />
-          </View>
-        </Shadow>
+          </TouchableOpacity>
+        </CustomShadow>
       </LinearGradient>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -104,7 +108,7 @@ const MoreForYou = () => {
           carouselRef.current?.snapToNext();
         }
       }
-    }, 7000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [activeIndex, scrollingForward]);
@@ -127,12 +131,20 @@ const MoreForYou = () => {
         sliderWidth={width}
         itemWidth={width}
         onSnapToItem={setActiveIndex}
-        inactiveSlideScale={1}
-        inactiveSlideOpacity={1}
-        activeSlideAlignment={'center'}
+        inactiveSlideScale={0.95}
+        inactiveSlideOpacity={0.7}
+        activeSlideAlignment="start"
         autoplay={false}
         loop={false}
+        enableMomentum={false}
+        decelerationRate="fast"
+        useScrollView={true}
+        animationOptions={{
+          friction: 4,
+          tension: 40,
+        }}
       />
+
       <View style={styles.pagination}>
         {carouselData.map((_, index) => (
           <View
@@ -164,7 +176,7 @@ const styles = StyleSheet.create({
   },
   pagination: {
     flexDirection: 'row',
-    marginTop: scale(10),
+    marginVertical: scale(10),
     alignItems: 'center',
   },
   dot: {

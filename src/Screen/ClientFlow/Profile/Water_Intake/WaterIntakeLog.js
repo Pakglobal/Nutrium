@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,15 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
+  GetWaterIntakeDetails,
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import {Color} from '../../../../assets/styles/Colors';
+import { Color } from '../../../../assets/styles/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,7 +27,7 @@ import { Shadow } from 'react-native-shadow-2';
 import { Font } from '../../../../assets/styles/Fonts';
 import { ShadowValues } from '../../../../assets/styles/Shadow';
 
-const WaterIntakeLog = ({route}) => {
+const WaterIntakeLog = ({ route }) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
@@ -163,10 +164,6 @@ const WaterIntakeLog = ({route}) => {
         date: date,
       };
       const response = await SetWaterIntakeDetails(payload);
-
-      // if(response) {
-      //   navigation.goBack();
-      // }
       if (
         response?.message === 'Water intake recorded successfully.' ||
         response?.success === true
@@ -190,15 +187,10 @@ const WaterIntakeLog = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        showIcon={'save'}
-        backIcon={true}
-        screenName="Water intake log"
-        iconStyle={{left: scale(-65)}}
-        onSave={() => {
-          handleSave();
-        }}
-      />
+      <Header screenheader={true} screenName={'Water Intake Log'}
+        plus={false}
+        handleSave={() =>
+          handleSave()} />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much water did you drink?</Text>
@@ -228,7 +220,6 @@ const WaterIntakeLog = ({route}) => {
             distance={2}
             startColor={ShadowValues.blackShadow}
             style={{ width: '100%' }}>
-
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(200)}>
@@ -239,21 +230,20 @@ const WaterIntakeLog = ({route}) => {
                     name="plus"
                     color={Color?.primaryColor}
                     style={{
-                      alignItems: "center",
-                      alignSelf: 'center'
+                      alignItems: 'center',
+                      alignSelf: 'center',
                     }}
                     size={verticalScale(15)}
                   />
                 </View>
                 <Text style={styles.waterTxt}>{'200mL'}</Text>
               </View>
-
             </TouchableOpacity>
           </Shadow>
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
+            style={{ width: '100%' }}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(300)}>
@@ -264,8 +254,8 @@ const WaterIntakeLog = ({route}) => {
                     name="plus"
                     color={Color?.primaryColor}
                     style={{
-                      alignItems: "center",
-                      alignSelf: 'center'
+                      alignItems: 'center',
+                      alignSelf: 'center',
                     }}
                     size={verticalScale(15)}
                   />
@@ -277,7 +267,7 @@ const WaterIntakeLog = ({route}) => {
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
+            style={{ width: '100%' }}>
             <TouchableOpacity
               style={styles.waterCardView}
               onPress={() => setAmount(500)}>
@@ -288,8 +278,8 @@ const WaterIntakeLog = ({route}) => {
                     name="plus"
                     color={Color?.primaryColor}
                     style={{
-                      alignItems: "center",
-                      alignSelf: 'center'
+                      alignItems: 'center',
+                      alignSelf: 'center',
                     }}
                     size={verticalScale(15)}
                   />
@@ -305,20 +295,26 @@ const WaterIntakeLog = ({route}) => {
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
-
-            <View style={styles.pickerButton} >
-              <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>{date.toLocaleDateString()}</Text>
-              <TouchableOpacity
-                style={{}}
-                onPress={() => setDateOpen(true)}>
-                <MaterialCommunityIcons name='calendar-month' color={Color?.primaryColor} size={20} />
+            style={{ width: '100%' }}>
+            <View style={styles.pickerButton}>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontWeight: '500',
+                  fontSize: scale(13),
+                }}>
+                {date.toLocaleDateString()}
+              </Text>
+              <TouchableOpacity style={{}} onPress={() => setDateOpen(true)}>
+                <MaterialCommunityIcons
+                  name="calendar-month"
+                  color={Color?.primaryColor}
+                  size={20}
+                />
               </TouchableOpacity>
             </View>
           </Shadow>
         </View>
-
-
 
         <DatePicker
           modal
@@ -336,15 +332,18 @@ const WaterIntakeLog = ({route}) => {
 
         <Text style={styles.label}>Hour</Text>
 
-
         <View style={{ marginHorizontal: scale(2), marginBottom: scale(10) }}>
           <Shadow
             distance={2}
             startColor={ShadowValues.blackShadow}
-            style={{ width: '100%', }}>
-
-            <View style={[styles.pickerButton, {}]} >
-              <Text style={{ color: Color.textColor, fontWeight: "500", fontSize: scale(13) }}>
+            style={{ width: '100%' }}>
+            <View style={[styles.pickerButton, {}]}>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontWeight: '500',
+                  fontSize: scale(13),
+                }}>
                 {time
                   ?.toLocaleTimeString('en-US', {
                     hour: 'numeric',
@@ -354,10 +353,12 @@ const WaterIntakeLog = ({route}) => {
                   ?.replace(/\s+/g, ' ')
                   ?.trim()}
               </Text>
-              <TouchableOpacity
-                style={{}}
-                onPress={() => setTimeOpen(true)}>
-                <MaterialCommunityIcons name='clock-time-four-outline' color={Color?.primaryColor} size={20} />
+              <TouchableOpacity style={{}} onPress={() => setTimeOpen(true)}>
+                <MaterialCommunityIcons
+                  name="clock-time-four-outline"
+                  color={Color?.primaryColor}
+                  size={20}
+                />
               </TouchableOpacity>
             </View>
           </Shadow>
@@ -395,8 +396,8 @@ const styles = StyleSheet.create({
     fontSize: scale(17),
     color: Color?.textColor,
     marginTop: verticalScale(20),
-    fontWeight: "500",
-    fontFamily: Font?.Poppins
+    fontWeight: '500',
+    fontFamily: Font?.Poppins,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -429,10 +430,10 @@ const styles = StyleSheet.create({
   pickerButton: {
     padding: scale(10),
     borderRadius: scale(8),
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     backgroundColor: Color?.white,
-    width: "100%",
+    width: '100%',
     alignSelf: 'center',
   },
   errorText: {
@@ -467,13 +468,12 @@ const styles = StyleSheet.create({
   },
   plusIcon: {
     backgroundColor: '#68A16C4D',
-    position: "absolute",
+    position: 'absolute',
     top: scale(-20),
     height: scale(18),
     width: scale(18),
     borderTopRightRadius: scale(7),
     borderBottomLeftRadius: scale(5),
-    justifyContent: "center",
-
-  }
+    justifyContent: 'center',
+  },
 });

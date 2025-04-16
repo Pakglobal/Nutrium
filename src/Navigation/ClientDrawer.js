@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Image,
   Text,
@@ -18,7 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {loginData} from '../redux/user';
-import {setImage} from '../redux/client';
+import {setImage, updateUserInfo} from '../redux/client';
 import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
 import {
   GetPhysicalActivities,
@@ -30,49 +30,47 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../Apis/ClientApis/RecommendationApi';
-import {GetUserApi} from '../Apis/ClientApis/ProfileApi';
 import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
-import { Font } from '../assets/styles/Fonts';
+import {Font} from '../assets/styles/Fonts';
 
 const ClientDrawerContent = props => {
   const {navigation} = props;
   const dispatch = useDispatch();
 
   const [asyncLoading, setAsyncLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState([]);
 
   const userInfo = useSelector(state => state.user?.userInfo);
+  const token = userInfo?.token;
+  const id = userInfo?.user?._id || userInfo?.userData?._id;
   const user = userInfo?.user || userInfo?.userData;
   const userName = userInfo?.user?.fullName || userInfo?.userData?.fullName;
   const userImage = userInfo?.user?.image || userInfo?.userData?.image;
+  
 
-  const token = userInfo?.token;
-  const id = userInfo?.user?._id || userInfo?.userData?._id;
-  const practitionerName = userData?.fullName;
-  const practitionerImage = userData?.image
-    ? {uri: userData?.image}
-    : userData?.gender === 'Female'
+  const profileInfo = useSelector(state => state?.user?.profileInfo);
+  const profileName = profileInfo?.fullName;
+  const profileImage = profileInfo?.image
+    ? {uri: profileInfo?.image}
+    : profileInfo?.gender === 'Female'
     ? require('../assets/Images/woman.png')
     : require('../assets/Images/man.png');
 
-  const GetUserApiData = async () => {
-    try {
-      setLoading(true);
-      const response = await GetUserApi(token);
-      setUserData(response?.data);
+  const updateProfileImage = useSelector(state => state?.client?.imageInfo);
 
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    GetUserApiData();
-  }, []);
+  let userImgSource;
+  if (updateProfileImage && typeof updateProfileImage === 'string') {
+    userImgSource = {uri: updateProfileImage};
+  } else if (userImage && typeof userImage === 'string') {
+    userImgSource = {uri: userImage};
+  } else {
+    userImgSource =
+      userInfo?.gender === 'Female'
+        ? require('../assets/Images/woman.png')
+        : require('../assets/Images/man.png');
+  }
 
   const handleSignOut = async () => {
+    props.navigation.closeDrawer();
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
       {
         text: 'Cancel',
@@ -102,7 +100,6 @@ const ClientDrawerContent = props => {
 
   const handleSyncInfo = async () => {
     setAsyncLoading(true);
-
     try {
       await GetMeasurementData(token, id),
         await GetPhysicalActivityDetails(token, id);
@@ -141,9 +138,13 @@ const ClientDrawerContent = props => {
             props.navigation.closeDrawer();
             navigation.navigate('mainProfile', {data: user});
           }}>
-          <Image source={{uri: userImage}} style={styles.avatar} />
+          <Image
+            source={userImgSource}
+            style={styles.avatar}
+          />
           <Text style={styles.userName}>{userName}</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => {
             props.navigation.closeDrawer();
@@ -158,7 +159,7 @@ const ClientDrawerContent = props => {
         </TouchableOpacity>
       </View>
 
-      <View>
+      <View style={{marginTop: verticalScale(8)}}>
         <TouchableOpacity
           style={styles.drawerItem}
           onPress={() => {
@@ -248,10 +249,10 @@ const ClientDrawerContent = props => {
         style={styles.drawerItem}
         onPress={() => {
           props.navigation.closeDrawer();
-          navigation.navigate('practitioner', {data: userData});
+          navigation.navigate('practitioner', {data: profileInfo});
         }}>
-        <Image source={practitionerImage} style={styles.avatar} />
-        <Text style={styles.drawerItemText}>{practitionerName}</Text>
+        <Image source={profileImage} style={styles.avatar} />
+        <Text style={styles.drawerItemText}>{profileName}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -276,7 +277,7 @@ const ClientDrawerContent = props => {
 
       <TouchableOpacity style={styles.drawerItem} onPress={handleSyncInfo}>
         <View style={IconBg}>
-          <Ionicons
+          <Octicons
             name="sync"
             size={IconStyle.drawerIconSize}
             color={IconStyle.drawerIconColor}
@@ -285,7 +286,7 @@ const ClientDrawerContent = props => {
         <Text style={styles.drawerItemText}>Sync all info</Text>
         {asyncLoading && (
           <View style={{position: 'absolute', right: 0}}>
-            <ActivityIndicator />
+            <ActivityIndicator color={Color.primaryColor} />
           </View>
         )}
       </TouchableOpacity>
@@ -329,7 +330,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(20),
   },
   userName: {
-    fontSize: scale(16),
+    fontSize: scale(14),
     fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font.Poppins,
@@ -341,12 +342,12 @@ const styles = StyleSheet.create({
   drawerItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: verticalScale(10),
+    paddingVertical: verticalScale(8),
     paddingHorizontal: scale(10),
   },
   drawerItemText: {
     marginLeft: 15,
-    fontSize: scale(16),
+    fontSize: scale(14),
     color: Color.textColor,
     fontWeight: '500',
     fontFamily: Font.Poppins,
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
     paddingBottom: verticalScale(5),
   },
   sectionTitle: {
-    fontSize: scale(20),
+    fontSize: scale(18),
     fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font.Poppins,

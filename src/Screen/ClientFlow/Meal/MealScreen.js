@@ -73,29 +73,17 @@ const MealScreen = () => {
     }
   };
 
-  // const getMealsForSelectedDays = () => {
-  //   if (!mealPlan || !selectedDays) return [];
-
-  //   const selectedTemplate = mealPlan.find(template =>
-  //     selectedDays.some(day => template?.days?.includes(day)),
-  //   );
-
-  //   return selectedTemplate?.mealSchedule || [];
-  // };
-
-  // console.log('mealPlan', mealPlan[0]?.mealSchedule)
-
   const getMealsForSelectedDays = () => {
     if (!mealPlan || !selectedDays || !Array.isArray(mealPlan)) return [];
 
-    // Handle both string ("Everyday") and array (["Monday", "Tuesday"]) day formats
+   
     const selectedTemplate = mealPlan.find(template => {
       const templateDays = template?.days;
 
-      // If days is "Everyday", it matches all selected days
+   
       if (templateDays === 'Everyday') return true;
 
-      // Otherwise check if any selected day is in template days array
+   
       return (
         Array.isArray(templateDays) &&
         selectedDays.some(day => templateDays.includes(day))
@@ -154,11 +142,7 @@ const MealScreen = () => {
     }
   };
 
-  // const isDaySelected = (templateDays) => {
-  //   if (!Array.isArray(selectedDays)) return false;
-  //   if (!Array.isArray(templateDays)) return false;
-  //   return JSON.stringify(selectedDays) === JSON.stringify(templateDays);
-  // };
+
 
   const isDaySelected = templateDays => {
     if (!Array.isArray(selectedDays)) return false;
@@ -166,78 +150,13 @@ const MealScreen = () => {
     if (!Array.isArray(templateDays)) return false;
     return JSON.stringify(selectedDays) === JSON.stringify(templateDays);
   };
-  // const renderMealItem = ({ item, index }) => {
-  //   const hasMealWithDisplayName = item?.meal?.some(
-  //     meal => meal?.displayName,
-  //   );
-
-  //   if (!hasMealWithDisplayName) {
-  //     return null;
-  //   }
-
-  //   return (
-  //     <View style={styles.card}>
-  //       <View style={styles.cardHeader}>
-  //         <View>
-  //           <Text style={styles.mealType}>
-  //             {item?.mealType || 'Meal'}
-  //           </Text>
-  //           <View style={styles.timeContainer}>
-  //             <AntDesign
-  //               name="clockcircleo"
-  //               color={Color.black}
-  //               size={scale(16)}
-  //             />
-  //             <Text style={styles.timeText}>
-  //               {item?.time || 'No time specified'}
-  //             </Text>
-  //           </View>
-  //         </View>
-  //         <TouchableOpacity onPress={() => toggleItem(index)}>
-  //           <AntDesign
-  //             name={openItemId === index ? 'up' : 'down'}
-  //             size={verticalScale(12)}
-  //             color={Color.gray}
-  //           />
-  //         </TouchableOpacity>
-  //       </View>
-  //       {openItemId === index && (
-  //         <View style={styles.detailsContainer}>
-  //           {item?.meal && Array.isArray(item.meal) && (
-  //             <FlatList
-  //               keyExtractor={(mealItem, mealIndex) => `meal-item-${mealIndex}`}
-  //               data={item.meal.filter(meal => meal?.displayName)}
-  //               renderItem={({ item: mealItem }) => (
-  //                 <View style={styles.detailItem}>
-  //                   <Text style={styles.detailText}>
-  //                     {mealItem?.displayName}
-  //                   </Text>
-  //                 </View>
-  //               )}
-  //             />
-  //           )}
-  //           <TouchableOpacity
-  //             style={styles.infoContainer}
-  //             onPress={() => handleOpenBottomSheet(item)}>
-  //             <AntDesign
-  //               name="infocirlce"
-  //               size={verticalScale(12)}
-  //               color={Color.secondary}
-  //             />
-  //             <Text style={styles.infoText}>Nutritional info</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //       )}
-  //     </View>
-  //   );
-  // };
 
   const toggleItem = id => {
     setOpenItemId(openItemId === id ? null : id);
   };
 
   const renderMealItem = ({item, index}) => {
-    // Check if there are any meal items in any of the possible properties
+ 
     const hasMealItems =
       (item.meal && item.meal.length > 0) ||
       (item.Appetizer && item.Appetizer.length > 0) ||
@@ -511,8 +430,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     marginHorizontal: scale(16),
     flex: 1,
-    // justifyContent: 'center',
-    // alignSelf:'center'
   },
   bottomContentContainer: {
     marginHorizontal: scale(16),
@@ -525,7 +442,6 @@ const styles = StyleSheet.create({
     borderColor: '#DDD',
     borderRadius: scale(10),
     backgroundColor: Color.white,
-    // width:'100%'
   },
   cardHeader: {
     paddingVertical: verticalScale(10),

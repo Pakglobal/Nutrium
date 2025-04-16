@@ -10,24 +10,26 @@ import {
   Keyboard,
   Platform,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { Color } from '../../../assets/styles/Colors';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { LeftIcon } from '../../../assets/styles/Icon';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import {Color} from '../../../assets/styles/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {LeftIcon} from '../../../assets/styles/Icon';
+import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectCountry.svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import { Font } from '../../../assets/styles/Fonts';
-import { Progress } from '../../../assets/styles/Progress';
-import { Shadow } from 'react-native-shadow-2';
-import { ShadowValues } from '../../../assets/styles/Shadow';
+import {Font} from '../../../assets/styles/Fonts';
+import {Progress} from '../../../assets/styles/Progress';
+import {Shadow} from 'react-native-shadow-2';
+import {ShadowValues} from '../../../assets/styles/Shadow';
+import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
+import CustomShadow from '../../../Components/CustomShadow';
 
-const SelectCountry = () => {
+const SelectCountry = ({route}) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -36,26 +38,12 @@ const SelectCountry = () => {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  useAndroidBack()
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
 
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  const selectGender=route?.params
+  const countryData = { country, number, dateOfBirth ,...selectGender}
+  
+  useKeyboardHandler();
+  useAndroidBack();
 
   const countryCodes = {
     India: '+91',
@@ -75,12 +63,22 @@ const SelectCountry = () => {
     'Canada',
   ];
 
+
+
+
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
-    setDateOfBirth(currentDate.toLocaleDateString('en-US'));
+  
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = currentDate.getFullYear();
+  
+    const formattedDate = `${day}/${month}/${year}`;
+    setDateOfBirth(formattedDate);
   };
+  
 
   const handleNavigation = () => {
     Keyboard.dismiss();
@@ -107,7 +105,7 @@ const SelectCountry = () => {
       }
 
       Alert.alert('Selection Required', message, [
-        { text: 'OK', style: 'cancel' },
+        {text: 'OK', style: 'cancel'},
       ]);
       return;
     }
@@ -116,19 +114,13 @@ const SelectCountry = () => {
       Alert.alert(
         'Invalid Number',
         'Please enter a valid 10-digit mobile number to continue',
-        [{ text: 'OK', style: 'cancel' }],
+        [{text: 'OK', style: 'cancel'}],
       );
       return;
     }
 
-    navigation.navigate('GuestLogin');
+    navigation.navigate('GuestLogin',countryData);
   };
-
-  useEffect(() => {
-    if (keyboardVisible) {
-      setShowCountryDropdown(false);
-    }
-  }, [keyboardVisible]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -138,20 +130,20 @@ const SelectCountry = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{}}
-        contentContainerStyle={{ paddingBottom: '50%' }}
+        contentContainerStyle={{paddingBottom: '50%'}}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
-          style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
+          style={{alignSelf: 'center', marginTop: verticalScale(50)}}
         />
 
         <View
-          style={{ marginHorizontal: scale(16), marginTop: verticalScale(20) }}>
+          style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
           <Shadow
             distance={ShadowValues.blackShadowDistance}
             startColor={Color.primaryColor}
-            style={{ width: '100%', borderRadius: scale(5) }}>
+            style={{width: '100%', borderRadius: scale(5)}}>
             <TouchableOpacity
-              style={[styles.inputContainer, { marginBottom: verticalScale(10) }]}
+              style={[styles.inputContainer, {marginBottom: verticalScale(10)}]}
               onPress={() => {
                 Keyboard.dismiss();
                 setShowCountryDropdown(!showCountryDropdown);
@@ -159,7 +151,7 @@ const SelectCountry = () => {
               <Text
                 style={[
                   styles.titleText,
-                  !country && { color: Color.textColor },
+                  !country && {color: Color.textColor},
                 ]}>
                 {country || 'Select country'}
               </Text>
@@ -186,7 +178,7 @@ const SelectCountry = () => {
                   key={item}
                   style={[
                     styles.dropdownItem,
-                    country === item && { backgroundColor: Color.primaryColor },
+                    country === item && {backgroundColor: Color.primaryColor},
                   ]}
                   onPress={() => {
                     setCountry(item);
@@ -206,7 +198,32 @@ const SelectCountry = () => {
             </View>
           )}
 
-          <Shadow
+          <CustomShadow
+            style={{
+              width: '100%',
+              borderRadius: scale(5),
+              marginBottom: verticalScale(10),
+            }}>
+            <View
+              style={{
+                height: verticalScale(38),
+                justifyContent: 'center',
+                paddingHorizontal: scale(5),
+              }}>
+              <TextInput
+                value={number}
+                placeholder="Number"
+                onChangeText={setNumber}
+                placeholderTextColor={Color.textColor}
+                style={styles.titleText}
+                multiline={false}
+                keyboardType="numeric"
+                maxLength={10}
+              />
+            </View>
+          </CustomShadow>
+
+          {/* <Shadow
             distance={ShadowValues.blackShadowDistance}
             startColor={Color.primaryColor}
             style={{
@@ -215,7 +232,7 @@ const SelectCountry = () => {
               marginBottom: verticalScale(10),
               paddingHorizontal: scale(5),
             }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               {country && (
                 <Text style={[styles.titleText, styles.countryCode]}>
                   {countryCodes[country]}
@@ -228,15 +245,15 @@ const SelectCountry = () => {
                 keyboardType="numeric"
                 placeholderTextColor={Color.textColor}
                 maxLength={10}
-                style={[styles.titleText, { flex: 1 }]}
+                style={[styles.titleText, {flex: 1}]}
               />
             </View>
-          </Shadow>
+          </Shadow> */}
 
           <Shadow
             distance={ShadowValues.blackShadowDistance}
             startColor={Color.primaryColor}
-            style={{ width: '100%', borderRadius: scale(5) }}>
+            style={{width: '100%', borderRadius: scale(5)}}>
             <TouchableOpacity
               style={styles.inputContainer}
               onPress={() => {
@@ -246,7 +263,7 @@ const SelectCountry = () => {
               <Text
                 style={[
                   styles.titleText,
-                  !dateOfBirth && { color: Color.textColor },
+                  !dateOfBirth && {color: Color.textColor},
                 ]}>
                 {dateOfBirth || 'Date of Birth'}
               </Text>
@@ -342,4 +359,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-

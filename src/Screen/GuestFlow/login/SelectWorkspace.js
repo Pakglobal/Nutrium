@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -15,28 +15,26 @@ import {useNavigation} from '@react-navigation/native';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import {Font} from '../../../assets/styles/Fonts';
 
-const SelectWorkspace = ({ route }) => {
+const SelectWorkspace = ({route}) => {
   const navigation = useNavigation();
   const [workspace, setWorkspace] = useState(null);
   const [expertise, setExpertise] = useState(null);
 
-
-  const goaldata=route?.params
-  const selectWorkspace={...goaldata,workspace,expertise}
-
+  const goaldata = route?.params;
+  const selectWorkspace = {...goaldata, workspace, expertise};
 
   const workspaceOptions = [
-    { id: 'meal_plans', label: 'Meal Plans' },
-    { id: 'client_management', label: 'Client Management' },
-    { id: 'nutrition_tracking', label: 'Nutrition Tracking' },
-    { id: 'reports_analytics', label: 'Reports & Analytics' },
+    {id: 'meal_plans', label: 'Meal Plans'},
+    {id: 'client_management', label: 'Client Management'},
+    {id: 'nutrition_tracking', label: 'Nutrition Tracking'},
+    {id: 'reports_analytics', label: 'Reports & Analytics'},
   ];
 
   const expertiseOptions = [
-    { id: 'spoorts_nutrition', label: 'Sports Nutrition' },
-    { id: 'diabetes_management', label: 'Diabetes Management' },
-    { id: 'vegan_nutrition', label: 'Vegan Nutrition' },
-    { id: 'heart_health', label: 'Heart Health' },
+    {id: 'spoorts_nutrition', label: 'Sports Nutrition'},
+    {id: 'diabetes_management', label: 'Diabetes Management'},
+    {id: 'vegan_nutrition', label: 'Vegan Nutrition'},
+    {id: 'heart_health', label: 'Heart Health'},
   ];
 
   const handleNavigation = () => {
@@ -50,14 +48,12 @@ const SelectWorkspace = ({ route }) => {
         message = 'Please select your expertise to continue';
       }
 
-      Alert.alert(
-        'Selection Required',
-        message,
-        [{ text: 'OK', style: 'cancel' }]
-      );
+      Alert.alert('Selection Required', message, [
+        {text: 'OK', style: 'cancel'},
+      ]);
       return;
     }
-    navigation.navigate('SelectCountry',selectWorkspace);
+    navigation.navigate('SelectCountry', selectWorkspace);
   };
 
   return (

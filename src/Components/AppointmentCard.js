@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
   Alert,
   Animated,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Carousel from 'react-native-snap-carousel';
 import moment from 'moment';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -21,14 +21,15 @@ import {
   GetAppointmentByClientId,
   UpdateAppointmentStatus,
 } from '../Apis/ClientApis/ClientAppointmentApi';
-import { Shadow } from 'react-native-shadow-2';
+import {Shadow} from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { Font } from '../assets/styles/Fonts';
-import { ShadowValues } from '../assets/styles/Shadow';
+import {Font} from '../assets/styles/Fonts';
+import {ShadowValues} from '../assets/styles/Shadow';
+import CustomShadow from './CustomShadow';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const AppointmentCard = ({ navigation }) => {
+const AppointmentCard = ({navigation}) => {
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
@@ -63,6 +64,7 @@ const AppointmentCard = ({ navigation }) => {
   const FetchAppointmentData = async () => {
     try {
       setLoading(true);
+
       const response = await GetAppointmentByClientId(token, id);
 
       if (response && response.length > 0) {
@@ -71,21 +73,17 @@ const AppointmentCard = ({ navigation }) => {
           ?.sort((a, b) => new Date(a?.start) - new Date(b?.start));
 
         setActiveAppointments(active);
-
-        if (active.length > 0) {
-          setSelectedAppointment(active[0]);
-        }
+        setSelectedAppointment(active.length > 0 ? active[0] : null);
       } else {
+        console.log('No active appointments found.');
         setActiveAppointments([]);
         setSelectedAppointment(null);
       }
-
-      setLoading(false);
     } catch (error) {
-      console.error('Error fetching appointments:', error);
-
+      console.error('Error fetching appointments:', error.message || error);
       setActiveAppointments([]);
       setSelectedAppointment(null);
+    } finally {
       setLoading(false);
     }
   };
@@ -153,7 +151,7 @@ const AppointmentCard = ({ navigation }) => {
   const handleConfirm = async appointment => {
     try {
       const updatedAppointments = activeAppointments.map(app =>
-        app._id === appointment._id ? { ...app, isLoading: true } : app,
+        app._id === appointment._id ? {...app, isLoading: true} : app,
       );
       setActiveAppointments(updatedAppointments);
 
@@ -163,7 +161,6 @@ const AppointmentCard = ({ navigation }) => {
 
       await refreshAppointments();
 
-      // Alert.alert('Success', 'Appointment confirmed successfully!');
     } catch (error) {
       console.error('Error confirming appointment:', error);
       Alert.alert(
@@ -181,19 +178,19 @@ const AppointmentCard = ({ navigation }) => {
 
   const handleViewDetails = appointment => {
     if (navigation) {
-      navigation.navigate('AppointmentDetails', { appointment });
+      navigation.navigate('AppointmentDetails', {appointment});
     }
     setModalVisible(false);
   };
 
   const handleReschedule = appointment => {
     if (navigation) {
-      navigation.navigate('RescheduleAppointment', { appointment });
+      navigation.navigate('RescheduleAppointment', {appointment});
     }
     setModalVisible(false);
   };
 
-  const renderAppointmentItem = ({ item, index }) => {
+  const renderAppointmentItem = ({item, index}) => {
     const date = formatDate(item?.start);
     const timeRange = `${formatTime(item?.start)}-${formatTime(item?.end)}`;
     const isPending = item?.status === 'not_confirmed';
@@ -208,12 +205,9 @@ const AppointmentCard = ({ navigation }) => {
             alignSelf: 'center',
             width: '100%',
           },
-          { opacity: fadeAnim },
+          {opacity: fadeAnim},
         ]}>
-        <Shadow
-          distance={ShadowValues.distance}
-          startColor={ShadowValues.color}
-          style={{ width: '100%', borderRadius: scale(10) }}>
+        <CustomShadow style={{width: '100%', borderRadius: scale(10)}}>
           <View style={styles.cardContainer}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Appointment</Text>
@@ -224,10 +218,10 @@ const AppointmentCard = ({ navigation }) => {
               <Image
                 source={
                   item?.image
-                    ? { uri: item?.image }
+                    ? {uri: item?.image}
                     : item?.gender === 'Female'
-                      ? require('../assets/Images/woman.png')
-                      : require('../assets/Images/man.png')
+                    ? require('../assets/Images/woman.png')
+                    : require('../assets/Images/man.png')
                 }
                 style={styles.avatar}
               />
@@ -236,7 +230,7 @@ const AppointmentCard = ({ navigation }) => {
                 <Text style={styles.timeText}>{timeRange}</Text>
               </View>
               <TouchableOpacity
-                style={{ padding: scale(10) }}
+                style={{padding: scale(10)}}
                 onPress={() => {
                   setSelectedAppointment(item);
                   setModalVisible(true);
@@ -262,7 +256,7 @@ const AppointmentCard = ({ navigation }) => {
               </TouchableOpacity>
             )}
           </View>
-        </Shadow>
+        </CustomShadow>
       </Animated.View>
     );
   };
@@ -322,9 +316,8 @@ const AppointmentCard = ({ navigation }) => {
           />
           {renderPagination()}
         </>
-      ) : (
-        renderEmptyState()
-      )}
+      ) : // renderEmptyState()
+      null}
 
       <Modal
         visible={isModalVisible}
@@ -390,7 +383,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     padding: scale(10),
-    borderRadius: scale(16),
+    borderRadius: scale(10),
     backgroundColor: Color.white,
   },
   cardHeader: {
@@ -456,7 +449,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: verticalScale(3),
-    paddingBottom: verticalScale(10),
+    paddingBottom: verticalScale(20),
   },
   paginationDot: {
     height: scale(8),

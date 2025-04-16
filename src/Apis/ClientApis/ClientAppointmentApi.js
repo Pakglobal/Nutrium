@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL } from '../Base_Url/Baseurl';
+import {BASE_URL} from '../Base_Url/Baseurl';
 
 export const GetAppointmentByClientId = async (token, id) => {
   try {
@@ -9,9 +9,15 @@ export const GetAppointmentByClientId = async (token, id) => {
         Authorization: token,
       },
     });
+
     return response?.data;
   } catch (error) {
-    console.error('Error fetching get appointment by client', error);
+    if (error?.response?.status === 404) {
+      return [];
+    } else {
+      console.error('Error fetching get appointment by client:', error);
+      throw error;
+    }
   }
 };
 

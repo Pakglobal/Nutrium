@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
@@ -13,12 +14,11 @@ import {useStepTracking} from './StepTrackingService';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import {Shadow} from 'react-native-shadow-2';
-import { Font } from '../assets/styles/Fonts';
-import { ShadowValues } from '../assets/styles/Shadow';
+import {Font} from '../assets/styles/Fonts';
+import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
-const PhysicalActivity = ({style,header,subHeader,
-  bottomButton,noData
-}) => {
+const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
   const navigation = useNavigation();
   const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
 
@@ -34,245 +34,183 @@ const PhysicalActivity = ({style,header,subHeader,
     }
   };
 
-  const styles = StyleSheet.create({
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginVertical: verticalScale(15),
-    },
-    workoutContainer: {
-      padding: scale(10),
-    },
-    title: {
-      fontSize: verticalScale(14),
-      fontWeight: '500',
-      color: Color.txt,
-      marginHorizontal: scale(16),
-    },
-    cardContainer: {
-      height: noData ? verticalScale(70):verticalScale(110),
-    },
-    cardOverlay: {
-      width: '100%',
-      borderRadius: scale(10),
-      position: 'absolute',
-      justifyContent: 'center',
-    },
-    description: {
-      color: Color.textColor,
-      fontWeight: '500',
-      fontFamily: Font?.Poppins,
-    },
-    txtIcon: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: verticalScale(10),
-    },
-    txt: {
-      fontSize: verticalScale(12),
-      fontWeight: '600',
-      color: Color.white,
-      marginTop: scale(8),
-    },
-    bgImage: {
-      height: '100%',
-      width: '100%',
-    },
-    dayContainer: {
-      borderRadius: scale(10),
-    },
-    day: {
-      borderRadius: scale(20),
-      backgroundColor: Color?.primaryColor,
-      marginVertical: verticalScale(8),
-      paddingVertical: verticalScale(15),
-      paddingHorizontal: scale(15),
-      shadowColor: Color?.black,
-      elevation: 5,
-    },
-    dayText: {
-      fontSize: scale(11),
-      color: Color.primaryColor,
-      fontWeight: '500',
-      textAlign: 'center',
-      fontFamily: Font?.Poppins,
-    },
-    imageWrapper: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderWidth: scale(1),
-      borderColor: Color?.primaryColor,
-      borderRadius: scale(5),
-      marginTop: verticalScale(10),
-    },
-    zero: {
-      color: Color.textColor,
-      fontSize: scale(24),
-      fontWeight: '500',
-      paddingHorizontal: scale(10),
-      fontFamily: Font?.Poppins,
-      textAlign: 'center',
-    },
-    waterText: {
-      fontSize: scale(12),
-      color: Color.primaryColor,
-      fontWeight: '500',
-      fontFamily: Font?.Poppins,
-      marginTop: verticalScale(2),
-      marginLeft: scale(5),
-    },
-  });
-
   return (
     <View style={[styles.workoutContainer, style]}>
-      <View style={styles.cardContainer}>
+      <View style={shadowStyle}>
+        {header && (
+          <Text style={styles.description}>Your physical activity</Text>
+        )}
+        {subHeader && (
+          <Text
+            style={[
+              styles.description,
+              {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
+            ]}>
+            Workouts this week
+          </Text>
+        )}
+
         <View
-          style={[
-            styles.cardOverlay,
-          ]}>
-          <View style={{}}>
-            {
-              header && 
-            <Text style={[styles.description, {fontSize: scale(16)}]}>
-              Your physical activity
-            </Text>
-            }
-            {
-              subHeader &&
-              <Text
-              style={[
-                styles.description,
-                {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
-              ]}>
-              Workouts this week
-            </Text>
-            }
-            <View style={{}}>
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}>
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(
+            (day, index) => (
               <View
+                key={day}
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  width: '100%',
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(
-                  (day, index) => (
-                    <View key={day} style={[]}>
-                      <View style={[styles.day]} />
-                      {currentDay === index && (
-                        <Text
-                          style={{
-                            position: 'absolute',
-                            alignSelf: 'center',
-                            top: scale(16),
-                            color: Color.white,
-                            minWidth: '50%',
-                            maxWidth: '90%',
-                            textAlign: 'center',
-                            fontSize: scale(11),
-                            fontWeight: '500',
-                          }}
-                          numberOfLines={1}
-                          adjustsFontSizeToFit={true}>
-                          {formatNumber(100)}
-                        </Text>
-                      )}
-                      <Text style={styles.dayText}>{day}</Text>
-                    </View>
-                  ),
-                )}
+                <View style={styles.day}>
+                  {currentDay === index && (
+                    <Text
+                      style={{
+                        color: Color.white,
+                        textAlign: 'center',
+                        fontSize: scale(11),
+                        fontWeight: '500',
+                        fontFamily: Font.PoppinsMedium,
+                        marginTop: verticalScale(2),
+                      }}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit={true}>
+                      {formatNumber(steps)}
+                    </Text>
+                  )}
+                </View>
+                <Text style={styles.dayText}>{day}</Text>
               </View>
-            </View>
-          </View>
+            ),
+          )}
         </View>
       </View>
 
       <View
         style={[
-        
           {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            // marginVertical: verticalScale(10),
+            marginTop: verticalScale(10),
+            marginBottom: verticalScale(5),
             gap: scale(25),
           },
         ]}>
         <View style={styles.imageWrapper}>
-          <View style={[]}>
-            <View style={{paddingVertical: verticalScale(10)}}>
-              <Text
-                style={[
-                  styles.description,
-                  {textAlign: 'center', fontSize: scale(16)},
-                ]}>
-                calories
-              </Text>
-              <Text style={styles.zero} numberOfLines={1}>
-                {calories}
-              </Text>
-            </View>
-          </View>
+          <Text style={[styles.description, {textAlign: 'center'}]}>
+            calories
+          </Text>
+          <Text style={styles.zero} numberOfLines={1}>
+            {calories}
+          </Text>
         </View>
 
         <View style={styles.imageWrapper}>
-          <View style={[]}>
-            <View style={{paddingVertical: verticalScale(10)}}>
-              <Text
-                style={[
-                  styles.description,
-                  {textAlign: 'center', fontSize: scale(16)},
-                ]}>
-                steps
-              </Text>
-              <Text style={styles.zero}>{steps}</Text>
-            </View>
-          </View>
+          <Text style={[styles.description, {textAlign: 'center'}]}>steps</Text>
+          <Text style={styles.zero}>{steps}</Text>
         </View>
       </View>
 
-      {
-        bottomButton &&
-      <View style={{marginTop:scale(10)}}>
-        <Shadow
-          distance={ShadowValues.blackShadowDistance}
-          startColor={ShadowValues.blackShadow}
-          style={{width: '100%'}}>
-          <View
-            style={{
-              borderRadius: scale(5),
-              backgroundColor: Color?.white,
-            }}>
-            <Pressable
-              style={styles.logButton}
-              onPress={() => navigation.navigate('physicalActivity')}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  padding: scale(6),
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <Text style={styles.waterText}>
-                  See All Physical Activity Stats
-                </Text>
-                <Entypo
-                  name="chevron-right"
-                  size={24}
-                  color={Color.primaryColor}
-                />
-              </View>
-            </Pressable>
-          </View>
-        </Shadow>
-      </View>
-      }
-
+      {bottomButton && (
+        <CustomHomeButtonNavigation
+          text={'See All Physical Activity Stats'}
+          onPress={() => navigation.navigate('physicalActivity')}
+        />
+      )}
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: verticalScale(15),
+  },
+  workoutContainer: {
+    padding: scale(10),
+  },
+  title: {
+    fontSize: verticalScale(14),
+    fontWeight: '500',
+    color: Color.txt,
+    marginHorizontal: scale(16),
+  },
+  cardOverlay: {
+    width: '100%',
+    borderRadius: scale(10),
+  },
+  description: {
+    color: Color.textColor,
+    fontWeight: '500',
+    fontFamily: Font?.Poppins,
+    fontSize: scale(16),
+  },
+  txtIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: verticalScale(10),
+  },
+  txt: {
+    fontSize: verticalScale(12),
+    fontWeight: '600',
+    color: Color.white,
+    marginTop: scale(8),
+  },
+  bgImage: {
+    height: '100%',
+    width: '100%',
+  },
+  dayContainer: {
+    borderRadius: scale(10),
+  },
+  day: {
+    borderRadius: scale(20),
+    backgroundColor: Color?.primaryColor,
+    marginVertical: verticalScale(8),
+    height: scale(30),
+    width: scale(30),
+    shadowColor: Color?.black,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayText: {
+    fontSize: scale(11),
+    color: Color.primaryColor,
+    fontWeight: '500',
+    textAlign: 'center',
+    fontFamily: Font?.PoppinsMedium,
+  },
+  imageWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: scale(1.6),
+    borderColor: Color?.primaryColor,
+    borderRadius: scale(6),
+    paddingVertical: verticalScale(8),
+  },
+  zero: {
+    color: Color.textColor,
+    fontSize: scale(24),
+    fontWeight: '500',
+    paddingHorizontal: scale(10),
+    fontFamily: Font?.Poppins,
+    textAlign: 'center',
+  },
+  waterText: {
+    fontSize: scale(12),
+    color: Color.primaryColor,
+    fontWeight: '500',
+    fontFamily: Font?.Poppins,
+    marginTop: verticalScale(2),
+    marginLeft: scale(5),
+  },
+});
+
 export default PhysicalActivity;
-
-

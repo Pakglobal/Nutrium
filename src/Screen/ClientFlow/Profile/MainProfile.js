@@ -1,4 +1,3 @@
-
 import React, {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -19,7 +18,6 @@ import {Color} from '../../../assets/styles/Colors';
 import CameraPicker from '../../../Components/CameraPicker';
 import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
 import {useDispatch, useSelector} from 'react-redux';
-import Toast from 'react-native-simple-toast';
 import {setImage} from '../../../redux/client';
 
 const MainProfile = ({route}) => {
@@ -33,15 +31,10 @@ const MainProfile = ({route}) => {
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = data?.image;
 
-  // const showToast = message => {
-  //   Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  // };
-
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [fullscreenImageVisible, setFullscreenImageVisible] = useState(false);
-
 
   const handleImageSelect = async imageResponse => {
     if (imageResponse) {
@@ -59,13 +52,9 @@ const MainProfile = ({route}) => {
         ) {
           dispatch(setImage(response?.client?.image));
           setLoading(false);
-        } else {
-          // showToast(response?.message);
-          setLoading(false);
         }
         setLoading(false);
       } catch (error) {
-        // showToast(error);
         setLoading(false);
       }
     }
@@ -127,21 +116,6 @@ const MainProfile = ({route}) => {
           </TouchableOpacity>
 
           <View style={styles.imgIconView}>
-            {/* {loading ? (
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: verticalScale(80),
-                  width: verticalScale(80),
-                }}>
-                <ActivityIndicator size="small" color={Color.primaryColor} />
-              </View>
-            ) : (
-
-              <Image source={imgSource} style={styles.img} />
-            )} */}
-
             {loading ? (
               <View
                 style={{

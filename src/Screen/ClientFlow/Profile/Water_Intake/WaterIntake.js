@@ -31,6 +31,7 @@ import {Color} from '../../../../assets/styles/Colors';
 import {ShadowValues} from '../../../../assets/styles/Shadow';
 import {Shadow} from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
+import { getWaterIntake } from '../../../../redux/client';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -421,6 +422,7 @@ const WaterIntake = () => {
           })}
         </View>
       </ScrollView>
+      </View>
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
@@ -433,7 +435,7 @@ const WaterIntake = () => {
                 <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
                 <Text style={styles.statLabel}>Water intake</Text>
               </View>
-            </CustomShadow>
+     </Shadow>
           </View>
           <View style={{width: '46%'}}>
             <Shadow
@@ -444,7 +446,7 @@ const WaterIntake = () => {
                 <Text style={styles.statValue}>{dailyGoal} mL</Text>
                 <Text style={styles.statLabel}>Daily goal</Text>
               </View>
-            </CustomShadow>
+         </Shadow>
           </View>
         </View>
         {loading ? (

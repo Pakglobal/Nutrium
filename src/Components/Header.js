@@ -34,7 +34,8 @@ const Header = ({
   handleSave,
   handleNotification,
   handleAward,
-  rightHeaderButton = true
+  rightHeaderButton = true,
+  onPress
 }) => {
   const navigation = useNavigation();
   return (
@@ -118,8 +119,9 @@ const Header = ({
                 }}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={{padding: scale(5), alignSelf: 'center', marginRight: scale(5)}}>
+
+                    onPress={() => {navigation.goBack(),onPress}}
+                    style={{padding: scale(5), alignSelf: 'center'}}>
                     <AntDesign
                       name="arrowleft"
                       size={IconStyle.drawerIconSize}

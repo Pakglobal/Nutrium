@@ -33,9 +33,10 @@ const FoodDiary = () => {
   const [diaryData, setDiaryData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+    const tokenId = useSelector(state => state?.user?.token);
+    const guestTokenId = useSelector(state => state?.user?.guestToken);
+    const token = tokenId?.token || guestTokenId?.token;
+    const id = tokenId?.id || guestTokenId?.id;
 
   const getDateString = () => {
     if (dayOffset === 0) return 'Today';

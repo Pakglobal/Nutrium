@@ -12,7 +12,6 @@ import {Color} from '../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {setGuestMode} from '../../redux/user';
 import {Font} from '../../assets/styles/Fonts';
 
 const LoginChoiceScreen = () => {
@@ -61,8 +60,7 @@ const LoginChoiceScreen = () => {
 
         <TouchableOpacity
           onPress={() => {
-            dispatch(setGuestMode(true))
-            // navigation.navigate('GuestFlow');
+            navigation.navigate('GuestFlow');
           }}
           style={[
             styles.button,

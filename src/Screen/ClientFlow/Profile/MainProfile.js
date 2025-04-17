@@ -25,8 +25,11 @@ const MainProfile = ({route}) => {
 
   const dispatch = useDispatch();
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
+  console.log(token, id);
+  
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = data?.image;
@@ -250,7 +253,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(50),
   },
   profileName: {
-    fontSize: verticalScale(18),
+    fontSize: scale(18),
     fontWeight: '700',
     color: Color.txt,
     marginLeft: scale(20),
@@ -270,7 +273,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(15),
   },
   title: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '700',
     color: Color.txt,
     marginBottom: verticalScale(10),
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(10),
   },
   btnTxt: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '600',
     color: Color.gray,
   },

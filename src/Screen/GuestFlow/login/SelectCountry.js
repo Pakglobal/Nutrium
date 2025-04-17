@@ -33,8 +33,8 @@ const SelectCountry = ({route}) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [country, setCountry] = useState('India');
-  const [number, setNumber] = useState('9856235263');
+  const [country, setCountry] = useState('');
+  const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
 

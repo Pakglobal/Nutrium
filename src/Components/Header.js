@@ -40,7 +40,7 @@ const Header = ({
   const navigation = useNavigation();
   return (
     <SafeAreaView style={{backgroundColor: Color.white, zIndex: 1}}>
-      <CustomShadow radius={4}>
+      <CustomShadow radius={4} color={Color.gray}>
         <View style={styles.header}>
           {logoHeader && (
             <>
@@ -84,8 +84,7 @@ const Header = ({
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      onPress={() => navigation.openDrawer()}
-                      style={{}}>
+                      onPress={() => navigation.openDrawer()}>
                       <MaterialCommunityIcons
                         style={IconPadding}
                         name="menu"

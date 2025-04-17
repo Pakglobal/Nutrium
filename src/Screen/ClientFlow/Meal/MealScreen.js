@@ -27,10 +27,9 @@ const MealScreen = () => {
   const [openItemId, setOpenItemId] = useState(null);
   const bottomSheetRef = useRef(null);
 
-  const isGuest = useSelector(state => state.user?.guestMode);
-
   const tokenId = useSelector(state => state?.user?.token);
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const id = tokenId?.id || guestTokenId?.id;
 
   useEffect(() => {
     fetchMealPlanData();

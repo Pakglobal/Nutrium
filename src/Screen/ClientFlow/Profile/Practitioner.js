@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   profileName: {
-    fontSize: verticalScale(18),
+    fontSize: scale(18),
     fontWeight: '700',
     color: Color.txt,
     marginLeft: scale(20),

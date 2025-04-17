@@ -106,7 +106,7 @@ const SelectRegistrationType = () => {
 export default SelectRegistrationType;
 const styles = StyleSheet.create({
   queTxt: {
-    fontSize: verticalScale(20),
+    fontSize: scale(20),
     color: Color.black,
     fontWeight: '500',
     marginTop: verticalScale(50),

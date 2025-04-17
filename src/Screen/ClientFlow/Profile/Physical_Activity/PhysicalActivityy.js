@@ -44,8 +44,9 @@ const PhysicalActivityScreen = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const getDateString = () => {
     if (dayOffset === 0) return 'This Week';
@@ -212,14 +213,14 @@ const PhysicalActivityScreen = () => {
   };
 
   const renderActivityItem = ({item}) => (
-    <View style={{marginTop: scale(10), marginHorizontal: scale(4)}}>
+    <View style={{marginTop: scale(10), marginHorizontal: scale(16)}}>
       <CustomShadow color={Color.lightgray}>
         <View style={styles.entryItem}>
           <View style={{width: '60%'}}>
             <Text style={styles.upFont}>{item?.activity}</Text>
             <Text style={styles.downFont}>{formatDate(item?.date)}</Text>
           </View>
-          <View style={{width: '35%',}}>
+          <View style={{width: '35%'}}>
             <Text style={styles.upFont}>
               {item?.time} {item?.timeunit}
             </Text>
@@ -280,6 +281,7 @@ const PhysicalActivityScreen = () => {
         handlePlus={navigateToLogActivity}
         plus={true}
       />
+
       <View style={{marginVertical: verticalScale(10)}}>
         <CalenderHeader
           onPressLeft={() => setDayOffset(dayOffset - 1)}
@@ -291,7 +293,7 @@ const PhysicalActivityScreen = () => {
       </View>
 
       <View style={styles.contentContainer}>
-        <CustomShadow radius={4}>
+        <CustomShadow radius={3}>
           <PhysicalActivity />
         </CustomShadow>
 
@@ -301,8 +303,6 @@ const PhysicalActivityScreen = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             marginVertical: verticalScale(10),
-            borderBottomColor: 'rgba(0,0,0,0.2)',
-            borderBottomWidth: 1,
           }}>
           <Text
             style={{
@@ -312,30 +312,30 @@ const PhysicalActivityScreen = () => {
             }}>
             Your Workouts
           </Text>
-          <OnOffFunctionality
-            ShowTitle={true}
-            title={'Your workouts'}
-            style={styles.sectionHeader}
-          />
+          <OnOffFunctionality ShowTitle={true} title={'Your workouts'} />
         </View>
 
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={Color.primaryColor} />
-          </View>
-        ) : (
-          <View style={styles.entriesContainer}>
-            <FlatList
-              data={physicalActivityData}
-              renderItem={renderActivityItem}
-              keyExtractor={(item, index) => `activity-${index}`}
-              showsVerticalScrollIndicator={false}
-              ListEmptyComponent={renderEmptyState}
-              contentContainerStyle={styles.flatListContent}
-            />
-          </View>
-        )}
       </View>
+        <View
+          style={{borderBottomColor: 'rgba(0,0,0,0.2)', borderBottomWidth: 1}}
+        />
+
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Color.primaryColor} />
+        </View>
+      ) : (
+        <View style={styles.entriesContainer}>
+          <FlatList
+            data={physicalActivityData}
+            renderItem={renderActivityItem}
+            keyExtractor={(item, index) => `activity-${index}`}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={renderEmptyState}
+            contentContainerStyle={styles.flatListContent}
+          />
+        </View>
+      )}
 
       {renderActionModal()}
     </SafeAreaView>
@@ -348,25 +348,11 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   contentContainer: {
-    flex: 1,
     paddingHorizontal: scale(16),
-  },
-  summaryContainer: {
-    marginVertical: scale(10),
-    paddingHorizontal: scale(15),
-  },
-  fullWidth: {
-    width: '100%',
   },
   shadow: {
     borderRadius: scale(10),
     backgroundColor: Color.white,
-  },
-  sectionHeader: {
-    marginTop: scale(8),
-    borderBottomWidth: 1,
-    paddingVertical: scale(10),
-    borderBottomColor: Color.lightgray,
   },
   loadingContainer: {
     flex: 1,
@@ -375,6 +361,7 @@ const styles = StyleSheet.create({
   },
   entriesContainer: {
     flex: 1,
+    marginTop: verticalScale(5),
   },
   flatListContent: {
     paddingBottom: scale(20),

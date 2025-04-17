@@ -17,7 +17,6 @@ import AddMeal from '../Screen/ClientFlow/Profile/Food_Diary/AddMeal';
 import LogMeal from '../Screen/ClientFlow/Profile/Food_Diary/LogMeal';
 import WaterIntake from '../Screen/ClientFlow/Profile/Water_Intake/WaterIntake';
 import Measurements from '../Screen/ClientFlow/Profile/Measurements/Measurements';
-import HomeScreen from '../Screen/ClientFlow/Home/HomeScreen';
 import AdminHomeScreen from '../Screen/AdminFlow/HomeScreen/AdminHomeScreen';
 import {persistor, store} from '../redux/Store';
 import {Provider, useDispatch, useSelector} from 'react-redux';
@@ -41,47 +40,17 @@ import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShop
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
 import ClientDrawerContent from './ClientDrawer';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View} from 'react-native';
 import LoginChoiceScreen from '../Auth/Login/LoginChoiceScreen';
 import OnboardingScreen from './OnboardingScreen';
-import SelectWorkspace from '../Screen/GuestFlow/login/SelectWorkspace';
 import SelectCountry from '../Screen/GuestFlow/login/SelectCountry';
 import GuestLogin from '../Screen/GuestFlow/login/GuestLogin';
 import SelectGender from '../Screen/GuestFlow/login/SelectGender';
 import SelectProfession from '../Screen/GuestFlow/login/SelectProfession';
-import CustomTabBar from './BottomNavigation';
-import MealScreen from '../Screen/ClientFlow/Meal/MealScreen';
-import RecommendationScreen from '../Screen/ClientFlow/Recommend/RecommendationScreen';
-import ProfileMenuScreen from '../Screen/ClientFlow/Profile/ProfileMenuScreen';
-import Deo from './Deo';
  
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const ClientDrawer = createDrawerNavigator();
-const Tab = createBottomTabNavigator();
- 
-// const BottomNavigation = () => {
-//   return (
-//     <NavigationContainer>
-//       <Tab.Navigator tabBar={props => <CustomTabBar {...props} />} screenOptions={{headerShown: false}}>
-//         <Tab.Screen name="home" component={HomeScreen} />
-//         <Tab.Screen name="meal" component={MealScreen} />
-//         <Tab.Screen name="deo" component={Deo} />
-//         <Tab.Screen name="recommendation" component={RecommendationScreen} />
-//         <Tab.Screen name="profileMenu" component={ProfileMenuScreen} />
-//       </Tab.Navigator>
-//     </NavigationContainer>
-//   );
-// };
- 
-const ClientHomeWithDrawer = () => {
-  return (
-    <View style={{flex: 1}}>
-      <BottomNavigation />
-    </View>
-  );
-};
  
 const ClientDrawerNavigator = () => {
   return (
@@ -93,7 +62,7 @@ const ClientDrawerNavigator = () => {
           width: '70%',
         },
       }}>
-      <ClientDrawer.Screen name="ClientHome" component={ClientHomeWithDrawer} />
+      <ClientDrawer.Screen name="ClientHome" component={BottomNavigation} />
     </ClientDrawer.Navigator>
   );
 };
@@ -144,6 +113,7 @@ const AdminFlowStack = () => (
  
 const AuthStack = ({route}) => {
   const {onboardingCompleted} = route.params || {};
+  
  
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -197,28 +167,24 @@ const UserFlowStack = () => (
 );
  
 const GuestStack = () => {
-  // const isGuest = useSelector(state => state.user?.guestMode);
- 
-  // if (isGuest) {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="SelectGender" component={SelectGender} />
       <Stack.Screen name="SelectProfession" component={SelectProfession} />
-      {/* <Stack.Screen name="SelectWorkspace" component={SelectWorkspace} /> */}
       <Stack.Screen name="SelectCountry" component={SelectCountry} />
       <Stack.Screen name="GuestLogin" component={GuestLogin} />
-      <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+      {/* <Stack.Screen name="BottomNavigation" component={BottomNavigation} /> */}
     </Stack.Navigator>
   );
-  // }
- 
 };
  
 const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
-  const isGuest = useSelector(state => state.user?.guestMode);
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
+  const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);
+  console.log(demoClient);
+  
  
   if (onboardingCompleted === null) {
     return null;
@@ -228,7 +194,7 @@ const MainStack = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {role === 'Admin' ? (
         <Stack.Screen name="AdminFlow" component={AdminFlowStack} />
-      ) : role === 'Client' ? (
+      ) : role === 'Client' || demoClient ? (
         <Stack.Screen name="UserFlow" component={UserFlowStack} />
       ) : (
         <Stack.Screen

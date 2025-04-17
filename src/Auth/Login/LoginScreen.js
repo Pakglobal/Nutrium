@@ -127,6 +127,8 @@ const LoginScreen = () => {
         token: response?.token,
         id: response?.userData?._id,
       };
+      console.log(response);
+      
 
       if (response) {
         dispatch(loginData(response));
@@ -215,7 +217,6 @@ const LoginScreen = () => {
     }
   };
 
-  console.log(passwordVisible);
   
 
   return (
@@ -261,17 +262,14 @@ const LoginScreen = () => {
 
           <View style={{ paddingHorizontal: scale(16) }}>
             <CustomShadow
-              style={{
-                width: '100%',
-                borderRadius: scale(5),
-                marginBottom: verticalScale(13),
-              }}
               color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
                   height: verticalScale(38),
                   justifyContent: 'center',
                   paddingHorizontal: scale(5),
+                  backgroundColor: Color.white,
+                  borderRadius: scale(6),
                 }}>
                 <TextInput
                   value={email}
@@ -286,17 +284,16 @@ const LoginScreen = () => {
             </CustomShadow>
 
             <CustomShadow
-              style={{
-                width: '100%',
-                borderRadius: scale(5),
-                marginBottom: verticalScale(10),
-              }}
+
               color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  backgroundColor: Color.white,
+                  marginVertical: verticalScale(13),
+                  borderRadius: scale(6)
                 }}>
                 <View
                   style={{

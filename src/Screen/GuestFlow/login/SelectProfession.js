@@ -23,16 +23,14 @@ import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
-import {setGuestMode} from '../../../redux/user';
-import {useDispatch} from 'react-redux';
 import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 
 const SelectProfession = ({route}) => {
   const navigation = useNavigation();
-  const [profession, setProfession] = useState('student');
-  const [goal, setGoal] = useState('weight_loss');
+  const [profession, setProfession] = useState('');
+  const [goal, setGoal] = useState('');
   const Gender = route?.params?.gender;
   const selectedGoal = {goal, profession, Gender};
 

@@ -36,6 +36,8 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
   };
 
   return (
+    <View style={{marginVertical: verticalScale(18)}}>
+
     <View style={shadowStyle}>
       <View style={[styles.workoutContainer, style]}>
         <View style={shadowStyle}>
@@ -46,7 +48,7 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
             <Text
               style={[
                 styles.description,
-                {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
+                {fontSize: scale(14), marginTop: verticalScale(5), color: '#344C5C'},
               ]}>
               Workouts this week
             </Text>
@@ -73,7 +75,7 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
                         style={{
                           color: Color.white,
                           textAlign: 'center',
-                          fontSize: scale(11),
+                          fontSize: scale(12),
                           fontWeight: '500',
                           fontFamily: Font.PoppinsMedium,
                           marginTop: verticalScale(2),
@@ -135,6 +137,7 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
         )}
       </View>
     </View>
+    </View>
   );
 };
 
@@ -149,7 +152,7 @@ const styles = StyleSheet.create({
     padding: scale(10),
   },
   title: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '500',
     color: Color.txt,
     marginHorizontal: scale(16),
@@ -170,7 +173,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
   },
   txt: {
-    fontSize: verticalScale(12),
+    fontSize: scale(12),
     fontWeight: '600',
     color: Color.white,
     marginTop: scale(8),
@@ -185,7 +188,8 @@ const styles = StyleSheet.create({
   day: {
     borderRadius: scale(20),
     backgroundColor: Color?.primaryColor,
-    marginVertical: verticalScale(8),
+    marginTop: verticalScale(8),
+    marginBottom: verticalScale(5),
     height: scale(30),
     width: scale(30),
     shadowColor: Color?.black,
@@ -193,7 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dayText: {
-    fontSize: scale(11),
+    fontSize: scale(12),
     color: Color.primaryColor,
     fontWeight: '500',
     textAlign: 'center',

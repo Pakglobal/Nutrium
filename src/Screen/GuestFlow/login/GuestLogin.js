@@ -30,7 +30,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {guestLoginData, setIsGuest} from '../../../redux/user';
+import {guestLoginData, loginData, setGuestToken, setIsGuest, setToken} from '../../../redux/user';
 import {Font} from '../../../assets/styles/Fonts';
 import {ShadowValues} from '../../../assets/styles/Shadow';
 import {Progress} from '../../../assets/styles/Progress';
@@ -45,10 +45,10 @@ const GuestLogin = ({route}) => {
 
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
-  const [firstName, setFirstName] = useState('ujgh');
-  const [lastName, setLastName] = useState('hfghf');
-  const [email, setEmail] = useState('hgfgfd@hgfgh.fhfg');
-  const [password, setPassword] = useState('grytyregxt');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -110,26 +110,6 @@ const GuestLogin = ({route}) => {
       setPasswordError('');
     }
   };
-
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener(
-  //     'keyboardDidShow',
-  //     () => {
-  //       setKeyboardVisible(true);
-  //     },
-  //   );
-  //   const keyboardDidHideListener = Keyboard.addListener(
-  //     'keyboardDidHide',
-  //     () => {
-  //       setKeyboardVisible(false);
-  //     },
-  //   );
-
-  //   return () => {
-  //     keyboardDidShowListener.remove();
-  //     keyboardDidHideListener.remove();
-  //   };
-  // }, []);
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -195,34 +175,23 @@ const GuestLogin = ({route}) => {
     };
     try {
       const response = await GuestLOGin(body);
-      if (response?.data?.message == 'Signup successful') {
+      console.log(response.data, 'hndsfgjubhsjugvdf-=-=-=-=-=-=-=-');
+
+      const storeTokenId = {
+        token: response?.data?.token,
+        id: response?.data?.userData?._id,
+        demoClient: response?.data?.userData?.isDemoClient,
+      };
+
+      if (response?.data?.message === 'Signup successful') {
+        dispatch(setGuestToken(storeTokenId))
+        dispatch(guestLoginData(response?.data));
         navigation.navigate('BottomNavigation');
-        // dispatch(guestLoginData(guestData));
-      } else if (response?.message) {
-        Alert.alert(response?.message);
+      } else {
+        Alert.alert('Error', 'User already exist');
       }
     } catch {}
   };
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

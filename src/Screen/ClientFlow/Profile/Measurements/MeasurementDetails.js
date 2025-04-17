@@ -43,8 +43,9 @@ const MeasurementDetail = () => {
   });
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const fetchLatestData = useCallback(async () => {
     if (!token || !id) return;

@@ -41,7 +41,6 @@ const OnOffFunctionality = ({hydrate = false}) => {
         if (userInfo && userInfo?.data?.idToken) {
           setIsTracking(true);
         } else {
-          console.log('Sign-in was cancelled');
           setIsTracking(false);
         }
       } catch (error) {
@@ -109,7 +108,6 @@ export default OnOffFunctionality;
 const styles = StyleSheet.create({
   header: {
     alignSelf: 'flex-end',
-    marginVertical: verticalScale(12),
     flexDirection: 'row',
   },
   buttonContainer: {

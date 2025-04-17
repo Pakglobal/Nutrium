@@ -22,32 +22,17 @@ import LoginHeader from '../../../assets/Images/SelectGender.svg';
 import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import {useDispatch} from 'react-redux';
-import {setGuestMode} from '../../../redux/user';
 import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
-import {ShadowValues} from '../../../assets/styles/Shadow';
+import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
+import CustomShadow from '../../../Components/CustomShadow';
 
 const SelectGender = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [selectedGender, setSelectedGender] = useState('Female');
+  const [selectedGender, setSelectedGender] = useState('');
   useAndroidBack()
-
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     dispatch(setGuestMode());
-  //     return true; 
-  //   };
-
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-
-  //   return () => backHandler.remove(); 
-  // }, []);
-
   
   const handleSelect = gender => {
     setSelectedGender(gender);
@@ -70,7 +55,7 @@ const SelectGender = () => {
     <SafeAreaView style={styles.container}>
       <GuestFlowHeader progress={Progress.selectGender} />
 
-      <LeftIcon onGoBack={() => dispatch(setGuestMode())} />
+      <LeftIcon onGoBack={() => navigation.goBack()} />
 
       <LoginHeader height={'45%'} width={'100%'} style={{marginTop: 50}} />
 
@@ -102,10 +87,9 @@ const SelectGender = () => {
 
         <View style={styles.selectionContainer}>
           <View style={{width: '48%'}}>
-            <Shadow
-              distance={ShadowValues.blackShadowDistance}
-              startColor={Color.primaryColor}
-              style={{width: '100%', borderRadius: scale(8)}}>
+            <CustomShadow>
+              <View style={shadowStyle}>
+
               <TouchableOpacity
                 style={[
                   styles.option,
@@ -141,14 +125,14 @@ const SelectGender = () => {
                   Female
                 </Text>
               </TouchableOpacity>
-            </Shadow>
+              </View>
+            </CustomShadow>
           </View>
 
           <View style={{width: '48%'}}>
-            <Shadow
-              distance={ShadowValues.blackShadowDistance}
-              startColor={Color.primaryColor}
-              style={{width: '100%', borderRadius: scale(8)}}>
+            <CustomShadow>
+              <View style={shadowStyle}>
+
               <TouchableOpacity
                 style={[
                   styles.option,
@@ -184,7 +168,8 @@ const SelectGender = () => {
                   Male
                 </Text>
               </TouchableOpacity>
-            </Shadow>
+              </View>
+            </CustomShadow>
           </View>
         </View>
       </View>

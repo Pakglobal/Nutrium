@@ -10,18 +10,18 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { BarChart } from 'react-native-gifted-charts';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {BarChart} from 'react-native-gifted-charts';
+import {scale, verticalScale} from 'react-native-size-matters';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
@@ -31,10 +31,10 @@ import {Color} from '../../../../assets/styles/Colors';
 import {ShadowValues} from '../../../../assets/styles/Shadow';
 import {Shadow} from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
+import CustomShadow from '../../../../Components/CustomShadow';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const [dateLabels, setDateLabels] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIntake, setSelectedIntake] = useState([]);
@@ -47,8 +47,9 @@ const WaterIntake = () => {
 
   const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const handleDate = selectedDate => {
     try {
@@ -112,7 +113,7 @@ const WaterIntake = () => {
         dates.push({
           fullDate: date,
           day: date.getDate(),
-          month: date.toLocaleString('default', { month: 'short' }),
+          month: date.toLocaleString('default', {month: 'short'}),
         });
       }
       return dates;
@@ -226,7 +227,7 @@ const WaterIntake = () => {
       if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
 
       return dateLabels.map(dateObj => {
-        if (!dateObj?.fullDate) return { value: 0, frontColor: '#2196F3' };
+        if (!dateObj?.fullDate) return {value: 0, frontColor: '#2196F3'};
 
         const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
         const dailyIntake = calculateDailyIntake(
@@ -288,49 +289,48 @@ const WaterIntake = () => {
     }
   };
 
-  // const handleDelete = async () => {
-  //   setDeleteModal(false);
-  //   try {
-  //     setLoading(true);
-  //     const payload = {
-  //       waterIntakeId: selectedEntry?.waterIntakeId,
-  //       waterRecordId: selectedEntry?.waterRecordId,
-  //       waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-  //       token: token,
-  //     };
-  //     const response = await DeleteWaterIntake(payload);
-  //     if (
-  //       response?.message === 'Water intake data deleted successfully.' ||
-  //       response?.success === true
-  //     ) {
-  //       getWaterIntakeData();
-  //     } else {
-  //       showToast(response?.message || 'Failed to delete entry');
-  //     }
-  //     setLoading(false);
-  //   } catch (error) {
-  //     showToast('An error occurred while deleting');
-  //     setLoading(false);
-  //   }
-  // };
+  const handleDelete = async () => {
+    setDeleteModal(false);
+    try {
+      setLoading(true);
+      const payload = {
+        waterIntakeId: selectedEntry?.waterIntakeId,
+        waterRecordId: selectedEntry?.waterRecordId,
+        waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+        token: token,
+      };
+      const response = await DeleteWaterIntake(payload);
+      if (
+        response?.message === 'Water intake data deleted successfully.' ||
+        response?.success === true
+      ) {
+        getWaterIntakeData();
+      } else {
+        showToast(response?.message || 'Failed to delete entry');
+      }
+      setLoading(false);
+    } catch (error) {
+      showToast('An error occurred while deleting');
+      setLoading(false);
+    }
+  };
 
   const scrollRef = React.createRef();
 
   useEffect(() => {
     setTimeout(() => {
       if (scrollRef.current) {
-        scrollRef.current.scrollToEnd({ animated: true });
+        scrollRef.current.scrollToEnd({animated: true});
       }
     }, 100);
   }, []);
 
   const selectedDateIntake = selectedDate
     ? calculateDailyIntake(
-      selectedDate,
-      waterIntake?.waterIntakeData?.waterIntakeRecords,
-    )
+        selectedDate,
+        waterIntake?.waterIntakeData?.waterIntakeRecords,
+      )
     : 0;
-  dispatch(getWaterIntake(selectedDateIntake))
 
   const plusData = {
     clientId: id,
@@ -367,9 +367,14 @@ const WaterIntake = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-
-      <Header onPress={()=> navigation.goBack({selectedDate:selectedDate})} screenheader={true} screenName={'Water intake'} handlePlus={() =>
-        navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
+      <Header
+        screenheader={true}
+        screenName={'Water intake'}
+        handlePlus={() =>
+          navigation.navigate('waterIntakeLog', {plusData: plusData})
+        }
+        plus={true}
+      />
 
       <View style={{height: verticalScale(220)}}>
         <ScrollView
@@ -385,50 +390,48 @@ const WaterIntake = () => {
               const formattedDate = date.fullDate.toISOString().split('T')[0];
               const isSelected = selectedDate === formattedDate;
 
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.singleDateChart}
-                onPress={() => handleDate(date)}>
-                <BarChart
-                  data={[{value: formatChartData()[index]?.value || 0}]}
-                  width={50}
-                  height={150}
-                  barWidth={35}
-                  spacing={0}
-                  hideRules
-                  hideAxesAndRules
-                  xAxisThickness={0}
-                  yAxisThickness={0}
-                  barBorderRadius={6}
-                  hideYAxisText
-                  maxValue={Math.max(
-                    dailyGoal,
-                    ...formatChartData().map(item => item.value || 0),
-                  )}
-                  frontColor={
-                    isSelected ? Color?.primaryColor : Color.primaryLight
-                  }
-                />
-                <View style={styles.dateBox}>
-                  <Text style={styles.dateText}>{date.day}</Text>
-                  <Text style={styles.monthText}>
-                    {date.month?.toUpperCase()}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </ScrollView>
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.singleDateChart}
+                  onPress={() => handleDate(date)}>
+                  <BarChart
+                    data={[{value: formatChartData()[index]?.value || 0}]}
+                    width={50}
+                    height={150}
+                    barWidth={35}
+                    spacing={0}
+                    hideRules
+                    hideAxesAndRules
+                    xAxisThickness={0}
+                    yAxisThickness={0}
+                    barBorderRadius={6}
+                    hideYAxisText
+                    maxValue={Math.max(
+                      dailyGoal,
+                      ...formatChartData().map(item => item.value || 0),
+                    )}
+                    frontColor={
+                      isSelected ? Color?.primaryColor : Color.primaryLight
+                    }
+                  />
+                  <View style={styles.dateBox}>
+                    <Text style={styles.dateText}>{date.day}</Text>
+                    <Text style={styles.monthText}>
+                      {date.month?.toUpperCase()}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
+      </View>
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
           <View style={{width: '46%'}}>
-            <Shadow
-              distance={2}
-              startColor={ShadowValues?.blackShadow}
-              style={{width: '100%', borderRadius: scale(10)}}>
+          <CustomShadow color={Color.lightgray}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
                 <Text style={styles.statLabel}>Water intake</Text>
@@ -436,10 +439,7 @@ const WaterIntake = () => {
             </CustomShadow>
           </View>
           <View style={{width: '46%'}}>
-            <Shadow
-              distance={2}
-              startColor={ShadowValues?.blackShadow}
-              style={{width: '100%', borderRadius: scale(10)}}>
+          <CustomShadow color={Color.lightgray}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{dailyGoal} mL</Text>
                 <Text style={styles.statLabel}>Daily goal</Text>
@@ -449,18 +449,18 @@ const WaterIntake = () => {
         </View>
         {loading ? (
           <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
         ) : selectedIntake && selectedIntake?.length > 0 ? (
           <View style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
-              renderItem={({ item: record, index: recordIndex }) => (
+              renderItem={({item: record, index: recordIndex}) => (
                 <View>
                   <FlatList
                     data={record?.waterIntakeAmount}
-                    renderItem={({ item: intake, index: intakeIndex }) => (
+                    renderItem={({item: intake, index: intakeIndex}) => (
                       <View style={styles.entryItem}>
                         <View style={styles.entryLeft}>
                           <Ionicons
@@ -508,99 +508,36 @@ const WaterIntake = () => {
             />
           </View>
         ) : (
-          <View style={{ padding: verticalScale(16) }}>
-            <Text style={{ textAlign: 'center', color: Color.gray }}>
+          <View style={{padding: verticalScale(16)}}>
+            <Text style={{textAlign: 'center', color: Color.gray}}>
               There are no records of water intake
             </Text>
           </View>
         )}
       </View>
 
-
-      <ModalComponent visible={modalVisible} handleEdit={handleEdit}
-        modalstyle={
-          {
-            position: 'absolute',
-            right: 20,
-            top: menuPosition.y - 80,
-          }
-        }
-        handleDelete={async () => {
-          setModalVisible(false);
-          try {
-            setLoading(true);
-            const payload = {
-              waterIntakeId: selectedEntry?.waterIntakeId,
-              waterRecordId: selectedEntry?.waterRecordId,
-              waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-              token: token,
-            };
-            const response = await DeleteWaterIntake(payload);
-            if (
-              response?.message === 'Water intake data deleted successfully.' ||
-              response?.success === true
-            ) {
-              getWaterIntakeData();
-            } else {
-              showToast(response?.message || 'Failed to delete entry');
-            }
-            setLoading(false);
-          } catch (error) {
-            showToast('An error occurred while deleting');
-            setLoading(false);
-          }
-
-          // setDeleteModal(true);
-        }
-        } setModalVisible={() => setModalVisible(false)} />
-      {/* <Modal
-        transparent={true}
+      <ModalComponent
         visible={modalVisible}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}>
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setModalVisible(false)}>
-          <View
-            style={[
-              styles.modalContent,
-              {
-                position: 'absolute',
-                right: 20,
-                top: menuPosition.y - 80,
-              },
-            ]}>
-            <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
-              <Text style={[styles.modalText]}>Edit</Text>
-            </TouchableOpacity>
+        handleEdit={handleEdit}
+        modalstyle={{
+          position: 'absolute',
+          right: 20,
+          top: menuPosition.y - 80,
+        }}
+        handleDelete={() => {
+          setModalVisible(false);
+          setDeleteModal(true);
+        }}
+        setModalVisible={() => setModalVisible(false)}
+      />
 
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => {
-                setModalVisible(false);
-                setDeleteModal(true);
-              }}>
-              <Text style={styles.modalText}>Delete</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal> */}
-
-
-      {/* <CustomAlert
+      <CustomAlert
         visible={deleteModal}
         message={'Are You Sure?'}
         onChange={handleDelete}
         onClose={() => setDeleteModal(false)}
         doubleButton={true}
-      /> */}
+      />
     </SafeAreaView>
   );
 };
@@ -653,8 +590,7 @@ const styles = StyleSheet.create({
     // marginBottom: verticalScale(4),
     color: Color.textColor,
     fontFamily: Font.Poppins,
-    textAlign: 'center'
-
+    textAlign: 'center',
   },
   statLabel: {
     fontSize: scale(16),

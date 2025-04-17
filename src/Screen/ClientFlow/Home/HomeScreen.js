@@ -40,12 +40,12 @@ const HomeScreen = () => {
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  const isGuest = useSelector(state => state.user?.guestMode);
-
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
-
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
+  console.log(token, id);
+  
   const dispatch = useDispatch();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -105,18 +105,18 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    if (isGuest) {
-      return;
-    } else {
-      FetchAppointmentData();
-      GetProfileImage();
+    FetchAppointmentData();
+    GetProfileImage();
+    if(tokenId) {
       GetUserApiData();
     }
   }, [token, id]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    GetUserApiData();
+    if(tokenId) {
+      GetUserApiData();
+    }
     GetProfileImage();
     FetchAppointmentData()
       .then(() => {
@@ -131,80 +131,54 @@ const HomeScreen = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header logoHeader={true} />
 
-      {isGuest ? (
-        <ScrollView
-          style={{backgroundColor: Color.white, paddingHorizontal: scale(8)}}>
-          <View style={{paddingHorizontal: scale(10)}}>
-            <View style={{marginVertical: scale(10)}}>
-              <CustomShadow style={{width: '100%', borderRadius: scale(10)}}>
-                <MealsLikeInHome />
-              </CustomShadow>
-            </View>
-
-            <MoreForYou />
-            <View style={{marginVertical: scale(10)}}>
-              <CustomShadow style={{width: '100%', borderRadius: scale(10)}}>
-                <HydratedStay />
-              </CustomShadow>
-            </View>
+      <View>
+        {loading ? (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: verticalScale(20),
+            }}>
+            <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
-        </ScrollView>
-      ) : (
-        <View>
-          {loading ? (
+        ) : (
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            showsVerticalScrollIndicator={false}>
             <View
               style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: verticalScale(20),
+                paddingHorizontal: scale(16),
               }}>
-              <ActivityIndicator size="large" color={Color.primaryColor} />
-            </View>
-          ) : (
-            <ScrollView
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              showsVerticalScrollIndicator={false}>
-              <View
-                style={{
-                  paddingHorizontal: scale(16),
-                  marginTop: verticalScale(12),
-                }}>
-                <AppointmentCard
-                  refreshAppointments={FetchAppointmentData}
-                  activeAppointments={activeAppointments}
-                  setActiveAppointments={setActiveAppointments}
-                  selectedAppointment={selectedAppointment}
-                  setSelectedAppointment={setSelectedAppointment}
-                />
-                  <CustomShadow radius={4}>
-                    <MealsLikeInHome />
-                  </CustomShadow>
+              <AppointmentCard
+                refreshAppointments={FetchAppointmentData}
+                activeAppointments={activeAppointments}
+                setActiveAppointments={setActiveAppointments}
+                selectedAppointment={selectedAppointment}
+                setSelectedAppointment={setSelectedAppointment}
+              />
+              <MealsLikeInHome />
 
-                <MoreForYou />
-                <OnOffFunctionality />
+              <MoreForYou />
+              <OnOffFunctionality />
 
-                <CustomShadow  radius={4}>
-                  <HydratedStay />
+              <HydratedStay />
+              <OnOffFunctionality />
+
+              <View style={{marginBottom: verticalScale(150)}}>
+                <CustomShadow radius={3}>
+                  <PhysicalActivity
+                    header={true}
+                    subHeader={true}
+                    bottomButton={true}
+                  />
                 </CustomShadow>
-
-                <OnOffFunctionality />
-
-                <View style={{marginBottom: verticalScale(160)}}>
-                  <CustomShadow  radius={4}>
-                    <PhysicalActivity
-                      header={true}
-                      subHeader={true}
-                      bottomButton={true}
-                    />
-                  </CustomShadow>
-                </View>
               </View>
-            </ScrollView>
-          )}
-        </View>
-      )}
+            </View>
+          </ScrollView>
+        )}
+      </View>
     </SafeAreaView>
   );
 };

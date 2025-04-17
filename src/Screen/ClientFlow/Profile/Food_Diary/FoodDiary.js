@@ -141,16 +141,11 @@ const FoodDiary = () => {
 
   return (
     <View style={styles.container}>
-      {/* <BackHeader
-        titleName={'}
-        onPressBack={() => navigation.goBack()}
-        onPress={() => navigation.navigate('addMeal')}
-      /> */}
-      <Header
-        showIcon={false}
-        backIcon={true}
-        screenName="Food diary"
-        iconStyle={{left: scale(-80)}}
+    
+       <Header
+        screenheader={true}
+        screenName={'Physical Activity'}
+        plus={true}
       />
       <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}

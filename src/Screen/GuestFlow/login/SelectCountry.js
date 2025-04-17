@@ -24,7 +24,7 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
 import {Shadow} from 'react-native-shadow-2';
-import {ShadowValues} from '../../../assets/styles/Shadow';
+import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
@@ -125,16 +125,17 @@ const SelectCountry = ({route}) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{}}
-        contentContainerStyle={{paddingBottom: '50%'}}
+        contentContainerStyle={{paddingBottom: '47.5%'}}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
           style={{alignSelf: 'center', marginTop: verticalScale(50)}}
         />
 
         <View
-          style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
-          <CustomShadow>
+          style={{marginHorizontal: scale(16), marginTop: verticalScale(20), }}>
+          <CustomShadow style={shadowStyle}>
             <TouchableOpacity
+            activeOpacity={1}
               style={styles.inputContainer}
               onPress={() => {
                 Keyboard.dismiss();
@@ -211,6 +212,7 @@ const SelectCountry = ({route}) => {
 
           <CustomShadow>
             <TouchableOpacity
+            activeOpacity={1}
               style={styles.inputContainer}
               onPress={() => {
                 Keyboard.dismiss();
@@ -297,7 +299,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: scale(0),
     right: scale(0),
-    marginBottom: verticalScale(25),
   },
   button: {
     justifyContent: 'center',

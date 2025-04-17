@@ -26,15 +26,18 @@ import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
-import {Font} from '../../../../assets/styles/Fonts';
-import {Color} from '../../../../assets/styles/Colors';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
-import {Shadow} from 'react-native-shadow-2';
+import { Font } from '../../../../assets/styles/Fonts';
+import { Color } from '../../../../assets/styles/Colors';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
 import CustomShadow from '../../../../Components/CustomShadow';
+import { getWaterIntake } from '../../../../redux/client';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
   const [dateLabels, setDateLabels] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIntake, setSelectedIntake] = useState([]);
@@ -42,10 +45,11 @@ const WaterIntake = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [waterIntake, setWaterIntake] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); 
+  const [dataFetched, setDataFetched] = useState(false); 
   const [alertVisible, setAlertVisible] = useState(false);
 
-  const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
@@ -123,11 +127,6 @@ const WaterIntake = () => {
     }
   };
 
-  useEffect(() => {
-    const dates = getLast10Days();
-    setDateLabels(dates);
-  }, []);
-
   const getWaterIntakeData = async () => {
     try {
       setLoading(true);
@@ -185,18 +184,29 @@ const WaterIntake = () => {
 
         setSelectedIntake(matchingRecords);
       }
+      setDataFetched(true); // Mark data as fetched
       setLoading(false);
     } catch (error) {
       console.error('Error in getWaterIntakeData:', error);
+      setDataFetched(true); // Still mark as fetched even if there's an error
       setLoading(false);
     }
   };
 
   useFocusEffect(
     useCallback(() => {
+      setLoading(true); 
+      setDataFetched(false);
       getWaterIntakeData();
-    }, [token, id, selectedDate]),
+    }, [token, id]),
   );
+
+ 
+  useEffect(() => {
+    if (dataFetched && selectedDate) {
+      handleDate({ fullDate: new Date(selectedDate) });
+    }
+  }, [selectedDate, dataFetched]);
 
   const dailyGoal =
     waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
@@ -289,31 +299,38 @@ const WaterIntake = () => {
     }
   };
 
-  const handleDelete = async () => {
-    setDeleteModal(false);
-    try {
-      setLoading(true);
-      const payload = {
-        waterIntakeId: selectedEntry?.waterIntakeId,
-        waterRecordId: selectedEntry?.waterRecordId,
-        waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-        token: token,
-      };
-      const response = await DeleteWaterIntake(payload);
-      if (
-        response?.message === 'Water intake data deleted successfully.' ||
-        response?.success === true
-      ) {
-        getWaterIntakeData();
-      } else {
-        showToast(response?.message || 'Failed to delete entry');
-      }
-      setLoading(false);
-    } catch (error) {
-      showToast('An error occurred while deleting');
-      setLoading(false);
-    }
-  };
+  const handleDelete = () => {
+    setModalVisible(false);
+    setLoading(true);
+    setTimeout(() => {
+      (async function () {
+        const payload = {
+          waterIntakeId: selectedEntry?.waterIntakeId,
+          waterRecordId: selectedEntry?.waterRecordId,
+          waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+          token: token,
+        };
+
+        try {
+          const response = await DeleteWaterIntake(payload);
+          if (
+            response?.message === 'Water intake data deleted successfully.' ||
+            response?.success === true
+          ) {
+            await getWaterIntakeData();
+          } else {
+            showToast(response?.message || 'Failed to delete entry');
+            await getWaterIntakeData();
+          }
+        } catch (error) {
+          showToast('An error occurred while deleting');
+          await getWaterIntakeData();
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }, 0);
+  }
 
   const scrollRef = React.createRef();
 
@@ -331,6 +348,13 @@ const WaterIntake = () => {
         waterIntake?.waterIntakeData?.waterIntakeRecords,
       )
     : 0;
+  
+
+  useEffect(() => {
+    if (selectedDateIntake) {
+      dispatch(getWaterIntake(selectedDateIntake));
+    }
+  }, [selectedDateIntake, dispatch]);
 
   const plusData = {
     clientId: id,
@@ -351,32 +375,34 @@ const WaterIntake = () => {
   };
 
   const handleDotMenuPress = (event, entry) => {
-    event.target.measure((x, y, width, height, pageX, pageY) => {
-      setMenuPosition({x: pageX, y: pageY});
-      setSelectedEntry({
-        waterIntakeId: waterIntake?.waterIntakeData?._id,
-        waterRecordId: entry.recordId,
-        waterIntakeAmountId: entry.intakeId,
-        date: entry.date,
-        amount: entry.amount,
-        time: entry.time,
-      });
-      setModalVisible(true);
+    const pageX = event.nativeEvent.pageX;
+    const pageY = event.nativeEvent.pageY;
+    setMenuPosition({ x: pageX, y: pageY });
+    setSelectedEntry({
+      waterIntakeId: waterIntake?.waterIntakeData?._id,
+      waterRecordId: entry.recordId,
+      waterIntakeAmountId: entry.intakeId,
+      date: entry.date,
+      amount: entry.amount,
+      time: entry.time,
     });
+    setModalVisible(true);
   };
+
+
+  const hasData = selectedIntake && selectedIntake.length > 0 && selectedIntake[0]?.waterIntakeAmount?.length > 0;
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        screenheader={true}
-        screenName={'Water intake'}
-        handlePlus={() =>
-          navigation.navigate('waterIntakeLog', {plusData: plusData})
-        }
-        plus={true}
+      <Header 
+        onPress={() => navigation.goBack({ selectedDate: selectedDate })} 
+        screenheader={true} 
+        screenName={'Water intake'} 
+        handlePlus={() => navigation.navigate('waterIntakeLog', { plusData: plusData })} 
+        plus={true} 
       />
 
-      <View style={{height: verticalScale(220)}}>
+      <View style={{ height: verticalScale(220) }}>
         <ScrollView
           horizontal
           ref={scrollRef}
@@ -447,12 +473,12 @@ const WaterIntake = () => {
             </CustomShadow>
           </View>
         </View>
+        
         {loading ? (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <View style={styles.loaderContainer}>
             <ActivityIndicator size="large" color={Color.primaryColor} />
           </View>
-        ) : selectedIntake && selectedIntake?.length > 0 ? (
+        ) : hasData ? (
           <View style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
@@ -508,8 +534,8 @@ const WaterIntake = () => {
             />
           </View>
         ) : (
-          <View style={{padding: verticalScale(16)}}>
-            <Text style={{textAlign: 'center', color: Color.gray}}>
+          <View style={styles.noDataContainer}>
+            <Text style={styles.noDataText}>
               There are no records of water intake
             </Text>
           </View>
@@ -524,19 +550,8 @@ const WaterIntake = () => {
           right: 20,
           top: menuPosition.y - 80,
         }}
-        handleDelete={() => {
-          setModalVisible(false);
-          setDeleteModal(true);
-        }}
-        setModalVisible={() => setModalVisible(false)}
-      />
-
-      <CustomAlert
-        visible={deleteModal}
-        message={'Are You Sure?'}
-        onChange={handleDelete}
-        onClose={() => setDeleteModal(false)}
-        doubleButton={true}
+        handleDelete={handleDelete}
+        setModalVisible={() => setModalVisible(false)} 
       />
     </SafeAreaView>
   );
@@ -587,7 +602,6 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: scale(20),
     fontWeight: '600',
-    // marginBottom: verticalScale(4),
     color: Color.textColor,
     fontFamily: Font.Poppins,
     textAlign: 'center',
@@ -638,34 +652,21 @@ const styles = StyleSheet.create({
     fontFamily: Font?.Poppins,
     marginTop: verticalScale(2),
   },
-
-  modalOverlay: {
+  loaderContainer: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  noDataContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: verticalScale(16),
   },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: scale(5),
-    width: scale(100),
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    overflow: 'hidden',
-  },
-  modalOption: {
-    paddingVertical: verticalScale(5),
-    paddingHorizontal: scale(10),
-    alignSelf: 'center',
-  },
-  modalText: {
-    fontSize: scale(12),
-    color: Color.textColor,
-    fontWeight: '500',
+  noDataText: {
+    textAlign: 'center', 
+    color: Color.gray,
     fontFamily: Font?.Poppins,
+    fontSize: scale(14),
   },
 });

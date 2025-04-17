@@ -2,7 +2,6 @@ import axios from 'axios';
 import { BASE_URL } from '../Base_Url/Baseurl';
 
 export const GetUserApi = async token => {
-  console.log(token, 'token');
   
   try {
     const url = `${BASE_URL}getUser`;

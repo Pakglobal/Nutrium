@@ -46,9 +46,9 @@ const LoginScreen = () => {
   useKeyboardHandler();
 
   const [loading, setLoading] = useState(false);
-  const [isAgree, setIsAgree] = useState(true);
-  const [email, setEmail] = useState('vatsal.r.lakhani2626+878@gmail.com');
-  const [password, setPassword] = useState('password123#');
+  const [isAgree, setIsAgree] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);

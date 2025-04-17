@@ -29,6 +29,8 @@ import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
 import {loginData, profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
+import {TouchableOpacity} from 'react-native';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -44,8 +46,8 @@ const HomeScreen = () => {
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
-  console.log(token, id);
-  
+  console.log(token, id, 'tokenid');
+
   const dispatch = useDispatch();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -107,14 +109,14 @@ const HomeScreen = () => {
   useEffect(() => {
     FetchAppointmentData();
     GetProfileImage();
-    if(tokenId) {
+    if (tokenId) {
       GetUserApiData();
     }
   }, [token, id]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    if(tokenId) {
+    if (tokenId) {
       GetUserApiData();
     }
     GetProfileImage();
@@ -126,12 +128,15 @@ const HomeScreen = () => {
         setRefreshing(false);
       });
   }, []);
+  const handleGoToChallenge = () => {
+    navigation.navigate('ChallengesScreen');
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header logoHeader={true} />
 
-      <View>
+      {/* <View>
         {loading ? (
           <View
             style={{
@@ -139,46 +144,56 @@ const HomeScreen = () => {
               alignItems: 'center',
               marginTop: verticalScale(20),
             }}>
-            <ActivityIndicator size="large" color={Color.primaryColor} />
+            <ActivityIndicator size="large" color={Color.primaryColor} /> */}
+      <TouchableOpacity
+        style={{
+          backgroundColor: Color?.primaryColor,
+          paddingVertical: 12,
+          paddingHorizontal: 20,
+          borderRadius: 10,
+          alignItems: 'center',
+          marginVertical: 16,
+          marginHorizontal: 20,
+        }}
+        onPress={handleGoToChallenge}>
+        <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+          Go to Challenge
+        </Text>
+      </TouchableOpacity>
+
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}>
+        <View
+          style={{
+            paddingHorizontal: scale(16),
+          }}>
+          <AppointmentCard
+            refreshAppointments={FetchAppointmentData}
+            activeAppointments={activeAppointments}
+            setActiveAppointments={setActiveAppointments}
+            selectedAppointment={selectedAppointment}
+            setSelectedAppointment={setSelectedAppointment}
+          />
+          <MealsLikeInHome />
+
+          <MoreForYou />
+          <OnOffFunctionality />
+
+          <HydratedStay />
+          <OnOffFunctionality />
+
+          <View style={{marginBottom: verticalScale(90)}}>
+            <PhysicalActivity
+              header={true}
+              subHeader={true}
+              bottomButton={true}
+            />
           </View>
-        ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            showsVerticalScrollIndicator={false}>
-            <View
-              style={{
-                paddingHorizontal: scale(16),
-              }}>
-              <AppointmentCard
-                refreshAppointments={FetchAppointmentData}
-                activeAppointments={activeAppointments}
-                setActiveAppointments={setActiveAppointments}
-                selectedAppointment={selectedAppointment}
-                setSelectedAppointment={setSelectedAppointment}
-              />
-              <MealsLikeInHome />
-
-              <MoreForYou />
-              <OnOffFunctionality />
-
-              <HydratedStay />
-              <OnOffFunctionality />
-
-              <View style={{marginBottom: verticalScale(150)}}>
-                <CustomShadow radius={3}>
-                  <PhysicalActivity
-                    header={true}
-                    subHeader={true}
-                    bottomButton={true}
-                  />
-                </CustomShadow>
-              </View>
-            </View>
-          </ScrollView>
-        )}
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

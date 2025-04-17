@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import SelectRegistrationType from '../Auth/Registartion/SelectRegistrationType';
 import Registration from '../Auth/Registartion/Registration';
 import UnlockAccess from '../Auth/Registartion/UnlockAccess';
@@ -18,12 +18,12 @@ import LogMeal from '../Screen/ClientFlow/Profile/Food_Diary/LogMeal';
 import WaterIntake from '../Screen/ClientFlow/Profile/Water_Intake/WaterIntake';
 import Measurements from '../Screen/ClientFlow/Profile/Measurements/Measurements';
 import AdminHomeScreen from '../Screen/AdminFlow/HomeScreen/AdminHomeScreen';
-import {persistor, store} from '../redux/Store';
-import {Provider, useDispatch, useSelector} from 'react-redux';
-import {PersistGate} from 'redux-persist/integration/react';
+import { persistor, store } from '../redux/Store';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import ClientProfileScreen from '../Screen/AdminFlow/Clients/ClientProfileScreen';
 import ClientChatScreen from '../Screen/AdminFlow/Clients/ClientChatScreen';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import SideBar from './SideBar';
 import SettingScreen from '../Screen/AdminFlow/HomeScreen/SettingScreen';
 import WaterIntakeLog from '../Screen/ClientFlow/Profile/Water_Intake/WaterIntakeLog';
@@ -40,13 +40,18 @@ import NewShoppingList from '../Screen/ClientFlow/Profile/Shopping_Lists/NewShop
 import MyList from '../Screen/ClientFlow/Profile/Shopping_Lists/MyList';
 import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
 import ClientDrawerContent from './ClientDrawer';
-import {View} from 'react-native';
 import LoginChoiceScreen from '../Auth/Login/LoginChoiceScreen';
 import OnboardingScreen from './OnboardingScreen';
 import SelectCountry from '../Screen/GuestFlow/login/SelectCountry';
 import GuestLogin from '../Screen/GuestFlow/login/GuestLogin';
 import SelectGender from '../Screen/GuestFlow/login/SelectGender';
 import SelectProfession from '../Screen/GuestFlow/login/SelectProfession';
+import linking from './linking';
+import ChallengesScreen from '../Screen/ClientFlow/ChallengeFlow/ChallengesScreen';
+import CreateChallenge from '../Screen/ClientFlow/ChallengeFlow/CreateChallenge';
+import ChallengesDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ChallengesDetailsScreen';
+import ViewChallengDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ViewChallengDetailsScreen';
+import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScreen';
  
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -66,16 +71,16 @@ const ClientDrawerNavigator = () => {
     </ClientDrawer.Navigator>
   );
 };
- 
+
 const MyDrawer = () => {
   const [selectedScreen, setSelectedScreen] = useState('MESSAGES');
- 
+
   const options = [
-    {id: 0, label: 'MESSAGES'},
-    {id: 1, label: 'CLIENTS'},
-    {id: 2, label: 'APPOINTMENTS'},
+    { id: 0, label: 'MESSAGES' },
+    { id: 1, label: 'CLIENTS' },
+    { id: 2, label: 'APPOINTMENTS' },
   ];
- 
+
   return (
     <Drawer.Navigator
       drawerContent={props => (
@@ -85,7 +90,7 @@ const MyDrawer = () => {
           onSelectScreen={setSelectedScreen}
         />
       )}
-      screenOptions={{headerShown: false}}>
+      screenOptions={{ headerShown: false }}>
       {options.map(item => (
         <Drawer.Screen key={item?.label} name={item?.label}>
           {props => (
@@ -100,9 +105,9 @@ const MyDrawer = () => {
     </Drawer.Navigator>
   );
 };
- 
+
 const AdminFlowStack = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="adminFlow" component={MyDrawer} />
     <Stack.Screen name="ClientProfile" component={ClientProfileScreen} />
     <Stack.Screen name="Chat" component={ClientChatScreen} />
@@ -116,7 +121,7 @@ const AuthStack = ({route}) => {
   
  
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!onboardingCompleted ? (
         <Stack.Screen name="onBoarding" component={OnboardingScreen} />
       ) : null}
@@ -138,12 +143,17 @@ const AuthStack = ({route}) => {
     </Stack.Navigator>
   );
 };
- 
+
 const UserFlowStack = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="ClientDrawer" component={ClientDrawerNavigator} />
     <Stack.Screen name="mainProfile" component={MainProfile} />
     <Stack.Screen name="practitioner" component={Practitioner} />
+    <Stack.Screen name="ChallengesScreen" component={ChallengesScreen} />
+    <Stack.Screen name="CreateChallenge" component={CreateChallenge} />
+    <Stack.Screen name="ChallengesDetailsScreen" component={ChallengesDetailsScreen} />
+    <Stack.Screen name="ViewChallengDetailsScreen" component={ViewChallengDetailsScreen} />
+    <Stack.Screen name="JoinRequestScreen" component={JoinRequestScreen} />
     <Stack.Screen name="settings" component={Settings} />
     <Stack.Screen name="foodDiary" component={FoodDiary} />
     <Stack.Screen name="addMeal" component={AddMeal} />
@@ -165,10 +175,10 @@ const UserFlowStack = () => (
     <Stack.Screen name="myLists" component={MyList} />
   </Stack.Navigator>
 );
- 
+
 const GuestStack = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SelectGender" component={SelectGender} />
       <Stack.Screen name="SelectProfession" component={SelectProfession} />
       <Stack.Screen name="SelectCountry" component={SelectCountry} />
@@ -177,21 +187,19 @@ const GuestStack = () => {
     </Stack.Navigator>
   );
 };
- 
+
 const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
-  const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);
-  console.log(demoClient);
-  
+  const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);  
  
   if (onboardingCompleted === null) {
     return null;
   }
- 
+
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {role === 'Admin' ? (
         <Stack.Screen name="AdminFlow" component={AdminFlowStack} />
       ) : role === 'Client' || demoClient ? (
@@ -200,21 +208,21 @@ const MainStack = () => {
         <Stack.Screen
           name="AuthStack"
           component={AuthStack}
-          initialParams={{onboardingCompleted}}
+          initialParams={{ onboardingCompleted }}
         />
       )}
     </Stack.Navigator>
   );
 };
- 
+
 const RootNavigation = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking} >
         <MainStack />
       </NavigationContainer>
     </PersistGate>
   </Provider>
 );
- 
+
 export default RootNavigation;

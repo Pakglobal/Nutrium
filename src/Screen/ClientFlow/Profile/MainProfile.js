@@ -28,8 +28,6 @@ const MainProfile = ({route}) => {
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
-  console.log(token, id);
-  
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = data?.image;

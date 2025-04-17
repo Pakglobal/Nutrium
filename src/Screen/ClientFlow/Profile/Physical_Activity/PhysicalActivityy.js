@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -9,30 +9,30 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CalenderHeader from '../../../../Components/CalenderHeader';
-import {Color} from '../../../../assets/styles/Colors';
+import { Color } from '../../../../assets/styles/Colors';
 import PhysicalActivity from '../../../../Components/PhysicalActivity';
-import {useStepTracking} from '../../../../Components/StepTrackingService';
+import { useStepTracking } from '../../../../Components/StepTrackingService';
 import {
   DeletePhysicalActivity,
   GetPhysicalActivityDetails,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
-import {Shadow} from 'react-native-shadow-2';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
-import {Font} from '../../../../assets/styles/Fonts';
+import { Shadow } from 'react-native-shadow-2';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
+import { Font } from '../../../../assets/styles/Fonts';
 import ModalComponent from '../../../../Components/ModalComponent';
 import CustomShadow from '../../../../Components/CustomShadow';
 
 const PhysicalActivityScreen = () => {
   const navigation = useNavigation();
-  const {steps, calories, workouts, currentDay} = useStepTracking();
+  const { steps, calories, workouts, currentDay } = useStepTracking();
 
   const [dayOffset, setDayOffset] = useState(0);
   const [physicalActivity, setPhysicalActivity] = useState({
@@ -42,6 +42,7 @@ const PhysicalActivityScreen = () => {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
 
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
@@ -148,7 +149,6 @@ const PhysicalActivityScreen = () => {
         clientId: id,
         activityId: selectedEntry.id,
       };
-
       const response = await DeletePhysicalActivity(payload);
 
       if (response?.success === true) {
@@ -193,7 +193,29 @@ const PhysicalActivityScreen = () => {
 
   const physicalActivityData = sortActivitiesByDate(filterActivitiesByWeek());
 
-  const handleSelectEntry = item => {
+
+
+
+  // const handleDotMenuPress = (event, entry, item) => {
+  //   const pageX = event.nativeEvent.pageX;
+  //   const pageY = event.nativeEvent.pageY;
+  //   setMenuPosition({ x: pageX, y: pageY });
+  //   setSelectedEntry({
+  //     id: item?._id,
+  //     activity: item?.activity,
+  //     time: item?.time,
+  //     date: item?.date,
+  //   });
+  //   setModalVisible(true);
+  // };
+
+
+  const handleDotMenuPress = (event, item) => {
+    const pageX = event.nativeEvent.pageX;
+    const pageY = event.nativeEvent.pageY;
+  
+    setMenuPosition({ x: pageX, y: pageY });
+  
     setSelectedEntry({
       id: item?._id,
       activity: item?.activity,
@@ -202,6 +224,8 @@ const PhysicalActivityScreen = () => {
     });
     setModalVisible(true);
   };
+  
+
 
   const navigateToLogActivity = () => {
     const plusData = {
@@ -209,14 +233,14 @@ const PhysicalActivityScreen = () => {
       token,
       id,
     };
-    navigation.navigate('logPhysicalActivity', {plusData});
+    navigation.navigate('logPhysicalActivity', { plusData });
   };
 
   const renderActivityItem = ({item}) => (
     <View style={{marginTop: scale(10), marginHorizontal: scale(16)}}>
       <CustomShadow color={Color.lightgray}>
         <View style={styles.entryItem}>
-          <View style={{width: '60%'}}>
+          <View style={{ width: '60%' }}>
             <Text style={styles.upFont}>{item?.activity}</Text>
             <Text style={styles.downFont}>{formatDate(item?.date)}</Text>
           </View>
@@ -226,12 +250,18 @@ const PhysicalActivityScreen = () => {
             </Text>
             <Text style={styles.downFont}>{item?.byactivity}</Text>
           </View>
-          <View style={{width: '5%'}}>
+          <View style={{ width: '5%' }}>
+            {/* <TouchableOpacity
+              style={styles.menuButton}
+              onPress={handleDotMenuPress}>
+              <Icon name="dots-vertical" size={22} color={Color.primaryColor} />
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={styles.menuButton}
-              onPress={() => handleSelectEntry(item)}>
+              onPress={(event) => handleDotMenuPress(event, item)}>
               <Icon name="dots-vertical" size={22} color={Color.primaryColor} />
             </TouchableOpacity>
+
           </View>
         </View>
       </CustomShadow>
@@ -246,31 +276,47 @@ const PhysicalActivityScreen = () => {
     </View>
   );
 
+  // const renderActionModal = () => (
+  //   <Modal
+  //     transparent={true}
+  //     visible={modalVisible}
+  //     animationType="fade"
+  //     onRequestClose={() => setModalVisible(false)}>
+  //     <View style={styles.modalOptionContainer}>
+  //       <View style={styles.modalOptionContent}>
+  //         <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
+  //           <Text style={styles.modalText}>Edit</Text>
+  //         </TouchableOpacity>
+  //         <TouchableOpacity
+  //           style={styles.modalOption}
+  //           onPress={handleDelete}
+  //           disabled={deleteLoading}>
+  //           <Text style={styles.modalText}>Delete</Text>
+  //         </TouchableOpacity>
+  //         <TouchableOpacity
+  //           style={styles.modalOption}
+  //           onPress={() => setModalVisible(false)}>
+  //           <Text style={styles.modalText}>Cancel</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //     </View>
+  //   </Modal>
+  // );
+
+
   const renderActionModal = () => (
-    <Modal
-      transparent={true}
+    <ModalComponent
       visible={modalVisible}
-      animationType="fade"
-      onRequestClose={() => setModalVisible(false)}>
-      <View style={styles.modalOptionContainer}>
-        <View style={styles.modalOptionContent}>
-          <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
-            <Text style={styles.modalText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.modalOption}
-            onPress={handleDelete}
-            disabled={deleteLoading}>
-            <Text style={styles.modalText}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.modalOption}
-            onPress={() => setModalVisible(false)}>
-            <Text style={styles.modalText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+      handleEdit={handleEdit}
+      handleDelete={handleDelete}
+      deleteLoading={deleteLoading} // if needed inside ModalComponent
+      setModalVisible={() => setModalVisible(false)}
+      modalstyle={{
+        position: 'absolute',
+        right: 20,
+        top: menuPosition.y - 80,
+      }}
+    />
   );
 
   return (
@@ -282,7 +328,7 @@ const PhysicalActivityScreen = () => {
         plus={true}
       />
 
-      <View style={{marginVertical: verticalScale(10)}}>
+      <View style={{marginTop: verticalScale(10),}}>
         <CalenderHeader
           onPressLeft={() => setDayOffset(dayOffset - 1)}
           onPressRight={() => setDayOffset(dayOffset + 1)}
@@ -293,22 +339,25 @@ const PhysicalActivityScreen = () => {
       </View>
 
       <View style={styles.contentContainer}>
-        <CustomShadow radius={3}>
+
           <PhysicalActivity />
-        </CustomShadow>
+
+
+
 
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginVertical: verticalScale(10),
+            marginBottom: verticalScale(10),
           }}>
           <Text
             style={{
               color: Color.textColor,
               fontFamily: Font.PoppinsMedium,
               fontSize: scale(14),
+              marginTop: verticalScale(2)
             }}>
             Your Workouts
           </Text>

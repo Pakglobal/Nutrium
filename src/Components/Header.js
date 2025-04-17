@@ -98,7 +98,6 @@ const Header = ({
             </>
           )}
           {screenheader && (
-            <View style={{}}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -143,7 +142,6 @@ const Header = ({
                     </TouchableOpacity>
                   ))}
               </View>
-            </View>
           )}
         </View>
       </CustomShadow>

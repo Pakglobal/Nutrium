@@ -40,9 +40,7 @@ const ClientDrawerContent = props => {
   const [asyncLoading, setAsyncLoading] = useState(false);
 
   const userInfo = useSelector(state => state.user?.userInfo);
-  const guestInfo = useSelector(state => state.user.guestUserData);
-  console.log(userInfo, guestInfo);
-  
+  const guestInfo = useSelector(state => state.user?.guestUserData);  
 
   const token = userInfo?.token || guestInfo?.token;
   const id =

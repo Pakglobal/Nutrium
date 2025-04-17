@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,14 @@ import {
   FlatList,
   RefreshControl,
 } from 'react-native';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../../assets/styles/Colors';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
-import {useDispatch, useSelector} from 'react-redux';
-import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
-import {measurementData} from '../../../../redux/client';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetMeasurementData } from '../../../../Apis/ClientApis/MeasurementApi';
+import { measurementData } from '../../../../redux/client';
+import Header from '../../../../Components/Header';
 
 const Measurements = () => {
   const navigation = useNavigation();
@@ -244,10 +245,15 @@ const Measurements = () => {
 
   return (
     <View style={styles.container}>
-      <BackHeader
+      {/* <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName="Measurements"
         showRightButton={false}
+      /> */}
+      <Header
+        screenheader={true}
+        screenName={'Measurements'}
+        rightHeaderButton={false}
       />
       {loading ? (
         <View
@@ -265,7 +271,7 @@ const Measurements = () => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             data={menuItems}
-            renderItem={({item}) => renderMenuItem(item)}
+            renderItem={({ item }) => renderMenuItem(item)}
           />
         </View>
       )}

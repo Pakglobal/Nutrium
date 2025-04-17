@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: verticalScale(10),
+    marginTop: verticalScale(5),
     
   },
   dateTxt: {

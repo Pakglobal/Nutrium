@@ -46,7 +46,6 @@ const ProfileMenuScreen = () => {
 
   const demoClient = useSelector(state => state?.user?.guestToken?.demoClient);
   const guestData = useSelector(state => state.user?.guestUserData?.userData);
-  console.log(guestData, demoClient);
 
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);

@@ -215,7 +215,6 @@ const LoginScreen = () => {
     }
   };
 
-  console.log(passwordVisible);
   
 
   return (

@@ -120,13 +120,13 @@ const styles = StyleSheet.create({
     progressBarBackground: {
         width: '100%',
         height: 10,
-        backgroundColor: '#ddd', // Light gray background
+        backgroundColor: '#ddd', 
         borderRadius: 5,
         overflow: 'hidden',
     },
     progressBarFill: {
         height: '100%',
-        backgroundColor: '#4CAF50', // Green progress bar
+        backgroundColor: '#4CAF50',
         borderRadius: 5,
     },
     remainingText: {

@@ -26,10 +26,10 @@ import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
-import {Font} from '../../../../assets/styles/Fonts';
-import {Color} from '../../../../assets/styles/Colors';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
-import {Shadow} from 'react-native-shadow-2';
+import { Font } from '../../../../assets/styles/Fonts';
+import { Color } from '../../../../assets/styles/Colors';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
 import { getWaterIntake } from '../../../../redux/client';
 
@@ -46,7 +46,7 @@ const WaterIntake = () => {
   const [loading, setLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
 
-  const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const tokenId = useSelector(state => state?.user?.token);
   const token = tokenId?.token;
   const id = tokenId?.id;
@@ -289,31 +289,32 @@ const WaterIntake = () => {
     }
   };
 
-  // const handleDelete = async () => {
-  //   setDeleteModal(false);
-  //   try {
-  //     setLoading(true);
-  //     const payload = {
-  //       waterIntakeId: selectedEntry?.waterIntakeId,
-  //       waterRecordId: selectedEntry?.waterRecordId,
-  //       waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-  //       token: token,
-  //     };
-  //     const response = await DeleteWaterIntake(payload);
-  //     if (
-  //       response?.message === 'Water intake data deleted successfully.' ||
-  //       response?.success === true
-  //     ) {
-  //       getWaterIntakeData();
-  //     } else {
-  //       showToast(response?.message || 'Failed to delete entry');
-  //     }
-  //     setLoading(false);
-  //   } catch (error) {
-  //     showToast('An error occurred while deleting');
-  //     setLoading(false);
-  //   }
-  // };
+  const handleDelete = async () => {
+    setModalVisible(false);
+    try {
+      setLoading(true);
+      const payload = {
+        waterIntakeId: selectedEntry?.waterIntakeId,
+        waterRecordId: selectedEntry?.waterRecordId,
+        waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
+        token: token,
+      };
+      const response = await DeleteWaterIntake(payload);
+      if (
+        response?.message === 'Water intake data deleted successfully.' ||
+        response?.success === true
+      ) {
+        getWaterIntakeData();
+      } else {
+        showToast(response?.message || 'Failed to delete entry');
+      }
+      setLoading(false);
+    } catch (error) {
+      showToast('An error occurred while deleting');
+      setLoading(false);
+    }
+  }
+
 
   const scrollRef = React.createRef();
 
@@ -353,7 +354,7 @@ const WaterIntake = () => {
 
   const handleDotMenuPress = (event, entry) => {
     event.target.measure((x, y, width, height, pageX, pageY) => {
-      setMenuPosition({x: pageX, y: pageY});
+      setMenuPosition({ x: pageX, y: pageY });
       setSelectedEntry({
         waterIntakeId: waterIntake?.waterIntakeData?._id,
         waterRecordId: entry.recordId,
@@ -369,10 +370,10 @@ const WaterIntake = () => {
   return (
     <SafeAreaView style={styles.container}>
 
-      <Header onPress={()=> navigation.goBack({selectedDate:selectedDate})} screenheader={true} screenName={'Water intake'} handlePlus={() =>
+      <Header onPress={() => navigation.goBack({ selectedDate: selectedDate })} screenheader={true} screenName={'Water intake'} handlePlus={() =>
         navigation.navigate('waterIntakeLog', { plusData: plusData })} plus={true} />
 
-      <View style={{height: verticalScale(220)}}>
+      <View style={{ height: verticalScale(220) }}>
         <ScrollView
           horizontal
           ref={scrollRef}
@@ -386,67 +387,67 @@ const WaterIntake = () => {
               const formattedDate = date.fullDate.toISOString().split('T')[0];
               const isSelected = selectedDate === formattedDate;
 
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.singleDateChart}
-                onPress={() => handleDate(date)}>
-                <BarChart
-                  data={[{value: formatChartData()[index]?.value || 0}]}
-                  width={50}
-                  height={150}
-                  barWidth={35}
-                  spacing={0}
-                  hideRules
-                  hideAxesAndRules
-                  xAxisThickness={0}
-                  yAxisThickness={0}
-                  barBorderRadius={6}
-                  hideYAxisText
-                  maxValue={Math.max(
-                    dailyGoal,
-                    ...formatChartData().map(item => item.value || 0),
-                  )}
-                  frontColor={
-                    isSelected ? Color?.primaryColor : Color.primaryLight
-                  }
-                />
-                <View style={styles.dateBox}>
-                  <Text style={styles.dateText}>{date.day}</Text>
-                  <Text style={styles.monthText}>
-                    {date.month?.toUpperCase()}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </ScrollView>
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.singleDateChart}
+                  onPress={() => handleDate(date)}>
+                  <BarChart
+                    data={[{ value: formatChartData()[index]?.value || 0 }]}
+                    width={50}
+                    height={150}
+                    barWidth={35}
+                    spacing={0}
+                    hideRules
+                    hideAxesAndRules
+                    xAxisThickness={0}
+                    yAxisThickness={0}
+                    barBorderRadius={6}
+                    hideYAxisText
+                    maxValue={Math.max(
+                      dailyGoal,
+                      ...formatChartData().map(item => item.value || 0),
+                    )}
+                    frontColor={
+                      isSelected ? Color?.primaryColor : Color.primaryLight
+                    }
+                  />
+                  <View style={styles.dateBox}>
+                    <Text style={styles.dateText}>{date.day}</Text>
+                    <Text style={styles.monthText}>
+                      {date.month?.toUpperCase()}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
       </View>
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
-          <View style={{width: '46%'}}>
+          <View style={{ width: '46%' }}>
             <Shadow
               distance={2}
               startColor={ShadowValues?.blackShadow}
-              style={{width: '100%', borderRadius: scale(10)}}>
+              style={{ width: '100%', borderRadius: scale(10) }}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
                 <Text style={styles.statLabel}>Water intake</Text>
               </View>
-     </Shadow>
+            </Shadow>
           </View>
-          <View style={{width: '46%'}}>
+          <View style={{ width: '46%' }}>
             <Shadow
               distance={2}
               startColor={ShadowValues?.blackShadow}
-              style={{width: '100%', borderRadius: scale(10)}}>
+              style={{ width: '100%', borderRadius: scale(10) }}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{dailyGoal} mL</Text>
                 <Text style={styles.statLabel}>Daily goal</Text>
               </View>
-         </Shadow>
+            </Shadow>
           </View>
         </View>
         {loading ? (
@@ -527,82 +528,9 @@ const WaterIntake = () => {
             top: menuPosition.y - 80,
           }
         }
-        handleDelete={async () => {
-          setModalVisible(false);
-          try {
-            setLoading(true);
-            const payload = {
-              waterIntakeId: selectedEntry?.waterIntakeId,
-              waterRecordId: selectedEntry?.waterRecordId,
-              waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-              token: token,
-            };
-            const response = await DeleteWaterIntake(payload);
-            if (
-              response?.message === 'Water intake data deleted successfully.' ||
-              response?.success === true
-            ) {
-              getWaterIntakeData();
-            } else {
-              showToast(response?.message || 'Failed to delete entry');
-            }
-            setLoading(false);
-          } catch (error) {
-            showToast('An error occurred while deleting');
-            setLoading(false);
-          }
+        handleDelete={handleDelete}
+        setModalVisible={() => setModalVisible(false)} />
 
-          // setDeleteModal(true);
-        }
-        } setModalVisible={() => setModalVisible(false)} />
-      {/* <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}>
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setModalVisible(false)}>
-          <View
-            style={[
-              styles.modalContent,
-              {
-                position: 'absolute',
-                right: 20,
-                top: menuPosition.y - 80,
-              },
-            ]}>
-            <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
-              <Text style={[styles.modalText]}>Edit</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => {
-                setModalVisible(false);
-                setDeleteModal(true);
-              }}>
-              <Text style={styles.modalText}>Delete</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.modalOption}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal> */}
-
-
-      {/* <CustomAlert
-        visible={deleteModal}
-        message={'Are You Sure?'}
-        onChange={handleDelete}
-        onClose={() => setDeleteModal(false)}
-        doubleButton={true}
-      /> */}
     </SafeAreaView>
   );
 };

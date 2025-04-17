@@ -8,20 +8,20 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
-import {useStepTracking} from './StepTrackingService';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
+import { useStepTracking } from './StepTrackingService';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useNavigation} from '@react-navigation/native';
-import {Shadow} from 'react-native-shadow-2';
-import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import { useNavigation } from '@react-navigation/native';
+import { Shadow } from 'react-native-shadow-2';
+import { Font } from '../assets/styles/Fonts';
+import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 import CustomShadow from './CustomShadow';
 
-const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
+const PhysicalActivity = ({ style, header, subHeader, bottomButton }) => {
   const navigation = useNavigation();
-  const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
+  const { steps, calories, workouts, currentDay, isTracking } = useStepTracking();
 
   const formatNumber = num => {
     if (num >= 10000000) {
@@ -36,8 +36,9 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
   };
 
   return (
-    <View style={shadowStyle}>
-      <View style={[styles.workoutContainer, style]}>
+    <CustomShadow radius={4} >
+
+      <View style={[shadowStyle, { padding: 10 }]}>
         <View style={shadowStyle}>
           {header && (
             <Text style={styles.description}>Your physical activity</Text>
@@ -46,7 +47,7 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
             <Text
               style={[
                 styles.description,
-                {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
+                { fontSize: scale(14), marginTop: scale(7), color: '#344C5C' },
               ]}>
               Workouts this week
             </Text>
@@ -102,10 +103,10 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
               width: '100%',
             },
           ]}>
-          <View style={{width: '45%'}}>
+          <View style={{ width: '45%' }}>
             <CustomShadow color={Color.lightgray}>
               <View style={styles.imageWrapper}>
-                <Text style={[styles.description, {textAlign: 'center', fontSize: scale(14)}]}>
+                <Text style={[styles.description, { textAlign: 'center', fontSize: scale(14) }]}>
                   calories
                 </Text>
                 <Text style={styles.zero} numberOfLines={1}>
@@ -115,13 +116,13 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
             </CustomShadow>
           </View>
 
-          <View style={{width: '45%'}}>
+          <View style={{ width: '45%' }}>
             <CustomShadow color={Color.lightgray}>
               <View style={styles.imageWrapper}>
-              <Text style={[styles.description, {textAlign: 'center', fontSize: scale(14)}]}>
-              steps
-            </Text>
-            <Text style={styles.zero}>{steps}</Text>
+                <Text style={[styles.description, { textAlign: 'center', fontSize: scale(14) }]}>
+                  steps
+                </Text>
+                <Text style={styles.zero}>{steps}</Text>
               </View>
             </CustomShadow>
           </View>
@@ -134,7 +135,9 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
           />
         )}
       </View>
-    </View>
+    </CustomShadow>
+
+
   );
 };
 

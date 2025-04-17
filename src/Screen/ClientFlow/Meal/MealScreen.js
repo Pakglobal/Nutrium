@@ -18,6 +18,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useSelector} from 'react-redux';
 import Cook from '../../../assets/Images/cooking.svg';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const MealScreen = () => {
   const [mealPlan, setMealPlan] = useState([]);
@@ -341,7 +342,8 @@ const MealScreen = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
+          {/* <ActivityIndicator size="large" color={Color.primaryColor} /> */}
+          <CustomLoader/>
         </View>
       ) : mealPlan?.length > 0 ? (
         <ScrollView

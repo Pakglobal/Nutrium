@@ -30,6 +30,7 @@ import CustomShadow from '../../../Components/CustomShadow';
 import { loginData, profileData } from '../../../redux/user';
 import { setImage } from '../../../redux/client';
 import { TouchableOpacity } from 'react-native';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -130,12 +131,13 @@ const HomeScreen = () => {
   const handleGoToChallenge = () => {
     navigation.navigate('ChallengesScreen')
   };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <Header logoHeader={true} />
       <TouchableOpacity
         style={{
-          backgroundColor: 'green', // Your theme color
+          backgroundColor: Color?.primaryColor, 
           paddingVertical: 12,
           paddingHorizontal: 20,
           borderRadius: 10,
@@ -160,7 +162,7 @@ const HomeScreen = () => {
             </View>
 
             <MoreForYou />
-            <View style={{ marginVertical: scale(10) }}>
+            <View style={{ marginVertical: scale(10) ,marginBottom:scale(250)}}>
               <CustomShadow style={{ width: '100%', borderRadius: scale(10) }}>
                 <HydratedStay />
               </CustomShadow>
@@ -176,10 +178,11 @@ const HomeScreen = () => {
                 alignItems: 'center',
                 marginTop: verticalScale(20),
               }}>
-              <ActivityIndicator size="large" color={Color.primaryColor} />
+              <CustomLoader/>
             </View>
           ) : (
             <ScrollView
+            style={{}}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
@@ -196,27 +199,28 @@ const HomeScreen = () => {
                   selectedAppointment={selectedAppointment}
                   setSelectedAppointment={setSelectedAppointment}
                 />
-                <CustomShadow radius={4}>
+        
                   <MealsLikeInHome />
-                </CustomShadow>
+             
 
                 <MoreForYou />
                 <OnOffFunctionality />
 
-                <CustomShadow radius={4}>
+           
                   <HydratedStay />
-                </CustomShadow>
+        
 
                 <OnOffFunctionality />
 
-                <View style={{ marginBottom: verticalScale(160) }}>
-                  <CustomShadow radius={4}>
+           
+                <View style={{ marginBottom:scale(250) }}>
+                 
                     <PhysicalActivity
                       header={true}
                       subHeader={true}
                       bottomButton={true}
                     />
-                  </CustomShadow>
+              
                 </View>
               </View>
             </ScrollView>

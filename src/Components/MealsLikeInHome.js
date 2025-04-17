@@ -14,14 +14,16 @@ import Food from '../assets/Images/Food.svg';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
+import CustomShadow from './CustomShadow';
 
 const MealsLikeInHome = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={shadowStyle}>
+    // <View style={shadowStyle}>
+    <CustomShadow radius={4} >
 
-    <View style={{padding: scale(10)}}>
+    <View style={[shadowStyle,{padding:10}]}>
       <Text style={styles.title}>What were your meals like?</Text>
       <View style={styles.cardContainer}>
         <Food width={'100%'} height={verticalScale(170)} />
@@ -35,7 +37,8 @@ const MealsLikeInHome = () => {
         onPress={() => navigation.navigate('foodDiary')}
       />
     </View>
-    </View>
+    {/* </View> */}
+    </CustomShadow>
   );
 };
 

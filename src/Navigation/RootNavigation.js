@@ -60,6 +60,7 @@ import CreateChallenge from '../Screen/ClientFlow/ChallengeFlow/CreateChallenge'
 import ChallengesDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ChallengesDetailsScreen';
 import ViewChallengDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ViewChallengDetailsScreen';
 import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScreen';
+import linking from './linking';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -254,7 +255,7 @@ const MainStack = () => {
 const RootNavigation = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking} >
         <MainStack />
       </NavigationContainer>
     </PersistGate>

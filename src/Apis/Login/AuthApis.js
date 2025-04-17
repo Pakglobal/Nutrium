@@ -51,15 +51,12 @@ export const GuestLOGin = async data => {
       deviceToken: data?.deviceToken,
       isDemoClient: true,
     };
-    console.log('body', body);
 
     const url = `${BASE_URL}demo-auth`;
     const response = await axios.post(url, body);
-    console.log('====', response?.data);
 
     return response;
   } catch (error) {
-    console.log('errrrr');
 
     return error?.response?.data;
   }

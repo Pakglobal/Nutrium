@@ -10,18 +10,18 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {BarChart} from 'react-native-gifted-charts';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { BarChart } from 'react-native-gifted-charts';
+import { scale, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 import CustomAlert from '../../../../Components/CustomAlert';
@@ -45,8 +45,8 @@ const WaterIntake = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [waterIntake, setWaterIntake] = useState([]);
-  const [loading, setLoading] = useState(true); 
-  const [dataFetched, setDataFetched] = useState(false); 
+  const [loading, setLoading] = useState(true);
+  const [dataFetched, setDataFetched] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
 
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -117,7 +117,7 @@ const WaterIntake = () => {
         dates.push({
           fullDate: date,
           day: date.getDate(),
-          month: date.toLocaleString('default', {month: 'short'}),
+          month: date.toLocaleString('default', { month: 'short' }),
         });
       }
       return dates;
@@ -195,13 +195,13 @@ const WaterIntake = () => {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(true); 
+      setLoading(true);
       setDataFetched(false);
       getWaterIntakeData();
     }, [token, id]),
   );
 
- 
+
   useEffect(() => {
     if (dataFetched && selectedDate) {
       handleDate({ fullDate: new Date(selectedDate) });
@@ -237,7 +237,7 @@ const WaterIntake = () => {
       if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
 
       return dateLabels.map(dateObj => {
-        if (!dateObj?.fullDate) return {value: 0, frontColor: '#2196F3'};
+        if (!dateObj?.fullDate) return { value: 0, frontColor: '#2196F3' };
 
         const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
         const dailyIntake = calculateDailyIntake(
@@ -337,24 +337,24 @@ const WaterIntake = () => {
   useEffect(() => {
     setTimeout(() => {
       if (scrollRef.current) {
-        scrollRef.current.scrollToEnd({animated: true});
+        scrollRef.current.scrollToEnd({ animated: true });
       }
     }, 100);
   }, []);
 
   const selectedDateIntake = selectedDate
     ? calculateDailyIntake(
-        selectedDate,
-        waterIntake?.waterIntakeData?.waterIntakeRecords,
-      )
+      selectedDate,
+      waterIntake?.waterIntakeData?.waterIntakeRecords,
+    )
     : 0;
-  
+  console.log('selectedDateIntake', selectedDateIntake)
 
-  useEffect(() => {
-    if (selectedDateIntake) {
-      dispatch(getWaterIntake(selectedDateIntake));
-    }
-  }, [selectedDateIntake, dispatch]);
+  // useEffect(() => {
+  //   if (selectedDateIntake) {
+  dispatch(getWaterIntake(selectedDateIntake));
+  //   }
+  // }, [selectedDateIntake, dispatch]);
 
   const plusData = {
     clientId: id,
@@ -392,14 +392,15 @@ const WaterIntake = () => {
 
   const hasData = selectedIntake && selectedIntake.length > 0 && selectedIntake[0]?.waterIntakeAmount?.length > 0;
 
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header 
-        onPress={() => navigation.goBack({ selectedDate: selectedDate })} 
-        screenheader={true} 
-        screenName={'Water intake'} 
-        handlePlus={() => navigation.navigate('waterIntakeLog', { plusData: plusData })} 
-        plus={true} 
+      <Header
+        onPress={() => navigation.goBack(selectedDate)}
+        screenheader={true}
+        screenName={'Water intake'}
+        handlePlus={() => navigation.navigate('waterIntakeLog', { plusData: plusData })}
+        plus={true}
       />
 
       <View style={{ height: verticalScale(220) }}>
@@ -422,7 +423,7 @@ const WaterIntake = () => {
                   style={styles.singleDateChart}
                   onPress={() => handleDate(date)}>
                   <BarChart
-                    data={[{value: formatChartData()[index]?.value || 0}]}
+                    data={[{ value: formatChartData()[index]?.value || 0 }]}
                     width={50}
                     height={150}
                     barWidth={35}
@@ -451,21 +452,22 @@ const WaterIntake = () => {
               );
             })}
           </View>
+
         </ScrollView>
       </View>
 
       <View style={styles.bottomContentContainer}>
         <View style={styles.statsContainer}>
-          <View style={{width: '46%'}}>
-          <CustomShadow color={Color.lightgray}>
+          <View style={{ width: '46%' }}>
+            <CustomShadow color={Color.lightgray}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{selectedDateIntake} mL</Text>
                 <Text style={styles.statLabel}>Water intake</Text>
               </View>
             </CustomShadow>
           </View>
-          <View style={{width: '46%'}}>
-          <CustomShadow color={Color.lightgray}>
+          <View style={{ width: '46%' }}>
+            <CustomShadow color={Color.lightgray}>
               <View style={styles.mlContainer}>
                 <Text style={styles.statValue}>{dailyGoal} mL</Text>
                 <Text style={styles.statLabel}>Daily goal</Text>
@@ -473,7 +475,7 @@ const WaterIntake = () => {
             </CustomShadow>
           </View>
         </View>
-        
+
         {loading ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator size="large" color={Color.primaryColor} />
@@ -482,11 +484,11 @@ const WaterIntake = () => {
           <View style={styles.entriesContainer}>
             <FlatList
               data={selectedIntake}
-              renderItem={({item: record, index: recordIndex}) => (
+              renderItem={({ item: record, index: recordIndex }) => (
                 <View>
                   <FlatList
                     data={record?.waterIntakeAmount}
-                    renderItem={({item: intake, index: intakeIndex}) => (
+                    renderItem={({ item: intake, index: intakeIndex }) => (
                       <View style={styles.entryItem}>
                         <View style={styles.entryLeft}>
                           <Ionicons
@@ -551,7 +553,7 @@ const WaterIntake = () => {
           top: menuPosition.y - 80,
         }}
         handleDelete={handleDelete}
-        setModalVisible={() => setModalVisible(false)} 
+        setModalVisible={() => setModalVisible(false)}
       />
     </SafeAreaView>
   );
@@ -653,20 +655,18 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(2),
   },
   loaderContainer: {
-    flex: 1, 
-    justifyContent: 'center', 
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center'
   },
   noDataContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    margin: scale(10),
     alignItems: 'center',
-    padding: verticalScale(16),
   },
   noDataText: {
-    textAlign: 'center', 
-    color: Color.gray,
-    fontFamily: Font?.Poppins,
-    fontSize: scale(14),
+    textAlign: 'center',
+    color: Color.textColor,
+    fontSize: scale(13),
+    fontFamily: Font?.PoppinsMedium,
   },
 });

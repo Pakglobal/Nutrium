@@ -62,7 +62,7 @@ const LoginScreen = () => {
   };
 
   const FCMtoken = useSelector(state => state?.user?.fcmToken);
-  console.log('FCMtoken', FCMtoken)
+
 
   const validateEmail = value => {
     setEmail(value);
@@ -127,7 +127,6 @@ const LoginScreen = () => {
         token: response?.token,
         id: response?.userData?._id,
       };
-      console.log(response);
       
 
       if (response) {
@@ -211,9 +210,9 @@ const LoginScreen = () => {
       const response = await ForgotPasswordApi(body);
       setForgotPassword(response);
       setPasswordAlertVisible(true);
-      console.log(response);
+      console.log('ressss',response);
     } catch (error) {
-      console.log(error);
+      console.log('-----',error);
     }
   };
 

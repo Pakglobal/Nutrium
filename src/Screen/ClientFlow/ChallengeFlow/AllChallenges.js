@@ -54,9 +54,6 @@ const CustomPagination = ({ paginationIndex, data }) => {
     );
 };
 const AllChallenges = ({ challenges, onJoin }) => {
-    console.log(
-        "challengeschallengeschallengeschallenges", challenges
-    );
 
     return (
         <View style={styles.container}>
@@ -83,7 +80,6 @@ const AllChallenges = ({ challenges, onJoin }) => {
                 <View style={styles.categoriesContainer}>
                     <View style={styles.categoryCard}>
                         <View style={styles.iconWrapper}>
-                            {/* Replace with your actual icon */}
                             <Text style={styles.iconText}>🏃‍♂️</Text>
                         </View>
                         <Text style={styles.categoryTitle}>Cardio</Text>
@@ -92,14 +88,13 @@ const AllChallenges = ({ challenges, onJoin }) => {
 
                     <View style={styles.categoryCard}>
                         <View style={styles.iconWrapper}>
-                            {/* Replace with your actual icon */}
                             <Text style={styles.iconText}>🥗</Text>
                         </View>
                         <Text style={styles.categoryTitle}>Nutrition</Text>
                         <Text style={styles.categoryCount}>5 challenges</Text>
                     </View>
                 </View>
-                <View style={[styles.containerText, { paddingVertical: 20 }]}>
+                <View style={[styles.containerText, { paddingVertical: 20, marginBottom: scale(-10) }]}>
                     <Text style={styles.text}>Popular Challenges</Text>
                 </View>
                 <FlatList

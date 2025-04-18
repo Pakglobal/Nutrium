@@ -2,6 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import moment from 'moment';
 import { Font } from '../../../assets/styles/Fonts';
+import { Color } from '../../../assets/styles/Colors';
+import { Scale } from 'lucide-react';
+import { shadowStyle } from '../../../assets/styles/Shadow';
+import CustomShadow from '../../../Components/CustomShadow';
 
 const ChallengeCard = ({ challenge, onJoin }) => {
     const { name, description, startDate, endDate, participants = [] } = challenge;
@@ -15,46 +19,48 @@ const ChallengeCard = ({ challenge, onJoin }) => {
     ];
 
     return (
-        <View style={styles.card}>
-            <View style={styles.row}>
-                <View style={styles.iconCircle}>
-                    <Text style={styles.icon}>🔥</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                    <Text style={styles.title}>{name}</Text>
-                    <Text numberOfLines={1} style={styles.description}>{description}</Text>
-                </View>
-                <View style={styles.daysBox}>
-                    <Text style={styles.daysText}>{days} days</Text>
-                </View>
-            </View>
-
-            <View style={styles.bottomRow}>
-                <View style={styles.avatarGroup}>
-                    {avatars.map((url, index) => (
-                        <Image
-                            key={index}
-                            source={{ uri: url }}
-                            style={[styles.avatar, { marginLeft: index !== 0 ? -10 : 0 }]}
-                        />
-                    ))}
-                    <Text style={styles.joinedText}>+{participants.length || 42} joined</Text>
+        <CustomShadow>
+            <View style={[styles.card]}>
+                <View style={styles.row}>
+                    <View style={styles.iconCircle}>
+                        <Text style={styles.icon}>🔥</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.title}>{name}</Text>
+                        <Text numberOfLines={1} style={styles.description}>{description}</Text>
+                    </View>
+                    <View style={styles.daysBox}>
+                        <Text style={styles.daysText}>{days} days</Text>
+                    </View>
                 </View>
 
-                <TouchableOpacity onPress={() => onJoin(challenge)} style={styles.joinButton}>
-                    <Text style={styles.joinButtonText}>Join Now</Text>
-                </TouchableOpacity>
+                <View style={styles.bottomRow}>
+                    <View style={styles.avatarGroup}>
+                        {avatars.map((url, index) => (
+                            <Image
+                                key={index}
+                                source={{ uri: url }}
+                                style={[styles.avatar, { marginLeft: index !== 0 ? -10 : 0 }]}
+                            />
+                        ))}
+                        <Text style={[styles.description, { marginLeft: 8 }]}>+{participants.length || 42} joined</Text>
+                    </View>
+
+                    <TouchableOpacity onPress={() => onJoin(challenge)} style={styles.joinButton}>
+                        <Text style={styles.joinButtonText}>Join Now</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
+        </CustomShadow>
     );
 };
 
 const styles = StyleSheet.create({
     card: {
-        borderWidth: 1,
-        borderColor: '#4CAF50',
+        // borderWidth: 1,
+        // borderColor: '#4CAF50',
         borderRadius: 12,
-        padding: 16,
+        padding: 15,
         margin: 10,
         backgroundColor: '#fff',
         shadowColor: '#ccc',
@@ -80,21 +86,24 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     title: {
-        fontWeight: '700',
-        fontSize: 16,
-        marginBottom: 4,
-        fontFamily: Font?.Poppins
+        fontWeight: '600',
+        fontSize: 14,
+        // marginBottom: 1,
+        fontFamily: Font?.PoppinsSemiBold,
+        color: Color?.primaryColor,
     },
     description: {
-        color: '#555',
-        fontSize: 13,
-        fontFamily: Font?.Poppins
+        color: '#575252',
+        fontSize: 12,
+        fontFamily: Font?.Poppins,
+        fontWeight: '400',
     },
     daysBox: {
         backgroundColor: '#E8F5E9',
         paddingVertical: 6,
         paddingHorizontal: 10,
         borderRadius: 20,
+        marginTop: -15
     },
     daysText: {
         fontWeight: '600',
@@ -119,23 +128,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#fff',
     },
-    joinedText: {
-        marginLeft: 8,
-        fontSize: 12,
-        color: '#777',
-        fontFamily: Font?.Poppins
-    },
     joinButton: {
-        backgroundColor: '#4CAF50',
-        paddingVertical: 6,
-        paddingHorizontal: 14,
-        borderRadius: 20,
+        // paddingHorizontal: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: Color.primaryColor
     },
     joinButtonText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 13,
-        fontFamily: Font?.Poppins
+        color: Color?.primaryColor,
+        fontWeight: '500',
+        fontSize: 14,
+        fontFamily: Font?.PoppinsSemiBold
+
     },
 });
 

@@ -6,6 +6,7 @@ import InviteFriendsModal from './InviteFriendsModal';
 import { useSelector } from 'react-redux';
 import CustomDropdown1 from './CustomDropdown1';
 import { createChallenge, getChallengeRange, getChallengeType } from '../../../Apis/ClientApis/ChallengesApi';
+import CustomAlertBox from '../../../Components/CustomAlertBox';
 
 const CreateChallenge = () => {
     const navigation = useNavigation();
@@ -28,6 +29,9 @@ const CreateChallenge = () => {
     const [selectChallengeRange, setselectChallengeRange] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedFriend, setSelectedFriend] = useState([])
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertType, setAlertType] = useState('success'); // 'success' or 'error'
+    const [alertMessage, setAlertMessage] = useState('');
 
     const userInfo = useSelector(state => state?.user?.userInfo);
     useEffect(() => {
@@ -99,19 +103,21 @@ const CreateChallenge = () => {
             );
 
             if (response?.message) {
-                Alert.alert('Success', response.message, [
-                    { text: 'OK', onPress: () => navigation.goBack() },
-                ]);
+                setAlertType('success');
+                setAlertMessage(response.message);
+                setAlertVisible(true);
             }
         } catch (error) {
             console.error('Create Challenge Error:', error);
 
             if (error?.response) {
-                const statusCode = error.response.status;
-                const message = error.response.data?.message || 'Something went wrong';
-                Alert.alert(`Error ${statusCode}`, message);
+                setAlertType('error');
+                setAlertMessage(`Error ${statusCode}: ${message}`);
+                setAlertVisible(true);
             } else {
-                Alert.alert('Error', 'Network error or server not responding');
+                setAlertType('error');
+                setAlertMessage('Network error or server not responding');
+                setAlertVisible(true);
             }
         } finally {
             setLoading(false);
@@ -210,6 +216,17 @@ const CreateChallenge = () => {
                 onInvite={(selectedFriends) => {
                     setSelectedFriend(selectedFriends)
                     setInviteModalVisible(false);
+                }}
+            />
+            <CustomAlertBox
+                visible={alertVisible}
+                type={alertType}
+                message={alertMessage}
+                onClose={() => {
+                    setAlertVisible(false);
+                    if (alertType === 'success') {
+                        navigation.goBack();
+                    }
                 }}
             />
         </ScrollView>

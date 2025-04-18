@@ -68,7 +68,7 @@ const ClientDrawerNavigator = () => {
           width: '70%',
         },
       }}>
-      <ClientDrawer.Screen name="ClientHome" component={BottomNavigation} />
+      <ClientDrawer.Screen name="ClientHome" component={ClientHomeWithDrawer} />
       <ClientDrawer.Screen name="ChallengesScreen" component={ChallengesScreen} />
     </ClientDrawer.Navigator>
   );

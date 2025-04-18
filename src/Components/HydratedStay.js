@@ -448,6 +448,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { scale, verticalScale } from 'react-native-size-matters';
 import { Color } from '../assets/styles/Colors';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+
 import HydratedView from './HydratedView';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -570,6 +571,11 @@ const HydratedStay = ({ route }) => {
     }, 0);
   };
 
+          const updated = prev + amount;
+          return updated;
+        });
+      }
+
   const getData = async () => {
     try {
       const data = await GetWaterIntakeDetails(token, id);
@@ -646,10 +652,10 @@ const HydratedStay = ({ route }) => {
     setCurrentProgress(total + sevenL + seventeenL);
   }, [waterData, sevenL, seventeenL]);
 
+
   // Update progress bar animation
   useEffect(() => {
     if (!hasLoaded || totalGoal === 0) return;
-
     const progress = localIntake / (totalGoal * 1000);
     const progressPercentage = Math.min(progress * 100, 100);
 

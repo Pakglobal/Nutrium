@@ -123,48 +123,52 @@ const GuestLogin = ({route}) => {
   };
 
   const handleGuestLogin = async () => {
-    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    let emailError = '';
-    let passwordError = '';
-    let firstNameError = '';
-    let lastNameError = '';
+    if (
+      !email ||
+      !emailRegex.test(email) ||
+      !password ||
+      password.length < 8 ||
+      !firstName ||
+      firstName.length < 3 ||
+      !lastName ||
+      lastName.length < 3
+    ) {
+      let message = '';
 
-    if (!email) {
-      emailError = 'Email is required';
-    }
-    if (!password) {
-      passwordError = 'Password is required';
-    }
-    if (!firstName) {
-      firstNameError = 'Name is required';
-    }
-    if (!lastName) {
-      lastNameError = 'Name is required';
-    }
+      if (!firstName) {
+        message += 'First name is required.\n';
+      } else if (firstName.length < 3) {
+        message += 'First name must be at least 8 characters.\n';
+      }
 
-    if (email && !emailRegex.test(email)) {
-      emailError = 'Enter a valid email';
-    }
-    if (password && password.length < 8) {
-      passwordError = 'Password must be at least 8 characters';
-    }
-    if (firstName && firstName.length < 3) {
-      firstNameError = 'First name must be at least 3 characters';
-    }
-    if (lastName && lastName.length < 3) {
-      lastNameError = 'First name must be at least 3 characters';
-    }
+      if (!lastName) {
+        message += 'Last name is required.\n';
+      } else if (lastName.length < 3) {
+        message += 'Last name must be at least 8 characters.\n';
+      }
 
-    setEmailError(emailError);
-    setPasswordError(passwordError);
-    setFirstNameError(firstNameError);
-    setLastNameError(lastNameError);
+      if (!email) {
+        message += 'Email is required.\n';
+      } else if (!emailRegex.test(email)) {
+        message += 'Enter a valid email.\n';
+      }
 
-    if (emailError || passwordError || firstNameError || lastNameError) {
-      Alert.alert('Error', 'Please solve the error');
+      if (!password) {
+        message += 'Password is required.\n';
+      } else if (password.length < 8) {
+        message += 'Password must be at least 8 characters.\n';
+      }
+
+      Alert.alert('Error', message.trim());
       return;
     }
+
+    setFirstNameError('');
+    setLastNameError('');
+    setEmailError('');
+    setPasswordError('');
 
     try {
       setLoading(true);
@@ -184,7 +188,6 @@ const GuestLogin = ({route}) => {
       };
 
       const response = await GuestLoGin(body);
-      
 
       const storeTokenId = {
         token: response?.data?.token,
@@ -195,13 +198,15 @@ const GuestLogin = ({route}) => {
       if (response?.data?.message === 'Signup successful') {
         dispatch(setGuestToken(storeTokenId));
         dispatch(guestLoginData(response?.data));
-        // navigation.navigate('BottomNavigation');
+        setLoading(false);
+      } else if (response?.data?.message === 'Signin successful') {
+        Alert.alert('Error', 'User Already exist');
         setLoading(false);
       } else {
-        Alert.alert(response?.message || response?.data?.message);
-        setLoading(false)
+        Alert.alert(response?.message);
+        setLoading(false);
       }
-      setLoading(false)
+      setLoading(false);
     } catch {
       setLoading(false);
     }
@@ -211,7 +216,6 @@ const GuestLogin = ({route}) => {
     <SafeAreaView style={styles.container}>
       {loading ? (
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-
           <CustomLoader />
         </View>
       ) : (

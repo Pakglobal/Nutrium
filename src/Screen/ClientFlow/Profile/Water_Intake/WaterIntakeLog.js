@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
-  ActivityIndicator,
 } from 'react-native';
 import { scale, verticalScale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
@@ -192,11 +191,14 @@ const WaterIntakeLog = ({ route }) => {
         screenheader={true}
         screenName={'Water Intake Log'}
         handleSave={() => handleSave()}
+        loading={loading}
       />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much Water Did You Drink ?</Text>
-        <View style={{ marginVertical: verticalScale(10) }}>
+
+        <View style={{marginVertical: verticalScale(10)}}>
+
           <CustomShadow color={Color.lightgray}>
             <View style={styles.inputContainer}>
               <TextInput
@@ -219,7 +221,9 @@ const WaterIntakeLog = ({ route }) => {
         </View>
 
         <View style={styles.hydrationButtons}>
-          <View style={{ width: '30%' }}>
+
+          <View style={{width: '30%'}}>
+
             <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(200)}>
                 <View style={styles.waterCardView}>
@@ -239,7 +243,8 @@ const WaterIntakeLog = ({ route }) => {
             </CustomShadow>
           </View>
 
-          <View style={{ width: '30%' }}>
+          <View style={{width: '30%'}}>
+
             <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(300)}>
                 <View style={styles.waterCardView}>
@@ -259,7 +264,8 @@ const WaterIntakeLog = ({ route }) => {
             </CustomShadow>
           </View>
 
-          <View style={{ width: '30%' }}>
+          <View style={{width: '30%'}}>
+
             <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(500)}>
                 <View style={styles.waterCardView}>
@@ -283,6 +289,7 @@ const WaterIntakeLog = ({ route }) => {
         <Text style={styles.label}>Date</Text>
 
         <CustomShadow color={Color.lightgray}>
+
           <TouchableOpacity activeOpacity={0.6} style={{}} onPress={() => setDateOpen(true)}>
             <View style={styles.pickerButton}>
               <Text
@@ -307,6 +314,7 @@ const WaterIntakeLog = ({ route }) => {
           mode="date"
           open={dateOpen}
           date={date}
+          maximumDate={new Date()}
           onConfirm={date => {
             setDateOpen(false);
             setDate(date);
@@ -319,6 +327,7 @@ const WaterIntakeLog = ({ route }) => {
         <Text style={styles.label}>Hour</Text>
 
         <CustomShadow color={Color.lightgray}>
+
           <TouchableOpacity activeOpacity={0.6} style={{}} onPress={() => setTimeOpen(true)}>
             <View style={styles.pickerButton}>
               <Text
@@ -350,6 +359,7 @@ const WaterIntakeLog = ({ route }) => {
           mode="time"
           open={timeOpen}
           date={time}
+          maximumDate={new Date()}
           onConfirm={time => {
             setTimeOpen(false);
             setTime(time);
@@ -380,7 +390,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(20),
     fontWeight: '500',
     fontFamily: Font?.PoppinsMedium,
-    marginHorizontal: scale(5)
+    marginHorizontal: scale(5),
   },
   inputContainer: {
     flexDirection: 'row',

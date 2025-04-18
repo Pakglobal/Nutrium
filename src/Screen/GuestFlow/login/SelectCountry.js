@@ -9,6 +9,7 @@ import {
   Alert,
   Keyboard,
   Platform,
+  Button,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Color } from '../../../assets/styles/Colors';
@@ -28,15 +29,18 @@ import { shadowStyle, ShadowValues } from '../../../assets/styles/Shadow';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
+import DateTimePickerModal from "react-native-modal-datetime-picker"; 
+import CustomDatePicker from '../../../Components/CustomeDateTimePicker';
 
 const SelectCountry = ({ route }) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  // const [showDatePicker, setShowDatePicker] = useState(false);
   const [country, setCountry] = useState('');
   const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [hasNumberError, setHasNumberError] = useState(false);
 
   const selectGender = route?.params;
   const countryData = { country, number, dateOfBirth, ...selectGender };
@@ -61,6 +65,20 @@ const SelectCountry = ({ route }) => {
     'United States',
     'Canada',
   ];
+
+  const validateNumberInput = (input) => {
+    const numericRegex = /^[0-9]*$/;
+    return numericRegex.test(input);
+  };
+
+  const handleNumberChange = (input) => {
+    if (input === '' || validateNumberInput(input)) {
+      setNumber(input);
+      setHasNumberError(false);
+    } else {
+      setHasNumberError(true);
+    }
+  };
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -104,6 +122,16 @@ const SelectCountry = ({ route }) => {
       ]);
       return;
     }
+    
+    if (!validateNumberInput(number)) {
+      setHasNumberError(true);
+      Alert.alert(
+        'Invalid Number',
+        'Please enter numbers only',
+        [{text: 'OK', style: 'cancel'}],
+      );
+      return;
+    }
 
     if (number.length !== 10) {
       Alert.alert(
@@ -116,6 +144,22 @@ const SelectCountry = ({ route }) => {
 
     navigation.navigate('GuestLogin', countryData);
   };
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    setSelectedDate(date.toLocaleString());
+    hideDatePicker();
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -124,8 +168,7 @@ const SelectCountry = ({ route }) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{}}
-        contentContainerStyle={{ paddingBottom: '47.5%' }}
+        contentContainerStyle={{paddingBottom: '47.5%'}}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
           style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
@@ -191,7 +234,7 @@ const SelectCountry = ({ route }) => {
             </View>
           )}
 
-          <CustomShadow>
+          <CustomShadow color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>
             <View style={styles.inputContainer}>
               {country && (
                 <Text style={[styles.titleText, styles.countryCode]}>
@@ -201,7 +244,7 @@ const SelectCountry = ({ route }) => {
               <TextInput
                 value={number}
                 placeholder="Number"
-                onChangeText={setNumber}
+                onChangeText={handleNumberChange}
                 keyboardType="numeric"
                 placeholderTextColor={Color.textColor}
                 maxLength={10}
@@ -210,7 +253,7 @@ const SelectCountry = ({ route }) => {
             </View>
           </CustomShadow>
 
-          <CustomShadow>
+          {/* <CustomShadow>
             <TouchableOpacity
               activeOpacity={1}
               style={styles.inputContainer}
@@ -241,8 +284,28 @@ const SelectCountry = ({ route }) => {
               onChange={onDateChange}
               maximumDate={new Date()}
             />
-          )}
+          )} */}
+
+<CustomDatePicker
+          label="Date of Birth"
+          value={selectedDate}
+          onChange={setSelectedDate}
+          placeholder="Select your date of birth"
+        />
         </View>
+
+        <Button title="Show Date Picker" onPress={showDatePicker} />
+      <Text>{selectedDate}</Text>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="datetime"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        pickerStyleIOS={{
+          backgroundColor: "white",
+        }}
+        customHeaderIOS={() => <Text style={{ textAlign: "center", fontSize: 18 }}>Pick Date</Text>}
+      />
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleNavigation}>
@@ -319,3 +382,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

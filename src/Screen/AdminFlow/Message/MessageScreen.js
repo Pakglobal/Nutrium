@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../assets/styles/Colors';
@@ -22,6 +21,7 @@ import {
 } from '../../../Apis/AdminScreenApi/ClientApi';
 import {clientInfoData} from '../../../redux/admin';
 import {connectSocket} from '../../../Components/SocketService';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const MessageScreen = () => {
   const navigation = useNavigation();
@@ -77,14 +77,7 @@ const MessageScreen = () => {
   return (
     <SafeAreaView>
       {loading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: verticalScale(10),
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader style={{marginTop: verticalScale(10)}} />
       ) : (
         <View
           style={{

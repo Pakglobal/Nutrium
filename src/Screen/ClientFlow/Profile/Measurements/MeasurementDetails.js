@@ -6,7 +6,6 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator,
 } from 'react-native';
 import {
   useFocusEffect,

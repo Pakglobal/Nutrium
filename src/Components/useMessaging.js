@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  ActivityIndicator,
   Modal,
   Animated,
   PanResponder,
@@ -36,6 +35,7 @@ import moment from 'moment';
 
 import uuid from 'react-native-uuid';
 import {Color} from '../assets/styles/Colors';
+import CustomLoader from './CustomLoader';
 
 const MessageComponent = ({
   userId,
@@ -459,9 +459,7 @@ const MessageComponent = ({
         {fileUrl && (
           <View style={styles.imageContainer}>
             {isUploading ? (
-              <View style={styles.loadingImageContainer}>
-                <ActivityIndicator size="large" color={Color.primaryColor} />
-              </View>
+             <CustomLoader style={styles.loadingImageContainer} />
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
                 <Image source={{uri: fileUrl}} style={styles.image} />
@@ -561,10 +559,7 @@ const MessageComponent = ({
         style={{flex: 1}}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicator size="large" color={Color.primaryColor} />
-          </View>
+          <CustomLoader />
         ) : (
           <FlatList
             data={flatListData}

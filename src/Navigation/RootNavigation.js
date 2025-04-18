@@ -52,6 +52,7 @@ import CreateChallenge from '../Screen/ClientFlow/ChallengeFlow/CreateChallenge'
 import ChallengesDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ChallengesDetailsScreen';
 import ViewChallengDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ViewChallengDetailsScreen';
 import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScreen';
+import ForgotPasswordScreen from '../Auth/Login/ForgotPasswordScreen';
  
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -68,6 +69,7 @@ const ClientDrawerNavigator = () => {
         },
       }}>
       <ClientDrawer.Screen name="ClientHome" component={BottomNavigation} />
+      <ClientDrawer.Screen name="ChallengesScreen" component={ChallengesScreen} />
     </ClientDrawer.Navigator>
   );
 };
@@ -129,6 +131,7 @@ const AuthStack = ({route}) => {
       <Stack.Screen name="GuestFlow" component={GuestStack} />
       <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen name="loginScreen" component={LoginScreen} />
+      <Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen
         name="registrationType"
         component={SelectRegistrationType}
@@ -192,7 +195,9 @@ const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
-  const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);  
+  const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);
+  console.log(demoClient);
+  
  
   if (onboardingCompleted === null) {
     return null;

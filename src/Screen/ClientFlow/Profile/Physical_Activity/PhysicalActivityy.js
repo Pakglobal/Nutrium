@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
-  ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
 import { scale, verticalScale } from 'react-native-size-matters';
@@ -29,6 +28,7 @@ import { ShadowValues } from '../../../../assets/styles/Shadow';
 import { Font } from '../../../../assets/styles/Fonts';
 import ModalComponent from '../../../../Components/ModalComponent';
 import CustomShadow from '../../../../Components/CustomShadow';
+import CustomLoader from '../../../../Components/CustomLoader';
 
 const PhysicalActivityScreen = () => {
   const navigation = useNavigation();
@@ -193,23 +193,6 @@ const PhysicalActivityScreen = () => {
 
   const physicalActivityData = sortActivitiesByDate(filterActivitiesByWeek());
 
-
-
-
-  // const handleDotMenuPress = (event, entry, item) => {
-  //   const pageX = event.nativeEvent.pageX;
-  //   const pageY = event.nativeEvent.pageY;
-  //   setMenuPosition({ x: pageX, y: pageY });
-  //   setSelectedEntry({
-  //     id: item?._id,
-  //     activity: item?.activity,
-  //     time: item?.time,
-  //     date: item?.date,
-  //   });
-  //   setModalVisible(true);
-  // };
-
-
   const handleDotMenuPress = (event, item) => {
     const pageX = event.nativeEvent.pageX;
     const pageY = event.nativeEvent.pageY;
@@ -237,7 +220,7 @@ const PhysicalActivityScreen = () => {
   };
 
   const renderActivityItem = ({item}) => (
-    <View style={{marginTop: scale(10), marginHorizontal: scale(16)}}>
+    <View style={{marginTop: scale(15), marginHorizontal: scale(16)}}>
       <CustomShadow color={Color.lightgray}>
         <View style={styles.entryItem}>
           <View style={{ width: '60%' }}>
@@ -251,11 +234,6 @@ const PhysicalActivityScreen = () => {
             <Text style={styles.downFont}>{item?.byactivity}</Text>
           </View>
           <View style={{ width: '5%' }}>
-            {/* <TouchableOpacity
-              style={styles.menuButton}
-              onPress={handleDotMenuPress}>
-              <Icon name="dots-vertical" size={22} color={Color.primaryColor} />
-            </TouchableOpacity> */}
             <TouchableOpacity
               style={styles.menuButton}
               onPress={(event) => handleDotMenuPress(event, item)}>
@@ -276,40 +254,13 @@ const PhysicalActivityScreen = () => {
     </View>
   );
 
-  // const renderActionModal = () => (
-  //   <Modal
-  //     transparent={true}
-  //     visible={modalVisible}
-  //     animationType="fade"
-  //     onRequestClose={() => setModalVisible(false)}>
-  //     <View style={styles.modalOptionContainer}>
-  //       <View style={styles.modalOptionContent}>
-  //         <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
-  //           <Text style={styles.modalText}>Edit</Text>
-  //         </TouchableOpacity>
-  //         <TouchableOpacity
-  //           style={styles.modalOption}
-  //           onPress={handleDelete}
-  //           disabled={deleteLoading}>
-  //           <Text style={styles.modalText}>Delete</Text>
-  //         </TouchableOpacity>
-  //         <TouchableOpacity
-  //           style={styles.modalOption}
-  //           onPress={() => setModalVisible(false)}>
-  //           <Text style={styles.modalText}>Cancel</Text>
-  //         </TouchableOpacity>
-  //       </View>
-  //     </View>
-  //   </Modal>
-  // );
-
 
   const renderActionModal = () => (
     <ModalComponent
       visible={modalVisible}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
-      deleteLoading={deleteLoading} // if needed inside ModalComponent
+      deleteLoading={deleteLoading} 
       setModalVisible={() => setModalVisible(false)}
       modalstyle={{
         position: 'absolute',
@@ -370,8 +321,9 @@ const PhysicalActivityScreen = () => {
         />
 
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
+        <View style={styles.entriesContainer}>
+
+          <CustomLoader style={{marginTop: verticalScale(25)}} />
         </View>
       ) : (
         <View style={styles.entriesContainer}>
@@ -402,11 +354,6 @@ const styles = StyleSheet.create({
   shadow: {
     borderRadius: scale(10),
     backgroundColor: Color.white,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   entriesContainer: {
     flex: 1,

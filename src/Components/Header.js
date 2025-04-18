@@ -24,6 +24,7 @@ import IconStyle, {IconPadding} from '../assets/styles/Icon';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
+import CustomLoader from './CustomLoader';
 
 const Header = ({
   screenName,
@@ -34,8 +35,8 @@ const Header = ({
   handleSave,
   handleNotification,
   handleAward,
-  rightHeaderButton = true,  onPress
-
+  rightHeaderButton = true,
+  loading,
 }) => {
   const navigation = useNavigation();
   return (
@@ -83,8 +84,7 @@ const Header = ({
                       />
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                      onPress={() => navigation.openDrawer()}>
+                    <TouchableOpacity onPress={() => navigation.openDrawer()}>
                       <MaterialCommunityIcons
                         style={IconPadding}
                         name="menu"
@@ -98,50 +98,52 @@ const Header = ({
             </>
           )}
           {screenheader && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingVertical: verticalScale(8),
-                  borderBottomLeftRadius: scale(12),
-                  borderBottomRightRadius: scale(12),
-                  marginHorizontal: scale(8),
-                }}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <TouchableOpacity
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottomLeftRadius: scale(12),
+                borderBottomRightRadius: scale(12),
+                marginHorizontal: scale(8),
+                height: verticalScale(60),
+              }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.goBack();
+                  }}
+                  style={IconPadding}>
+                  <AntDesign
+                    name="arrowleft"
+                    size={IconStyle.drawerIconSize}
+                    color={Color.white}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.screenName}>{screenName}</Text>
+              </View>
 
-                    onPress={() => {navigation.goBack(),onPress}}
-                    style={{padding: scale(5), alignSelf: 'center'}}>
-
+              {rightHeaderButton &&
+                (plus ? (
+                  <TouchableOpacity onPress={handlePlus} style={IconPadding}>
                     <AntDesign
-                      name="arrowleft"
-                      size={IconStyle.drawerIconSize}
+                      name="pluscircle"
+                      size={IconStyle.headerIconSize}
                       color={Color.white}
                     />
                   </TouchableOpacity>
-                  <Text style={styles.screenName}>{screenName}</Text>
-                </View>
-
-                {rightHeaderButton &&
-                  (plus ? (
-                    <TouchableOpacity
-                      onPress={handlePlus}
-                      style={{padding: scale(8)}}>
-                      <AntDesign
-                        name="pluscircle"
-                        size={IconStyle.headerIconSize}
-                        color={Color.white}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={handleSave}
-                      style={{padding: scale(8)}}>
-                      <Text style={styles.saveStyle}>Save</Text>
-                    </TouchableOpacity>
-                  ))}
-              </View>
+                ) : (
+                  <TouchableOpacity onPress={handleSave} style={IconPadding}>
+                    {
+                      loading ? (
+                        <CustomLoader color={Color.white} size={'small'} />
+                      ) : (
+                        <Text style={styles.saveStyle}>Save</Text>
+                      )
+                    }
+                  </TouchableOpacity>
+                ))}
+            </View>
           )}
         </View>
       </CustomShadow>
@@ -166,7 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Font.PoppinsMedium,
     color: Color.white,
-    marginTop: verticalScale(2)
+    marginTop: verticalScale(2),
   },
   saveStyle: {
     color: Color?.white,

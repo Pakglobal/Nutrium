@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
   TouchableOpacity,
   Pressable,
   FlatList,
@@ -17,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetMeasurementData } from '../../../../Apis/ClientApis/MeasurementApi';
 import { measurementData } from '../../../../redux/client';
 import Header from '../../../../Components/Header';
+import CustomLoader from '../../../../Components/CustomLoader';
 
 const Measurements = () => {
   const navigation = useNavigation();
@@ -256,14 +256,7 @@ const Measurements = () => {
         rightHeaderButton={false}
       />
       {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader />
       ) : (
         <View style={styles.contentContainer}>
           <FlatList

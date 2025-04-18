@@ -5,6 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
 import {Font} from '../assets/styles/Fonts';
+import {IconPadding} from '../assets/styles/Icon';
 
 const CalenderHeader = ({
   onPressLeft,
@@ -13,25 +14,28 @@ const CalenderHeader = ({
   onPressRight,
   disabled,
 }) => {
-  const navigation = useNavigation();
   return (
     <View style={styles.headerContainer}>
-      <View style={{marginHorizontal: scale(8)}}>
+      <View style={{marginHorizontal: scale(9)}}>
         <View style={styles.calenderView}>
-          <AntDesign
-            name="left"
-            color={Color.primaryColor}
-            size={verticalScale(16)}
-            onPress={onPressLeft}
-          />
+          <TouchableOpacity style={IconPadding} onPress={onPressLeft}>
+            <AntDesign
+              name="left"
+              color={Color.primaryColor}
+              size={verticalScale(16)}
+            />
+          </TouchableOpacity>
           <Text style={styles.dateTxt}>{txtFunction}</Text>
-          <AntDesign
-            name="right"
-            color={rightColor}
-            size={verticalScale(16)}
+          <TouchableOpacity
+            style={IconPadding}
             onPress={onPressRight}
-            disabled={disabled}
-          />
+            disabled={disabled}>
+            <AntDesign
+              name="right"
+              color={rightColor}
+              size={verticalScale(16)}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -49,13 +53,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: verticalScale(5),
-    
   },
   dateTxt: {
-    fontSize: scale(12),
+    fontSize: scale(14),
     color: Color.primaryColor,
     fontWeight: '600',
     fontFamily: Font?.PoppinsMedium,
-    marginTop: verticalScale(2)
+    marginTop: verticalScale(2),
   },
 });

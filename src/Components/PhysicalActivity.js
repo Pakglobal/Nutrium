@@ -114,9 +114,9 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
                     <Text
                       style={[
                         styles.description,
-                        {textAlign: 'center', fontSize: scale(14)},
+                        {textAlign: 'center', fontSize: scale(16)},
                       ]}>
-                      calories
+                      Calories
                     </Text>
                     <Text style={styles.zero} numberOfLines={1}>
                       {calories}
@@ -131,9 +131,9 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
                     <Text
                       style={[
                         styles.description,
-                        {textAlign: 'center', fontSize: scale(14)},
+                        {textAlign: 'center', fontSize: scale(16)},
                       ]}>
-                      steps
+                      Steps
                     </Text>
                     <Text style={styles.zero}>{steps}</Text>
                   </View>
@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Font?.PoppinsMedium,
     fontSize: scale(16),
+    marginTop: verticalScale(2)
   },
   txtIcon: {
     flexDirection: 'row',
@@ -218,7 +219,8 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     borderRadius: scale(6),
-    paddingVertical: verticalScale(8),
+    paddingTop: verticalScale(8),
+    paddingBottom: verticalScale(2),
     backgroundColor: Color.white,
     borderWidth: 1,
     borderColor: Color.primaryColor,

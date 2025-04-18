@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  ActivityIndicator,
   Modal,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -19,6 +18,7 @@ import CameraPicker from '../../../Components/CameraPicker';
 import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {setImage} from '../../../redux/client';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const MainProfile = ({route}) => {
   const data = route?.params?.data;
@@ -125,7 +125,7 @@ const MainProfile = ({route}) => {
                   height: verticalScale(80),
                   width: verticalScale(80),
                 }}>
-                <ActivityIndicator size="small" color={Color.primaryColor} />
+                <CustomLoader size={'small'} />
               </View>
             ) : (
               <TouchableOpacity onPress={() => setFullscreenImageVisible(true)}>

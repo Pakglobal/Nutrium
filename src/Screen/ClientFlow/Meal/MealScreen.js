@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
@@ -341,7 +340,6 @@ const MealScreen = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          {/* <ActivityIndicator size="large" color={Color.primaryColor} /> */}
           <CustomLoader/>
         </View>
       ) : mealPlan?.length > 0 ? (

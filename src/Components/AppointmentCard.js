@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   Dimensions,
-  ActivityIndicator,
   Alert,
   Animated,
 } from 'react-native';
@@ -26,6 +25,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
+import CustomLoader from './CustomLoader';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -250,7 +250,7 @@ const AppointmentCard = ({navigation}) => {
                   onPress={() => handleConfirm(item)}
                   disabled={item.isLoading}>
                   {item.isLoading ? (
-                    <ActivityIndicator size="small" color="#FFFFFF" />
+                    <CustomLoader color={Color.white} size={'small'} />
                   ) : (
                     <Text style={styles.confirmButtonText}>Confirm</Text>
                   )}
@@ -356,7 +356,7 @@ const AppointmentCard = ({navigation}) => {
                     onPress={handleCancelAppointment}
                     style={[styles.modalOption, styles.modalOptionDanger]}>
                     {loading ? (
-                      <ActivityIndicator size="small" color="#F44336" />
+                      <CustomLoader color={'#F44336'} size={'small'} />
                     ) : (
                       <Text style={styles.modalOptionTextDanger}>
                         {selectedAppointment?.status === 'not_confirmed'

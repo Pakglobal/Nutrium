@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   SafeAreaView,
   ScrollView,
@@ -38,6 +37,7 @@ import { Font } from '../../assets/styles/Fonts';
 import { ShadowValues } from '../../assets/styles/Shadow';
 import CustomShadow from '../../Components/CustomShadow';
 import useKeyboardHandler from '../../Components/useKeyboardHandler';
+import CustomLoader from '../../Components/CustomLoader';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -90,7 +90,7 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (!email || !emailRegex.test(email) || !password || password.length < 8) {
+    if (!email || !emailRegex.test(email) || !password || password.length < 8 || !isAgree) {
       let message = '';
 
       if (!email) {
@@ -103,6 +103,9 @@ const LoginScreen = () => {
         message += 'Password is required.\n';
       } else if (password.length < 8) {
         message += 'Password must be at least 8 characters.\n';
+      }
+      if(!isAgree) {
+        message += 'Please agree a terms and condition before login'
       }
 
       Alert.alert('Error', message.trim());
@@ -360,11 +363,10 @@ const LoginScreen = () => {
               paddingHorizontal: scale(16),
             }}>
             <TouchableOpacity
-              disabled={!isAgree}
               onPress={handleLogin}
               style={[styles.button, { backgroundColor: Color.primaryColor }]}>
               {loading ? (
-                <ActivityIndicator size="small" color={Color.white} />
+                <CustomLoader color={Color.white} size={'small'} />
               ) : (
                 <Text style={[styles.buttonText, { color: Color.white }]}>
                   Login

@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   StyleSheet,
   Text,
@@ -21,6 +20,7 @@ import {useSelector} from 'react-redux';
 import moment from 'moment';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from 'react-native-virtualized-view';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const RecommendationScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
@@ -196,14 +196,7 @@ const RecommendationScreen = () => {
       
         <View>
           {loading ? (
-            <View
-              style={{
-                // flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <ActivityIndicator size="large" color={Color.primaryColor} />
-            </View>
+            <CustomLoader />
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}

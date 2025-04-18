@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -151,8 +150,8 @@ const WorkOutDetails = ({route}) => {
       <Header
         screenheader={true}
         screenName={'Physical Activity'}
-        plus={false}
         handleSave={handleSave}
+        loading={loading} 
       />
       <View style={styles.content}>
         <Text style={styles.topTitle}>Workout Details</Text>

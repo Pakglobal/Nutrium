@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,7 +16,12 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {guestLoginData, loginData, setGuestToken, setToken} from '../redux/user';
+import {
+  guestLoginData,
+  loginData,
+  setGuestToken,
+  setToken,
+} from '../redux/user';
 import {setImage, updateUserInfo} from '../redux/client';
 import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
 import {
@@ -32,6 +36,7 @@ import {
 } from '../Apis/ClientApis/RecommendationApi';
 import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
 import {Font} from '../assets/styles/Fonts';
+import CustomLoader from '../Components/CustomLoader';
 
 const ClientDrawerContent = props => {
   const {navigation} = props;
@@ -40,7 +45,7 @@ const ClientDrawerContent = props => {
   const [asyncLoading, setAsyncLoading] = useState(false);
 
   const userInfo = useSelector(state => state.user?.userInfo);
-  const guestInfo = useSelector(state => state.user?.guestUserData);  
+  const guestInfo = useSelector(state => state.user?.guestUserData);
 
   const token = userInfo?.token || guestInfo?.token;
   const id =
@@ -89,7 +94,7 @@ const ClientDrawerContent = props => {
         style: 'destructive',
         onPress: async () => {
           let success = false;
-          
+
           try {
             if (guestInfo) {
               dispatch(setGuestToken());
@@ -101,29 +106,27 @@ const ClientDrawerContent = props => {
               dispatch(setToken());
               success = true;
             }
-  
+
             if (success) {
               props.navigation.reset({
                 index: 0,
-                routes: [{ name: 'loginChoice' }],
+                routes: [{name: 'loginChoice'}],
               });
             } else {
               Alert.alert('Error', 'Failed to sign out. Please try again.', [
-                { text: 'OK' },
+                {text: 'OK'},
               ]);
             }
           } catch (error) {
             console.error('Sign out error:', error);
             Alert.alert('Error', 'Something went wrong. Please try again.', [
-              { text: 'OK' },
+              {text: 'OK'},
             ]);
           }
         },
       },
     ]);
   };
-  
-  
 
   const handleSyncInfo = async () => {
     setAsyncLoading(true);
@@ -310,7 +313,7 @@ const ClientDrawerContent = props => {
         <Text style={styles.drawerItemText}>Sync all info</Text>
         {asyncLoading && (
           <View style={{position: 'absolute', right: 0}}>
-            <ActivityIndicator color={Color.primaryColor} />
+            <CustomLoader size={'small'} />
           </View>
         )}
       </TouchableOpacity>

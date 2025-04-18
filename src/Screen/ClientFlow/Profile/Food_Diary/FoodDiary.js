@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   FlatList,
   Pressable,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import {
@@ -24,6 +23,7 @@ import {FetchFoodDiary} from '../../../../Apis/ClientApis/FoodDiaryApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {addData} from '../../../../redux/client';
 import Header from '../../../../Components/Header';
+import CustomLoader from '../../../../Components/CustomLoader';
 
 const FoodDiary = () => {
   const navigation = useNavigation();
@@ -156,9 +156,7 @@ const FoodDiary = () => {
         txtFunction={getDateString()}
       />
       {loading ? (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader />
       ) : diaryData && diaryData?.length > 0 ? (
         <FlatList
           data={diaryData}

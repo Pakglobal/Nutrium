@@ -7,7 +7,6 @@ import {
   FlatList,
   Modal,
   ScrollView,
-  ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
@@ -33,6 +32,7 @@ import { Shadow } from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
 import CustomShadow from '../../../../Components/CustomShadow';
 import { getWaterIntake } from '../../../../redux/client';
+import CustomLoader from '../../../../Components/CustomLoader';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -395,7 +395,6 @@ const WaterIntake = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header 
-        onPress={() => navigation.goBack({ selectedDate: selectedDate })} 
         screenheader={true} 
         screenName={'Water intake'} 
         handlePlus={() => navigation.navigate('waterIntakeLog', { plusData: plusData })} 
@@ -475,9 +474,7 @@ const WaterIntake = () => {
         </View>
         
         {loading ? (
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={Color.primaryColor} />
-          </View>
+         <CustomLoader style={{marginTop: verticalScale(25)}} />
         ) : hasData ? (
           <View style={styles.entriesContainer}>
             <FlatList
@@ -651,11 +648,6 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     fontFamily: Font?.Poppins,
     marginTop: verticalScale(2),
-  },
-  loaderContainer: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center'
   },
   noDataContainer: {
     flex: 1,

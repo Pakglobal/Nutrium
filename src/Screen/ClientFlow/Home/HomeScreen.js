@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   ScrollView,
   RefreshControl,
-  ActivityIndicator,
 } from 'react-native';
 import {Shadow} from 'react-native-shadow-2';
 import {Color} from '../../../assets/styles/Colors';
@@ -135,67 +134,57 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header logoHeader={true} />
-
-      {/* <View>
-        {loading ? (
-          <View
+      {loading ? (
+        <CustomLoader style={{marginTop: verticalScale(30)}} />
+      ) : (
+        <View style={{flex: 1}}>
+          <TouchableOpacity
             style={{
-              justifyContent: 'center',
+              backgroundColor: Color?.primaryColor,
+              paddingVertical: 12,
+              paddingHorizontal: 20,
+              borderRadius: 10,
               alignItems: 'center',
-              marginTop: verticalScale(20),
-            }}>
-            <ActivityIndicator size="large" color={Color.primaryColor} /> */}
-      <TouchableOpacity
-        style={{
-          backgroundColor: Color?.primaryColor,
-          paddingVertical: 12,
-          paddingHorizontal: 20,
-          borderRadius: 10,
-          alignItems: 'center',
-          marginVertical: 16,
-          marginHorizontal: 20,
-        }}
-        onPress={handleGoToChallenge}>
-        <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
-          Go to Challenge
-        </Text>
-      </TouchableOpacity>
-
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            paddingHorizontal: scale(16),
-          }}>
-          <AppointmentCard
-            refreshAppointments={FetchAppointmentData}
-            activeAppointments={activeAppointments}
-            setActiveAppointments={setActiveAppointments}
-            selectedAppointment={selectedAppointment}
-            setSelectedAppointment={setSelectedAppointment}
-          />
-          <MealsLikeInHome />
-
-          <MoreForYou />
-          <OnOffFunctionality />
-
-          <HydratedStay />
-          <OnOffFunctionality />
-
-          <View style={{marginBottom: verticalScale(90)}}>
-            <PhysicalActivity
-              header={true}
-              subHeader={true}
-              bottomButton={true}
-            />
-          </View>
+              marginVertical: 16,
+              marginHorizontal: 20,
+            }}
+            onPress={handleGoToChallenge}>
+            <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+              Go to Challenge
+            </Text>
+          </TouchableOpacity>
+  
+          <ScrollView
+            contentContainerStyle={{paddingBottom: 90}} 
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            showsVerticalScrollIndicator={false}>
+            <View style={{paddingHorizontal: scale(16)}}>
+              <AppointmentCard
+                refreshAppointments={FetchAppointmentData}
+                activeAppointments={activeAppointments}
+                setActiveAppointments={setActiveAppointments}
+                selectedAppointment={selectedAppointment}
+                setSelectedAppointment={setSelectedAppointment}
+              />
+              <MealsLikeInHome />
+              <MoreForYou />
+              <OnOffFunctionality />
+              <HydratedStay />
+              <OnOffFunctionality />
+              <PhysicalActivity
+                header={true}
+                subHeader={true}
+                bottomButton={true}
+              />
+            </View>
+          </ScrollView>
         </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
+  
 };
 
 const styles = StyleSheet.create({

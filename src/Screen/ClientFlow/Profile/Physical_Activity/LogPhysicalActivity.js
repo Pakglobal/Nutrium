@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   FlatList,
   Pressable,
   SafeAreaView,
@@ -25,6 +24,7 @@ import { Shadow } from 'react-native-shadow-2';
 import { ShadowValues } from '../../../../assets/styles/Shadow';
 import { Font } from '../../../../assets/styles/Fonts';
 import CustomShadow from '../../../../Components/CustomShadow';
+import CustomLoader from '../../../../Components/CustomLoader';
 
 const LogPhysicalActivity = ({route}) => {
   const token = route?.params?.plusData?.token;
@@ -107,7 +107,7 @@ const LogPhysicalActivity = ({route}) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
 
-      <Header screenheader={true} screenName={'Physical Activity'} />
+      <Header screenheader={true} screenName={'Physical Activity'} rightHeaderButton={false} />
 
       <View style={{marginHorizontal: scale(16)}}>
         <Text style={styles.topTitle}>Log Physical Activity</Text>
@@ -132,14 +132,7 @@ const LogPhysicalActivity = ({route}) => {
       </View>
 
       {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader />
       ) : filteredData?.length > 0 ? (
         <FlatList
           data={filteredData}

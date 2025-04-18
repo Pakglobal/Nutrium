@@ -1,5 +1,5 @@
-import {useEffect, useRef} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   accelerometer,
   setUpdateIntervalForType,
@@ -28,11 +28,10 @@ const MOTION_THRESHOLD = 0.3;
 
 export const useStepTracking = () => {
   const dispatch = useDispatch();
-  const {steps, workouts, currentDay, isTracking} = useSelector(
+  const { steps, workouts, currentDay, isTracking } = useSelector(
     state => state.stepTracker,
   );
-
-  const lastAccelerationRef = useRef({x: 0, y: 0, z: 0});
+  const lastAccelerationRef = useRef({ x: 0, y: 0, z: 0 });
   const lastStepTimeRef = useRef(0);
   const isCooldownRef = useRef(false);
   const hasPeakedRef = useRef(false);
@@ -105,7 +104,7 @@ export const useStepTracking = () => {
     return Math.sqrt(x * x + y * y + z * z) - 9.8;
   };
 
-  const detectStep = ({x, y, z}) => {
+  const detectStep = ({ x, y, z }) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - lastStepTimeRef.current;
 
@@ -120,7 +119,7 @@ export const useStepTracking = () => {
     }
 
     if (isCooldownRef.current) {
-      lastAccelerationRef.current = {x, y, z};
+      lastAccelerationRef.current = { x, y, z };
       return;
     }
 
@@ -139,7 +138,7 @@ export const useStepTracking = () => {
       }
     }
 
-    lastAccelerationRef.current = {x, y, z};
+    lastAccelerationRef.current = { x, y, z };
   };
 
   useEffect(() => {

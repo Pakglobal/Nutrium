@@ -484,7 +484,10 @@ const HydratedStay = ({ route }) => {
   const id = tokenId?.id || guestTokenId?.id;
   const waterData = useSelector(state => state?.client?.waterData);
   const intake = useSelector(state => state?.client?.waterIntake);
-  const [localIntake, setLocalIntake] = useState(intake || 0);
+  const [localIntake, setLocalIntake] = useState(intake);
+
+  console.log('-----', intake, localIntake);
+
 
   const widthAnimation = useRef(new Animated.Value(0)).current;
   const prevUserIdRef = useRef(null);
@@ -635,8 +638,8 @@ const HydratedStay = ({ route }) => {
       setCurrentProgress(0);
       widthAnimation.setValue(0);
     } else if (intake !== undefined) {
-
       setLocalIntake(intake);
+
     }
   }, [intake]);
 
@@ -760,6 +763,7 @@ const HydratedStay = ({ route }) => {
             </View>
             <CustomHomeButtonNavigation
               text={'See All Water Logs'}
+
               onPress={() => navigation.navigate('waterIntake')}
             />
           </View>

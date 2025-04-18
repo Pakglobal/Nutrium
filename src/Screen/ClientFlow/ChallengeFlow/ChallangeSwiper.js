@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Dimensions, TouchableOpacity, Text } from 'react-native';
+import { View, Dimensions, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AllChallenges from './AllChallenges';
@@ -27,7 +27,7 @@ const ChallangeSwiper = () => {
     ]);
     const InvitationScreen = () => (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>No Invitations</Text>
+            <Text style={styles.text} >No Invitations</Text>
         </View>
     );
     const [joinedChallenges, setJoinedChallenges] = useState([]);
@@ -121,3 +121,10 @@ const ChallangeSwiper = () => {
 };
 
 export default ChallangeSwiper;
+
+const styles=StyleSheet.create({
+text:{
+    color:Color.textColor,
+    fontFamily:Font?.Poppins
+}
+})

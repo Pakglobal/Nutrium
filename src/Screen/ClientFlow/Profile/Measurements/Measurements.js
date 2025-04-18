@@ -7,6 +7,7 @@ import {
   Pressable,
   FlatList,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { scale, verticalScale } from 'react-native-size-matters';
@@ -17,6 +18,7 @@ import { GetMeasurementData } from '../../../../Apis/ClientApis/MeasurementApi';
 import { measurementData } from '../../../../redux/client';
 import Header from '../../../../Components/Header';
 import CustomLoader from '../../../../Components/CustomLoader';
+import { Font } from '../../../../assets/styles/Fonts';
 
 const Measurements = () => {
   const navigation = useNavigation();
@@ -256,7 +258,7 @@ const Measurements = () => {
         rightHeaderButton={false}
       />
       {loading ? (
-       <CustomLoader />
+        <ActivityIndicator color={Color?.primaryColor} size={'large'} />
       ) : (
         <View style={styles.contentContainer}>
           <FlatList
@@ -268,6 +270,7 @@ const Measurements = () => {
           />
         </View>
       )}
+
     </View>
   );
 };
@@ -285,9 +288,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: scale(14),
-    color: Color.gray,
+    color: Color.textColor,
     fontWeight: '700',
     marginTop: verticalScale(25),
+    fontFamily: Font?.Poppins
+
   },
   cardcontainer: {
     paddingVertical: verticalScale(10),
@@ -298,9 +303,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardTxt: {
-    color: Color.black,
+    color: Color?.lightGrayText,
     fontSize: scale(13),
     marginHorizontal: scale(8),
+    fontFamily: Font?.Poppins
   },
   loadingContainer: {
     flex: 1,

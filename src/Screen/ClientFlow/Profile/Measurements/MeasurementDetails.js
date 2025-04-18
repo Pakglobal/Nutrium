@@ -19,6 +19,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { GetMeasurementData } from '../../../../Apis/ClientApis/MeasurementApi';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../../../../Components/Header';
+import { Font } from '../../../../assets/styles/Fonts';
 
 const MeasurementDetail = () => {
   const navigation = useNavigation();
@@ -382,140 +383,135 @@ const MeasurementDetail = () => {
 
   return (
     <View style={styles.container}>
-      {/* <BackHeader
-        onPressBack={() => navigation.goBack()}
-        titleName={measurementType}
-        showRightButton={false}
-        onPress={handleAddNewMeasurement}
-        backText={'Measurement'}
-      /> */}
-
       <Header
         screenheader={true}
         screenName={measurementType}
         rightHeaderButton={false}
       />
-      <View>
-        <View style={styles.periodSelectorContainer}>
-          {periods.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.periodButton,
-                selectedPeriod === item && styles.selectedPeriod,
-              ]}
-              onPress={() => setSelectedPeriod(item)}>
+      <View style={{ paddingHorizontal: scale(16), flex: 1 }} >
+        <Text style={styles.lebal} >{measurementType}</Text>
+        <View>
+          <View style={styles.periodSelectorContainer}>
+            {periods.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.periodButton,
+                  selectedPeriod === item && styles.selectedPeriod,
+                ]}
+                onPress={() => setSelectedPeriod(item)}>
+                <Text
+                  style={[
+                    styles.periodText,
+                    selectedPeriod === item && styles.selectedPeriodText,
+                  ]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.dateRangeText}>{dateRange}</Text>
+
+          <View style={{ height: '30%' }}>
+            {filteredData.length > 0 ? (
+              <LineChart
+                data={{
+                  labels: formattedDates,
+                  datasets: [
+                    {
+                      data: values.length ? values : [0],
+                      color: (opacity = 1) => Color.primaryColor,
+                      strokeWidth: 2,
+                    },
+                  ],
+                }}
+                width={Dimensions.get('window').width}
+                height={220}
+                yAxisSide="left"
+                chartConfig={{
+                  backgroundColor: Color.white,
+                  backgroundGradientFrom: Color.white,
+                  backgroundGradientTo: Color.white,
+                  decimalPlaces: 1,
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  propsForDots: {
+                    r: '6',
+                    stroke: Color.primaryColor,
+                    strokeWidth: '2',
+                    fill: Color.white,
+                  },
+                  propsForVerticalLabels: {
+                    fontSize: 10,
+                    rotation: 0,
+                  },
+                }}
+                style={{
+                  marginVertical: verticalScale(15),
+                }}
+              />
+            ) : (
+              <View style={styles.noDataContainer}>
+                <Text style={styles.noDataText}>
+                  No data available for this period
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        <View style={{ marginTop: scale(5) }}>
+          <View style={{ marginVertical: verticalScale(15) }}>
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Current</Text>
+              <View style={styles.valueContainer}>
+                <Text style={styles.value}>
+                  {stats.current.value !== '-'
+                    ? `${stats.current.value} ${unit}`
+                    : '-'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Total variation</Text>
               <Text
                 style={[
-                  styles.periodText,
-                  selectedPeriod === item && styles.selectedPeriodText,
+                  styles.value,
+                  stats.totalVariation && stats.totalVariation.charAt(0) === '+'
+                    ? styles.positiveValue
+                    : stats.totalVariation &&
+                      stats.totalVariation.charAt(0) === '-'
+                      ? styles.negativeValue
+                      : null,
                 ]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Text style={styles.dateRangeText}>{dateRange}</Text>
-
-        <View style={{ height: '30%' }}>
-          {filteredData.length > 0 ? (
-            <LineChart
-              data={{
-                labels: formattedDates,
-                datasets: [
-                  {
-                    data: values.length ? values : [0],
-                    color: (opacity = 1) => Color.primaryColor,
-                    strokeWidth: 2,
-                  },
-                ],
-              }}
-              width={Dimensions.get('window').width}
-              height={220}
-              yAxisSide="left"
-              chartConfig={{
-                backgroundColor: Color.white,
-                backgroundGradientFrom: Color.white,
-                backgroundGradientTo: Color.white,
-                decimalPlaces: 1,
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                propsForDots: {
-                  r: '6',
-                  stroke: Color.primaryColor,
-                  strokeWidth: '2',
-                  fill: Color.white,
-                },
-                propsForVerticalLabels: {
-                  fontSize: 10,
-                  rotation: 0,
-                },
-              }}
-              style={{
-                marginVertical: verticalScale(15),
-              }}
-            />
-          ) : (
-            <View style={styles.noDataContainer}>
-              <Text style={styles.noDataText}>
-                No data available for this period
-              </Text>
-            </View>
-          )}
-        </View>
-      </View>
-
-      <View style={{ marginHorizontal: scale(16) }}>
-        <View style={{ marginVertical: verticalScale(15) }}>
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Current</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.value}>
-                {stats.current.value !== '-'
-                  ? `${stats.current.value} ${unit}`
+                {stats.totalVariation !== '-'
+                  ? `${stats.totalVariation} ${unit}`
                   : '-'}
               </Text>
             </View>
-          </View>
 
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Total variation</Text>
-            <Text
-              style={[
-                styles.value,
-                stats.totalVariation && stats.totalVariation.charAt(0) === '+'
-                  ? styles.positiveValue
-                  : stats.totalVariation &&
-                    stats.totalVariation.charAt(0) === '-'
-                    ? styles.negativeValue
-                    : null,
-              ]}>
-              {stats.totalVariation !== '-'
-                ? `${stats.totalVariation} ${unit}`
-                : '-'}
-            </Text>
-          </View>
-
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Highest</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.value}>
-                {stats.highest.value !== '-'
-                  ? `${stats.highest.value} ${unit}`
-                  : '-'}
-              </Text>
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Highest</Text>
+              <View style={styles.valueContainer}>
+                <Text style={styles.value}>
+                  {stats.highest.value !== '-'
+                    ? `${stats.highest.value} ${unit}`
+                    : '-'}
+                </Text>
+              </View>
             </View>
-          </View>
 
-          <View style={styles.detailContainer}>
-            <Text style={styles.title}>Lowest</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.value}>
-                {stats.lowest.value !== '-'
-                  ? `${stats.lowest.value} ${unit}`
-                  : '-'}
-              </Text>
+            <View style={styles.detailContainer}>
+              <Text style={styles.title}>Lowest</Text>
+              <View style={styles.valueContainer}>
+                <Text style={styles.value}>
+                  {stats.lowest.value !== '-'
+                    ? `${stats.lowest.value} ${unit}`
+                    : '-'}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -525,6 +521,7 @@ const MeasurementDetail = () => {
           <Text style={styles.buttonText}>See logs</Text>
         </TouchableOpacity>
       </View>
+
     </View>
   );
 };
@@ -565,47 +562,56 @@ const styles = StyleSheet.create({
     color: Color.black,
   },
   buttonContainer: {
-    backgroundColor: Color.secondary,
+    backgroundColor: Color.primaryColor,
     height: verticalScale(35),
-    borderRadius: scale(20),
+    borderRadius: scale(6),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: verticalScale(20),
+    position: 'absolute',
+    width: '100%',
+    bottom: 1,
+    alignSelf: 'center'
   },
   buttonText: {
     color: Color.white,
     fontSize: scale(14),
     fontWeight: '500',
+    fontFamily: Font?.Poppins
   },
   periodSelectorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: verticalScale(10),
-    backgroundColor: Color.common,
-    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(8),
+    backgroundColor: '#21972B1A',
+    width: "100%",
+    marginTop: scale(5),
+    borderRadius: scale(5),
+
   },
   periodButton: {
-    paddingVertical: verticalScale(5),
-    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(2),
+    paddingHorizontal: scale(25),
   },
   selectedPeriod: {
-    borderBottomWidth: 2,
-    borderBottomColor: Color.primaryColor,
+    backgroundColor: Color?.primaryColor,
+    borderRadius: scale(5),
   },
   periodText: {
-    color: Color.gray,
+    color: Color.primaryColor,
     fontSize: scale(14),
+    fontFamily: Font?.Poppins
   },
   selectedPeriodText: {
-    color: Color.primaryColor,
+    color: Color.white,
     fontWeight: '500',
   },
   dateRangeText: {
     color: Color.gray,
     fontSize: scale(14),
     marginVertical: verticalScale(10),
-    marginHorizontal: scale(16),
     fontWeight: '600',
   },
   noDataContainer: {
@@ -626,7 +632,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   value: {
-    color: Color.black,
+    color: '#545657',
     fontSize: scale(14),
     fontWeight: '500',
   },
@@ -634,7 +640,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   title: {
-    color: Color.gray,
+    color: Color.lightGrayText,
     fontSize: scale(13),
     marginHorizontal: scale(8),
   },
@@ -644,4 +650,11 @@ const styles = StyleSheet.create({
   negativeValue: {
     color: '#E74C3C',
   },
+  lebal: {
+    color: Color?.textColor,
+    fontFamily: Font?.Poppins,
+    fontWeight: '500',
+    fontSize: scale(18),
+    marginTop: scale(8)
+  }
 });

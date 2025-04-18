@@ -19,7 +19,7 @@ const ChallengesScreen = () => {
         <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: scale(10) }}>
           <TouchableOpacity style={{ backgroundColor: "green", padding: 10, borderRadius: 5 }}
             onPress={() => navigation.navigate('JoinRequestScreen')}>
-            <Text style={{ color: "white" }}>Join Challenge request</Text>
+            <Text style={{ color: Color?.white }}>Join Challenge request</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonStyle}
             onPress={() => navigation.navigate('CreateChallenge')}>

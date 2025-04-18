@@ -21,7 +21,7 @@ import CustomShadow from './CustomShadow';
 
 const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
   const navigation = useNavigation();
-  const {steps, calories, workouts, currentDay, isTracking} = useStepTracking();
+  const {steps, calories, workouts, isTracking, currentDay} = useStepTracking();
 
   const formatNumber = num => {
     if (num >= 10000000) {
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Font?.PoppinsMedium,
     fontSize: scale(16),
-    marginTop: verticalScale(2)
+    marginTop: verticalScale(2),
   },
   txtIcon: {
     flexDirection: 'row',

@@ -18,6 +18,8 @@ const ChallangeSwiper = () => {
     const [allChallengeJoinData, setAllChallengeJoinData] = useState([])
 
     const userInfo = useSelector(state => state?.user?.userInfo);
+    console.log(userInfo?.userData?._id);
+    
 
 
     const [routes] = useState([
@@ -42,6 +44,8 @@ const ChallangeSwiper = () => {
 
     const fetchChallangeDetails = async () => {
         const response = await getAllChallenge(userInfo?.token)
+        console.log(response, 'rrrrrererdrdfrdfrtrtrtf');
+        
         if (response?.success == true) {
             setAllChallengeData(response?.challenges)
         } else {

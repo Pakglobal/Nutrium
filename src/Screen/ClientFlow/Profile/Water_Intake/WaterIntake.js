@@ -348,7 +348,6 @@ const WaterIntake = () => {
       waterIntake?.waterIntakeData?.waterIntakeRecords,
     )
     : 0;
-  console.log('selectedDateIntake', selectedDateIntake)
 
   // useEffect(() => {
   //   if (selectedDateIntake) {

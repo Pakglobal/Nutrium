@@ -60,6 +60,9 @@ const ClientDrawerContent = props => {
     userInfo?.userData?.image ||
     guestInfo?.userData?.image;
 
+
+    console.log(token, id);
+    
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?.fullName;
   const profileImage = profileInfo?.image
@@ -101,7 +104,7 @@ const ClientDrawerContent = props => {
               dispatch(guestLoginData());
               success = true;
             } else {
-              await dispatch(loginData());
+              dispatch(loginData());
               dispatch(setImage(''));
               dispatch(setToken());
               success = true;
@@ -169,7 +172,7 @@ const ClientDrawerContent = props => {
             navigation.navigate('mainProfile', {data: user});
           }}>
           <Image source={userImgSource} style={styles.avatar} />
-          <Text style={styles.userName}>{userName}</Text>
+          <Text style={styles.drawerItemText}>{userName}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -356,13 +359,6 @@ const styles = StyleSheet.create({
     height: scale(37),
     borderRadius: scale(20),
   },
-  userName: {
-    fontSize: scale(14),
-    fontWeight: '500',
-    color: Color.textColor,
-    fontFamily: Font.Poppins,
-    marginLeft: scale(8),
-  },
   settingsButton: {
     padding: scale(5),
   },
@@ -377,7 +373,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: Color.textColor,
     fontWeight: '500',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
   sectionHeader: {
     paddingTop: verticalScale(14),

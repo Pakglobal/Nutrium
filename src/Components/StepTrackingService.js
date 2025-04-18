@@ -13,6 +13,7 @@ import {
   setIsTracking,
   resetSteps,
 } from '../redux/stepTracker';
+import io from 'socket.io-client';
 
 const STORAGE_KEYS = {
   STEPS: 'steps',
@@ -25,6 +26,8 @@ const VALLEY_THRESHOLD = -1.2;
 const MIN_STEP_DELAY = 300;
 const COOLDOWN_TIME = 500;
 const MOTION_THRESHOLD = 0.3;
+const SOCKET_SERVER_URL = 'https://nutrium-back-end-1.onrender.com';
+const SOCKET_UPDATE_INTERVAL = 5000;
 
 export const useStepTracking = () => {
   const dispatch = useDispatch();
@@ -32,17 +35,19 @@ export const useStepTracking = () => {
     state => state.stepTracker,
   );
 
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const id = tokenId?.id || guestTokenId?.id;
+
   const lastAccelerationRef = useRef({x: 0, y: 0, z: 0});
   const lastStepTimeRef = useRef(0);
   const isCooldownRef = useRef(false);
   const hasPeakedRef = useRef(false);
   const dayCheckIntervalRef = useRef(null);
   const motionDetectedRef = useRef(false);
-
-  const getCurrentDayIndex = () => {
-    const day = new Date().getDay();
-    return day === 0 ? 6 : day - 1;
-  };
+  const socketRef = useRef(null);
+  const socketIntervalRef = useRef(null);
+  const lastSyncedStepsRef = useRef(0);
 
   const calculateCalories = stepCount => {
     const CALORIES_PER_STEP = 0.03;
@@ -142,6 +147,57 @@ export const useStepTracking = () => {
     lastAccelerationRef.current = {x, y, z};
   };
 
+  const syncStepsToServer = () => {
+    if (!socketRef.current || !socketRef.current.connected) return;
+
+    if (steps > lastSyncedStepsRef.current) {
+      const stepData = {
+        participantedId: id,
+        value: steps,
+        date: new Date().toISOString(),
+        // calories: calculateCalories(steps),
+        // dayIndex: currentDay,
+      };
+
+      socketRef.current.emit('logProgressSocket', stepData);
+      lastSyncedStepsRef.current = steps;
+      console.log('Steps synced to server:', stepData);
+    }
+  };
+
+  const initializeSocket = () => {
+    try {
+      socketRef.current = io(SOCKET_SERVER_URL);
+
+      socketRef.current.on('connect', () => {
+        console.log('Connected to step tracking server');
+
+        // syncStepsToServer();
+
+        socketIntervalRef.current = setInterval(() => {
+          syncStepsToServer();
+        }, SOCKET_UPDATE_INTERVAL);
+      });
+
+      socketRef.current.on('disconnect', () => {
+        console.log('Disconnected from step tracking server');
+        if (socketIntervalRef.current) {
+          clearInterval(socketIntervalRef.current);
+        }
+      });
+
+      socketRef.current.on('connect_error', error => {
+        console.error('Socket connection error:', error);
+      });
+
+      socketRef.current.on('progressUpdated', data => {
+        console.log('Server acknowledged steps:', data);
+      });
+    } catch (error) {
+      console.error('Error initializing socket:', error);
+    }
+  };
+
   useEffect(() => {
     loadData();
     let subscription;
@@ -153,6 +209,7 @@ export const useStepTracking = () => {
           detectStep(acceleration);
         });
         dispatch(setIsTracking(true));
+        initializeSocket();
       } catch (error) {
         console.error('Error starting tracking:', error);
         dispatch(setIsTracking(false));
@@ -167,6 +224,8 @@ export const useStepTracking = () => {
       if (subscription) subscription.unsubscribe();
       if (dayCheckIntervalRef.current)
         clearInterval(dayCheckIntervalRef.current);
+      if (socketIntervalRef.current) clearInterval(socketIntervalRef.current);
+      if (socketRef.current) socketRef.current.disconnect();
     };
   }, []);
 
@@ -178,7 +237,7 @@ export const useStepTracking = () => {
     steps,
     calories: calculateCalories(steps),
     workouts,
-    currentDay: getCurrentDayIndex(),
+    currentDay,
     isTracking,
   };
 };

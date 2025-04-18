@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,26 +8,26 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
   GetWaterIntakeDetails,
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import {Color} from '../../../../assets/styles/Colors';
+import { Color } from '../../../../assets/styles/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
-import {Shadow} from 'react-native-shadow-2';
-import {Font} from '../../../../assets/styles/Fonts';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
+import { Font } from '../../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
 import CustomShadow from '../../../../Components/CustomShadow';
 
-const WaterIntakeLog = ({route}) => {
+const WaterIntakeLog = ({ route }) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
@@ -196,7 +196,9 @@ const WaterIntakeLog = ({route}) => {
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much Water Did You Drink ?</Text>
+
         <View style={{marginVertical: verticalScale(10)}}>
+
           <CustomShadow color={Color.lightgray}>
             <View style={styles.inputContainer}>
               <TextInput
@@ -219,11 +221,13 @@ const WaterIntakeLog = ({route}) => {
         </View>
 
         <View style={styles.hydrationButtons}>
+
           <View style={{width: '30%'}}>
+
             <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(200)}>
                 <View style={styles.waterCardView}>
-                  <View style={{marginTop: verticalScale(20)}}>
+                  <View style={{ marginTop: verticalScale(20) }}>
                     <Glass height={verticalScale(30)} width={scale(45)} />
                   </View>
                   <Text style={styles.waterTxt}>{'200mL'}</Text>
@@ -240,10 +244,11 @@ const WaterIntakeLog = ({route}) => {
           </View>
 
           <View style={{width: '30%'}}>
+
             <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(300)}>
                 <View style={styles.waterCardView}>
-                  <View style={{marginTop: verticalScale(20)}}>
+                  <View style={{ marginTop: verticalScale(20) }}>
                     <Glass height={verticalScale(30)} width={scale(45)} />
                   </View>
                   <Text style={styles.waterTxt}>{'300mL'}</Text>
@@ -260,10 +265,11 @@ const WaterIntakeLog = ({route}) => {
           </View>
 
           <View style={{width: '30%'}}>
+
             <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(500)}>
                 <View style={styles.waterCardView}>
-                  <View style={{marginTop: verticalScale(20)}}>
+                  <View style={{ marginTop: verticalScale(20) }}>
                     <Glass height={verticalScale(30)} width={scale(45)} />
                   </View>
                   <Text style={styles.waterTxt}>{'500mL'}</Text>
@@ -283,10 +289,8 @@ const WaterIntakeLog = ({route}) => {
         <Text style={styles.label}>Date</Text>
 
         <CustomShadow color={Color.lightgray}>
-          <TouchableOpacity
-            activeOpacity={0.6}
-            style={{}}
-            onPress={() => setDateOpen(true)}>
+
+          <TouchableOpacity activeOpacity={0.6} style={{}} onPress={() => setDateOpen(true)}>
             <View style={styles.pickerButton}>
               <Text
                 style={{
@@ -319,13 +323,12 @@ const WaterIntakeLog = ({route}) => {
             setDateOpen(false);
           }}
         />
-
+    
         <Text style={styles.label}>Hour</Text>
 
         <CustomShadow color={Color.lightgray}>
-          <TouchableOpacity
-            activeOpacity={0.6}
-            onPress={() => setTimeOpen(true)}>
+
+          <TouchableOpacity activeOpacity={0.6} style={{}} onPress={() => setTimeOpen(true)}>
             <View style={styles.pickerButton}>
               <Text
                 style={{
@@ -365,6 +368,7 @@ const WaterIntakeLog = ({route}) => {
             setTimeOpen(false);
           }}
         />
+
       </ScrollView>
     </SafeAreaView>
   );

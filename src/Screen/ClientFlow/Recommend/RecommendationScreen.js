@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   StyleSheet,
   Text,
@@ -21,11 +20,13 @@ import {useSelector} from 'react-redux';
 import moment from 'moment';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ScrollView} from 'react-native-virtualized-view';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const RecommendationScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
   const bottomSheetRef = useRef(null);
 
   const [recommendations, setRecommendations] = useState([]);
@@ -37,8 +38,6 @@ const RecommendationScreen = () => {
   const handleOpenBottomSheet = () => {
     bottomSheetRef.current?.open();
   };
-
-  const isGuest = useSelector(state => state.user?.guestMode);
 
   const FetchRecommendationData = async () => {
     setLoading(true);
@@ -168,13 +167,11 @@ const RecommendationScreen = () => {
   );
 
   useEffect(() => {
-    if (isGuest === true) {
-      return;
-    } else {
+    
       FetchRecommendationData();
       FetchFoodAvoidData();
       FetchGoalsData();
-    }
+    
   }, []);
 
   const onRefresh = useCallback(() => {
@@ -196,21 +193,10 @@ const RecommendationScreen = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header logoHeader={true} />
 
-      {isGuest ? (
-        <View>
-          <Text>Guest</Text>
-        </View>
-      ) : (
+      
         <View>
           {loading ? (
-            <View
-              style={{
-                // flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <ActivityIndicator size="large" color={Color.primaryColor} />
-            </View>
+            <CustomLoader />
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}
@@ -292,7 +278,7 @@ const RecommendationScreen = () => {
             </ScrollView>
           )}
         </View>
-      )}
+  
 
       <RBSheet
         ref={bottomSheetRef}

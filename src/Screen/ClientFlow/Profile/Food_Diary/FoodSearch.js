@@ -23,7 +23,8 @@ const FoodSearch = () => {
   const [filteredData, setFilteredData] = useState([]);
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
 
   useEffect(() => {
     const fetchFoodData = async () => {

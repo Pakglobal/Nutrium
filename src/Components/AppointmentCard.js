@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   Dimensions,
-  ActivityIndicator,
   Alert,
   Animated,
 } from 'react-native';
@@ -26,13 +25,15 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
+import CustomLoader from './CustomLoader';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const AppointmentCard = ({navigation}) => {
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -75,7 +76,6 @@ const AppointmentCard = ({navigation}) => {
         setActiveAppointments(active);
         setSelectedAppointment(active.length > 0 ? active[0] : null);
       } else {
-        console.log('No active appointments found.');
         setActiveAppointments([]);
         setSelectedAppointment(null);
       }
@@ -199,14 +199,15 @@ const AppointmentCard = ({navigation}) => {
       <Animated.View
         style={[
           {
-            marginVertical: verticalScale(8),
+            marginTop: verticalScale(18),
+            marginBottom: verticalScale(10),
             paddingHorizontal: scale(15),
             alignSelf: 'center',
             width: '100%',
           },
           {opacity: fadeAnim},
         ]}>
-        <CustomShadow radius={4}>
+        <CustomShadow radius={3}>
           <View style={shadowStyle}>
             <View style={{padding: scale(10)}}>
               <View style={styles.cardHeader}>
@@ -230,14 +231,14 @@ const AppointmentCard = ({navigation}) => {
                   <Text style={styles.timeText}>{timeRange}</Text>
                 </View>
                 <TouchableOpacity
-                  style={{padding: scale(5)}}
+                  style={{padding: scale(4)}}
                   onPress={() => {
                     setSelectedAppointment(item);
                     setModalVisible(true);
                   }}>
                   <Entypo
                     name="dots-three-vertical"
-                    size={22}
+                    size={20}
                     color={Color.primaryColor}
                   />
                 </TouchableOpacity>
@@ -249,7 +250,7 @@ const AppointmentCard = ({navigation}) => {
                   onPress={() => handleConfirm(item)}
                   disabled={item.isLoading}>
                   {item.isLoading ? (
-                    <ActivityIndicator size="small" color="#FFFFFF" />
+                    <CustomLoader color={Color.white} size={'small'} />
                   ) : (
                     <Text style={styles.confirmButtonText}>Confirm</Text>
                   )}
@@ -355,7 +356,7 @@ const AppointmentCard = ({navigation}) => {
                     onPress={handleCancelAppointment}
                     style={[styles.modalOption, styles.modalOptionDanger]}>
                     {loading ? (
-                      <ActivityIndicator size="small" color="#F44336" />
+                      <CustomLoader color={'#F44336'} size={'small'} />
                     ) : (
                       <Text style={styles.modalOptionTextDanger}>
                         {selectedAppointment?.status === 'not_confirmed'
@@ -382,16 +383,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cardContainer: {
-    padding: scale(10),
-    borderRadius: scale(8),
-    backgroundColor: Color.white,
-  },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: verticalScale(15),
+    marginBottom: verticalScale(12),
   },
   cardTitle: {
     fontSize: scale(16),
@@ -449,7 +445,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: verticalScale(3),
-    paddingBottom: verticalScale(20),
   },
   paginationDot: {
     height: scale(8),

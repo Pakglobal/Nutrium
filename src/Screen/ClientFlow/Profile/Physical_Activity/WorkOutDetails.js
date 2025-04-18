@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -43,8 +42,9 @@ const WorkOutDetails = ({route}) => {
   const navigation = useNavigation();
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
   const activityId = route?.params?.activity?.id;
 
   const [date, setDate] = useState(new Date(defaultDate));
@@ -150,8 +150,8 @@ const WorkOutDetails = ({route}) => {
       <Header
         screenheader={true}
         screenName={'Physical Activity'}
-        plus={false}
         handleSave={handleSave}
+        loading={loading} 
       />
       <View style={styles.content}>
         <Text style={styles.topTitle}>Workout Details</Text>

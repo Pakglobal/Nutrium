@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../../assets/styles/Colors';
-import {useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../../../../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
+import Header from '../../../../Components/Header';
 
 const NewShoppingList = () => {
   const navigation = useNavigation();
@@ -38,15 +39,15 @@ const NewShoppingList = () => {
   ];
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <TouchableOpacity onPress={() => navigation.navigate('myLists')}>
-        <BackHeader
-          titleName={'New shopping lists'}
-          onPressBack={() => navigation.goBack()}
-          showRightButton={false}
+        <Header
+          screenheader={true}
+          screenName={'New shopping lists'}
+          rightHeaderButton={false}
         />
 
-        <View style={{marginHorizontal: scale(16)}}>
+        <View style={{ marginHorizontal: scale(16) }}>
           <View style={styles.cardContainer}>
             <Text style={styles.title}>Create automatic list</Text>
             <Text style={styles.text}>
@@ -58,7 +59,7 @@ const NewShoppingList = () => {
               scrollEnabled={false}
               showsHorizontalScrollIndicator={false}
               data={number}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <View style={styles.numerContainer}>
                   <Text>{item?.title}</Text>
                 </View>
@@ -76,7 +77,7 @@ const NewShoppingList = () => {
               }}>
               Create manual list
             </Text>
-            <Text style={{color: Color.gray, fontSize: scale(14)}}>
+            <Text style={{ color: Color.gray, fontSize: scale(14) }}>
               A new empty list will be created so you can add new products
             </Text>
           </View>

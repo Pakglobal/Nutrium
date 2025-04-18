@@ -145,18 +145,6 @@ const MoreForYou = () => {
           tension: 40,
         }}
       />
-
-      <View style={styles.pagination}>
-        {carouselData.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              activeIndex === index ? styles.activeDot : styles.inactiveDot,
-            ]}
-          />
-        ))}
-      </View>
     </View>
   );
 };
@@ -194,15 +182,15 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.lightgray,
   },
   cardContainer: {
-    marginTop: scale(20),
+    marginVertical: scale(18),
     borderRadius: scale(15),
     overflow: 'hidden',
   },
   description: {
     color: Color.white,
-    fontSize: verticalScale(14),
+    fontSize: scale(13),
     fontWeight: '600',
-    fontFamily: Font?.Poppins,
+    fontFamily: Font?.PoppinsSemiBold,
     marginBottom: verticalScale(10),
   },
   txtIcon: {
@@ -214,10 +202,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   txt: {
-    fontSize: verticalScale(12),
+    fontSize: scale(12),
     fontWeight: '500',
     color: Color.primaryColor,
-    fontFamily: Font?.Poppins,
+    fontFamily: Font?.PoppinsMedium,
     marginLeft: scale(5),
     marginTop: scale(2),
   },

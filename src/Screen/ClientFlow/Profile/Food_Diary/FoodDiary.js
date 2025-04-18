@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   FlatList,
   Pressable,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import {
@@ -24,6 +23,7 @@ import {FetchFoodDiary} from '../../../../Apis/ClientApis/FoodDiaryApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {addData} from '../../../../redux/client';
 import Header from '../../../../Components/Header';
+import CustomLoader from '../../../../Components/CustomLoader';
 
 const FoodDiary = () => {
   const navigation = useNavigation();
@@ -33,9 +33,10 @@ const FoodDiary = () => {
   const [diaryData, setDiaryData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+    const tokenId = useSelector(state => state?.user?.token);
+    const guestTokenId = useSelector(state => state?.user?.guestToken);
+    const token = tokenId?.token || guestTokenId?.token;
+    const id = tokenId?.id || guestTokenId?.id;
 
   const getDateString = () => {
     if (dayOffset === 0) return 'Today';
@@ -141,16 +142,11 @@ const FoodDiary = () => {
 
   return (
     <View style={styles.container}>
-      {/* <BackHeader
-        titleName={'}
-        onPressBack={() => navigation.goBack()}
-        onPress={() => navigation.navigate('addMeal')}
-      /> */}
-      <Header
-        showIcon={false}
-        backIcon={true}
-        screenName="Food diary"
-        iconStyle={{left: scale(-80)}}
+    
+       <Header
+        screenheader={true}
+        screenName={'Food Diary'}
+        plus={true}
       />
       <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
@@ -160,9 +156,7 @@ const FoodDiary = () => {
         txtFunction={getDateString()}
       />
       {loading ? (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader />
       ) : diaryData && diaryData?.length > 0 ? (
         <FlatList
           data={diaryData}

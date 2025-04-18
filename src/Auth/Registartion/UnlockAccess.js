@@ -62,13 +62,13 @@ const styles = StyleSheet.create({
   titleFont: {
     color: Color.black,
     fontWeight: '500',
-    fontSize: verticalScale(22),
+    fontSize: scale(22),
     marginVertical: verticalScale(15),
   },
   subTitleFont: {
     color: '#616161',
     fontWeight: '600',
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     marginBottom: verticalScale(5),
   },
 });

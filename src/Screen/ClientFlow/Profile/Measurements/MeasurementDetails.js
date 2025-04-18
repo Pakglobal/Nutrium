@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,25 +6,25 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator,
 } from 'react-native';
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
-import {LineChart} from 'react-native-chart-kit';
-import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
-import {useDispatch, useSelector} from 'react-redux';
+import { LineChart } from 'react-native-chart-kit';
+import { GetMeasurementData } from '../../../../Apis/ClientApis/MeasurementApi';
+import { useDispatch, useSelector } from 'react-redux';
+import Header from '../../../../Components/Header';
 
 const MeasurementDetail = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const route = useRoute();
-  const {measurementType, data} = route.params;
+  const { measurementType, data } = route.params;
   const unit = route?.params?.unit;
 
   const measurementId = route?.params?.data?._id;
@@ -36,15 +36,16 @@ const MeasurementDetail = () => {
   const [dateRange, setDateRange] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [stats, setStats] = useState({
-    current: {value: '-'},
-    highest: {value: '-'},
-    lowest: {value: '-'},
+    current: { value: '-' },
+    highest: { value: '-' },
+    lowest: { value: '-' },
     totalVariation: '-',
   });
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const fetchLatestData = useCallback(async () => {
     if (!token || !id) return;
@@ -104,9 +105,9 @@ const MeasurementDetail = () => {
   const calculateStats = entries => {
     if (!entries || !entries.length) {
       return {
-        current: {value: '-'},
-        highest: {value: '-'},
-        lowest: {value: '-'},
+        current: { value: '-' },
+        highest: { value: '-' },
+        lowest: { value: '-' },
         totalVariation: '-',
       };
     }
@@ -123,18 +124,18 @@ const MeasurementDetail = () => {
       value: sortedByNewest[0].value,
     };
 
-    let highest = {value: Number(entries[0].value)};
-    let lowest = {value: Number(entries[0].value)};
+    let highest = { value: Number(entries[0].value) };
+    let lowest = { value: Number(entries[0].value) };
 
     entries.forEach(entry => {
       const value = Number(entry.value);
 
       if (value > highest.value) {
-        highest = {value};
+        highest = { value };
       }
 
       if (value < lowest.value) {
-        lowest = {value};
+        lowest = { value };
       }
     });
 
@@ -311,7 +312,7 @@ const MeasurementDetail = () => {
         if (
           labels.length > 0 &&
           labels[labels.length - 1] !==
-            `${lastDate.getMonth() + 1}/${lastDate.getDate()}`
+          `${lastDate.getMonth() + 1}/${lastDate.getDate()}`
         ) {
           labels.push(`${lastDate.getMonth() + 1}/${lastDate.getDate()}`);
         }
@@ -360,8 +361,7 @@ const MeasurementDetail = () => {
 
           if (monthsWithData.has(monthYear)) {
             labels.push(
-              `${
-                monthNames[currentDate.getMonth()]
+              `${monthNames[currentDate.getMonth()]
               } ${currentDate.getFullYear()}`,
             );
           }
@@ -382,14 +382,19 @@ const MeasurementDetail = () => {
 
   return (
     <View style={styles.container}>
-      <BackHeader
+      {/* <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName={measurementType}
         showRightButton={false}
         onPress={handleAddNewMeasurement}
         backText={'Measurement'}
-      />
+      /> */}
 
+      <Header
+        screenheader={true}
+        screenName={measurementType}
+        rightHeaderButton={false}
+      />
       <View>
         <View style={styles.periodSelectorContainer}>
           {periods.map((item, index) => (
@@ -413,7 +418,7 @@ const MeasurementDetail = () => {
 
         <Text style={styles.dateRangeText}>{dateRange}</Text>
 
-        <View style={{height: '30%'}}>
+        <View style={{ height: '30%' }}>
           {filteredData.length > 0 ? (
             <LineChart
               data={{
@@ -461,8 +466,8 @@ const MeasurementDetail = () => {
         </View>
       </View>
 
-      <View style={{marginHorizontal: scale(16)}}>
-        <View style={{marginVertical: verticalScale(15)}}>
+      <View style={{ marginHorizontal: scale(16) }}>
+        <View style={{ marginVertical: verticalScale(15) }}>
           <View style={styles.detailContainer}>
             <Text style={styles.title}>Current</Text>
             <View style={styles.valueContainer}>
@@ -483,8 +488,8 @@ const MeasurementDetail = () => {
                   ? styles.positiveValue
                   : stats.totalVariation &&
                     stats.totalVariation.charAt(0) === '-'
-                  ? styles.negativeValue
-                  : null,
+                    ? styles.negativeValue
+                    : null,
               ]}>
               {stats.totalVariation !== '-'
                 ? `${stats.totalVariation} ${unit}`
@@ -516,7 +521,7 @@ const MeasurementDetail = () => {
         </View>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={() => navigation.navigate('allLogs', {data: routeData})}>
+          onPress={() => navigation.navigate('allLogs', { data: routeData })}>
           <Text style={styles.buttonText}>See logs</Text>
         </TouchableOpacity>
       </View>

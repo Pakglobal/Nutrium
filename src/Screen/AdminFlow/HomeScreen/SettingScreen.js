@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Switch,
-  ActivityIndicator,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../assets/styles/Colors';
@@ -17,6 +16,7 @@ import {
   DrawerActions,
 } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const SettingScreen = () => {
   const navigation = useNavigation();
@@ -101,14 +101,7 @@ const SettingScreen = () => {
           </View>
 
           {isEnabled === null ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <ActivityIndicator size="small" color={Color.primaryColor} />
-            </View>
+           <CustomLoader />
           ) : (
             <Switch
               trackColor={{

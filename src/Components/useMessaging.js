@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  ActivityIndicator,
   Modal,
   Animated,
   PanResponder,
@@ -36,6 +35,7 @@ import moment from 'moment';
 
 import uuid from 'react-native-uuid';
 import {Color} from '../assets/styles/Colors';
+import CustomLoader from './CustomLoader';
 
 const MessageComponent = ({
   userId,
@@ -151,7 +151,6 @@ const MessageComponent = ({
     });
 
     const messageHandler = newMessage => {
-      console.log('newMessage', newMessage);
 
       setMessages(prevMessages => {
         const messageExists = prevMessages.some(
@@ -183,13 +182,11 @@ const MessageComponent = ({
     onReceiveMessage(messageHandler);
 
     const messagesSeenHandler = data => {
-      console.log('Messages seen by other user:', data);
       if (
         data?.messageIds &&
         data?.senderId === userId &&
         data?.receiverId === otherUserId
       ) {
-        console.log('Updating seen status for our messages:', data.messageIds);
         setMessages(prevMessages =>
           prevMessages.map(msg =>
             data.messageIds.includes(msg._id) ? {...msg, seen: true} : msg,
@@ -462,9 +459,7 @@ const MessageComponent = ({
         {fileUrl && (
           <View style={styles.imageContainer}>
             {isUploading ? (
-              <View style={styles.loadingImageContainer}>
-                <ActivityIndicator size="large" color={Color.primaryColor} />
-              </View>
+             <CustomLoader style={styles.loadingImageContainer} />
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
                 <Image source={{uri: fileUrl}} style={styles.image} />
@@ -564,10 +559,7 @@ const MessageComponent = ({
         style={{flex: 1}}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicator size="large" color={Color.primaryColor} />
-          </View>
+          <CustomLoader />
         ) : (
           <FlatList
             data={flatListData}

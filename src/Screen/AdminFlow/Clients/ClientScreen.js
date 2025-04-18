@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Image,
   Platform,
   RefreshControl,
@@ -23,6 +22,7 @@ import {
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
 import {clientInfoData} from '../../../redux/admin';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const ClientScreen = () => {
   const [search, setSearch] = useState('');
@@ -34,7 +34,8 @@ const ClientScreen = () => {
   const dispatch = useDispatch();
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
 
   useEffect(() => {
     fetchData();
@@ -97,14 +98,7 @@ const ClientScreen = () => {
       </View>
 
       {loading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: verticalScale(10),
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader style={{marginTop: verticalScale(10)}} />
       ) : (
         <View
           style={{

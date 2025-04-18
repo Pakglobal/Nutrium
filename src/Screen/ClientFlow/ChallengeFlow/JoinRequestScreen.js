@@ -4,7 +4,6 @@ import {
     View,
     FlatList,
     TouchableOpacity,
-    ActivityIndicator,
     Alert,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +11,7 @@ import { challengeAcceptAndRejectedApi, getAllChallengePendingRequest } from '..
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const JoinRequestScreen = () => {
     const userInfo = useSelector(state => state?.user?.userInfo);
@@ -109,9 +109,7 @@ const JoinRequestScreen = () => {
     }
     if (loading) {
         return (
-            <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#007BFF" />
-            </View>
+          <CustomLoader />
         );
     }
 

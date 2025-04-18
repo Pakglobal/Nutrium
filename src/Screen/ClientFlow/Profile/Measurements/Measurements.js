@@ -1,21 +1,22 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
   TouchableOpacity,
   Pressable,
   FlatList,
   RefreshControl,
 } from 'react-native';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../../assets/styles/Colors';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
-import {useDispatch, useSelector} from 'react-redux';
-import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
-import {measurementData} from '../../../../redux/client';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetMeasurementData } from '../../../../Apis/ClientApis/MeasurementApi';
+import { measurementData } from '../../../../redux/client';
+import Header from '../../../../Components/Header';
+import CustomLoader from '../../../../Components/CustomLoader';
 
 const Measurements = () => {
   const navigation = useNavigation();
@@ -26,8 +27,9 @@ const Measurements = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
   const units = useSelector(state => state?.unit?.units);
 
   useEffect(() => {
@@ -243,20 +245,18 @@ const Measurements = () => {
 
   return (
     <View style={styles.container}>
-      <BackHeader
+      {/* <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName="Measurements"
         showRightButton={false}
+      /> */}
+      <Header
+        screenheader={true}
+        screenName={'Measurements'}
+        rightHeaderButton={false}
       />
       {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader />
       ) : (
         <View style={styles.contentContainer}>
           <FlatList
@@ -264,7 +264,7 @@ const Measurements = () => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             data={menuItems}
-            renderItem={({item}) => renderMenuItem(item)}
+            renderItem={({ item }) => renderMenuItem(item)}
           />
         </View>
       )}

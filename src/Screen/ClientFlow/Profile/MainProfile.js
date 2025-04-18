@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  ActivityIndicator,
   Modal,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -19,14 +18,16 @@ import CameraPicker from '../../../Components/CameraPicker';
 import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {setImage} from '../../../redux/client';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const MainProfile = ({route}) => {
   const data = route?.params?.data;
 
   const dispatch = useDispatch();
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
   const profileImage = data?.image;
@@ -124,7 +125,7 @@ const MainProfile = ({route}) => {
                   height: verticalScale(80),
                   width: verticalScale(80),
                 }}>
-                <ActivityIndicator size="small" color={Color.primaryColor} />
+                <CustomLoader size={'small'} />
               </View>
             ) : (
               <TouchableOpacity onPress={() => setFullscreenImageVisible(true)}>
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(50),
   },
   profileName: {
-    fontSize: verticalScale(18),
+    fontSize: scale(18),
     fontWeight: '700',
     color: Color.txt,
     marginLeft: scale(20),
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(15),
   },
   title: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '700',
     color: Color.txt,
     marginBottom: verticalScale(10),
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(10),
   },
   btnTxt: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '600',
     color: Color.gray,
   },

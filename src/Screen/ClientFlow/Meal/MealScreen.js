@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
@@ -18,6 +17,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useSelector} from 'react-redux';
 import Cook from '../../../assets/Images/cooking.svg';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const MealScreen = () => {
   const [mealPlan, setMealPlan] = useState([]);
@@ -27,10 +27,9 @@ const MealScreen = () => {
   const [openItemId, setOpenItemId] = useState(null);
   const bottomSheetRef = useRef(null);
 
-  const isGuest = useSelector(state => state.user?.guestMode);
-
   const tokenId = useSelector(state => state?.user?.token);
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const id = tokenId?.id || guestTokenId?.id;
 
   useEffect(() => {
     fetchMealPlanData();
@@ -341,7 +340,7 @@ const MealScreen = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
+          <CustomLoader/>
         </View>
       ) : mealPlan?.length > 0 ? (
         <ScrollView

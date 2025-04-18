@@ -5,7 +5,6 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -15,6 +14,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginData} from '../redux/user';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import CustomLoader from '../Components/CustomLoader';
 
 const SideBar = ({onSelectScreen}) => {
   const navigation = useNavigation();
@@ -81,7 +81,7 @@ const SideBar = ({onSelectScreen}) => {
       <Text style={styles.title}>{item?.name}</Text>
       {item?.name === 'Sync all info' && asyncLoading && (
         <View style={{alignItems: 'flex-end', flex: 1}}>
-          <ActivityIndicator />
+          <CustomLoader />
         </View>
       )}
     </TouchableOpacity>

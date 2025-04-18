@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   SafeAreaView,
   ScrollView,
@@ -38,6 +37,7 @@ import { Font } from '../../assets/styles/Fonts';
 import { ShadowValues } from '../../assets/styles/Shadow';
 import CustomShadow from '../../Components/CustomShadow';
 import useKeyboardHandler from '../../Components/useKeyboardHandler';
+import CustomLoader from '../../Components/CustomLoader';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -46,9 +46,9 @@ const LoginScreen = () => {
   useKeyboardHandler();
 
   const [loading, setLoading] = useState(false);
-  const [isAgree, setIsAgree] = useState(true);
-  const [email, setEmail] = useState('vatsal.r.lakhani2626+878@gmail.com');
-  const [password, setPassword] = useState('password123#');
+  const [isAgree, setIsAgree] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -62,7 +62,7 @@ const LoginScreen = () => {
   };
 
   const FCMtoken = useSelector(state => state?.user?.fcmToken);
-  console.log('FCMtoken', FCMtoken)
+
 
   const validateEmail = value => {
     setEmail(value);
@@ -90,7 +90,7 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (!email || !emailRegex.test(email) || !password || password.length < 8) {
+    if (!email || !emailRegex.test(email) || !password || password.length < 8 || !isAgree) {
       let message = '';
 
       if (!email) {
@@ -103,6 +103,9 @@ const LoginScreen = () => {
         message += 'Password is required.\n';
       } else if (password.length < 8) {
         message += 'Password must be at least 8 characters.\n';
+      }
+      if(!isAgree) {
+        message += 'Please agree a terms and condition before login'
       }
 
       Alert.alert('Error', message.trim());
@@ -127,6 +130,7 @@ const LoginScreen = () => {
         token: response?.token,
         id: response?.userData?._id,
       };
+      
 
       if (response) {
         dispatch(loginData(response));
@@ -209,13 +213,12 @@ const LoginScreen = () => {
       const response = await ForgotPasswordApi(body);
       setForgotPassword(response);
       setPasswordAlertVisible(true);
-      console.log(response);
+      console.log('ressss',response);
     } catch (error) {
-      console.log(error);
+      console.log('-----',error);
     }
   };
 
-  console.log(passwordVisible);
   
 
   return (
@@ -261,17 +264,14 @@ const LoginScreen = () => {
 
           <View style={{ paddingHorizontal: scale(16) }}>
             <CustomShadow
-              style={{
-                width: '100%',
-                borderRadius: scale(5),
-                marginBottom: verticalScale(13),
-              }}
               color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
                   height: verticalScale(38),
                   justifyContent: 'center',
                   paddingHorizontal: scale(5),
+                  backgroundColor: Color.white,
+                  borderRadius: scale(6),
                 }}>
                 <TextInput
                   value={email}
@@ -286,17 +286,16 @@ const LoginScreen = () => {
             </CustomShadow>
 
             <CustomShadow
-              style={{
-                width: '100%',
-                borderRadius: scale(5),
-                marginBottom: verticalScale(10),
-              }}
+
               color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  backgroundColor: Color.white,
+                  marginVertical: verticalScale(13),
+                  borderRadius: scale(6)
                 }}>
                 <View
                   style={{
@@ -363,11 +362,10 @@ const LoginScreen = () => {
               paddingHorizontal: scale(16),
             }}>
             <TouchableOpacity
-              disabled={!isAgree}
               onPress={handleLogin}
               style={[styles.button, { backgroundColor: Color.primaryColor }]}>
               {loading ? (
-                <ActivityIndicator size="small" color={Color.white} />
+                <CustomLoader color={Color.white} size={'small'} />
               ) : (
                 <Text style={[styles.buttonText, { color: Color.white }]}>
                   Login

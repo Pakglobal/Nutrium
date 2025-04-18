@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
-  ActivityIndicator,
   ScrollView,
   FlatList,
   RefreshControl,
@@ -18,6 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {GetAppointmentData} from '../../../Apis/AdminScreenApi/AppointmentApi';
 import {appointmentData} from '../../../redux/admin';
 import moment from 'moment';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const AppointmentScreen = ({selected, setSelected}) => {
   const navigation = useNavigation();
@@ -126,14 +126,7 @@ const AppointmentScreen = ({selected, setSelected}) => {
       </View>
 
       {loading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: verticalScale(10),
-          }}>
-          <ActivityIndicator size="large" color={Color.primaryColor} />
-        </View>
+       <CustomLoader style={{marginTop: verticalScale(10)}} />
       ) : (
         <View
           style={{

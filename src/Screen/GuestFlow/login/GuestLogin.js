@@ -30,14 +30,21 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {guestLoginData, setIsGuest} from '../../../redux/user';
+import {
+  guestLoginData,
+  loginData,
+  setGuestToken,
+  setIsGuest,
+  setToken,
+} from '../../../redux/user';
 import {Font} from '../../../assets/styles/Fonts';
 import {ShadowValues} from '../../../assets/styles/Shadow';
 import {Progress} from '../../../assets/styles/Progress';
-import {GuestLOGin} from '../../../Apis/Login/AuthApis';
+import {GuestLoGin, GuestLOGin} from '../../../Apis/Login/AuthApis';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const GuestLogin = ({route}) => {
   const dispatch = useDispatch();
@@ -45,10 +52,10 @@ const GuestLogin = ({route}) => {
 
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
-  const [firstName, setFirstName] = useState('ujgh');
-  const [lastName, setLastName] = useState('hfghf');
-  const [email, setEmail] = useState('hgfgfd@hgfgh.fhfg');
-  const [password, setPassword] = useState('grytyregxt');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -111,203 +118,202 @@ const GuestLogin = ({route}) => {
     }
   };
 
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener(
-  //     'keyboardDidShow',
-  //     () => {
-  //       setKeyboardVisible(true);
-  //     },
-  //   );
-  //   const keyboardDidHideListener = Keyboard.addListener(
-  //     'keyboardDidHide',
-  //     () => {
-  //       setKeyboardVisible(false);
-  //     },
-  //   );
-
-  //   return () => {
-  //     keyboardDidShowListener.remove();
-  //     keyboardDidHideListener.remove();
-  //   };
-  // }, []);
-
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
   const handleGuestLogin = async () => {
-    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    let emailError = '';
-    let passwordError = '';
-    let firstNameError = '';
-    let lastNameError = '';
+    if (
+      !email ||
+      !emailRegex.test(email) ||
+      !password ||
+      password.length < 8 ||
+      !firstName ||
+      firstName.length < 3 ||
+      !lastName ||
+      lastName.length < 3
+    ) {
+      let message = '';
 
-    if (!email) {
-      emailError = 'Email is required';
-    }
-    if (!password) {
-      passwordError = 'Password is required';
-    }
-    if (!firstName) {
-      firstNameError = 'Name is required';
-    }
-    if (!lastName) {
-      lastNameError = 'Name is required';
-    }
+      if (!firstName) {
+        message += 'First name is required.\n';
+      } else if (firstName.length < 3) {
+        message += 'First name must be at least 8 characters.\n';
+      }
 
-    if (email && !emailRegex.test(email)) {
-      emailError = 'Enter a valid email';
-    }
-    if (password && password.length < 8) {
-      passwordError = 'Password must be at least 8 characters';
-    }
-    if (firstName && firstName.length < 3) {
-      firstNameError = 'First name must be at least 3 characters';
-    }
-    if (lastName && lastName.length < 3) {
-      lastNameError = 'First name must be at least 3 characters';
-    }
+      if (!lastName) {
+        message += 'Last name is required.\n';
+      } else if (lastName.length < 3) {
+        message += 'Last name must be at least 8 characters.\n';
+      }
 
-    setEmailError(emailError);
-    setPasswordError(passwordError);
-    setFirstNameError(firstNameError);
-    setLastNameError(lastNameError);
+      if (!email) {
+        message += 'Email is required.\n';
+      } else if (!emailRegex.test(email)) {
+        message += 'Enter a valid email.\n';
+      }
 
-    if (emailError || passwordError || firstNameError || lastNameError) {
-      Alert.alert('Error', 'Please solve the error');
+      if (!password) {
+        message += 'Password is required.\n';
+      } else if (password.length < 8) {
+        message += 'Password must be at least 8 characters.\n';
+      }
+
+      Alert.alert('Error', message.trim());
       return;
     }
 
-    const body = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-      goal: data?.goal,
-      profession: data?.profession,
-      gender: data?.Gender,
-      country: data?.country,
-      phoneNumber: data?.number,
-      dateOfBirth: data?.dateOfBirth,
-      deviceToken: token,
-      isDemoClient: true,
-    };
+    setFirstNameError('');
+    setLastNameError('');
+    setEmailError('');
+    setPasswordError('');
+
     try {
-      const response = await GuestLOGin(body);
-      if (response?.data?.message == 'Signup successful') {
-        navigation.navigate('BottomNavigation');
-        // dispatch(guestLoginData(guestData));
-      } else if (response?.message) {
+      setLoading(true);
+      const body = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        goal: data?.goal,
+        profession: data?.profession,
+        gender: data?.Gender,
+        country: data?.country,
+        phoneNumber: data?.number,
+        dateOfBirth: data?.dateOfBirth,
+        deviceToken: token,
+        isDemoClient: true,
+      };
+
+      const response = await GuestLoGin(body);
+
+      const storeTokenId = {
+        token: response?.data?.token,
+        id: response?.data?.userData?._id,
+        demoClient: response?.data?.userData?.isDemoClient,
+      };
+
+      if (response?.data?.message === 'Signup successful') {
+        dispatch(setGuestToken(storeTokenId));
+        dispatch(guestLoginData(response?.data));
+        setLoading(false);
+      } else if (response?.data?.message === 'Signin successful') {
+        Alert.alert('Error', 'User Already exist');
+        setLoading(false);
+      } else {
         Alert.alert(response?.message);
+        setLoading(false);
       }
-    } catch {}
+      setLoading(false);
+    } catch {
+      setLoading(false);
+    }
   };
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <GuestFlowHeader progress={Progress.guestLogin} />
-      <LeftIcon onGoBack={() => navigation.goBack()} />
+      {loading ? (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <CustomLoader />
+        </View>
+      ) : (
+        <View>
+          <GuestFlowHeader progress={Progress.guestLogin} />
+          <LeftIcon onGoBack={() => navigation.goBack()} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{}}
-        contentContainerStyle={{paddingBottom: '31%'}}
-        keyboardShouldPersistTaps="handled">
-        <LoginHeader
-          style={{alignSelf: 'center', marginTop: verticalScale(50)}}
-        />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{}}
+            contentContainerStyle={{paddingBottom: '32%'}}
+            keyboardShouldPersistTaps="handled">
+            <LoginHeader
+              style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+            />
 
-        <View
-          style={{
-            marginHorizontal: scale(16),
-            marginVertical: verticalScale(20),
-          }}>
-          <CustomShadow>
-            <View style={styles.shadowView}>
-              <TextInput
-                value={firstName}
-                placeholder="First Name"
-                onChangeText={validateFirstName}
-                placeholderTextColor={Color.textColor}
-                style={styles.titleText}
-              />
+            <View
+              style={{
+                marginHorizontal: scale(16),
+                marginVertical: verticalScale(20),
+              }}>
+              <CustomShadow
+                color={firstNameError ? 'rgba(255,0,0,0.3)' : undefined}>
+                <View style={styles.shadowView}>
+                  <TextInput
+                    value={firstName}
+                    placeholder="First Name"
+                    onChangeText={validateFirstName}
+                    placeholderTextColor={Color.textColor}
+                    style={styles.titleText}
+                  />
+                </View>
+              </CustomShadow>
+
+              <CustomShadow
+                color={lastNameError ? 'rgba(255,0,0,0.3)' : undefined}>
+                <View style={styles.shadowView}>
+                  <TextInput
+                    value={lastName}
+                    placeholder="Last Name"
+                    onChangeText={validateLastName}
+                    placeholderTextColor={Color.textColor}
+                    style={styles.titleText}
+                  />
+                </View>
+              </CustomShadow>
+
+              <CustomShadow
+                color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
+                <View style={styles.shadowView}>
+                  <TextInput
+                    value={email}
+                    placeholder="Email"
+                    onChangeText={validateEmail}
+                    placeholderTextColor={Color.textColor}
+                    style={styles.titleText}
+                  />
+                </View>
+              </CustomShadow>
+
+              <CustomShadow
+                color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
+                <View style={styles.shadowView}>
+                  <TextInput
+                    value={password}
+                    placeholder="Password"
+                    onChangeText={validatePassword}
+                    placeholderTextColor={Color.textColor}
+                    style={styles.titleText}
+                    secureTextEntry={!passwordVisible}
+                  />
+                  <TouchableOpacity
+                    onPress={handlePassword}
+                    style={styles.eyeIconContainer}>
+                    <Ionicons
+                      name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+                      color={Color?.primaryColor}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </CustomShadow>
             </View>
-          </CustomShadow>
 
-          <CustomShadow>
-            <View style={styles.shadowView}>
-              <TextInput
-                value={lastName}
-                placeholder="Last Name"
-                onChangeText={validateLastName}
-                placeholderTextColor={Color.textColor}
-                style={styles.titleText}
-              />
-            </View>
-          </CustomShadow>
-
-          <CustomShadow>
-            <View style={styles.shadowView}>
-              <TextInput
-                value={email}
-                placeholder="Email"
-                onChangeText={validateEmail}
-                placeholderTextColor={Color.textColor}
-                style={styles.titleText}
-              />
-            </View>
-          </CustomShadow>
-
-          <CustomShadow>
-            <View style={styles.shadowView}>
-              <TextInput
-                value={password}
-                placeholder="Password"
-                onChangeText={validatePassword}
-                placeholderTextColor={Color.textColor}
-                style={styles.titleText}
-                secureTextEntry={!passwordVisible}
-              />
+            <View style={styles.buttonContainer}>
               <TouchableOpacity
-                onPress={handlePassword}
-                style={styles.eyeIconContainer}>
-                <Ionicons
-                  name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
-                  color={Color?.primaryColor}
-                  size={24}
+                style={styles.button}
+                onPress={handleGuestLogin}>
+                <FontAwesome6
+                  name="arrow-right"
+                  size={22}
+                  color={Color.white}
                 />
               </TouchableOpacity>
             </View>
-          </CustomShadow>
+          </ScrollView>
         </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleGuestLogin}>
-            <FontAwesome6 name="arrow-right" size={22} color={Color.white} />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
@@ -440,8 +446,8 @@ const styles = StyleSheet.create({
   },
   shadowView: {
     backgroundColor: Color.white,
-borderRadius: scale(8),
-marginVertical: verticalScale(6),
-paddingHorizontal: scale(5)
-  }
+    borderRadius: scale(8),
+    marginVertical: verticalScale(6),
+    paddingHorizontal: scale(5),
+  },
 });

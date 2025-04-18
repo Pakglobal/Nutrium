@@ -21,6 +21,8 @@
 // };
 
 // export default AllChallenges;
+
+
 import React from 'react';
 import { View, StyleSheet, Dimensions, Animated, Text, FlatList, ScrollView } from 'react-native';
 import { SwiperFlatList, Pagination } from 'react-native-swiper-flatlist';

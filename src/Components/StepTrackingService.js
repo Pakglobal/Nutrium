@@ -41,7 +41,7 @@ export const useStepTracking = () => {
 
   const getCurrentDayIndex = () => {
     const day = new Date().getDay();
-    return day === 0 ? 6 : day - 1; // Remap Sunday (0) to 6, and shift others back by 1
+    return day === 0 ? 6 : day - 1;
   };
 
   const calculateCalories = stepCount => {
@@ -95,7 +95,6 @@ export const useStepTracking = () => {
           STORAGE_KEYS.LAST_RESET,
           JSON.stringify(now.toISOString()),
         );
-        console.log('Step counter reset for new day');
       }
     } catch (error) {
       console.error('Error checking day change:', error);

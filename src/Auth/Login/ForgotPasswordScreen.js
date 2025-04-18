@@ -22,6 +22,7 @@ import {Font} from '../../assets/styles/Fonts';
 import {LeftIcon} from '../../assets/styles/Icon';
 import Header from '../../assets/Images/forgotPassword.svg';
 import CustomShadow from '../../Components/CustomShadow';
+import { shadowStyle } from '../../assets/styles/Shadow';
 
 const ForgotPasswordScreen = ({route}) => {
   const email = route?.params?.data;
@@ -49,16 +50,14 @@ const ForgotPasswordScreen = ({route}) => {
           We will send a verification code to your registered email{' '}
         </Text>
         <View style={{marginTop: verticalScale(20)}}>
-          <CustomShadow
-            style={{
-              width: '100%',
-              borderRadius: scale(5),
-            }}>
+          <CustomShadow>
             <View
               style={{
                 height: verticalScale(38),
                 justifyContent: 'center',
                 paddingHorizontal: scale(5),
+                backgroundColor: Color.white,
+                borderRadius: scale(6)
               }}>
               <TextInput
                 value={email}
@@ -88,7 +87,7 @@ const ForgotPasswordScreen = ({route}) => {
         }}>
         <TouchableOpacity
           style={[styles.button, {backgroundColor: Color.primaryColor}]}>
-          <Text style={[styles.buttonText, {color: Color.white}]}>Login</Text>
+          <Text style={[styles.buttonText, {color: Color.white}]}>Next</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

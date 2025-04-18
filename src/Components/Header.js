@@ -24,6 +24,7 @@ import IconStyle, { IconPadding } from '../assets/styles/Icon';
 import { Font } from '../assets/styles/Fonts';
 import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
+import CustomLoader from './CustomLoader';
 
 const Header = ({
   screenName,
@@ -34,13 +35,13 @@ const Header = ({
   handleSave,
   handleNotification,
   handleAward,
-  rightHeaderButton = true, onPress
-
+  rightHeaderButton = true,
+  loading,
 }) => {
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={{ backgroundColor: Color.white, zIndex: 1 }}>
-      <CustomShadow radius={4}>
+    <SafeAreaView style={{backgroundColor: Color.white, zIndex: 1}}>
+      <CustomShadow radius={4} color={Color.gray}>
         <View style={styles.header}>
           {logoHeader && (
             <>
@@ -83,9 +84,7 @@ const Header = ({
                       />
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                      onPress={() => navigation.openDrawer()}
-                      style={{}}>
+                    <TouchableOpacity onPress={() => navigation.openDrawer()}>
                       <MaterialCommunityIcons
                         style={IconPadding}
                         name="menu"
@@ -99,26 +98,37 @@ const Header = ({
             </>
           )}
           {screenheader && (
-            <View style={{}}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingVertical: verticalScale(8),
-                  borderBottomLeftRadius: scale(12),
-                  borderBottomRightRadius: scale(12),
-                  marginHorizontal: scale(8),
-                }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <TouchableOpacity
 
-                    onPress={() => { navigation.goBack(), onPress }}
-                    style={{ padding: scale(5), alignSelf: 'center' }}>
-
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottomLeftRadius: scale(12),
+                borderBottomRightRadius: scale(12),
+                marginHorizontal: scale(8),
+                height: verticalScale(60),
+              }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.goBack();
+                  }}
+                  style={IconPadding}>
+                  <AntDesign
+                    name="arrowleft"
+                    size={IconStyle.drawerIconSize}
+                    color={Color.white}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.screenName}>{screenName}</Text>
+              </View>
+              {rightHeaderButton &&
+                (plus ? (
+                  <TouchableOpacity onPress={handlePlus} style={IconPadding}>
                     <AntDesign
-                      name="arrowleft"
-                      size={IconStyle.drawerIconSize}
+                      name="pluscircle"
+                      size={IconStyle.headerIconSize}
                       color={Color.white}
                     />
                   </TouchableOpacity>
@@ -144,6 +154,17 @@ const Header = ({
                     </TouchableOpacity>
                   ))}
               </View>
+                ) : (
+                  <TouchableOpacity onPress={handleSave} style={IconPadding}>
+                    {
+                      loading ? (
+                        <CustomLoader color={Color.white} size={'small'} />
+                      ) : (
+                        <Text style={styles.saveStyle}>Save</Text>
+                      )
+                    }
+                  </TouchableOpacity>
+                ))}
             </View>
           )}
         </View>
@@ -169,7 +190,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Font.PoppinsMedium,
     color: Color.white,
-    marginTop: verticalScale(2)
+    marginTop: verticalScale(2),
   },
   saveStyle: {
     color: Color?.white,

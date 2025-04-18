@@ -26,7 +26,7 @@ export default SighnUpHeader;
 
 const styles = StyleSheet.create({
   titleTxt: {
-    fontSize: verticalScale(18),
+    fontSize: scale(18),
     color: Color.black,
     fontWeight: '600',
     marginStart: scale(15),

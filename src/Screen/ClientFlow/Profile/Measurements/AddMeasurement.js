@@ -35,8 +35,9 @@ const AddMeasurement = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const formattedDate = new Date(date).toISOString().split('T')[0];
 

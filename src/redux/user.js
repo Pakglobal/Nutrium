@@ -5,8 +5,8 @@ const initialState = {
   profileInfo: {},
   fcmToken: {},
   token: {},
+  guestToken: {},
   guestUserData: {},
-  guestMode: false,
   isCompleted: false,
 };
 
@@ -26,8 +26,8 @@ const userSlice = createSlice({
     setToken: (state, action) => {
       state.token = action.payload;
     },
-    setGuestMode: (state, action) => {
-      state.guestMode = action.payload;
+    setGuestToken: (state, action) => {
+      state.guestToken = action.payload;
     },
     guestLoginData: (state, action) => {
       state.guestUserData = action.payload;
@@ -43,7 +43,7 @@ export const {
   profileData,
   setFcmToken,
   setToken,
-  setGuestMode,
+setGuestToken,
   guestLoginData,
   completeOnboarding,
   resetOnboarding,

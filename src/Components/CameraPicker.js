@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(15),
   },
   title: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '700',
     color: Color.txt,
     marginBottom: verticalScale(10),
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(10),
   },
   btnTxt: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '600',
     color: Color.gray,
   },

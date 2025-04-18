@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,6 +9,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
+import CustomLoader from './CustomLoader';
 
 const BackHeader = ({
   onPressBack,
@@ -39,17 +39,7 @@ const BackHeader = ({
             {onSave ? (
               <TouchableOpacity onPress={onPress}>
                 {loading ? (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <ActivityIndicator
-                      size="small"
-                      color={Color.primaryColor}
-                    />
-                  </View>
+                  <CustomLoader />
                 ) : (
                   <Text style={styles.save}>Save</Text>
                 )}
@@ -87,7 +77,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
   },
   titleTxt: {
-    fontSize: verticalScale(20),
+    fontSize: scale(20),
     color: Color.black,
     fontWeight: '600',
     marginTop: verticalScale(25),

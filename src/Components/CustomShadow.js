@@ -8,7 +8,7 @@ import { scale } from 'react-native-size-matters';
 
 const CustomShadow = ({style, children, color, radius}) => {
   return (
-    // <Shadow distance={6} startColor={color || Color.primaryLight} style={style}>
+    // <Shadow distance={6} startColor={color || Color.primaryLight} style={[style, {width: '100%', borderRadius: scale(10)}]}>
     //   {children}
     // </Shadow>
     <DropShadow

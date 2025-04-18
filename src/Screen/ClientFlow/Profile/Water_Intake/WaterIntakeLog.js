@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,28 +7,27 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
-  ActivityIndicator,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {
   GetWaterIntakeDetails,
   SetWaterIntakeDetails,
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
-import {Color} from '../../../../assets/styles/Colors';
+import { Color } from '../../../../assets/styles/Colors';
 import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Header from '../../../../Components/Header';
-import {Shadow} from 'react-native-shadow-2';
-import {Font} from '../../../../assets/styles/Fonts';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
+import { Font } from '../../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
 import CustomShadow from '../../../../Components/CustomShadow';
 
-const WaterIntakeLog = ({route}) => {
+const WaterIntakeLog = ({ route }) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
@@ -192,12 +191,15 @@ const WaterIntakeLog = ({route}) => {
         screenheader={true}
         screenName={'Water Intake Log'}
         handleSave={() => handleSave()}
+        loading={loading}
       />
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.label}>How much Water Did You Drink ?</Text>
+
         <View style={{marginVertical: verticalScale(10)}}>
-        <CustomShadow color={Color.lightgray}>
+
+          <CustomShadow color={Color.lightgray}>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
@@ -219,11 +221,13 @@ const WaterIntakeLog = ({route}) => {
         </View>
 
         <View style={styles.hydrationButtons}>
+
           <View style={{width: '30%'}}>
-          <CustomShadow color={Color.lightgray}>
+
+            <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(200)}>
                 <View style={styles.waterCardView}>
-                  <View style={{marginTop: verticalScale(20)}}>
+                  <View style={{ marginTop: verticalScale(20) }}>
                     <Glass height={verticalScale(30)} width={scale(45)} />
                   </View>
                   <Text style={styles.waterTxt}>{'200mL'}</Text>
@@ -240,10 +244,11 @@ const WaterIntakeLog = ({route}) => {
           </View>
 
           <View style={{width: '30%'}}>
-          <CustomShadow color={Color.lightgray}>
+
+            <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(300)}>
                 <View style={styles.waterCardView}>
-                  <View style={{marginTop: verticalScale(20)}}>
+                  <View style={{ marginTop: verticalScale(20) }}>
                     <Glass height={verticalScale(30)} width={scale(45)} />
                   </View>
                   <Text style={styles.waterTxt}>{'300mL'}</Text>
@@ -260,10 +265,11 @@ const WaterIntakeLog = ({route}) => {
           </View>
 
           <View style={{width: '30%'}}>
-          <CustomShadow color={Color.lightgray}>
+
+            <CustomShadow color={Color.lightgray}>
               <TouchableOpacity onPress={() => setAmount(500)}>
                 <View style={styles.waterCardView}>
-                  <View style={{marginTop: verticalScale(20)}}>
+                  <View style={{ marginTop: verticalScale(20) }}>
                     <Glass height={verticalScale(30)} width={scale(45)} />
                   </View>
                   <Text style={styles.waterTxt}>{'500mL'}</Text>
@@ -283,23 +289,24 @@ const WaterIntakeLog = ({route}) => {
         <Text style={styles.label}>Date</Text>
 
         <CustomShadow color={Color.lightgray}>
-          <View style={styles.pickerButton}>
-            <Text
-              style={{
-                color: Color.textColor,
-                fontWeight: '500',
-                fontSize: scale(13),
-              }}>
-              {date.toLocaleDateString()}
-            </Text>
-            <TouchableOpacity style={{}} onPress={() => setDateOpen(true)}>
+
+          <TouchableOpacity activeOpacity={0.6} style={{}} onPress={() => setDateOpen(true)}>
+            <View style={styles.pickerButton}>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontWeight: '500',
+                  fontSize: scale(13),
+                }}>
+                {date.toLocaleDateString()}
+              </Text>
               <MaterialCommunityIcons
                 name="calendar-month"
                 color={Color?.primaryColor}
                 size={20}
               />
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         </CustomShadow>
 
         <DatePicker
@@ -307,6 +314,7 @@ const WaterIntakeLog = ({route}) => {
           mode="date"
           open={dateOpen}
           date={date}
+          maximumDate={new Date()}
           onConfirm={date => {
             setDateOpen(false);
             setDate(date);
@@ -315,34 +323,35 @@ const WaterIntakeLog = ({route}) => {
             setDateOpen(false);
           }}
         />
-
+    
         <Text style={styles.label}>Hour</Text>
 
         <CustomShadow color={Color.lightgray}>
-          <View style={styles.pickerButton}>
-            <Text
-              style={{
-                color: Color.textColor,
-                fontWeight: '500',
-                fontSize: scale(13),
-              }}>
-              {time
-                ?.toLocaleTimeString('en-US', {
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  hour12: true,
-                })
-                ?.replace(/\s+/g, ' ')
-                ?.trim()}
-            </Text>
-            <TouchableOpacity style={{}} onPress={() => setTimeOpen(true)}>
+
+          <TouchableOpacity activeOpacity={0.6} style={{}} onPress={() => setTimeOpen(true)}>
+            <View style={styles.pickerButton}>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontWeight: '500',
+                  fontSize: scale(13),
+                }}>
+                {time
+                  ?.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                  })
+                  ?.replace(/\s+/g, ' ')
+                  ?.trim()}
+              </Text>
               <MaterialCommunityIcons
                 name="clock-time-four-outline"
                 color={Color?.primaryColor}
                 size={20}
               />
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         </CustomShadow>
 
         <DatePicker
@@ -350,6 +359,7 @@ const WaterIntakeLog = ({route}) => {
           mode="time"
           open={timeOpen}
           date={time}
+          maximumDate={new Date()}
           onConfirm={time => {
             setTimeOpen(false);
             setTime(time);
@@ -358,6 +368,7 @@ const WaterIntakeLog = ({route}) => {
             setTimeOpen(false);
           }}
         />
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -379,7 +390,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(20),
     fontWeight: '500',
     fontFamily: Font?.PoppinsMedium,
-    marginHorizontal: scale(5)
+    marginHorizontal: scale(5),
   },
   inputContainer: {
     flexDirection: 'row',

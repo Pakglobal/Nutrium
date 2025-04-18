@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   title: {
     width: '75%',
     marginHorizontal: scale(15),
-    fontSize: verticalScale(13),
+    fontSize: scale(13),
     fontWeight: '600',
     color: Color.txt,
   },

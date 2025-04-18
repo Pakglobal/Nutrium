@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,7 +16,12 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {loginData, setToken} from '../redux/user';
+import {
+  guestLoginData,
+  loginData,
+  setGuestToken,
+  setToken,
+} from '../redux/user';
 import {setImage, updateUserInfo} from '../redux/client';
 import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
 import {
@@ -32,6 +36,7 @@ import {
 } from '../Apis/ClientApis/RecommendationApi';
 import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
 import {Font} from '../assets/styles/Fonts';
+import CustomLoader from '../Components/CustomLoader';
 
 const ClientDrawerContent = props => {
   const {navigation} = props;
@@ -40,12 +45,20 @@ const ClientDrawerContent = props => {
   const [asyncLoading, setAsyncLoading] = useState(false);
 
   const userInfo = useSelector(state => state.user?.userInfo);
-  const token = userInfo?.token;
-  const id = userInfo?.user?._id || userInfo?.userData?._id;
-  const user = userInfo?.user || userInfo?.userData;
-  const userName = userInfo?.user?.fullName || userInfo?.userData?.fullName;
-  const userImage = userInfo?.user?.image || userInfo?.userData?.image;
-  
+  const guestInfo = useSelector(state => state.user?.guestUserData);
+
+  const token = userInfo?.token || guestInfo?.token;
+  const id =
+    userInfo?.user?._id || userInfo?.userData?._id || guestInfo?.userData?._id;
+  const user = userInfo?.user || userInfo?.userData || guestInfo?.userData;
+  const userName =
+    userInfo?.user?.fullName ||
+    userInfo?.userData?.fullName ||
+    guestInfo?.userData?.fullName;
+  const userImage =
+    userInfo?.user?.image ||
+    userInfo?.userData?.image ||
+    guestInfo?.userData?.image;
 
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?.fullName;
@@ -80,17 +93,33 @@ const ClientDrawerContent = props => {
         text: 'Sign Out',
         style: 'destructive',
         onPress: async () => {
-          const success = await dispatch(loginData());
-          dispatch(setImage(''));
-          dispatch(setToken())
+          let success = false;
 
-          if (success) {
-            navigation.reset({
-              index: 0,
-              routes: [{name: 'loginChoice'}],
-            });
-          } else {
-            Alert.alert('Error', 'Failed to sign out. Please try again.', [
+          try {
+            if (guestInfo) {
+              dispatch(setGuestToken());
+              dispatch(guestLoginData());
+              success = true;
+            } else {
+              await dispatch(loginData());
+              dispatch(setImage(''));
+              dispatch(setToken());
+              success = true;
+            }
+
+            if (success) {
+              props.navigation.reset({
+                index: 0,
+                routes: [{name: 'loginChoice'}],
+              });
+            } else {
+              Alert.alert('Error', 'Failed to sign out. Please try again.', [
+                {text: 'OK'},
+              ]);
+            }
+          } catch (error) {
+            console.error('Sign out error:', error);
+            Alert.alert('Error', 'Something went wrong. Please try again.', [
               {text: 'OK'},
             ]);
           }
@@ -139,10 +168,7 @@ const ClientDrawerContent = props => {
             props.navigation.closeDrawer();
             navigation.navigate('mainProfile', {data: user});
           }}>
-          <Image
-            source={userImgSource}
-            style={styles.avatar}
-          />
+          <Image source={userImgSource} style={styles.avatar} />
           <Text style={styles.userName}>{userName}</Text>
         </TouchableOpacity>
 
@@ -287,7 +313,7 @@ const ClientDrawerContent = props => {
         <Text style={styles.drawerItemText}>Sync all info</Text>
         {asyncLoading && (
           <View style={{position: 'absolute', right: 0}}>
-            <ActivityIndicator color={Color.primaryColor} />
+            <CustomLoader size={'small'} />
           </View>
         )}
       </TouchableOpacity>

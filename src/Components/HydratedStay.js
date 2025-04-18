@@ -560,11 +560,11 @@ import {
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
-import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
 
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GetWaterIntakeDetails,
   SetWaterIntakeDetails,
@@ -575,12 +575,12 @@ import Feather from 'react-native-vector-icons/Feather';
 import Drop from '../assets/Images/drop.svg';
 import Bottle from '../assets/Images/bottel.svg';
 import Glass from '../assets/Images/glass.svg';
-import {Shadow} from 'react-native-shadow-2';
-import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
+import { Font } from '../assets/styles/Fonts';
+import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {  getWaterIntake } from '../redux/client';
+import { getWaterIntake } from '../redux/client';
 
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 import CustomShadow from './CustomShadow';
@@ -612,7 +612,7 @@ const HydratedStay = () => {
 
   const totalGoal = waterIntake?.waterIntakeData?.waterIntakeLimit || 2;
 
-  
+
 
   const resetLocalWaterData = async () => {
     await AsyncStorage.multiSet([
@@ -664,7 +664,7 @@ const HydratedStay = () => {
         setSevenTeenL((prev) => {
 
           const updated = prev + amount;
-            return updated;
+          return updated;
         });
       }
 
@@ -747,20 +747,20 @@ const HydratedStay = () => {
     setCurrentProgress(total + sevenL + seventeenL);
   }, [waterData]);
 
-useEffect(() => {
-  if (!hasLoaded || totalGoal === 0) return;
+  useEffect(() => {
+    if (!hasLoaded || totalGoal === 0) return;
 
-  const progress = localIntake / (totalGoal * 1000);
-  const progressPercentage = Math.min(progress * 100, 100);
+    const progress = localIntake / (totalGoal * 1000);
+    const progressPercentage = Math.min(progress * 100, 100);
 
-  widthAnimation.setValue(progressPercentage);
+    widthAnimation.setValue(progressPercentage);
 
-  Animated.timing(widthAnimation, {
-    toValue: progressPercentage,
-    duration: 1000,
-    useNativeDriver: false,
-  }).start();
-}, [localIntake, totalGoal, hasLoaded]);
+    Animated.timing(widthAnimation, {
+      toValue: progressPercentage,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  }, [localIntake, totalGoal, hasLoaded]);
 
 
 
@@ -821,11 +821,11 @@ useEffect(() => {
                 label: 'Custom',
                 Icon: Drop,
                 onPress: () =>
-                  navigation.navigate('waterIntakeLog', {plusData}),
+                  navigation.navigate('waterIntakeLog', { plusData }),
               },
-            ].map(({label, Icon, onPress}, idx) => (
-              <View style={{width: '30%'}}>
-                 <CustomShadow color={Color.lightgray}>
+            ].map(({ label, Icon, onPress }, idx) => (
+              <View style={{ width: '30%' }}>
+                <CustomShadow color={Color.lightgray}>
                   <View key={label + idx}>
                     <TouchableOpacity
                       style={styles.waterCardView}

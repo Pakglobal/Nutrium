@@ -9,20 +9,20 @@ import {
   Pressable,
   Image,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Color} from '../assets/styles/Colors';
-import {useNavigation} from '@react-navigation/native';
+import { Color } from '../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
 import Logo from '../assets/Images/logoWhite.svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import {Shadow} from 'react-native-shadow-2';
-import IconStyle, {IconPadding} from '../assets/styles/Icon';
-import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import { Shadow } from 'react-native-shadow-2';
+import IconStyle, { IconPadding } from '../assets/styles/Icon';
+import { Font } from '../assets/styles/Fonts';
+import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
 
 const Header = ({
@@ -34,12 +34,12 @@ const Header = ({
   handleSave,
   handleNotification,
   handleAward,
-  rightHeaderButton = true,  onPress
+  rightHeaderButton = true, onPress
 
 }) => {
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={{backgroundColor: Color.white, zIndex: 1}}>
+    <SafeAreaView style={{ backgroundColor: Color.white, zIndex: 1 }}>
       <CustomShadow radius={4}>
         <View style={styles.header}>
           {logoHeader && (
@@ -62,9 +62,9 @@ const Header = ({
                     borderBottomLeftRadius: scale(12),
                     borderBottomRightRadius: scale(12),
                   }}>
-                  <Logo style={{marginLeft: scale(7)}} />
+                  <Logo style={{ marginLeft: scale(7) }} />
 
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={handleAward} style={{}}>
                       <FontAwesome5
                         style={IconPadding}
@@ -110,11 +110,11 @@ const Header = ({
                   borderBottomRightRadius: scale(12),
                   marginHorizontal: scale(8),
                 }}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <TouchableOpacity
 
-                    onPress={() => {navigation.goBack(),onPress}}
-                    style={{padding: scale(5), alignSelf: 'center'}}>
+                    onPress={() => { navigation.goBack(), onPress }}
+                    style={{ padding: scale(5), alignSelf: 'center' }}>
 
                     <AntDesign
                       name="arrowleft"
@@ -129,7 +129,7 @@ const Header = ({
                   (plus ? (
                     <TouchableOpacity
                       onPress={handlePlus}
-                      style={{padding: scale(8)}}>
+                      style={{ padding: scale(8) }}>
                       <AntDesign
                         name="pluscircle"
                         size={IconStyle.headerIconSize}
@@ -139,7 +139,7 @@ const Header = ({
                   ) : (
                     <TouchableOpacity
                       onPress={handleSave}
-                      style={{padding: scale(8)}}>
+                      style={{ padding: scale(8) }}>
                       <Text style={styles.saveStyle}>Save</Text>
                     </TouchableOpacity>
                   ))}
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: scale(12),
     shadowColor: Color?.black,
     shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
     zIndex: 1,
   },

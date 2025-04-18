@@ -209,7 +209,7 @@ const HomeScreen = () => {
 
                 <OnOffFunctionality />
 
-                <View style={{ marginBottom: verticalScale(160) }}>
+                <View style={{ marginBottom: verticalScale(250) }}>
                   <CustomShadow radius={4}>
                     <PhysicalActivity
                       header={true}

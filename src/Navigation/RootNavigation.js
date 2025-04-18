@@ -99,6 +99,8 @@ const ClientDrawerNavigator = () => {
         },
       }}>
       <ClientDrawer.Screen name="ClientHome" component={ClientHomeWithDrawer} />
+      <ClientDrawer.Screen name="ChallengesScreen" component={ChallengesScreen} />
+
     </ClientDrawer.Navigator>
   );
 };

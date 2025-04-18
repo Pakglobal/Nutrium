@@ -31,7 +31,8 @@ const MessageScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
   const clientData = useSelector(state => state?.admin?.clientInfo);
 
   useEffect(() => {

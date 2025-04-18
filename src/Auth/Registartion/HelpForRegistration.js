@@ -98,14 +98,14 @@ const styles = StyleSheet.create({
   titleFont: {
     color: Color.black,
     fontWeight: '700',
-    fontSize: verticalScale(18),
+    fontSize: scale(18),
     marginTop: verticalScale(35),
     marginVertical: verticalScale(25),
   },
   subTitleFont: {
     color: Color.txt,
     fontWeight: '500',
-    fontSize: verticalScale(16),
+    fontSize: scale(16),
     marginBottom: verticalScale(5),
   },
   pointCircle: {
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   discriptionFont: {
     color: '#616161',
     fontWeight: '500',
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
   },
   boldText: {
     fontWeight: 'bold',

@@ -123,7 +123,7 @@ const LogPhysicalActivity = ({route}) => {
             <Pressable style={styles.clearButton} onPress={clearSearch}>
               <AntDesign
                 name="close"
-                size={verticalScale(22)}
+                size={verticalScale(18)}
                 color={Color.primaryColor}
               />
             </Pressable>
@@ -218,8 +218,9 @@ const styles = StyleSheet.create({
     color: Color.textColor,
     width: '85%',
     marginHorizontal: scale(8),
-    fontFamily:Font?.PoppinsMedium,
-    marginTop: verticalScale(2)
+    // fontFamily:Font?.PoppinsMedium,
+    marginTop: verticalScale(2),
+    height: scale(35)
   },
   clearButton: {
     marginEnd: scale(10),

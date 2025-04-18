@@ -33,9 +33,10 @@ const FoodDiary = () => {
   const [diaryData, setDiaryData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+    const tokenId = useSelector(state => state?.user?.token);
+    const guestTokenId = useSelector(state => state?.user?.guestToken);
+    const token = tokenId?.token || guestTokenId?.token;
+    const id = tokenId?.id || guestTokenId?.id;
 
   const getDateString = () => {
     if (dayOffset === 0) return 'Today';
@@ -141,16 +142,11 @@ const FoodDiary = () => {
 
   return (
     <View style={styles.container}>
-      {/* <BackHeader
-        titleName={'}
-        onPressBack={() => navigation.goBack()}
-        onPress={() => navigation.navigate('addMeal')}
-      /> */}
-      <Header
-        showIcon={false}
-        backIcon={true}
-        screenName="Food diary"
-        iconStyle={{left: scale(-80)}}
+    
+       <Header
+        screenheader={true}
+        screenName={'Food Diary'}
+        plus={true}
       />
       <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}

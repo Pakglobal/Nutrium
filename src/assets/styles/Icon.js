@@ -16,7 +16,6 @@ export default IconStyle;
 export const IconPadding = {
   paddingVertical: verticalScale(5),
   paddingHorizontal: scale(7),
-  // backgroundColor: 'red'
 };
 
 export const IconBg = {
@@ -24,7 +23,6 @@ export const IconBg = {
   width: scale(25),
   alignItems: 'center',
   justifyContent: 'center',
-  // backgroundColor: 'red'
 };
 
 export const LeftIcon = ({onGoBack}) => {

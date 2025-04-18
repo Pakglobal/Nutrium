@@ -34,7 +34,8 @@ const ClientScreen = () => {
   const dispatch = useDispatch();
 
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
 
   useEffect(() => {
     fetchData();

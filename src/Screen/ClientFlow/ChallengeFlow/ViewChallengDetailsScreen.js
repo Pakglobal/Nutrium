@@ -19,7 +19,6 @@ const ViewChallengDetailsScreen = ({ route }) => {
 
     const fetchLeaderbordData = async () => {
         const responce = await getChallengeLederBoardData(userInfo?.token, challenge?._id)
-        console.log("-=-");
 
         if (responce?.leaderboard) {
 

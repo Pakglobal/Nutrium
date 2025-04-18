@@ -14,6 +14,8 @@ export const GetAppointmentByClientId = async (token, id) => {
   } catch (error) {
     if (error?.response?.status === 404) {
       return [];
+    } else if (error?.response?.status === 401) {
+      return [];
     } else {
       console.error('Error fetching get appointment by client:', error);
       throw error;
@@ -36,6 +38,6 @@ export const UpdateAppointmentStatus = async (token, appointmentId, data) => {
 
     return response?.data;
   } catch (error) {
-    console.error('Error fetching update physical activity', error);
+    console.error('Error fetching update appointment status', error);
   }
 };

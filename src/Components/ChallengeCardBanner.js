@@ -10,17 +10,22 @@ const CARD_WIDTH = width * 0.85;
 const SPACING = (width - CARD_WIDTH) / 2;
 const ChallengeCardBanner = ({ challenge, onJoin }) => {
     return (
+        // <LinearGradient
+        //     colors={[
+        //         Color.primaryColor,
+        //         Color.primaryColor,
+        //         Color.primaryLight
+        //     ]}
+        //     locations={[0, 0.6, 1]}
+        //     start={{ x: 0, y: 0 }}
+        //     end={{ x: 1, y: 1 }}
+        //     style={styles.card}
+        // >
         <LinearGradient
-            colors={[
-                Color.primaryColor,
-                Color.primaryColor,
-                Color.primaryLight
-            ]}
-            locations={[0, 0.6, 1]}
+            colors={['#21972B', '#6BCB77']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.card}
-        >
+            style={styles.card}>
             <View style={styles.badge}>
                 <Text style={styles.badgeText}>Featured</Text>
             </View>

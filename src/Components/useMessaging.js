@@ -151,7 +151,6 @@ const MessageComponent = ({
     });
 
     const messageHandler = newMessage => {
-      console.log('newMessage', newMessage);
 
       setMessages(prevMessages => {
         const messageExists = prevMessages.some(
@@ -183,13 +182,11 @@ const MessageComponent = ({
     onReceiveMessage(messageHandler);
 
     const messagesSeenHandler = data => {
-      console.log('Messages seen by other user:', data);
       if (
         data?.messageIds &&
         data?.senderId === userId &&
         data?.receiverId === otherUserId
       ) {
-        console.log('Updating seen status for our messages:', data.messageIds);
         setMessages(prevMessages =>
           prevMessages.map(msg =>
             data.messageIds.includes(msg._id) ? {...msg, seen: true} : msg,

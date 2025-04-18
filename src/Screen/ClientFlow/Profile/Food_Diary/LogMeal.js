@@ -342,7 +342,7 @@ const LogMeal = () => {
               placeholder="Anything you'd like to add about your meal?"
               placeholderTextColor={'#AAA'}
               multiline={true}
-              style={{fontSize: verticalScale(12), color: '#AAA'}}
+              style={{fontSize: scale(12), color: '#AAA'}}
               value={comments}
               onChangeText={e => setComments(e)}
             />
@@ -482,12 +482,12 @@ const styles = StyleSheet.create({
     width: '68%',
   },
   typeIcon: {
-    fontSize: verticalScale(16),
+    fontSize: scale(16),
     fontWeight: '600',
     color: Color.txt,
   },
   timeTxt: {
-    fontSize: verticalScale(13),
+    fontSize: scale(13),
     fontWeight: '600',
     color: Color.gray,
   },
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     height: '35%',
   },
   discriptinTxt: {
-    fontSize: verticalScale(12),
+    fontSize: scale(12),
     fontWeight: '500',
     color: Color.txt,
   },
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(15),
   },
   tittle: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '700',
     color: Color.txt,
     marginBottom: verticalScale(10),
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(10),
   },
   btnTxt: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '600',
     color: Color.gray,
   },

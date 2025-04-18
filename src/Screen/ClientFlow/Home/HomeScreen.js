@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,28 +8,29 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-import { Shadow } from 'react-native-shadow-2';
-import { Color } from '../../../assets/styles/Colors';
+import {Shadow} from 'react-native-shadow-2';
+import {Color} from '../../../assets/styles/Colors';
 import PhysicalActivity from '../../../Components/PhysicalActivity';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import Header from '../../../Components/Header';
 import AppointmentCard from '../../../Components/AppointmentCard';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   GetProfileImageApi,
   GetUserApi,
 } from '../../../Apis/ClientApis/ProfileApi';
-import { GetAppointmentByClientId } from '../../../Apis/ClientApis/ClientAppointmentApi';
+import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
-import { shadowStyle, ShadowValues } from '../../../assets/styles/Shadow';
+import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
-import { loginData, profileData } from '../../../redux/user';
-import { setImage } from '../../../redux/client';
-import { TouchableOpacity } from 'react-native';
+import {loginData, profileData} from '../../../redux/user';
+import {setImage} from '../../../redux/client';
+import {TouchableOpacity} from 'react-native';
+import CustomLoader from '../../../Components/CustomLoader';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -41,11 +42,11 @@ const HomeScreen = () => {
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  const isGuest = useSelector(state => state.user?.guestMode);
-
   const tokenId = useSelector(state => state?.user?.token);
-  const token = tokenId?.token;
-  const id = tokenId?.id;
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
+  console.log(token, id, 'tokenid');
 
   const dispatch = useDispatch();
 
@@ -106,18 +107,18 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    if (isGuest) {
-      return;
-    } else {
-      FetchAppointmentData();
-      GetProfileImage();
+    FetchAppointmentData();
+    GetProfileImage();
+    if (tokenId) {
       GetUserApiData();
     }
   }, [token, id]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    GetUserApiData();
+    if (tokenId) {
+      GetUserApiData();
+    }
     GetProfileImage();
     FetchAppointmentData()
       .then(() => {
@@ -128,14 +129,25 @@ const HomeScreen = () => {
       });
   }, []);
   const handleGoToChallenge = () => {
-    navigation.navigate('ChallengesScreen')
+    navigation.navigate('ChallengesScreen');
   };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header logoHeader={true} />
+
+      {/* <View>
+        {loading ? (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: verticalScale(20),
+            }}>
+            <ActivityIndicator size="large" color={Color.primaryColor} /> */}
       <TouchableOpacity
         style={{
-          backgroundColor: 'green', // Your theme color
+          backgroundColor: Color?.primaryColor,
           paddingVertical: 12,
           paddingHorizontal: 20,
           borderRadius: 10,
@@ -143,86 +155,45 @@ const HomeScreen = () => {
           marginVertical: 16,
           marginHorizontal: 20,
         }}
-        onPress={handleGoToChallenge}
-      >
-        <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
+        onPress={handleGoToChallenge}>
+        <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
           Go to Challenge
         </Text>
       </TouchableOpacity>
-      {isGuest ? (
-        <ScrollView
-          style={{ backgroundColor: Color.white, paddingHorizontal: scale(8) }}>
-          <View style={{ paddingHorizontal: scale(10) }}>
-            <View style={{ marginVertical: scale(10) }}>
-              <CustomShadow style={{ width: '100%', borderRadius: scale(10) }}>
-                <MealsLikeInHome />
-              </CustomShadow>
-            </View>
 
-            <MoreForYou />
-            <View style={{ marginVertical: scale(10) }}>
-              <CustomShadow style={{ width: '100%', borderRadius: scale(10) }}>
-                <HydratedStay />
-              </CustomShadow>
-            </View>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}>
+        <View
+          style={{
+            paddingHorizontal: scale(16),
+          }}>
+          <AppointmentCard
+            refreshAppointments={FetchAppointmentData}
+            activeAppointments={activeAppointments}
+            setActiveAppointments={setActiveAppointments}
+            selectedAppointment={selectedAppointment}
+            setSelectedAppointment={setSelectedAppointment}
+          />
+          <MealsLikeInHome />
+
+          <MoreForYou />
+          <OnOffFunctionality />
+
+          <HydratedStay />
+          <OnOffFunctionality />
+
+          <View style={{marginBottom: verticalScale(90)}}>
+            <PhysicalActivity
+              header={true}
+              subHeader={true}
+              bottomButton={true}
+            />
           </View>
-        </ScrollView>
-      ) : (
-        <View>
-          {loading ? (
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: verticalScale(20),
-              }}>
-              <ActivityIndicator size="large" color={Color.primaryColor} />
-            </View>
-          ) : (
-            <ScrollView
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              showsVerticalScrollIndicator={false}>
-              <View
-                style={{
-                  paddingHorizontal: scale(16),
-                  marginTop: verticalScale(12),
-                }}>
-                <AppointmentCard
-                  refreshAppointments={FetchAppointmentData}
-                  activeAppointments={activeAppointments}
-                  setActiveAppointments={setActiveAppointments}
-                  selectedAppointment={selectedAppointment}
-                  setSelectedAppointment={setSelectedAppointment}
-                />
-                <CustomShadow radius={4}>
-                  <MealsLikeInHome />
-                </CustomShadow>
-
-                <MoreForYou />
-                <OnOffFunctionality />
-
-                <CustomShadow radius={4}>
-                  <HydratedStay />
-                </CustomShadow>
-
-                <OnOffFunctionality />
-
-                <View style={{ marginBottom: verticalScale(160) }}>
-                  <CustomShadow radius={4}>
-                    <PhysicalActivity
-                      header={true}
-                      subHeader={true}
-                      bottomButton={true}
-                    />
-                  </CustomShadow>
-                </View>
-              </View>
-            </ScrollView>
-          )}
         </View>
-      )}
+      </ScrollView>
     </SafeAreaView>
   );
 };

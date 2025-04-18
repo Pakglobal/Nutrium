@@ -36,104 +36,120 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
   };
 
   return (
-    <View style={shadowStyle}>
-      <View style={[styles.workoutContainer, style]}>
+    <View style={{marginVertical: verticalScale(18)}}>
+      <CustomShadow radius={3}>
         <View style={shadowStyle}>
-          {header && (
-            <Text style={styles.description}>Your physical activity</Text>
-          )}
-          {subHeader && (
-            <Text
-              style={[
-                styles.description,
-                {fontSize: scale(14), marginTop: scale(7), color: '#344C5C'},
-              ]}>
-              Workouts this week
-            </Text>
-          )}
+          <View style={[styles.workoutContainer, style]}>
+            <View style={shadowStyle}>
+              {header && (
+                <Text style={styles.description}>Your physical activity</Text>
+              )}
+              {subHeader && (
+                <Text
+                  style={[
+                    styles.description,
+                    {
+                      fontSize: scale(14),
+                      marginTop: verticalScale(5),
+                      color: '#344C5C',
+                    },
+                  ]}>
+                  Workouts this week
+                </Text>
+              )}
 
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}>
-            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(
-              (day, index) => (
-                <View
-                  key={day}
-                  style={{
-                    alignSelf: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <View style={styles.day}>
-                    {currentDay === index && (
-                      <Text
-                        style={{
-                          color: Color.white,
-                          textAlign: 'center',
-                          fontSize: scale(11),
-                          fontWeight: '500',
-                          fontFamily: Font.PoppinsMedium,
-                          marginTop: verticalScale(2),
-                        }}
-                        numberOfLines={1}
-                        adjustsFontSizeToFit={true}>
-                        {formatNumber(steps)}
-                      </Text>
-                    )}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}>
+                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(
+                  (day, index) => (
+                    <View
+                      key={day}
+                      style={{
+                        alignSelf: 'center',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <View style={styles.day}>
+                        {currentDay === index && (
+                          <Text
+                            style={{
+                              color: Color.white,
+                              textAlign: 'center',
+                              fontSize: scale(12),
+                              fontWeight: '500',
+                              fontFamily: Font.PoppinsMedium,
+                              marginTop: verticalScale(2),
+                            }}
+                            numberOfLines={1}
+                            adjustsFontSizeToFit={true}>
+                            {formatNumber(steps)}
+                          </Text>
+                        )}
+                      </View>
+                      <Text style={styles.dayText}>{day}</Text>
+                    </View>
+                  ),
+                )}
+              </View>
+            </View>
+
+            <View
+              style={[
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: verticalScale(10),
+                  marginBottom: verticalScale(5),
+                  width: '100%',
+                },
+              ]}>
+              <View style={{width: '45%'}}>
+                <CustomShadow color={Color.lightgray}>
+                  <View style={styles.imageWrapper}>
+                    <Text
+                      style={[
+                        styles.description,
+                        {textAlign: 'center', fontSize: scale(14)},
+                      ]}>
+                      calories
+                    </Text>
+                    <Text style={styles.zero} numberOfLines={1}>
+                      {calories}
+                    </Text>
                   </View>
-                  <Text style={styles.dayText}>{day}</Text>
-                </View>
-              ),
+                </CustomShadow>
+              </View>
+
+              <View style={{width: '45%'}}>
+                <CustomShadow color={Color.lightgray}>
+                  <View style={styles.imageWrapper}>
+                    <Text
+                      style={[
+                        styles.description,
+                        {textAlign: 'center', fontSize: scale(14)},
+                      ]}>
+                      steps
+                    </Text>
+                    <Text style={styles.zero}>{steps}</Text>
+                  </View>
+                </CustomShadow>
+              </View>
+            </View>
+
+            {bottomButton && (
+              <CustomHomeButtonNavigation
+                text={'See All Physical Activity Stats'}
+                onPress={() => navigation.navigate('physicalActivity')}
+              />
             )}
           </View>
         </View>
-
-        <View
-          style={[
-            {
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginTop: verticalScale(10),
-              marginBottom: verticalScale(5),
-              width: '100%',
-            },
-          ]}>
-          <View style={{width: '45%'}}>
-            <CustomShadow color={Color.lightgray}>
-              <View style={styles.imageWrapper}>
-                <Text style={[styles.description, {textAlign: 'center', fontSize: scale(14)}]}>
-                  calories
-                </Text>
-                <Text style={styles.zero} numberOfLines={1}>
-                  {calories}
-                </Text>
-              </View>
-            </CustomShadow>
-          </View>
-
-          <View style={{width: '45%'}}>
-            <CustomShadow color={Color.lightgray}>
-              <View style={styles.imageWrapper}>
-              <Text style={[styles.description, {textAlign: 'center', fontSize: scale(14)}]}>
-              steps
-            </Text>
-            <Text style={styles.zero}>{steps}</Text>
-              </View>
-            </CustomShadow>
-          </View>
-        </View>
-
-        {bottomButton && (
-          <CustomHomeButtonNavigation
-            text={'See All Physical Activity Stats'}
-            onPress={() => navigation.navigate('physicalActivity')}
-          />
-        )}
-      </View>
+      </CustomShadow>
     </View>
   );
 };
@@ -149,7 +165,7 @@ const styles = StyleSheet.create({
     padding: scale(10),
   },
   title: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '500',
     color: Color.txt,
     marginHorizontal: scale(16),
@@ -170,7 +186,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
   },
   txt: {
-    fontSize: verticalScale(12),
+    fontSize: scale(12),
     fontWeight: '600',
     color: Color.white,
     marginTop: scale(8),
@@ -185,7 +201,8 @@ const styles = StyleSheet.create({
   day: {
     borderRadius: scale(20),
     backgroundColor: Color?.primaryColor,
-    marginVertical: verticalScale(8),
+    marginTop: verticalScale(8),
+    marginBottom: verticalScale(5),
     height: scale(30),
     width: scale(30),
     shadowColor: Color?.black,
@@ -193,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dayText: {
-    fontSize: scale(11),
+    fontSize: scale(12),
     color: Color.primaryColor,
     fontWeight: '500',
     textAlign: 'center',
@@ -204,7 +221,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(8),
     backgroundColor: Color.white,
     borderWidth: 1,
-    borderColor: Color.primaryColor
+    borderColor: Color.primaryColor,
   },
   zero: {
     color: Color.textColor,

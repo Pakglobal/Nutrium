@@ -14,27 +14,31 @@ import Food from '../assets/Images/Food.svg';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
+import CustomShadow from './CustomShadow';
 
 const MealsLikeInHome = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={shadowStyle}>
+    <View style={{marginTop: verticalScale(18)}}>
+      <CustomShadow radius={3}>
+        <View style={shadowStyle}>
+          <View style={{padding: scale(10)}}>
+            <Text style={styles.title}>What were your meals like?</Text>
+            <View style={styles.cardContainer}>
+              <Food width={'100%'} height={verticalScale(150)} />
+              <Text style={styles.discription}>
+                Log more meals and get the {'\n'}bigger picture of your days.
+              </Text>
+            </View>
 
-    <View style={{padding: scale(10)}}>
-      <Text style={styles.title}>What were your meals like?</Text>
-      <View style={styles.cardContainer}>
-        <Food width={'100%'} height={verticalScale(170)} />
-        <Text style={styles.discription}>
-          Log more meals and get the {'\n'}bigger picture of your days.
-        </Text>
-      </View>
-
-      <CustomHomeButtonNavigation
-        text={'Go to Food Diary'}
-        onPress={() => navigation.navigate('foodDiary')}
-      />
-    </View>
+            <CustomHomeButtonNavigation
+              text={'Go to Food Diary'}
+              onPress={() => navigation.navigate('foodDiary')}
+            />
+          </View>
+        </View>
+      </CustomShadow>
     </View>
   );
 };
@@ -73,7 +77,7 @@ const styles = StyleSheet.create({
     marginLeft: scale(5),
   },
   title: {
-    fontSize: verticalScale(14),
+    fontSize: scale(14),
     fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font?.PoppinsMedium,

@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
   },
   titleTxt: {
-    fontSize: verticalScale(20),
+    fontSize: scale(20),
     color: Color.black,
     fontWeight: '600',
     marginTop: verticalScale(25),

@@ -48,11 +48,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: verticalScale(10),
+    marginTop: verticalScale(5),
     
   },
   dateTxt: {
-    fontSize: verticalScale(12),
+    fontSize: scale(12),
     color: Color.primaryColor,
     fontWeight: '600',
     fontFamily: Font?.PoppinsMedium,

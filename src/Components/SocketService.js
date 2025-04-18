@@ -68,7 +68,6 @@ export const markMessagesAsSeen = (messageIds, senderId, receiverId) => {
     return false;
   }
 
-  console.log('📢 Marking messages as seen:', messageIds);
   socket.emit('messagesSeen', {messageIds, senderId, receiverId});
   return true;
 };
@@ -81,7 +80,6 @@ export const onMessagesSeen = callback => {
 
   socket.off('messagesSeen');
   socket.on('messagesSeen', data => {
-    console.log('✅ Messages marked as seen:', data);
     callback(data);
   });
 
@@ -98,7 +96,6 @@ export const onUnreadMessages = callback => {
 
   socket.off('unreadMessages');
   socket.on('unreadMessages', data => {
-    console.log('📩 Received unread messages:', data);
     callback(data);
   });
 
@@ -123,7 +120,6 @@ export const sendMessage = async (
       tempId,
       seen: false,
     };
-    console.log('messageDatamessageData', messageData);
 
     if (socket && socket.connected) {
       socket.emit('sendMessage', messageData);
@@ -168,7 +164,6 @@ export const onReceiveMessage = callback => {
 
 export const leaveRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
-    console.log(`📢 Leaving room: ${userId}-${otherUserId}`);
     socket.emit('leave', {userId, otherUserId});
     return true;
   } else {

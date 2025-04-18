@@ -53,11 +53,11 @@ import ChallengesDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/Challeng
 import ViewChallengDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ViewChallengDetailsScreen';
 import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScreen';
 import ForgotPasswordScreen from '../Auth/Login/ForgotPasswordScreen';
- 
+
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const ClientDrawer = createDrawerNavigator();
- 
+
 const ClientDrawerNavigator = () => {
   return (
     <ClientDrawer.Navigator
@@ -68,7 +68,7 @@ const ClientDrawerNavigator = () => {
           width: '70%',
         },
       }}>
-      <ClientDrawer.Screen name="ClientHome" component={ClientHomeWithDrawer} />
+      <ClientDrawer.Screen name="ClientHome" component={BottomNavigation} />
       <ClientDrawer.Screen name="ChallengesScreen" component={ChallengesScreen} />
     </ClientDrawer.Navigator>
   );
@@ -117,11 +117,11 @@ const AdminFlowStack = () => (
     <Stack.Screen name="Messages" component={MessageClient} />
   </Stack.Navigator>
 );
- 
-const AuthStack = ({route}) => {
-  const {onboardingCompleted} = route.params || {};
-  
- 
+
+const AuthStack = ({ route }) => {
+  const { onboardingCompleted } = route.params || {};
+
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!onboardingCompleted ? (
@@ -197,8 +197,8 @@ const MainStack = () => {
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
   const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);
   console.log(demoClient);
-  
- 
+
+
   if (onboardingCompleted === null) {
     return null;
   }

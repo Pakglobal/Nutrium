@@ -40,7 +40,7 @@ const Header = ({
 }) => {
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={{backgroundColor: Color.white, zIndex: 1}}>
+    <SafeAreaView style={{ backgroundColor: Color.white, zIndex: 1 }}>
       <CustomShadow radius={4} color={Color.gray}>
         <View style={styles.header}>
           {logoHeader && (
@@ -109,7 +109,7 @@ const Header = ({
                 marginHorizontal: scale(8),
                 height: verticalScale(60),
               }}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity
                   onPress={() => {
                     navigation.goBack();
@@ -125,51 +125,29 @@ const Header = ({
               </View>
               {rightHeaderButton &&
                 (plus ? (
-                  <TouchableOpacity onPress={handlePlus} style={IconPadding}>
+                  <TouchableOpacity
+                    onPress={handlePlus}
+                    style={{ padding: scale(8) }}>
                     <AntDesign
                       name="pluscircle"
                       size={IconStyle.headerIconSize}
                       color={Color.white}
                     />
                   </TouchableOpacity>
-                  <Text style={styles.screenName}>{screenName}</Text>
-                </View>
-
-                {rightHeaderButton &&
-                  (plus ? (
-                    <TouchableOpacity
-                      onPress={handlePlus}
-                      style={{ padding: scale(8) }}>
-                      <AntDesign
-                        name="pluscircle"
-                        size={IconStyle.headerIconSize}
-                        color={Color.white}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={handleSave}
-                      style={{ padding: scale(8) }}>
-                      <Text style={styles.saveStyle}>Save</Text>
-                    </TouchableOpacity>
-                  ))}
-              </View>
+                ) : loading ? (
+                  <CustomLoader color={Color.white} size={'small'} />
                 ) : (
-                  <TouchableOpacity onPress={handleSave} style={IconPadding}>
-                    {
-                      loading ? (
-                        <CustomLoader color={Color.white} size={'small'} />
-                      ) : (
-                        <Text style={styles.saveStyle}>Save</Text>
-                      )
-                    }
+                  <TouchableOpacity
+                    onPress={handleSave}
+                    style={{ padding: scale(8) }}>
+                    <Text style={styles.saveStyle}>Save</Text>
                   </TouchableOpacity>
                 ))}
             </View>
           )}
         </View>
       </CustomShadow>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 };
 

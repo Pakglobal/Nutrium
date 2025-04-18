@@ -571,10 +571,7 @@ const HydratedStay = ({ route }) => {
     }, 0);
   };
 
-          const updated = prev + amount;
-          return updated;
-        });
-      }
+
 
   const getData = async () => {
     try {
@@ -633,17 +630,17 @@ const HydratedStay = ({ route }) => {
 
   useEffect(() => {
     if (intake === 0) {
-   
+
       setLocalIntake(0);
       setCurrentProgress(0);
       widthAnimation.setValue(0);
     } else if (intake !== undefined) {
-     
+
       setLocalIntake(intake);
     }
   }, [intake]);
 
- 
+
   useEffect(() => {
     const total = (waterData?.waterIntakes || []).reduce(
       (sum, entry) => sum + (entry?.amount || 0) / 1000,

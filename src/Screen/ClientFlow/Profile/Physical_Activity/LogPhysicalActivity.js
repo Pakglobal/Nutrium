@@ -9,7 +9,7 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { scale, verticalScale } from 'react-native-size-matters';
@@ -26,7 +26,7 @@ import { Font } from '../../../../assets/styles/Fonts';
 import CustomShadow from '../../../../Components/CustomShadow';
 import CustomLoader from '../../../../Components/CustomLoader';
 
-const LogPhysicalActivity = ({route}) => {
+const LogPhysicalActivity = ({ route }) => {
   const token = route?.params?.plusData?.token;
   const id = route?.params?.plusData?.id;
   const plus = route?.params?.plusData?.press === 'plus';
@@ -109,7 +109,7 @@ const LogPhysicalActivity = ({route}) => {
 
       <Header screenheader={true} screenName={'Physical Activity'} rightHeaderButton={false} />
 
-      <View style={{marginHorizontal: scale(16)}}>
+      <View style={{ marginHorizontal: scale(16) }}>
         <Text style={styles.topTitle}>Log Physical Activity</Text>
         <CustomShadow>
           <View style={styles.searchContainer}>
@@ -132,18 +132,18 @@ const LogPhysicalActivity = ({route}) => {
       </View>
 
       {loading ? (
-       <CustomLoader />
+        <CustomLoader viewStyle={{ marginTop: verticalScale(15) }} />
       ) : filteredData?.length > 0 ? (
         <FlatList
           data={filteredData}
           ListHeaderComponent={
-            <View style={{marginHorizontal: scale(16)}}>
+            <View style={{ marginHorizontal: scale(16) }}>
               {quickAccessData?.length > 0 && (
                 <View>
                   <Text style={styles.title}>Quick access</Text>
                   {quickAccessData?.map((item, index) => (
                     <TouchableOpacity
-                    style={{marginVertical: verticalScale(5)}}
+                      style={{ marginVertical: verticalScale(5) }}
                       key={index}
                       onPress={() =>
                         handlePressItem(item?.activity, item?.time)
@@ -160,10 +160,10 @@ const LogPhysicalActivity = ({route}) => {
               <Text style={styles.title}>All physical activities</Text>
             </View>
           }
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handlePressItem(item?.activity)}
-              style={{marginHorizontal: scale(16)}}>
+              style={{ marginHorizontal: scale(16) }}>
               <Text style={styles.name}>{item?.activity}</Text>
             </TouchableOpacity>
           )}
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(15),
     fontSize: scale(16),
     fontWeight: '500',
-    fontFamily:Font?.PoppinsMedium,
+    fontFamily: Font?.PoppinsMedium,
   },
   inputView: {
     fontSize: scale(12),
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     color: Color.textColor,
     fontWeight: '500',
-    fontFamily:Font?.Poppins
+    fontFamily: Font?.Poppins
   },
   name: {
     fontSize: scale(12),
@@ -231,21 +231,21 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
-    color:'#675A5A',
-    fontFamily:Font?.Poppins
+    color: '#675A5A',
+    fontFamily: Font?.Poppins
   },
   activity: {
     fontSize: scale(12),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily:Font?.PoppinsMedium
+    fontFamily: Font?.PoppinsMedium
   },
   time: {
     fontSize: scale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
     color: '#999595',
-    fontFamily:Font?.Poppins,
+    fontFamily: Font?.Poppins,
     paddingBottom: verticalScale(5)
   },
   emptyContainer: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   emptyText: {
     color: Color.gray,
     fontSize: scale(14),
-    fontFamily:Font?.Poppins
+    fontFamily: Font?.Poppins
 
   },
 });

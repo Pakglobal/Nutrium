@@ -36,11 +36,13 @@ import CustomeDropDown from '../../../Components/CustomeDropDown';
 const SelectCountry = ({ route }) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
-  // const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [country, setCountry] = useState('');
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+
+
   const [hasNumberError, setHasNumberError] = useState(false);
 
   const selectGender = route?.params;
@@ -148,9 +150,9 @@ const SelectCountry = ({ route }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
+  // const showDatePicker = () => {
+  //   setDatePickerVisibility(true);
+  // };
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
@@ -211,32 +213,13 @@ const SelectCountry = ({ route }) => {
           {showCountryDropdown && (
             <View style={styles.dropdown}>
               {countries.map(item => (
-                // <TouchableOpacity
-                //   key={item}
-                //   style={[
-                //     styles.dropdownItem,
-                //     country === item && { backgroundColor: Color.primaryColor },
-                //   ]}
-                // onPress={() => {
-                //   setCountry(item);
-                //   setShowCountryDropdown(false);
-                // }}>
-                //   <Text
-                // style={[
-                //   styles.titleText,
-                //   {
-                //     color: country === item ? Color.white : Color.textColor,
-                //   },
-                // ]}>
-                //     {item}
-                //   </Text>
-                // </TouchableOpacity>
                 <CustomeDropDown
                   keyitem={item}
                   dropdownStyle={[
                     styles.dropdownItem,
                     country === item && { backgroundColor: Color.primaryColor },
                   ]}
+                  singleSelected={true}
                   onPress={() => {
                     setCountry(item);
                     setShowCountryDropdown(false);
@@ -252,6 +235,8 @@ const SelectCountry = ({ route }) => {
               ))}
             </View>
           )}
+        
+
 
           <CustomShadow color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>
             <View style={styles.inputContainer}>
@@ -313,7 +298,7 @@ const SelectCountry = ({ route }) => {
           />
         </View>
 
-        <Button title="Show Date Picker" onPress={showDatePicker} />
+        {/* <Button title="Show Date Picker" onPress={showDatePicker} /> */}
         <Text>{selectedDate}</Text>
         <DateTimePickerModal
           isVisible={isDatePickerVisible}

@@ -196,7 +196,7 @@ const MainStack = () => {
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
   const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);
-  console.log(demoClient);
+  // console.log(demoClient);
 
 
   if (onboardingCompleted === null) {

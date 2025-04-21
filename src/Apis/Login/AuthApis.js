@@ -62,13 +62,13 @@ export const GuestLoGin = async data => {
 
 
 export const ForgotPasswordApi = async(data) => {
-  console.log(data, 'data');
   
   try {
     const body = {
       email: data?.email,
     };
-
+    
+    console.log(body, '=====');
     const url = `${BASE_URL}forget-password`;
     const response = await axios.post(url, body);
 

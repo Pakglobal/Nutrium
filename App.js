@@ -10,8 +10,45 @@ import SplashScreen from 'react-native-splash-screen';
 import NetInfo from '@react-native-community/netinfo';
 import RNRestart from 'react-native-restart';
 
+// import { startBackgroundStepTracking, stopBackgroundStepTracking } from './hooks/BackgroundStepTrackingService';
+import { NativeModules } from 'react-native';
+import { useStepTracking } from './src/Components/StepTrackingService';
+import { startBackgroundStepTracking, stopBackgroundStepTracking } from './src/Components/BackgroundStepTracking';
+const { BackgroundTaskModule } = NativeModules;
+
 const AppContent = () => {
   const dispatch = useDispatch();
+  const { isLoggedIn } = useStepTracking();
+  const { user } = useSelector(state => state);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log('User logged in, starting background step tracking');
+      
+      // For Android, we need to start a foreground service
+      if (Platform.OS === 'android') {
+        BackgroundTaskModule.startService();
+      }
+      
+      startBackgroundStepTracking();
+    } else {
+      console.log('User not logged in, stopping background step tracking');
+      
+      if (Platform.OS === 'android') {
+        BackgroundTaskModule.stopService();
+      }
+      
+      stopBackgroundStepTracking();
+    }
+    
+    return () => {
+      // Clean up on app close
+      if (Platform.OS === 'android') {
+        BackgroundTaskModule.stopService();
+      }
+      stopBackgroundStepTracking();
+    };
+  }, [isLoggedIn]);
 
   const fetchToken = async () => {
     try {
@@ -91,5 +128,3 @@ const App = () => {
 };
 
 export default App;
-
-const styles = StyleSheet.create({});

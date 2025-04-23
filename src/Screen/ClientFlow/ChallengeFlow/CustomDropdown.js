@@ -1,8 +1,15 @@
 import React from 'react';
-import { Modal, TouchableOpacity, Text, View, FlatList, StyleSheet } from 'react-native';
+import {
+  Modal,
+  TouchableOpacity,
+  Text,
+  View,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
-import { Color } from './yourColorConfig'; // Adjust the color import as needed
+import {Color} from './yourColorConfig'; // Adjust the color import as needed
 
 const CustomDropdown = ({
   label,
@@ -13,12 +20,12 @@ const CustomDropdown = ({
   setSelectedValue,
   multiple = false,
 }) => {
-  const toggleOption = (value) => {
+  const toggleOption = value => {
     if (multiple) {
-      setSelectedValue((prev) =>
+      setSelectedValue(prev =>
         prev.includes(value)
-          ? prev.filter((item) => item !== value)
-          : [...prev, value]
+          ? prev.filter(item => item !== value)
+          : [...prev, value],
       );
     } else {
       setSelectedValue(value);
@@ -30,20 +37,19 @@ const CustomDropdown = ({
     <>
       <TouchableOpacity
         style={styles.dropdownContainer}
-        onPress={() => setVisible(true)}
-      >
+        onPress={() => setVisible(true)}>
         <Text style={styles.dropdownLabel}>{label}</Text>
         <View style={styles.dropdownSelector}>
           <Text style={styles.dropdownText}>
             {multiple
               ? selectedValue.length > 0
                 ? selectedValue
-                  .map((sel) => options.find((o) => o.value === sel)?.label)
-                  .join(', ')
+                    .map(sel => options.find(o => o.value === sel)?.label)
+                    .join(', ')
                 : `Select ${label}`
               : selectedValue
-                ? options.find((o) => o.value === selectedValue)?.label
-                : `Select ${label}`}
+              ? options.find(o => o.value === selectedValue)?.label
+              : `Select ${label}`}
           </Text>
           <Ionicons name="chevron-down" size={20} color={Color.gray} />
         </View>
@@ -53,13 +59,11 @@ const CustomDropdown = ({
         transparent={true}
         visible={visible}
         animationType="slide"
-        onRequestClose={() => setVisible(false)}
-      >
+        onRequestClose={() => setVisible(false)}>
         <View style={styles.modalOverlay}>
           <LinearGradient
             colors={['#FFFFFF', '#F0F0F0']}
-            style={styles.modalContainer}
-          >
+            style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{label}</Text>
               <TouchableOpacity onPress={() => setVisible(false)}>
@@ -68,12 +72,11 @@ const CustomDropdown = ({
             </View>
             <FlatList
               data={options}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
+              keyExtractor={item => item.value}
+              renderItem={({item}) => (
                 <TouchableOpacity
                   style={styles.dropdownItem}
-                  onPress={() => toggleOption(item.value)}
-                >
+                  onPress={() => toggleOption(item.value)}>
                   <Text style={styles.dropdownItemText}>{item.label}</Text>
                   {multiple && selectedValue.includes(item.value) && (
                     <Ionicons
@@ -95,8 +98,7 @@ const CustomDropdown = ({
             {multiple && (
               <TouchableOpacity
                 style={styles.doneButton}
-                onPress={() => setVisible(false)}
-              >
+                onPress={() => setVisible(false)}>
                 <Text style={styles.doneButtonText}>Confirm</Text>
               </TouchableOpacity>
             )}

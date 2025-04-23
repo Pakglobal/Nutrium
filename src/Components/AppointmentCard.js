@@ -20,7 +20,6 @@ import {
   GetAppointmentByClientId,
   UpdateAppointmentStatus,
 } from '../Apis/ClientApis/ClientAppointmentApi';
-import {Shadow} from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';

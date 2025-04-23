@@ -13,7 +13,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {Shadow} from 'react-native-shadow-2';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {useDispatch} from 'react-redux';
@@ -22,7 +21,7 @@ import {Font} from '../../assets/styles/Fonts';
 import {LeftIcon} from '../../assets/styles/Icon';
 import Header from '../../assets/Images/forgotPassword.svg';
 import CustomShadow from '../../Components/CustomShadow';
-import { shadowStyle } from '../../assets/styles/Shadow';
+import {shadowStyle} from '../../assets/styles/Shadow';
 
 const ForgotPasswordScreen = ({route}) => {
   const email = route?.params?.data;
@@ -57,7 +56,7 @@ const ForgotPasswordScreen = ({route}) => {
                 justifyContent: 'center',
                 paddingHorizontal: scale(5),
                 backgroundColor: Color.white,
-                borderRadius: scale(6)
+                borderRadius: scale(6),
               }}>
               <TextInput
                 value={email}

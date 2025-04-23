@@ -10,7 +10,10 @@ const STORAGE_KEYS = {
 const initialState = {
   steps: 0,
   workouts: Array(7).fill(0),
-  currentDay: new Date().getDay(),
+  currentDay: (() => {
+    const jsDay = new Date().getDay();
+    return jsDay === 0 ? 6 : jsDay - 1;
+  })(),
   isTracking: false,
   lastReset: new Date().toISOString(),
 };
@@ -40,13 +43,15 @@ const stepTrackerSlice = createSlice({
       saveToStorage(STORAGE_KEYS.WORKOUTS, state.workouts);
     },
     resetSteps: state => {
-      state.workouts[state.currentDay] = state.steps;
       state.steps = 0;
-      state.currentDay = new Date().getDay();
-      state.lastReset = new Date().toISOString();
-      saveToStorage(STORAGE_KEYS.STEPS, state.steps);
-      saveToStorage(STORAGE_KEYS.WORKOUTS, state.workouts);
-      saveToStorage(STORAGE_KEYS.LAST_RESET, state.lastReset);
+      // state.workouts[state.currentDay] = state.steps;
+      // state.steps = 0;
+      // const jsDay = new Date().getDay();
+      // state.currentDay = jsDay === 0 ? 6 : jsDay - 1;
+      // state.lastReset = new Date().toISOString();
+      // saveToStorage(STORAGE_KEYS.STEPS, state.steps);
+      // saveToStorage(STORAGE_KEYS.WORKOUTS, state.workouts);
+      // saveToStorage(STORAGE_KEYS.LAST_RESET, state.lastReset);
     },
     setIsTracking: (state, action) => {
       state.isTracking = action.payload;

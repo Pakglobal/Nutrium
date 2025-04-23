@@ -1,104 +1,127 @@
+# def node_require(script)
+#   # Resolve script with node to allow for hoisting
+#   require Pod::Executable.execute_command('node', ['-p',
+#     "require.resolve(
+#       '#{script}',
+#       {paths: [process.argv[1]]},
+#    )", __dir__]).strip
+# end
+
+# # Import necessary scripts first
+# node_require('react-native/scripts/react_native_pods.rb')
+# node_require('react-native-permissions/scripts/setup.rb')
+
+# require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+# platform :ios, '13.0'
+# prepare_react_native_project!
+
+# # For react-native-permissions v5+, we use this setup approach
+# # This will handle adding the necessary permissions pods
+# setup_permissions([
+#   'Camera',
+#   'PhotoLibrary',
+#   'Notifications'
+# ])
+
+# flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+
+# pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+# pod 'Firebase', :modular_headers => true
+# pod 'FirebaseCore', :modular_headers => true
+# pod 'GoogleUtilities', :modular_headers => true
+# pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
+# # Remove these manual permission declarations - they're now handled by setup_permissions
+# # permissions_path = '../node_modules/react-native-permissions/ios'
+# # pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+# # pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+# # pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
+
+# linkage = ENV['USE_FRAMEWORKS']
+# if linkage != nil
+#   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+#   use_frameworks! :linkage => linkage.to_sym
+# end
+
+# use_modular_headers! 
+
+# target 'Nutrium' do
+#   config = use_native_modules!
+
+#   # Flags change depending on the env values.
+#   flags = get_default_flags()
+
+#   use_react_native!(
+#     :path => config[:reactNativePath],
+#     # Hermes is now enabled by default. Disable by setting this flag to false.
+#     # Upcoming versions of React Native may rely on get_default_flags(), but
+#     # we make it explicit here to aid in the React Native upgrade process.
+#     :hermes_enabled => true,
+#     :fabric_enabled => flags[:fabric_enabled],
+#     # Enables Flipper.
+#     #
+#     # Note that if you have use_frameworks! enabled, Flipper will not work and
+#     # you should disable the next line.
+#     :flipper_configuration => flipper_config,
+#     # An absolute path to your application root.
+#     :app_path => "#{Pod::Config.instance.installation_root}/.."
+#   )
+
+#   target 'NutriumTests' do
+#     inherit! :complete
+#     # Pods for testing
+#   end
+
+#   post_install do |installer|
+#     react_native_post_install(
+#       installer,
+#       # Set `mac_catalyst_enabled` to `true` in order to apply patches
+#       # necessary for Mac Catalyst builds
+#       :mac_catalyst_enabled => false
+#     )
+#     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    
+#     # Add C++ language standard setting
+#     installer.pods_project.targets.each do |target|
+#       target.build_configurations.each do |config|
+#         config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+#       end
+#     end
+#   end
+# end
+
+
+
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, min_ios_version_supported
-prepare_react_native_project!
+platform :ios, '13.0'
+install! 'cocoapods', :deterministic_uuids => false
 
-# setup_permissions([
-#   # 'AppTrackingTransparency',
-#   # 'Bluetooth',
-#   'Calendars',
-#   # 'CalendarsWriteOnly',
-#   'Camera',
-#   # 'Contacts',
-#   # 'FaceID',
-#   # 'LocationAccuracy',
-#   # 'LocationAlways',
-#   # 'LocationWhenInUse',
-#   # 'MediaLibrary',
-#   # 'Microphone',
-#   # 'Motion',
-#   # 'Notifications',
-#   'PhotoLibrary',
-#   'PhotoLibraryAddOnly',
-#   # 'Reminders',
-#   # 'Siri',
-#   # 'SpeechRecognition',
-#   # 'StoreKit',
-# ])
-
-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
-# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
-#
-# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
-# ```js
-# module.exports = {
-#   dependencies: {
-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
-# ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
-
-pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-pod 'GoogleSignIn'
-pod 'Firebase/Auth'
-pod 'FirebaseCoreInternal'
-# permissions_path = '../node_modules/react-native-permissions/ios'
-# pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
-# pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
-
-
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+use_modular_headers!
 
 target 'Nutrium' do
   config = use_native_modules!
 
-  # Flags change depending on the env values.
-  flags = get_default_flags()
-
   use_react_native!(
     :path => config[:reactNativePath],
-    # Hermes is now enabled by default. Disable by setting this flag to false.
-    # Upcoming versions of React Native may rely on get_default_flags(), but
-    # we make it explicit here to aid in the React Native upgrade process.
-    :hermes_enabled => flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
-    # Enables Flipper.
-    #
-    # Note that if you have use_frameworks! enabled, Flipper will not work and
-    # you should disable the next line.
-    :flipper_configuration => flipper_config,
-    # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :hermes_enabled => false
   )
 
-  target 'NutriumTests' do
-    inherit! :complete
-    # Pods for testing
-  end
+  # pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec', :modular_headers => true
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'  
 
   post_install do |installer|
-    react_native_post_install(
-      installer,
-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
-      # necessary for Mac Catalyst builds
-      :mac_catalyst_enabled => false
-    )
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    react_native_post_install(installer)
+  
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+      end
+    end
   end
 end
-
-def node_require(script)
-  # Resolve script with node to allow for hoisting
-  require Pod::Executable.execute_command('node', ['-p',
-    "require.resolve(
-      '#{script}',
-      {paths: [process.argv[1]]},
-    )", __dir__]).strip
-end
-
-# Use it to require both react-native's and this package's scripts:
-node_require('react-native/scripts/react_native_pods.rb')

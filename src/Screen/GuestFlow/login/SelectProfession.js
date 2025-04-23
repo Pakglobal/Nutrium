@@ -19,7 +19,6 @@ import IconStyle, {
 } from '../../../assets/styles/Icon';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectProfession.svg';
-import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';

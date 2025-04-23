@@ -6,10 +6,10 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { Color } from '../assets/styles/Colors';
-import { useNavigation } from '@react-navigation/native';
-import { Shadow } from 'react-native-shadow-2';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../assets/styles/Colors';
+import {useNavigation} from '@react-navigation/native';
+
 import Food from '../assets/Images/Food.svg';
 import { Font } from '../assets/styles/Fonts';
 import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';

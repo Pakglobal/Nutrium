@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -12,7 +12,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
 
@@ -24,17 +24,16 @@ import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
-import { loginData, profileData, setToken } from '../../redux/user';
-import { GetAdminProfileData } from '../../Apis/AdminScreenApi/ProfileApi';
+import {loginData, profileData, setToken} from '../../redux/user';
+import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import CustomAlert from '../../Components/CustomAlert';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
 import IconStyle from '../../assets/styles/Icon';
-import { Shadow } from 'react-native-shadow-2';
 import Google from '../../assets/Icon/google.svg';
-import { Font } from '../../assets/styles/Fonts';
-import { ShadowValues } from '../../assets/styles/Shadow';
+import {Font} from '../../assets/styles/Fonts';
+import {ShadowValues} from '../../assets/styles/Shadow';
 import CustomShadow from '../../Components/CustomShadow';
 import useKeyboardHandler from '../../Components/useKeyboardHandler';
 import CustomLoader from '../../Components/CustomLoader';
@@ -63,7 +62,6 @@ const LoginScreen = () => {
 
   const FCMtoken = useSelector(state => state?.user?.fcmToken);
 
-
   const validateEmail = value => {
     setEmail(value);
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -90,7 +88,13 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (!email || !emailRegex.test(email) || !password || password.length < 8 || !isAgree) {
+    if (
+      !email ||
+      !emailRegex.test(email) ||
+      !password ||
+      password.length < 8 ||
+      !isAgree
+    ) {
       let message = '';
 
       if (!email) {
@@ -104,8 +108,8 @@ const LoginScreen = () => {
       } else if (password.length < 8) {
         message += 'Password must be at least 8 characters.\n';
       }
-      if(!isAgree) {
-        message += 'Please agree a terms and condition before login'
+      if (!isAgree) {
+        message += 'Please agree a terms and condition before login';
       }
 
       Alert.alert('Error', message.trim());
@@ -130,7 +134,6 @@ const LoginScreen = () => {
         token: response?.token,
         id: response?.userData?._id,
       };
-      
 
       if (response) {
         dispatch(loginData(response));
@@ -205,7 +208,7 @@ const LoginScreen = () => {
   };
 
   const handleForgetPassword = async () => {
-    navigation.navigate('forgotPassword', {data: email})
+    navigation.navigate('forgotPassword', {data: email});
     const body = {
       email: email,
     };
@@ -213,13 +216,11 @@ const LoginScreen = () => {
       const response = await ForgotPasswordApi(body);
       setForgotPassword(response);
       setPasswordAlertVisible(true);
-      console.log('ressss',response);
+      console.log('ressss', response);
     } catch (error) {
-      console.log('-----',error);
+      console.log('-----', error);
     }
   };
-
-  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -254,17 +255,16 @@ const LoginScreen = () => {
           showsVerticalScrollIndicator={false}>
           <LoginHeader
             width={'100%'}
-            style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
+            style={{alignSelf: 'center', marginTop: verticalScale(50)}}
           />
           <NutriumLogo
             width={'100%'}
             height={scale(30)}
-            style={{ alignSelf: 'center', marginVertical: verticalScale(20) }}
+            style={{alignSelf: 'center', marginVertical: verticalScale(20)}}
           />
 
-          <View style={{ paddingHorizontal: scale(16) }}>
-            <CustomShadow
-              color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
+          <View style={{paddingHorizontal: scale(16)}}>
+            <CustomShadow color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
                   height: verticalScale(38),
@@ -286,7 +286,6 @@ const LoginScreen = () => {
             </CustomShadow>
 
             <CustomShadow
-
               color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
@@ -295,7 +294,7 @@ const LoginScreen = () => {
                   justifyContent: 'space-between',
                   backgroundColor: Color.white,
                   marginVertical: verticalScale(13),
-                  borderRadius: scale(6)
+                  borderRadius: scale(6),
                 }}>
                 <View
                   style={{
@@ -338,7 +337,7 @@ const LoginScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.checkbox,
-                  { backgroundColor: isAgree ? Color.primaryColor : Color.white },
+                  {backgroundColor: isAgree ? Color.primaryColor : Color.white},
                 ]}
                 onPress={() => setIsAgree(!isAgree)}>
                 {isAgree && (
@@ -363,11 +362,11 @@ const LoginScreen = () => {
             }}>
             <TouchableOpacity
               onPress={handleLogin}
-              style={[styles.button, { backgroundColor: Color.primaryColor }]}>
+              style={[styles.button, {backgroundColor: Color.primaryColor}]}>
               {loading ? (
                 <CustomLoader color={Color.white} size={'small'} />
               ) : (
-                <Text style={[styles.buttonText, { color: Color.white }]}>
+                <Text style={[styles.buttonText, {color: Color.white}]}>
                   Login
                 </Text>
               )}
@@ -389,7 +388,7 @@ const LoginScreen = () => {
               <Text
                 style={[
                   styles.buttonText,
-                  { color: Color.primaryColor, marginHorizontal: scale(8) },
+                  {color: Color.primaryColor, marginHorizontal: scale(8)},
                 ]}>
                 Continue With Google
               </Text>

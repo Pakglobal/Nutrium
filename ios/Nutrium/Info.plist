@@ -2,47 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSCameraUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSContactsUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
-	<dict>
-		<key>YOUR-PURPOSE-KEY</key>
-		<string>[REASON]</string>
-	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSMotionUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSRemindersFullAccessUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSSiriUsageDescription</key>
-	<string>[REASON]</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>[REASON]</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -89,6 +48,67 @@
 			</dict>
 		</dict>
 	</dict>
+
+	<dict>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	</dict>
+
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires camera access to take photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires photo library access to select images</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires photo library access to save images</string>
+	<key>NSNotificationsUsageDescription</key>
+	<string>This app requires notifications permission to alert you of important updates</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSContactsUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>YOUR-PURPOSE-KEY</key>
+		<string>[REASON]</string>
+	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSMotionUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSSiriUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>[REASON]</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>[REASON]</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+
+	<key>UIBackgroundModes</key>
+	<array>
+	<string>remote-notification</string>
+	</array>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>We need your permission to send notifications.</string>
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -129,8 +149,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

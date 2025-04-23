@@ -23,7 +23,6 @@ import IconStyle, {
 } from '../../../assets/styles/Icon';
 import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/GuestLogin.svg';
-import {Shadow} from 'react-native-shadow-2';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';

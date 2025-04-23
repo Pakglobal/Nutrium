@@ -21,7 +21,6 @@ import {useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
 import {Font} from '../../../../assets/styles/Fonts';
-import {Shadow} from 'react-native-shadow-2';
 import {ShadowValues} from '../../../../assets/styles/Shadow';
 import CustomShadow from '../../../../Components/CustomShadow';
 
@@ -151,7 +150,7 @@ const WorkOutDetails = ({route}) => {
         screenheader={true}
         screenName={'Physical Activity'}
         handleSave={handleSave}
-        loading={loading} 
+        loading={loading}
       />
       <View style={styles.content}>
         <Text style={styles.topTitle}>Workout Details</Text>

@@ -17,7 +17,12 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Header from '../../../Components/Header';
 import {Color} from '../../../assets/styles/Colors';
 import {useDispatch, useSelector} from 'react-redux';
-import {guestLoginData, loginData, setGuestToken, setToken} from '../../../redux/user';
+import {
+  guestLoginData,
+  loginData,
+  setGuestToken,
+  setToken,
+} from '../../../redux/user';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import Toast from 'react-native-simple-toast';
 import {setImage} from '../../../redux/client';
@@ -49,7 +54,6 @@ const ProfileMenuScreen = () => {
   const showToast = message => {
     Toast.show(message, Toast.LONG, Toast.BOTTOM);
   };
-
 
   const handleLogout = async () => {
     dispatch(guestLoginData());

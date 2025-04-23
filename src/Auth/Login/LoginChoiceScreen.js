@@ -8,19 +8,19 @@ import {
 import React from 'react';
 import HeaderImage from '../../assets/Images/loginChoiceHeader.svg';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
-import { Color } from '../../assets/styles/Colors';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { setGuestMode } from '../../redux/user';
-import { Font } from '../../assets/styles/Fonts';
+import {Color} from '../../assets/styles/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {setGuestMode} from '../../redux/user';
+import {Font} from '../../assets/styles/Fonts';
 
 const LoginChoiceScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <HeaderImage
         width="100%"
         height="56%"
@@ -38,7 +38,7 @@ const LoginChoiceScreen = () => {
         <NutriumLogo height={'100%'} width={'100%'} />
       </View>
 
-      <View style={{ paddingHorizontal: scale(16) }}>
+      <View style={{paddingHorizontal: scale(16)}}>
         <Text style={styles.text}>
           Nutrium provides personalized meal plans and diet tracking for a
           healthier lifestyle.
@@ -55,8 +55,8 @@ const LoginChoiceScreen = () => {
         }}>
         <TouchableOpacity
           onPress={() => navigation.navigate('loginScreen')}
-          style={[styles.button, { backgroundColor: Color.primaryColor }]}>
-          <Text style={[styles.buttonText, { color: Color.white }]}>Login</Text>
+          style={[styles.button, {backgroundColor: Color.primaryColor}]}>
+          <Text style={[styles.buttonText, {color: Color.white}]}>Login</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -72,7 +72,7 @@ const LoginChoiceScreen = () => {
               marginTop: verticalScale(8),
             },
           ]}>
-          <Text style={[styles.buttonText, { color: Color.primaryColor }]}>
+          <Text style={[styles.buttonText, {color: Color.primaryColor}]}>
             Continue As Guest
           </Text>
         </TouchableOpacity>
@@ -107,6 +107,5 @@ const styles = StyleSheet.create({
     height: verticalScale(35),
     alignItems: 'center',
     justifyContent: 'center',
-
   },
 });

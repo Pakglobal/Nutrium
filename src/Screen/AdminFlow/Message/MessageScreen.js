@@ -77,7 +77,7 @@ const MessageScreen = () => {
   return (
     <SafeAreaView>
       {loading ? (
-       <CustomLoader style={{marginTop: verticalScale(10)}} />
+        <CustomLoader style={{marginTop: verticalScale(10)}} />
       ) : (
         <View
           style={{

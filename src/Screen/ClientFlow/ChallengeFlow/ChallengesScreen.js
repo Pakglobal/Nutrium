@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import ChallangeSwiper from './ChallangeSwiper';
@@ -11,10 +11,13 @@ import { Font } from '../../../assets/styles/Fonts';
 
 const ChallengesScreen = () => {
   const navigation = useNavigation();
+  const [selectedTitle, setSelectedTitle] = useState('All Challenge');
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Header logoHeader={true} />
+      <Header screenheader={true} rightHeaderButton={false} screenName={selectedTitle} />
+      {/* <Header logoHeader={true} /> */}
       <View style={{ flex: 1, backgroundColor: Color.white, paddingHorizontal: scale(8) }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: scale(10) }}>
           <TouchableOpacity style={{ backgroundColor: "green", padding: 10, borderRadius: 5 }}
@@ -34,7 +37,7 @@ const ChallengesScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        <ChallangeSwiper />
+        <ChallangeSwiper onTabChange={setSelectedTitle} />
       </View>
     </SafeAreaView>
   );

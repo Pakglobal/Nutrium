@@ -11,7 +11,7 @@ import { Color } from '../../../assets/styles/Colors';
 import { scale } from 'react-native-size-matters';
 import { Font } from '../../../assets/styles/Fonts';
 
-const ChallangeSwiper = () => {
+const ChallangeSwiper = ({onTabChange}) => {
     const [index, setIndex] = useState(0);
     const navigation = useNavigation()
     const [allChallengeData, setAllChallengeData] = useState([])
@@ -25,6 +25,14 @@ const ChallangeSwiper = () => {
         { key: 'join', title: 'Join Challenge' },
         { key: 'invitation', title: 'Invitation' },
     ]);
+
+
+  useEffect(() => {
+    if (onTabChange) {
+      onTabChange(routes[index].title);
+    }
+  }, [index]);
+
     const InvitationScreen = () => (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={styles.text} >No Invitations</Text>
@@ -76,7 +84,7 @@ const ChallangeSwiper = () => {
             <View style={{
                 flexDirection: 'row',
                 backgroundColor: '#e1f3e1',
-                borderRadius: 12,
+                borderRadius: scale(6),
                 overflow: 'hidden',
                 justifyContent: 'space-around',
                 padding: scale(6)
@@ -88,8 +96,8 @@ const ChallangeSwiper = () => {
                             key={route.key}
                             onPress={() => setIndex(i)}
                             style={{
-                                paddingVertical: 8,
-                                paddingHorizontal: 16,
+                                paddingVertical: scale(5),
+                                paddingHorizontal: scale(15),
                                 borderRadius: scale(6),
                                 backgroundColor: isSelected ? Color?.primaryColor : 'transparent',
                             }}
@@ -122,9 +130,9 @@ const ChallangeSwiper = () => {
 
 export default ChallangeSwiper;
 
-const styles=StyleSheet.create({
-text:{
-    color:Color.textColor,
-    fontFamily:Font?.Poppins
-}
+const styles = StyleSheet.create({
+    text: {
+        color: Color.textColor,
+        fontFamily: Font?.Poppins
+    }
 })

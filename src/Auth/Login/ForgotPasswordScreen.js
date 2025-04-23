@@ -158,38 +158,39 @@ const ForgotPasswordScreen = ({ route }) => {
   const [loading, setLoading] = useState(false);
 
 
-
   const handleSubmit = async () => {
     Keyboard.dismiss();
-
+  
     if (!email || !email.includes('@')) {
       Alert.alert('Invalid Email', 'Please enter a valid email address.');
       return;
     }
-
-
+  
     const body = {
       email: email,
     };
+  
     try {
       setLoading(true);
-
+  
       const response = await ForgotPasswordApi(body);
       console.log('response=====', response);
-
+  
       const successMsg = 'Password reset email sent.';
-
+  
       if (response?.message?.includes(successMsg)) {
         Alert.alert(
           'Email Sent',
           successMsg,
           [{
-            text: 'OK', onPress: () =>
-            (Linking.openURL(
-              `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?clientId=67e236a84d6b05c36e97e2b5`,
-            ),
-              navigation?.navigate('loginScreen')
-            )
+            text: 'OK',
+            onPress: () => {
+              const encodedEmail = encodeURIComponent(email);
+              Linking.openURL(
+                `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?email=${encodedEmail}`
+              );
+              navigation?.navigate('loginScreen');
+            }
           }]
         );
       } else {
@@ -201,10 +202,11 @@ const ForgotPasswordScreen = ({ route }) => {
       setLoading(false);
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>
-      
+
       <LeftIcon onGoBack={() => navigation.goBack()} />
       <Header height="40%" width="100%" style={{ marginTop: 50 }} />
 

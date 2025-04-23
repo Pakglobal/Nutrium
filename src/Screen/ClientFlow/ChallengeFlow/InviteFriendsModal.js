@@ -13,8 +13,13 @@ import {
     ActivityIndicator,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useSelector } from "react-redux"; // if using token from Redux
+import { useSelector } from "react-redux";
 import { getAllUser } from "../../../Apis/ClientApis/ChallengesApi";
+import { Color } from "../../../assets/styles/Colors";
+import { scale } from "react-native-size-matters";
+import { Font } from "../../../assets/styles/Fonts";
+import CustomShadow from "../../../Components/CustomShadow";
+import { shadowStyle } from "../../../assets/styles/Shadow";
 
 const InviteFriendsModal = ({ isInviteModalVisible, onClose, onInvite }) => {
     const getToken = useSelector(state => state?.user?.userInfo);
@@ -99,7 +104,7 @@ const InviteFriendsModal = ({ isInviteModalVisible, onClose, onInvite }) => {
                         : "add-circle-outline"
                 }
                 size={24}
-                color={selectedFriends.includes(item._id) ? "#007AFF" : "gray"}
+                color={selectedFriends.includes(item._id) ? Color?.primaryColor : "gray"}
             />
         </TouchableOpacity>
     );
@@ -116,20 +121,37 @@ const InviteFriendsModal = ({ isInviteModalVisible, onClose, onInvite }) => {
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <View style={styles.modalContent}>
                             <View style={styles.header}>
-                                <View style={{ flex: 1, alignItems: "center" }}>
-                                    <Text style={styles.title}>Invite Friends</Text>
+                                <View style={{ flex: 1, }}>
+                                    <Text style={styles.title}>Invite</Text>
                                 </View>
                                 <TouchableOpacity onPress={onClose}>
-                                    <Ionicons name="close" size={24} color="black" />
+                                    <Ionicons name="close" size={24} color={Color?.white} />
                                 </TouchableOpacity>
                             </View>
-
-                            <TextInput
-                                style={styles.searchInput}
-                                placeholder="Search Friends..."
-                                value={searchQuery}
-                                onChangeText={setSearchQuery}
-                            />
+                            {/* <CustomShadow style={shadowStyle} >
+                                <View>
+                                    <Ionicons name='search' />
+                                    <TextInput
+                                        style={styles.searchInput}
+                                        placeholder="Search "
+                                        value={searchQuery}
+                                        onChangeText={setSearchQuery}
+                                        fontFamily={Font?.Poppins}
+                                    />
+                                </View>
+                            </CustomShadow> */}
+                            <CustomShadow style={shadowStyle} radius={1} color={Color?.blackShadow} >
+                                <View style={styles.searchContainer}>
+                                    <Ionicons name="search" size={20} color={Color.primaryColor} style={styles.searchIcon} />
+                                    <TextInput
+                                        style={styles.searchInput}
+                                        placeholder="Search"
+                                        value={searchQuery}
+                                        onChangeText={setSearchQuery}
+                                        placeholderTextColor="gray"
+                                    />
+                                </View>
+                            </CustomShadow>
 
                             <FlatList
                                 data={friends}
@@ -153,6 +175,7 @@ const InviteFriendsModal = ({ isInviteModalVisible, onClose, onInvite }) => {
                                     Invite {selectedFriends.length > 0 ? `(${selectedFriends.length})` : ""}
                                 </Text>
                             </TouchableOpacity>
+
                         </View>
                     </TouchableWithoutFeedback>
                 </View>
@@ -171,26 +194,34 @@ const styles = StyleSheet.create({
     modalContent: {
         backgroundColor: "#fff",
         width: "90%",
-        height: "80%",
-        borderRadius: 10,
-        padding: 10,
+        height: "70%",
+        borderRadius: scale(15),
+        // padding: 10,
         elevation: 5,
     },
     header: {
         flexDirection: "row",
-        alignItems: "center",
         paddingVertical: 10,
+        backgroundColor: Color?.primaryColor,
+        borderTopRightRadius: scale(15),
+        borderTopLeftRadius: scale(15),
+        justifyContent: "space-between",
+        flexDirection: 'row',
+        paddingHorizontal: scale(15)
     },
     title: {
-        fontSize: 18,
-        fontWeight: "bold",
-        alignSelf: "center",
+        fontSize: scale(16),
+        color: Color?.white,
+        fontFamily: Font?.PoppinsMedium
     },
     searchInput: {
-        backgroundColor: "#f0f0f0",
-        padding: 8,
+        backgroundColor: Color?.gray,
         borderRadius: 5,
         marginBottom: 10,
+        width: '90%',
+        alignSelf: 'center',
+        padding: scale(5),
+
     },
     friendItem: {
         flexDirection: "row",
@@ -217,17 +248,41 @@ const styles = StyleSheet.create({
         color: "gray",
     },
     inviteButton: {
-        marginTop: 15,
-        backgroundColor: "#007AFF",
-        padding: 12,
+        marginVertical: scale(12),
+        backgroundColor: Color?.primaryColor,
+        padding: scale(12),
         borderRadius: 5,
         alignItems: "center",
+        width: "90%",
+        alignSelf: 'center'
     },
     inviteButtonText: {
         color: "white",
         fontSize: 16,
         fontWeight: "bold",
     },
+    searchContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#fff",
+        borderRadius: scale(10),
+        paddingHorizontal: scale(10),
+        margin: scale(10),
+        // borderWidth: 1,
+        // borderColor: Color.primaryColor,
+    },
+    
+    searchIcon: {
+        marginRight: scale(8),
+    },
+    
+    searchInput: {
+        flex: 1,
+        height: scale(40),
+        fontSize: scale(14),
+        color: "#000",
+    },
+    
 });
 
 export default InviteFriendsModal;

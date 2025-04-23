@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { BASE_URL } from '../Base_Url/Baseurl';
 export const getAllChallenge = async (token) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge/public`;
+        const url = `${BASE_URL}challenge/public`;
         const response = await axios.get(url, {
             headers: {
                 Authorization: token,
@@ -14,7 +15,7 @@ export const getAllChallenge = async (token) => {
 }
 export const getAllChallengeJoinDatawithId = async (token, userId) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge/accepted-challenges/${userId}`;
+        const url = `${BASE_URL}challenge/accepted-challenges/${userId}`;
         const response = await axios.get(url, {
             headers: {
                 Authorization: token,
@@ -27,7 +28,7 @@ export const getAllChallengeJoinDatawithId = async (token, userId) => {
 }
 export const getAllChallengePendingRequest = async (token, userId) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge/private/${userId}`;
+        const url = `${BASE_URL}challenge/private/${userId}`;
         const response = await axios.get(url, {
             headers: {
                 Authorization: token,
@@ -41,7 +42,7 @@ export const getAllChallengePendingRequest = async (token, userId) => {
 
 export const challengeAcceptAndRejectedApi = async (token, challengeId, userId, action) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge/respond/${userId}/${challengeId}`;
+        const url = `${BASE_URL}challenge/respond/${userId}/${challengeId}`;
         const response = await axios.post(url, action, {
             headers: {
                 Authorization: token,
@@ -57,7 +58,7 @@ export const challengeAcceptAndRejectedApi = async (token, challengeId, userId, 
 
 export const getChallengeLederBoardData = async (token, chllangeId) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/leaderboard/${chllangeId}`;
+        const url = `${BASE_URL}leaderboard/${chllangeId}`;
         const response = await axios.get(url, {
             headers: {
                 Authorization: token,
@@ -70,7 +71,7 @@ export const getChallengeLederBoardData = async (token, chllangeId) => {
 }
 export const joinPublicChallenge = async (token, userId, challengeId) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge/public/join/${userId}/${challengeId}`;
+        const url = `${BASE_URL}challenge/public/join/${userId}/${challengeId}`;
         const response = await axios.post(url, {
             headers: {
                 Authorization: token,
@@ -83,7 +84,7 @@ export const joinPublicChallenge = async (token, userId, challengeId) => {
 }
 export const createChallenge = async (token, userId, data) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge/create/${userId}`;
+        const url = `${BASE_URL}challenge/create/${userId}`;
         const response = await axios.post(url, data, {
             headers: {
                 Authorization: token,
@@ -96,7 +97,7 @@ export const createChallenge = async (token, userId, data) => {
 }
 export const getChallengeType = async (token) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge-master`;
+        const url = `${BASE_URL}challenge-master`;
         const response = await axios.get(url, {
             headers: {
                 Authorization: token,
@@ -111,7 +112,7 @@ export const getChallengeType = async (token) => {
 export const getChallengeRange = async (token, id) => {
     console.log("ididid", id);
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/challenge-master/reward-ranges-dropdown/${id}`;
+        const url = `${BASE_URL}challenge-master/reward-ranges-dropdown/${id}`;
         const response = await axios.get(url, {
             headers: {
                 Authorization: token,
@@ -119,13 +120,13 @@ export const getChallengeRange = async (token, id) => {
         });
         return response?.data;
     } catch (error) {
-        console.error('Error fetching challenge range', error);
+        console.error('Error fetching challenge range-------', error);
     }
 }
 
 export const getAllUser = async (token, pageNo, limit, search) => {
     try {
-        const url = `https://nutrium-back-end-1.onrender.com/api/v1/clients?page=${pageNo}&limit=${limit}&search=${search}`;
+        const url = `${BASE_URL}clients?page=${pageNo}&limit=${limit}&search=${search}`;
         const response = await axios.get(url, {
             headers: {
                 Authorization: token,

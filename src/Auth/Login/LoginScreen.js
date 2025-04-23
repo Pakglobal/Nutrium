@@ -125,8 +125,11 @@ const LoginScreen = () => {
       const response = await Login(body);
       setLoginAlert(response?.message);
       console.log('response?.message', response)
-      if (response?.message) {
-        Alert.alert('Error',response?.message)
+      if (response?.message == 'Login successful' ) 
+        {
+        }else{
+          
+          Alert.alert('Error',response?.message)
       }
       const storeTokenId = {
         token: response?.token,

@@ -67,7 +67,7 @@ export const ForgotPasswordApi = async(data) => {
     const body = {
       email: data?.email,
     };
-    
+  // /setPassword/vatsal.r.lakhani2626+83@gmail.com
     console.log(body, '=====');
     const url = `${BASE_URL}forget-password`;
     const response = await axios.post(url, body);
@@ -77,3 +77,23 @@ export const ForgotPasswordApi = async(data) => {
     return error?.response?.data;
   }
 }
+
+
+export const SetNewPassword = async() => {
+  
+  try {
+    const body = {
+      "newPassword":"password123#",
+      "confirmPassword":"password123#"
+  };
+  // /setPassword/vatsal.r.lakhani2626+83@gmail.com
+    console.log(body, '=====');
+    const url = `${BASE_URL}forget-password`;
+    const response = await axios.put(url, body);
+
+    return response?.data;
+  } catch (error) {
+    return error?.response?.data;
+  }
+}
+

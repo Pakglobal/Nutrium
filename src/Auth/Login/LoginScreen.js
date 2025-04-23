@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  ToastAndroid,
   TouchableOpacity,
   View,
   Image,
@@ -16,9 +15,9 @@ import { scale, verticalScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
 
-import {Color} from '../../assets/styles/Colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
+import { Color } from '../../assets/styles/Colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { ForgotPasswordApi, GoogleLogin, Login } from '../../Apis/Login/AuthApis';
 
 import {
   GoogleSignin,
@@ -28,7 +27,6 @@ import { loginData, profileData, setToken } from '../../redux/user';
 import { GetAdminProfileData } from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import CustomAlert from '../../Components/CustomAlert';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
 import IconStyle from '../../assets/styles/Icon';
 import { Shadow } from 'react-native-shadow-2';
@@ -38,6 +36,7 @@ import { ShadowValues } from '../../assets/styles/Shadow';
 import CustomShadow from '../../Components/CustomShadow';
 import useKeyboardHandler from '../../Components/useKeyboardHandler';
 import CustomLoader from '../../Components/CustomLoader';
+import CustomAlert from '../../Components/CustomAlert';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -104,7 +103,7 @@ const LoginScreen = () => {
       } else if (password.length < 8) {
         message += 'Password must be at least 8 characters.\n';
       }
-      if(!isAgree) {
+      if (!isAgree) {
         message += 'Please agree a terms and condition before login'
       }
 
@@ -125,12 +124,18 @@ const LoginScreen = () => {
       setLoading(true);
       const response = await Login(body);
       setLoginAlert(response?.message);
-
+      console.log('response?.message', response)
+      if (response?.message == 'Login successful' ) 
+        {
+        }else{
+          
+          Alert.alert('Error',response?.message)
+      }
       const storeTokenId = {
         token: response?.token,
         id: response?.userData?._id,
       };
-      
+
 
       if (response) {
         dispatch(loginData(response));
@@ -200,12 +205,8 @@ const LoginScreen = () => {
     }
   };
 
-  const showToast = () => {
-    ToastAndroid.show(forgotPassword?.message, ToastAndroid.SHORT);
-  };
-
   const handleForgetPassword = async () => {
-    navigation.navigate('forgotPassword', {data: email})
+    navigation.navigate('forgotPassword', { data: email })
     const body = {
       email: email,
     };
@@ -213,13 +214,13 @@ const LoginScreen = () => {
       const response = await ForgotPasswordApi(body);
       setForgotPassword(response);
       setPasswordAlertVisible(true);
-      console.log('ressss',response);
+      console.log('ressss', response);
     } catch (error) {
-      console.log('-----',error);
+      console.log('-----', error);
     }
   };
 
-  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -229,7 +230,7 @@ const LoginScreen = () => {
         onClose={() => setAlertVisible(false)}
         singleButton={true}
       />
-      {passwordAlertVisible && showToast()}
+
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Color } from '../../../assets/styles/Colors';
 
 const CustomDropdown1 = ({ data = [], value, onSelect, placeholder = 'Select an option' }) => {
 
@@ -37,7 +38,7 @@ const CustomDropdown1 = ({ data = [], value, onSelect, placeholder = 'Select an 
                                     style={styles.option}
                                     onPress={() => handleSelect(item)}
                                 >
-                                    <Text>{item.value}</Text>
+                                    <Text style={{color:Color?.gray}} >{item.value}</Text>
                                 </TouchableOpacity>
                             )}
                         />

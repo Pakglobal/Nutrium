@@ -70,6 +70,8 @@ const ClientDrawerNavigator = () => {
       }}>
       <ClientDrawer.Screen name="ClientHome" component={BottomNavigation} />
       <ClientDrawer.Screen name="ChallengesScreen" component={ChallengesScreen} />
+      <ClientDrawer.Screen name="CreateChallenge" component={CreateChallenge} />
+
     </ClientDrawer.Navigator>
   );
 };
@@ -196,7 +198,7 @@ const MainStack = () => {
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
   const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);
-  console.log(demoClient);
+  // console.log(demoClient);
 
 
   if (onboardingCompleted === null) {

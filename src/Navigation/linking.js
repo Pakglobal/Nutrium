@@ -1,29 +1,18 @@
-// linking.js
 const linking = {
-    prefixes: ['myapp://', 'https://myapp.com'],
-    config: {
-      screens: {
-        // Top-level stacks
-        UserFlow: {
-          screens: {
-            shoppingLists: 'shoppingLists', // matches Stack.Screen name
-            newShoppingLists: 'newShoppingLists',
-            myLists: 'myLists',
-          },
-        },
-        AuthStack: {
-          screens: {
-            loginScreen: 'login',
-          },
-        },
-        AdminFlow: {
-          screens: {
-            Messages: 'messages',
-          },
+  prefixes: [
+    'myapp://',
+    'https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app',
+  ],
+  config: {
+    screens: {
+      resetPassword: {
+        path: 'accounts/clientPassword/resetPassword',
+        parse: {
+          email: (email) => `${email}`,
         },
       },
     },
-  };
-  
-  export default linking;
-  
+  },
+};
+
+export default linking;

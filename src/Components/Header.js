@@ -135,11 +135,11 @@ const Header = ({
                     />
                   </TouchableOpacity>
                 ) : loading ? (
-                  <CustomLoader color={Color.white} size={'small'} />
+                  <CustomLoader color={Color.white} size={'small'} viewStyle={{ width: '20%' }} style={{}} />
                 ) : (
                   <TouchableOpacity
                     onPress={handleSave}
-                    style={{ padding: scale(8) }}>
+                    style={{ padding: scale(8), width: '20%' }}>
                     <Text style={styles.saveStyle}>Save</Text>
                   </TouchableOpacity>
                 ))}
@@ -175,5 +175,6 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     fontWeight: '500',
     fontFamily: Font.Poppins,
+    alignSelf: 'center'
   },
 });

@@ -5,6 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { verticalScale } from 'react-native-size-matters';
 import { getChallengeLederBoardData } from '../../../Apis/ClientApis/ChallengesApi';
 import { useSelector } from 'react-redux';
+import { Color } from '../../../assets/styles/Colors';
 
 // Static JSON data
 
@@ -33,7 +34,7 @@ const ViewChallengDetailsScreen = ({ route }) => {
         return (
             <View style={styles.card}>
                 <Text style={styles.username}>#{item?.rank} - {item?.fullName}</Text>
-                <Text>Total Score: {item.progress}</Text>
+                <Text style={{color:Color?.gray}} >Total Score: {item.progress}</Text>
                 <View style={styles.dateScoreBox}>
 
                 </View>
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+        color:Color?.textColor
     },
     card: {
         padding: 15,
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         marginBottom: 5,
+        color:Color?.textColor
     },
     dateScoreBox: {
         marginTop: 5,

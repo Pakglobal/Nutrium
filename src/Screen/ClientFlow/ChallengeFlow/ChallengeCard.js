@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     joinButton: {
         // paddingHorizontal: 5,
         borderBottomWidth: 1,
-        borderBottomColor: Color.primaryColor
+        borderBottomColor: Color.primaryColor,
     },
     joinButtonText: {
         color: Color?.primaryColor,

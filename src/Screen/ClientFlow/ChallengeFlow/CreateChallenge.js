@@ -1,12 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert, Switch, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Alert, Switch, ScrollView, TouchableOpacity, Modal, SafeAreaView, Keyboard } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import InviteFriendsModal from './InviteFriendsModal';
 import { useSelector } from 'react-redux';
-import CustomDropdown1 from './CustomDropdown1';
 import { createChallenge, getChallengeRange, getChallengeType } from '../../../Apis/ClientApis/ChallengesApi';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
+import { Color } from '../../../assets/styles/Colors';
+import { Font } from '../../../assets/styles/Fonts';
+import { scale, verticalScale } from 'react-native-size-matters';
+import CustomeDropDown from '../../../Components/CustomeDropDown';
+import Header from '../../../Components/Header';
+import CustomShadow from '../../../Components/CustomShadow';
+import { shadowStyle } from '../../../assets/styles/Shadow';
+
 
 const CreateChallenge = () => {
     const navigation = useNavigation();
@@ -30,7 +37,7 @@ const CreateChallenge = () => {
     const [loading, setLoading] = useState(false);
     const [selectedFriend, setSelectedFriend] = useState([])
     const [alertVisible, setAlertVisible] = useState(false);
-    const [alertType, setAlertType] = useState('success'); // 'success' or 'error'
+    const [alertType, setAlertType] = useState('success');
     const [alertMessage, setAlertMessage] = useState('');
 
     const userInfo = useSelector(state => state?.user?.userInfo);
@@ -47,7 +54,6 @@ const CreateChallenge = () => {
             }
         } catch (error) {
             console.error('Error fetching appointments:', error);
-            //   setLoading(false);
         }
     };
 
@@ -107,6 +113,7 @@ const CreateChallenge = () => {
                 setAlertMessage(response.message);
                 setAlertVisible(true);
             }
+
         } catch (error) {
             console.error('Create Challenge Error:', error);
 
@@ -125,133 +132,316 @@ const CreateChallenge = () => {
 
     };
 
-    const handleSlectChalangeType = async (value) => {
-        try {
-
-            setChallengeType(value?.value)
-            setChallengeTypeId(value?._id)
-            const response = await getChallengeRange(userInfo?.token, value?._id);
-            if (response?.success) {
-                setChallengeRangeOptions(response?.data)
-            } else {
-            }
-            //   setLoading(false);
-        } catch (error) {
-            console.error('Error fetching appointments1515:', error);
-            //   setLoading(false);
+    const handleSlectChalangeType = async (item) => {
+        if (!item || !item._id) {
+            console.warn('Invalid challenge type selected:', item);
+            return;
         }
-    }
+
+        setChallengeType(item?.value);
+        setChallengeTypeId(item._id);
+
+        try {
+            const response = await getChallengeRange(userInfo?.token, item._id);
+            if (response?.success) {
+                setChallengeRangeOptions(response?.data);
+            }
+        } catch (error) {
+            console.error('Error fetching challenge range:', error);
+        }
+    };
+
+    // const handleSlectChalangeType = async (value) => {
+    //     try {
+
+    //         setChallengeType(value)
+    //         setChallengeTypeId(value?._id)
+    //         const response = await getChallengeRange(userInfo?.token, value?._id);
+    //         if (response?.success) {
+    //             setChallengeRangeOptions(response?.data)
+    //         } else {
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching appointments1515:', error);
+    //         //   setLoading(false);
+    //     }
+    // }
     const handleSlectChalangeRangeType = (value) => {
         setCoinReward(value?.coin)
+
         setselectChallengeRange(value)
 
     }
 
+
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.header}>Create Challenge</Text>
-
-            <Text>Challenge Name</Text>
-            <TextInput style={styles.input} placeholder="Enter challenge name" value={challengeName} onChangeText={setChallengeName} />
-
-            <Text style={{ marginBottom: 10 }}>Challenge Type</Text>
-            {/* <TextInput style={styles.input} value={challengeType} onChangeText={setChallengeType} /> */}
-            <CustomDropdown1 data={challengeTypeOptions} onSelect={(e) => handleSlectChalangeType(e)} value={challengeType} />
-            <Text style={{ marginBottom: 10 }}>Challenge Range</Text>
-            {/* <TextInput style={styles.input} value={challengeType} onChangeText={setChallengeType} /> */}
-            <CustomDropdown1 data={challengeRange} onSelect={(e) => handleSlectChalangeRangeType(e)} value={selectChallengeRange?.value} />
-
-            <Text>Coin Reward</Text>
-            <Text style={styles.input}>{coinReward}</Text>
-            <Text>Select Start and End Dates</Text>
-            <TouchableOpacity style={[styles.input, { justifyContent: 'center' }]} onPress={() => {
-                setSelectedDateField('start');
-                setIsDatePickerOpen(true);
-            }}>
-                <Text>{`Start Date: ${startDate?.toLocaleDateString()}`}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={[styles.input, { justifyContent: 'center' }]} onPress={() => {
-                setSelectedDateField('end');
-                setIsDatePickerOpen(true);
-            }}>
-                <Text>{`End Date: ${endDate?.toLocaleDateString()}`}</Text>
-            </TouchableOpacity>
-
-            <DatePicker modal mode="date" open={isDatePickerOpen} date={selectedDateField === 'start' ? startDate : endDate} onConfirm={handleDateConfirm} onCancel={() => setIsDatePickerOpen(false)} />
-
-            <Text>Challenge Description</Text>
-            <TextInput style={styles.input} placeholder="Enter description" value={description} onChangeText={setDescription} multiline />
-
-            <Text>Target Goal ({challengeType})</Text>
-            <TextInput style={styles.input} placeholder={`Enter target goal for ${challengeType}`} keyboardType="numeric" value={targetGoal} onChangeText={setTargetGoal} />
-
-            <Text>Participants Limit</Text>
-            <TextInput style={styles.input} placeholder="Enter participant limit" keyboardType="numeric" value={participantsLimit.toString()} onChangeText={(val) => setParticipantsLimit(parseInt(val) || 0)} />
+        <SafeAreaView style={styles?.mainContainer} >
 
 
-            <Text>Privacy</Text>
-            <View style={styles.switchContainer}>
-                <Text>Public</Text>
-                <Switch value={isPublic} onValueChange={setIsPublic} />
-                <Text>Private</Text>
-            </View>
+            <Header logoHeader={true} />
 
-            {/* Invite Friends Button (Only for Private Challenges) */}
-            {isPublic && (
-                <TouchableOpacity style={styles.inviteButton} onPress={() => setInviteModalVisible(true)}>
-                    <Text style={styles.inviteButtonText}>Invite Friends</Text>
+
+            <ScrollView style={styles.container}>
+
+
+
+
+                <Text style={styles.header}>Create Challenge</Text>
+
+                <Text style={styles.nameText} >Challenge Name</Text>
+                <CustomShadow radius={1.5} style={shadowStyle} >
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter challenge name"
+                        placeholderTextColor={Color?.gray}
+                        fontFamily={Font?.Poppins}
+                        value={challengeName}
+                        onChangeText={setChallengeName} />
+                </CustomShadow>
+
+
+                <Text style={styles?.nameText}>Challenge Type</Text>
+                <CustomeDropDown
+                    items={challengeTypeOptions}
+                    selectedItem={challengeType || 'Select Challenge'}
+                    onSelect={(e) => handleSlectChalangeType(e)}
+                    textStyle={!challengeType ? { color: Color.textColor } : {}}
+                />
+
+                <Text style={styles?.nameText}>Challenge Range</Text>
+
+                <CustomeDropDown
+                    items={challengeRange}
+                    selectedItem={selectChallengeRange?.value || 'Select Challenge'}
+                    onSelect={(e) => handleSlectChalangeRangeType(e)}
+                    textStyle={!selectChallengeRange?.value ? { color: Color.textColor } : {}}
+                />
+                <Text style={styles?.nameText}  >Coin Reward</Text>
+                {/* <View style={[styles?.input, { justifyContent: "center" }]}> */}
+                <CustomShadow radius={1.5} style={shadowStyle} >
+
+                    <Text style={[styles?.input, { color: Color?.gray }]}>{coinReward}</Text>
+                </CustomShadow>
+                {/* </View> */}
+                <Text style={styles?.nameText} >Select Start and End Dates</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} >
+                    <CustomShadow radius={1.5}  >
+
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            style={[styles.input, { width: "95%" }]}
+                            onPress={() => {
+                                setSelectedDateField('start');
+                                setIsDatePickerOpen(true);
+                            }}>
+                            <Text style={styles?.nameText} >{`Start Date: ${startDate?.toLocaleDateString()}`}</Text>
+                        </TouchableOpacity>
+                    </CustomShadow>
+                    <CustomShadow radius={1.5} >
+
+                        <TouchableOpacity
+                            style={[styles.input, { width: "95%" }]}
+                            onPress={() => {
+                                setSelectedDateField('end');
+                                setIsDatePickerOpen(true);
+                            }}>
+                            <Text style={styles?.nameText}>{`End Date: ${endDate?.toLocaleDateString()}`}</Text>
+                        </TouchableOpacity>
+                    </CustomShadow>
+                </View>
+                <DatePicker
+                    modal mode="date"
+                    open={isDatePickerOpen}
+                    date={selectedDateField === 'start' ? startDate : endDate}
+                    onConfirm={handleDateConfirm}
+                    onCancel={() => setIsDatePickerOpen(false)} />
+
+                <Text style={styles?.nameText} >Challenge Description</Text>
+                <CustomShadow radius={1.5} style={shadowStyle} >
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter description"
+                        placeholderTextColor={Color?.gray}
+                        fontFamily={Font?.Poppins}
+                        value={description}
+                        onChangeText={setDescription}
+                        multiline />
+                </CustomShadow>
+
+                <Text style={styles?.nameText} >Target Goal ({challengeType})</Text>
+                <CustomShadow radius={1.5} style={shadowStyle} >
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder={`Enter target goal for ${challengeType}`}
+                        keyboardType="numeric"
+                        placeholderTextColor={Color?.gray}
+                        fontFamily={Font?.Poppins}
+                        value={targetGoal}
+                        onChangeText={setTargetGoal} />
+                </CustomShadow>
+                <Text style={styles?.nameText} >Participants Limit</Text>
+                <CustomShadow radius={1.5} style={shadowStyle} >
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter participant limit"
+                        keyboardType="numeric"
+                        value={participantsLimit.toString()}
+                        onChangeText={(val) => setParticipantsLimit(parseInt(val) || 0)} />
+                </CustomShadow>
+
+                <Text style={styles?.nameText} >Privacy</Text>
+                {/* <View style={styles.switchContainer}>
+                    <Text style={styles.nameText} >Public</Text>
+                    <Switch value={isPublic} onValueChange={setIsPublic} />
+                    <Text style={styles.nameText} >Private</Text>
+                </View> */}
+                <View style={styles.radioGroup}>
+                    <TouchableOpacity
+                        style={styles.radioContainer}
+                        onPress={() => setIsPublic(true)}
+                    >
+                        <View
+                            style={[
+                                styles.radioCircle,
+                                { borderColor: isPublic ? Color?.primaryColor : Color?.gray },
+                            ]}
+                        >
+                            {isPublic && <View style={[styles.selectedRb, { backgroundColor: Color?.primaryColor }]} />}
+                        </View>
+                        <Text style={styles.nameText}>Public</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.radioContainer}
+                        onPress={() => setIsPublic(false)}
+                    >
+                        <View
+                            style={[
+                                styles.radioCircle,
+                                { borderColor: !isPublic ? Color?.primaryColor : Color?.gray },
+                            ]}
+                        >
+                            {!isPublic && <View style={[styles.selectedRb, { backgroundColor: Color?.primaryColor }]} />}
+                        </View>
+                        <Text style={styles.nameText}>Private</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* Invite Friends Button (Only for Private Challenges) */}
+                {isPublic && (
+                    <TouchableOpacity style={styles.inviteButton} onPress={() => setInviteModalVisible(true)}>
+                        <Text style={styles.inviteButtonText}>Invite Friends</Text>
+                    </TouchableOpacity>
+                )}
+
+                <TouchableOpacity
+                    onPress={handleSubmit}
+                    disabled={loading}
+                    style={{
+                        backgroundColor: Color?.primaryColor,
+                        padding: scale(10),
+                        borderRadius: scale(8),
+                        width: '100%'
+                    }}
+                >
+                    <Text style={{
+                        color: Color?.white,
+                        alignSelf: 'center',
+                        fontFamily: Font?.Poppins,
+                        fontWeight: '600'
+                    }} >
+                        {loading ? 'Creating...' : 'Create Challenge'}
+                    </Text>
                 </TouchableOpacity>
-            )}
 
-            <Button title={loading ? 'Creating...' : 'Create Challenge'}
-                onPress={handleSubmit}
-                disabled={loading} />
-
-            {/* Invite Friends Bottom Sheet Modal */}
-            <InviteFriendsModal
-                onClose={() => setInviteModalVisible(false)}
-                isInviteModalVisible={isInviteModalVisible}
-                setInviteModalVisible={setInviteModalVisible}
-                onInvite={(selectedFriends) => {
-                    setSelectedFriend(selectedFriends)
-                    setInviteModalVisible(false);
-                }}
-            />
-            <CustomAlertBox
-                visible={alertVisible}
-                type={alertType}
-                message={alertMessage}
-                onClose={() => {
-                    setAlertVisible(false);
-                    if (alertType === 'success') {
-                        navigation.goBack();
-                    }
-                }}
-            />
-        </ScrollView>
+                {/* Invite Friends Bottom Sheet Modal */}
+                <InviteFriendsModal
+                    onClose={() => setInviteModalVisible(false)}
+                    isInviteModalVisible={isInviteModalVisible}
+                    setInviteModalVisible={setInviteModalVisible}
+                    onInvite={(selectedFriends) => {
+                        setSelectedFriend(selectedFriends)
+                        setInviteModalVisible(false);
+                    }}
+                />
+                <CustomAlertBox
+                    visible={alertVisible}
+                    type={alertType}
+                    message={alertMessage}
+                    onClose={() => {
+                        setAlertVisible(false);
+                        if (alertType === 'success') {
+                            navigation.goBack();
+                        }
+                    }}
+                />
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 20,
+    mainContainer: {
+
         backgroundColor: 'white',
         flex: 1,
     },
+    container: {
+        paddingHorizontal: scale(16)
+    },
+    dropdown: {
+        borderRadius: scale(4),
+        borderWidth: 1,
+        borderColor: Color.borderColor,
+        margin: scale(2),
+        backgroundColor: Color.white,
+        zIndex: 10,
+        marginBottom: verticalScale(10),
+    },
+    titleText: {
+        fontWeight: '500',
+        letterSpacing: 1,
+        fontFamily: Font.PoppinsMedium,
+        color: Color.textColor,
+    },
+    dropdownItem: {
+        paddingVertical: scale(8),
+        paddingHorizontal: scale(12),
+    },
+    inputContainer: {
+        borderRadius: 8,
+        paddingHorizontal: scale(10),
+        borderColor: Color.primaryColor,
+        height: verticalScale(38),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: Color.white,
+        marginVertical: verticalScale(6)
+    },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 22,
+        fontWeight: '500',
         textAlign: 'center',
-        marginBottom: 20,
+        marginVertical: scale(15),
+        color: Color?.textColor,
+        fontFamily: Font?.PoppinsMedium
     },
     input: {
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
+        height: scale(38),
+        width: "98%",
         marginBottom: 10,
-        paddingLeft: 10,
+        paddingHorizontal: scale(10),
         fontSize: 16,
+        fontFamily: Font?.Poppins,
+        color: Color?.textColor,
+        backgroundColor: Color?.white,
+        alignSelf: 'center',
+        borderRadius: scale(6)
     },
     switchContainer: {
         flexDirection: 'row',
@@ -303,6 +493,37 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
+    nameText: {
+        fontFamily: Font?.Poppins,
+        color: Color?.textColor
+    },
+    radioGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 20,
+        marginBottom: scale(10)
+    },
+    radioContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    radioCircle: {
+        height: 20,
+        width: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#444',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 8,
+    },
+    selectedRb: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: Color?.primaryColor,
+    },
 });
 
 export default CreateChallenge;
+

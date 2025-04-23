@@ -29,17 +29,20 @@ import { shadowStyle, ShadowValues } from '../../../assets/styles/Shadow';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
-import DateTimePickerModal from "react-native-modal-datetime-picker"; 
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import CustomDatePicker from '../../../Components/CustomeDateTimePicker';
+import CustomeDropDown from '../../../Components/CustomeDropDown';
 
 const SelectCountry = ({ route }) => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
-  // const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [country, setCountry] = useState('');
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+
+
   const [hasNumberError, setHasNumberError] = useState(false);
 
   const selectGender = route?.params;
@@ -56,15 +59,16 @@ const SelectCountry = ({ route }) => {
     'United States': '+1',
     Canada: '+1',
   };
-
   const countries = [
-    'India',
-    'Australia',
-    'China',
-    'Japan',
-    'United States',
-    'Canada',
+    { label: "India", value: "India" },
+    { label: "Australia", value: "Australia" },
+    { label: "China", value: "China" },
+    { label: "Japan", value: "Japan" },
+    { label: "United States", value: "United States" },
+    { label: "Canada", value: "Canada" }
   ];
+
+
 
   const validateNumberInput = (input) => {
     const numericRegex = /^[0-9]*$/;
@@ -122,13 +126,13 @@ const SelectCountry = ({ route }) => {
       ]);
       return;
     }
-    
+
     if (!validateNumberInput(number)) {
       setHasNumberError(true);
       Alert.alert(
         'Invalid Number',
         'Please enter numbers only',
-        [{text: 'OK', style: 'cancel'}],
+        [{ text: 'OK', style: 'cancel' }],
       );
       return;
     }
@@ -147,9 +151,9 @@ const SelectCountry = ({ route }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
+  // const showDatePicker = () => {
+  //   setDatePickerVisibility(true);
+  // };
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
@@ -168,7 +172,7 @@ const SelectCountry = ({ route }) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: '47.5%'}}
+        contentContainerStyle={{ paddingBottom: '47.5%' }}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
           style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
@@ -176,63 +180,13 @@ const SelectCountry = ({ route }) => {
 
         <View
           style={{ marginHorizontal: scale(16), marginTop: verticalScale(20), }}>
-          <CustomShadow style={shadowStyle}>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={styles.inputContainer}
-              onPress={() => {
-                Keyboard.dismiss();
-                setShowCountryDropdown(!showCountryDropdown);
-              }}>
-              <Text
-                style={[
-                  styles.titleText,
-                  !country && { color: Color.textColor },
-                ]}>
-                {country || 'Select country'}
-              </Text>
-              {showCountryDropdown ? (
-                <MaterialIcons
-                  name="keyboard-arrow-up"
-                  size={20}
-                  color={Color.primaryColor}
-                />
-              ) : (
-                <MaterialIcons
-                  name="keyboard-arrow-down"
-                  size={20}
-                  color={Color.primaryColor}
-                />
-              )}
-            </TouchableOpacity>
-          </CustomShadow>
+          <CustomeDropDown
+            items={countries}
+            selectedItem={country || 'Select country'}
+            onSelect={(item) => setCountry(item?.value)}
+            textStyle={!country ? { color: Color.textColor } : {}}
+          />
 
-          {showCountryDropdown && (
-            <View style={styles.dropdown}>
-              {countries.map(item => (
-                <TouchableOpacity
-                  key={item}
-                  style={[
-                    styles.dropdownItem,
-                    country === item && { backgroundColor: Color.primaryColor },
-                  ]}
-                  onPress={() => {
-                    setCountry(item);
-                    setShowCountryDropdown(false);
-                  }}>
-                  <Text
-                    style={[
-                      styles.titleText,
-                      {
-                        color: country === item ? Color.white : Color.textColor,
-                      },
-                    ]}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
 
           <CustomShadow color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>
             <View style={styles.inputContainer}>
@@ -286,26 +240,26 @@ const SelectCountry = ({ route }) => {
             />
           )} */}
 
-<CustomDatePicker
-          label="Date of Birth"
-          value={selectedDate}
-          onChange={setSelectedDate}
-          placeholder="Select your date of birth"
-        />
+          <CustomDatePicker
+            label="Date of Birth"
+            value={selectedDate}
+            onChange={setSelectedDate}
+            placeholder="Select your date of birth"
+          />
         </View>
 
-        <Button title="Show Date Picker" onPress={showDatePicker} />
-      <Text>{selectedDate}</Text>
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="datetime"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        pickerStyleIOS={{
-          backgroundColor: "white",
-        }}
-        customHeaderIOS={() => <Text style={{ textAlign: "center", fontSize: 18 }}>Pick Date</Text>}
-      />
+        {/* <Button title="Show Date Picker" onPress={showDatePicker} /> */}
+        <Text>{selectedDate}</Text>
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="datetime"
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
+          pickerStyleIOS={{
+            backgroundColor: "white",
+          }}
+          customHeaderIOS={() => <Text style={{ textAlign: "center", fontSize: 18 }}>Pick Date</Text>}
+        />
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleNavigation}>

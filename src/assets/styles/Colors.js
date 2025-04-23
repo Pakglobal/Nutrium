@@ -15,4 +15,5 @@ export const Color = {
   grayshadow: '#e3dfde',
   subText: '#6E7071',
   blackShadow: 'rgba(0,0,0,0.025)',
+  lightGrayText:'#9D9696'
 };

@@ -119,9 +119,11 @@ export const getChallengeRange = async (token, id) => {
         });
         return response?.data;
     } catch (error) {
-        console.error('Error fetching challenge range', error);
+        console.error('Error fetching challenge range-------', error);
     }
 }
+
+
 
 export const getAllUser = async (token, pageNo, limit, search) => {
     try {

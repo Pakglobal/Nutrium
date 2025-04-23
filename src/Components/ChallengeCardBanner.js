@@ -37,30 +37,28 @@ const ChallengeCardBanner = ({challenge, onJoin}) => {
         <Text style={styles.badgeText}>Featured</Text>
       </View>
 
+
       <Text style={[styles.title, {marginTop: 20}]}>{challenge.name}</Text>
       <Text style={styles.description}>
         Complete {challenge.targetValue} {challenge.type?.unitLabel || 'units'}{' '}
         by {new Date(challenge.endDate).toDateString()}
       </Text>
 
-      <View style={styles.footer}>
-        <View style={styles.participants}>
-          <Image
-            source={{uri: 'https://i.pravatar.cc/30?img=1'}}
-            style={styles.avatar}
-          />
-          <Image
-            source={{uri: 'https://i.pravatar.cc/30?img=2'}}
-            style={[styles.avatar, {marginLeft: -10}]}
-          />
-          <Image
-            source={{uri: 'https://i.pravatar.cc/30?img=3'}}
-            style={[styles.avatar, {marginLeft: -10}]}
-          />
-          <Text style={styles.participantText}>
-            +{challenge.participants.length} participants
-          </Text>
-        </View>
+
+            <View style={styles.footer}>
+                <View style={styles.participants}>
+                    {challenge.participants.slice(0, 3).map((participant, index) => (
+                        <Image
+                            key={participant.clientId._id}
+                            source={{ uri: participant.clientId.image }}
+                            style={[styles.avatar, { marginLeft: index === 0 ? 0 : -10 }]}
+                        />
+                    ))}
+                    <Text style={styles.participantText}>
+                        +{challenge.participants.length} participants
+                    </Text>
+                </View>
+
 
         <TouchableOpacity
           style={styles.joinButton}

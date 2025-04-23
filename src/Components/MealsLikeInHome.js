@@ -6,13 +6,13 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
-import {useNavigation} from '@react-navigation/native';
-import {Shadow} from 'react-native-shadow-2';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
+import { Shadow } from 'react-native-shadow-2';
 import Food from '../assets/Images/Food.svg';
-import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import { Font } from '../assets/styles/Fonts';
+import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 import CustomShadow from './CustomShadow';
 
@@ -20,13 +20,16 @@ const MealsLikeInHome = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={{marginTop: verticalScale(18)}}>
+    <View style={{ marginTop: verticalScale(18) }}>
       <CustomShadow radius={3}>
         <View style={shadowStyle}>
-          <View style={{padding: scale(10)}}>
+          <View style={{ padding: scale(10) }}>
             <Text style={styles.title}>What were your meals like?</Text>
             <View style={styles.cardContainer}>
-              <Food width={'100%'} height={verticalScale(150)} />
+              <View style={{ width: '100%', }}>
+
+                <Food width={'100%'} />
+              </View>
               <Text style={styles.discription}>
                 Log more meals and get the {'\n'}bigger picture of your days.
               </Text>
@@ -47,17 +50,10 @@ export default MealsLikeInHome;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    borderRadius: scale(20),
-    alignSelf: 'center',
-    width: '100%',
-    backgroundColor: Color?.white,
+    // alignSelf: 'center',
+    // width: '100%',
+    backgroundColor: Color.white,
     borderRadius: scale(10),
-  },
-  card: {
-    height: '100%',
-    width: '100%',
-    borderRadius: scale(20),
-    paddingLeft: scale(20),
   },
   discription: {
     fontSize: scale(14),
@@ -68,23 +64,10 @@ const styles = StyleSheet.create({
     left: scale(10),
     fontFamily: Font?.Poppins,
   },
-  txt: {
-    fontSize: scale(12),
-    fontWeight: '500',
-    color: Color.primaryColor,
-    fontFamily: Font?.Poppins,
-    marginTop: verticalScale(2),
-    marginLeft: scale(5),
-  },
   title: {
     fontSize: scale(14),
     fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font?.PoppinsMedium,
-  },
-  DiaryBtn: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
 });

@@ -9,6 +9,8 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.85;
 const SPACING = (width - CARD_WIDTH) / 2;
 const ChallengeCardBanner = ({ challenge, onJoin }) => {
+    console.log("challengechallengechallengechallenge", challenge.participants.length);
+
     return (
         // <LinearGradient
         //     colors={[
@@ -37,10 +39,16 @@ const ChallengeCardBanner = ({ challenge, onJoin }) => {
 
             <View style={styles.footer}>
                 <View style={styles.participants}>
-                    <Image source={{ uri: 'https://i.pravatar.cc/30?img=1' }} style={styles.avatar} />
-                    <Image source={{ uri: 'https://i.pravatar.cc/30?img=2' }} style={[styles.avatar, { marginLeft: -10 }]} />
-                    <Image source={{ uri: 'https://i.pravatar.cc/30?img=3' }} style={[styles.avatar, { marginLeft: -10 }]} />
-                    <Text style={styles.participantText}>+{challenge.participants.length} participants</Text>
+                    {challenge.participants.slice(0, 3).map((participant, index) => (
+                        <Image
+                            key={participant.clientId._id}
+                            source={{ uri: participant.clientId.image }}
+                            style={[styles.avatar, { marginLeft: index === 0 ? 0 : -10 }]}
+                        />
+                    ))}
+                    <Text style={styles.participantText}>
+                        +{challenge.participants.length} participants
+                    </Text>
                 </View>
 
                 <TouchableOpacity style={styles.joinButton} onPress={() => onJoin(challenge)}>

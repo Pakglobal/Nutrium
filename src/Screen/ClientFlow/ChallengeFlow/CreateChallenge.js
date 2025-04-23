@@ -4,17 +4,15 @@ import { StyleSheet, Text, View, TextInput, Button, Alert, Switch, ScrollView, T
 import DatePicker from 'react-native-date-picker';
 import InviteFriendsModal from './InviteFriendsModal';
 import { useSelector } from 'react-redux';
-import CustomDropdown1 from './CustomDropdown1';
 import { createChallenge, getChallengeRange, getChallengeType } from '../../../Apis/ClientApis/ChallengesApi';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
 import { Color } from '../../../assets/styles/Colors';
 import { Font } from '../../../assets/styles/Fonts';
 import { scale, verticalScale } from 'react-native-size-matters';
-import Header from '../../../Components/Header';
 import CustomeDropDown from '../../../Components/CustomeDropDown';
+import Header from '../../../Components/Header';
 import CustomShadow from '../../../Components/CustomShadow';
 import { shadowStyle } from '../../../assets/styles/Shadow';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
 const CreateChallenge = () => {
@@ -39,9 +37,8 @@ const CreateChallenge = () => {
     const [loading, setLoading] = useState(false);
     const [selectedFriend, setSelectedFriend] = useState([])
     const [alertVisible, setAlertVisible] = useState(false);
-    const [alertType, setAlertType] = useState('success'); // 'success' or 'error'
+    const [alertType, setAlertType] = useState('success');
     const [alertMessage, setAlertMessage] = useState('');
-    const [selected, setSelected] = useState('Private');
 
     const userInfo = useSelector(state => state?.user?.userInfo);
     useEffect(() => {
@@ -57,7 +54,6 @@ const CreateChallenge = () => {
             }
         } catch (error) {
             console.error('Error fetching appointments:', error);
-            //   setLoading(false);
         }
     };
 
@@ -136,144 +132,123 @@ const CreateChallenge = () => {
 
     };
 
-    const handleSlectChalangeType = async (value) => {
-        try {
-
-            setChallengeType(value?.value)
-            setChallengeTypeId(value?._id)
-            console.log('userInfo?.token,value', userInfo?.token, value)
-            const response = await getChallengeRange(userInfo?.token, value?._id);
-            if (response?.success) {
-                setChallengeRangeOptions(response?.data)
-            } else {
-            }
-            //   setLoading(false);
-        } catch (error) {
-            console.error('Error fetching appointments1515:', error);
-            //   setLoading(false);
+    const handleSlectChalangeType = async (item) => {
+        if (!item || !item._id) {
+            console.warn('Invalid challenge type selected:', item);
+            return;
         }
-    }
+
+        setChallengeType(item?.value);
+        setChallengeTypeId(item._id);
+
+        try {
+            const response = await getChallengeRange(userInfo?.token, item._id);
+            if (response?.success) {
+                setChallengeRangeOptions(response?.data);
+            }
+        } catch (error) {
+            console.error('Error fetching challenge range:', error);
+        }
+    };
+
+    // const handleSlectChalangeType = async (value) => {
+    //     try {
+
+    //         setChallengeType(value)
+    //         setChallengeTypeId(value?._id)
+    //         const response = await getChallengeRange(userInfo?.token, value?._id);
+    //         if (response?.success) {
+    //             setChallengeRangeOptions(response?.data)
+    //         } else {
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching appointments1515:', error);
+    //         //   setLoading(false);
+    //     }
+    // }
     const handleSlectChalangeRangeType = (value) => {
         setCoinReward(value?.coin)
+
         setselectChallengeRange(value)
 
     }
 
+
     return (
         <SafeAreaView style={styles?.mainContainer} >
+
+
             <Header logoHeader={true} />
+
+
             <ScrollView style={styles.container}>
+
+
 
 
                 <Text style={styles.header}>Create Challenge</Text>
 
                 <Text style={styles.nameText} >Challenge Name</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter challenge name"
-                    placeholderTextColor={Color?.gray}
-                    fontFamily={Font?.Poppins}
-                    value={challengeName}
-                    onChangeText={setChallengeName} />
+                <CustomShadow radius={1.5} style={shadowStyle} >
 
-                <Text style={styles?.nameText}>Challenge Type</Text>
-                {/* <TextInput style={styles.input} value={challengeType} onChangeText={setChallengeType} /> */}
-                {/* <CustomDropdown1
-                    data={challengeTypeOptions}
-                    onSelect={(e) => handleSlectChalangeType(e)}
-                    value={challengeType} /> */}
-
-
-                <CustomShadow style={shadowStyle}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        style={styles.inputContainer}
-                        onPress={() => {
-                            Keyboard.dismiss();
-                            setChallengeTypeOptions(!challengeTypeOptions);
-                        }}>
-                        <Text
-                            style={[
-                                styles.titleText,
-                                !challengeType && { color: Color.textColor },
-                            ]}>
-                            {challengeType || 'Select bhg'}
-                        </Text>
-                        {challengeTypeOptions ? (
-                            <MaterialIcons
-                                name="keyboard-arrow-up"
-                                size={20}
-                                color={Color.primaryColor}
-                            />
-                        ) : (
-                            <MaterialIcons
-                                name="keyboard-arrow-down"
-                                size={20}
-                                color={Color.primaryColor}
-                            />
-                        )}
-                    </TouchableOpacity>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter challenge name"
+                        placeholderTextColor={Color?.gray}
+                        fontFamily={Font?.Poppins}
+                        value={challengeName}
+                        onChangeText={setChallengeName} />
                 </CustomShadow>
 
-                {challengeTypeOptions && (
-                    <View style={styles.dropdown}>
-                        {console.log(challengeTypeOptions[0]?.value,'--') }
-                        {challengeTypeOptions?.map(item => (
-                            <CustomeDropDown
-                            keyitem={item}
-                                dropdownStyle={[
-                                    styles.dropdownItem,
-                                    challengeType === item && { backgroundColor: Color.primaryColor },
-                                ]}
-                                singleSelected={true}
-                                onPress={() => {
-                                    setChallengeType(item);
-                                    setChallengeTypeOptions(false);
-                                }}
-                                textStyle={[
-                                    styles.titleText,
-                                    {
-                                        color: challengeType === item ? Color.white : Color.textColor,
-                                    },
-                                ]}
-                                item={item}
-                            />
-                        ))}
-                    </View>
-                )}
 
+                <Text style={styles?.nameText}>Challenge Type</Text>
+                <CustomeDropDown
+                    items={challengeTypeOptions}
+                    selectedItem={challengeType || 'Select Challenge'}
+                    onSelect={(e) => handleSlectChalangeType(e)}
+                    textStyle={!challengeType ? { color: Color.textColor } : {}}
+                />
 
                 <Text style={styles?.nameText}>Challenge Range</Text>
-                {/* <TextInput style={styles.input} value={challengeType} onChangeText={setChallengeType} /> */}
-                <CustomDropdown1
-                    data={challengeRange}
+
+                <CustomeDropDown
+                    items={challengeRange}
+                    selectedItem={selectChallengeRange?.value || 'Select Challenge'}
                     onSelect={(e) => handleSlectChalangeRangeType(e)}
-                    value={selectChallengeRange?.value} />
-
+                    textStyle={!selectChallengeRange?.value ? { color: Color.textColor } : {}}
+                />
                 <Text style={styles?.nameText}  >Coin Reward</Text>
-                <View style={[styles?.input, { justifyContent: "center" }]}>
+                {/* <View style={[styles?.input, { justifyContent: "center" }]}> */}
+                <CustomShadow radius={1.5} style={shadowStyle} >
 
-                    <Text style={{ color: Color?.gray }}>{coinReward}</Text>
-                </View>
+                    <Text style={[styles?.input, { color: Color?.gray }]}>{coinReward}</Text>
+                </CustomShadow>
+                {/* </View> */}
                 <Text style={styles?.nameText} >Select Start and End Dates</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }} >
-                    <TouchableOpacity
-                        style={[styles.input, { justifyContent: 'center', width: '49%' }]}
-                        onPress={() => {
-                            setSelectedDateField('start');
-                            setIsDatePickerOpen(true);
-                        }}>
-                        <Text style={styles?.nameText} >{`Start Date: ${startDate?.toLocaleDateString()}`}</Text>
-                    </TouchableOpacity>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} >
+                    <CustomShadow radius={1.5}  >
 
-                    <TouchableOpacity
-                        style={[styles.input, { justifyContent: 'center', width: '49%' }]}
-                        onPress={() => {
-                            setSelectedDateField('end');
-                            setIsDatePickerOpen(true);
-                        }}>
-                        <Text style={styles?.nameText}>{`End Date: ${endDate?.toLocaleDateString()}`}</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            style={[styles.input, { width: "95%" }]}
+                            onPress={() => {
+                                setSelectedDateField('start');
+                                setIsDatePickerOpen(true);
+                            }}>
+                            <Text style={styles?.nameText} >{`Start Date: ${startDate?.toLocaleDateString()}`}</Text>
+                        </TouchableOpacity>
+                    </CustomShadow>
+                    <CustomShadow radius={1.5} >
+
+                        <TouchableOpacity
+                            style={[styles.input, { width: "95%" }]}
+                            onPress={() => {
+                                setSelectedDateField('end');
+                                setIsDatePickerOpen(true);
+                            }}>
+                            <Text style={styles?.nameText}>{`End Date: ${endDate?.toLocaleDateString()}`}</Text>
+                        </TouchableOpacity>
+                    </CustomShadow>
                 </View>
                 <DatePicker
                     modal mode="date"
@@ -283,33 +258,40 @@ const CreateChallenge = () => {
                     onCancel={() => setIsDatePickerOpen(false)} />
 
                 <Text style={styles?.nameText} >Challenge Description</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter description"
-                    placeholderTextColor={Color?.gray}
-                    fontFamily={Font?.Poppins}
-                    value={description}
-                    onChangeText={setDescription}
-                    multiline />
+                <CustomShadow radius={1.5} style={shadowStyle} >
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter description"
+                        placeholderTextColor={Color?.gray}
+                        fontFamily={Font?.Poppins}
+                        value={description}
+                        onChangeText={setDescription}
+                        multiline />
+                </CustomShadow>
 
                 <Text style={styles?.nameText} >Target Goal ({challengeType})</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder={`Enter target goal for ${challengeType}`}
-                    keyboardType="numeric"
-                    placeholderTextColor={Color?.gray}
-                    fontFamily={Font?.Poppins}
-                    value={targetGoal}
-                    onChangeText={setTargetGoal} />
+                <CustomShadow radius={1.5} style={shadowStyle} >
 
+                    <TextInput
+                        style={styles.input}
+                        placeholder={`Enter target goal for ${challengeType}`}
+                        keyboardType="numeric"
+                        placeholderTextColor={Color?.gray}
+                        fontFamily={Font?.Poppins}
+                        value={targetGoal}
+                        onChangeText={setTargetGoal} />
+                </CustomShadow>
                 <Text style={styles?.nameText} >Participants Limit</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter participant limit"
-                    keyboardType="numeric"
-                    value={participantsLimit.toString()}
-                    onChangeText={(val) => setParticipantsLimit(parseInt(val) || 0)} />
+                <CustomShadow radius={1.5} style={shadowStyle} >
 
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter participant limit"
+                        keyboardType="numeric"
+                        value={participantsLimit.toString()}
+                        onChangeText={(val) => setParticipantsLimit(parseInt(val) || 0)} />
+                </CustomShadow>
 
                 <Text style={styles?.nameText} >Privacy</Text>
                 {/* <View style={styles.switchContainer}>
@@ -442,23 +424,24 @@ const styles = StyleSheet.create({
         marginVertical: verticalScale(6)
     },
     header: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: '500',
         textAlign: 'center',
-        marginBottom: 20,
+        marginVertical: scale(15),
         color: Color?.textColor,
-        fontFamily: Font?.Poppins
+        fontFamily: Font?.PoppinsMedium
     },
     input: {
-        height: scale(48),
-        // backgroundColor:'pink',
-        borderColor: '#ccc',
-        borderWidth: 1,
+        height: scale(38),
+        width: "98%",
         marginBottom: 10,
         paddingHorizontal: scale(10),
         fontSize: 16,
         fontFamily: Font?.Poppins,
-        color: Color?.gray,
+        color: Color?.textColor,
+        backgroundColor: Color?.white,
+        alignSelf: 'center',
+        borderRadius: scale(6)
     },
     switchContainer: {
         flexDirection: 'row',
@@ -543,3 +526,4 @@ const styles = StyleSheet.create({
 });
 
 export default CreateChallenge;
+

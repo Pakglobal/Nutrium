@@ -59,15 +59,16 @@ const SelectCountry = ({ route }) => {
     'United States': '+1',
     Canada: '+1',
   };
-
   const countries = [
-    'India',
-    'Australia',
-    'China',
-    'Japan',
-    'United States',
-    'Canada',
+    { label: "India", value: "India" },
+    { label: "Australia", value: "Australia" },
+    { label: "China", value: "China" },
+    { label: "Japan", value: "Japan" },
+    { label: "United States", value: "United States" },
+    { label: "Canada", value: "Canada" }
   ];
+
+
 
   const validateNumberInput = (input) => {
     const numericRegex = /^[0-9]*$/;
@@ -179,63 +180,12 @@ const SelectCountry = ({ route }) => {
 
         <View
           style={{ marginHorizontal: scale(16), marginTop: verticalScale(20), }}>
-          <CustomShadow style={shadowStyle}>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={styles.inputContainer}
-              onPress={() => {
-                Keyboard.dismiss();
-                setShowCountryDropdown(!showCountryDropdown);
-              }}>
-              <Text
-                style={[
-                  styles.titleText,
-                  !country && { color: Color.textColor },
-                ]}>
-                {country || 'Select country'}
-              </Text>
-              {showCountryDropdown ? (
-                <MaterialIcons
-                  name="keyboard-arrow-up"
-                  size={20}
-                  color={Color.primaryColor}
-                />
-              ) : (
-                <MaterialIcons
-                  name="keyboard-arrow-down"
-                  size={20}
-                  color={Color.primaryColor}
-                />
-              )}
-            </TouchableOpacity>
-          </CustomShadow>
-
-          {showCountryDropdown && (
-            <View style={styles.dropdown}>
-              {countries.map(item => (
-                <CustomeDropDown
-                  keyitem={item}
-                  dropdownStyle={[
-                    styles.dropdownItem,
-                    country === item && { backgroundColor: Color.primaryColor },
-                  ]}
-                  singleSelected={true}
-                  onPress={() => {
-                    setCountry(item);
-                    setShowCountryDropdown(false);
-                  }}
-                  textStyle={[
-                    styles.titleText,
-                    {
-                      color: country === item ? Color.white : Color.textColor,
-                    },
-                  ]}
-                  item={item}
-                />
-              ))}
-            </View>
-          )}
-        
+          <CustomeDropDown
+            items={countries}
+            selectedItem={country || 'Select country'}
+            onSelect={(item) => setCountry(item?.value)}
+            textStyle={!country ? { color: Color.textColor } : {}}
+          />
 
 
           <CustomShadow color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>

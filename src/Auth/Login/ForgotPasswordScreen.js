@@ -130,6 +130,9 @@
 //   },
 // });
 
+
+
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -141,8 +144,11 @@ import {
   Keyboard,
   ActivityIndicator,
   Linking,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { scale, verticalScale } from 'react-native-size-matters';
 import { Color } from '../../assets/styles/Colors';
@@ -152,12 +158,10 @@ import Header from '../../assets/Images/forgotPassword.svg';
 import CustomShadow from '../../Components/CustomShadow';
 import { ForgotPasswordApi } from '../../Apis/Login/AuthApis';
 
-const ForgotPasswordScreen = ({ route }) => {
+const ForgotPasswordScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-
-
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
@@ -167,31 +171,28 @@ const ForgotPasswordScreen = ({ route }) => {
       return;
     }
 
+    const body = { email };
 
-    const body = {
-      email: email,
-    };
     try {
       setLoading(true);
-
       const response = await ForgotPasswordApi(body);
       console.log('response=====', response);
 
       const successMsg = 'Password reset email sent.';
 
       if (response?.message?.includes(successMsg)) {
-        Alert.alert(
-          'Email Sent',
-          successMsg,
-          [{
-            text: 'OK', onPress: () =>
-            (Linking.openURL(
-              `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?clientId=67e236a84d6b05c36e97e2b5`,
-            ),
-              navigation?.navigate('loginScreen')
-            )
-          }]
-        );
+        Alert.alert('Email Sent', successMsg, [
+          {
+            text: 'OK',
+            onPress: () => {
+              const encodedEmail = encodeURIComponent(email);
+              Linking.openURL(
+                `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?email=${encodedEmail}`
+              );
+              navigation?.navigate('loginScreen');
+            },
+          },
+        ]);
       } else {
         Alert.alert('Error', response?.message || 'Failed to send reset email.');
       }
@@ -204,45 +205,58 @@ const ForgotPasswordScreen = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      
-      <LeftIcon onGoBack={() => navigation.goBack()} />
-      <Header height="40%" width="100%" style={{ marginTop: 50 }} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          <LeftIcon onGoBack={() => navigation.goBack()} />
+          <Header height="40%" width="100%" style={{ marginTop: 50 }} />
 
-      <View style={styles.formContainer}>
-        <Text style={styles.titleText}>Please Enter your Registered Email</Text>
-        <Text style={styles.subtitleText}>
-          We will send a verification link to your email to reset your password.
-        </Text>
+          <View style={styles.formContainer}>
+            <Text style={styles.titleText}>Please Enter your Registered Email</Text>
+            <Text style={styles.subtitleText}>
+              We will send a verification link to your email to reset your password.
+            </Text>
 
-        <View style={{ marginTop: verticalScale(20) }}>
-          <CustomShadow>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={setEmail}
-                placeholderTextColor={Color.textColor}
-                style={styles.textInput}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+            <View style={{ marginTop: verticalScale(20) }}>
+              <CustomShadow>
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    placeholder="Enter your email"
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholderTextColor={Color.textColor}
+                    style={styles.textInput}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+              </CustomShadow>
             </View>
-          </CustomShadow>
-        </View>
-      </View>
 
-      <View style={styles.buttonWrapper}>
-        <TouchableOpacity
-          onPress={handleSubmit}
-          disabled={loading}
-          style={[styles.button, { backgroundColor: Color.primaryColor }]}>
-          {loading ? (
-            <ActivityIndicator size="small" color={Color.white} />
-          ) : (
-            <Text style={[styles.buttonText, { color: Color.white }]}>Send Reset Link</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+            <View style={styles.buttonWrapper}>
+              <TouchableOpacity
+                onPress={handleSubmit}
+                disabled={loading}
+                style={[styles.button, { backgroundColor: Color.primaryColor }]}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color={Color.white} />
+                ) : (
+                  <Text style={[styles.buttonText, { color: Color.white }]}>
+                    Send Reset Link
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -253,6 +267,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Color.white,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: verticalScale(30),
   },
   titleText: {
     fontSize: scale(14),
@@ -285,11 +303,7 @@ const styles = StyleSheet.create({
     fontFamily: Font.PoppinsMedium,
   },
   buttonWrapper: {
-    justifyContent: 'center',
-    bottom: verticalScale(25),
-    position: 'absolute',
-    width: '100%',
-    paddingHorizontal: scale(16),
+    marginTop: verticalScale(30),
   },
   button: {
     borderRadius: scale(8),

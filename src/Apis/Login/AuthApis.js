@@ -2,7 +2,6 @@ import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
 
 export const Login = async data => {
-
   try {
     const body = {
       email: data?.email,
@@ -52,18 +51,16 @@ export const GuestLoGin = async data => {
     };
     const url = `${BASE_URL}demo-auth`;
     const response = await axios.post(url, body);
-    
+
     return response;
   } catch (error) {
-
     return error?.response?.data;
   }
 };
 
-
-export const ForgotPasswordApi = async(data) => {
+export const ForgotPasswordApi = async data => {
   console.log(data, 'data');
-  
+
   try {
     const body = {
       email: data?.email,
@@ -76,4 +73,4 @@ export const ForgotPasswordApi = async(data) => {
   } catch (error) {
     return error?.response?.data;
   }
-}
+};

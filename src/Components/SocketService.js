@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 
 const SOCKET_SERVER_URL = 'https://nutrium-back-end-1.onrender.com';
 
-let socket;
+let socket = null;
 
 export const getSocket = () => {
   return socket;

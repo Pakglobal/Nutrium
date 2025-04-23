@@ -11,18 +11,17 @@ import {
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { Color } from '../../../../assets/styles/Colors';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
   GetPhysicalActivities,
   GetQuickAccess,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
 import Header from '../../../../Components/Header';
-import { Shadow } from 'react-native-shadow-2';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
-import { Font } from '../../../../assets/styles/Fonts';
+import {ShadowValues} from '../../../../assets/styles/Shadow';
+import {Font} from '../../../../assets/styles/Fonts';
 import CustomShadow from '../../../../Components/CustomShadow';
 import CustomLoader from '../../../../Components/CustomLoader';
 
@@ -105,9 +104,12 @@ const LogPhysicalActivity = ({route}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
-
-      <Header screenheader={true} screenName={'Physical Activity'} rightHeaderButton={false} />
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+      <Header
+        screenheader={true}
+        screenName={'Physical Activity'}
+        rightHeaderButton={false}
+      />
 
       <View style={{marginHorizontal: scale(16)}}>
         <Text style={styles.topTitle}>Log Physical Activity</Text>
@@ -132,7 +134,7 @@ const LogPhysicalActivity = ({route}) => {
       </View>
 
       {loading ? (
-       <CustomLoader />
+        <CustomLoader />
       ) : filteredData?.length > 0 ? (
         <FlatList
           data={filteredData}
@@ -143,7 +145,7 @@ const LogPhysicalActivity = ({route}) => {
                   <Text style={styles.title}>Quick access</Text>
                   {quickAccessData?.map((item, index) => (
                     <TouchableOpacity
-                    style={{marginVertical: verticalScale(5)}}
+                      style={{marginVertical: verticalScale(5)}}
                       key={index}
                       onPress={() =>
                         handlePressItem(item?.activity, item?.time)
@@ -196,14 +198,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: verticalScale(10)
+    marginBottom: verticalScale(10),
   },
   topTitle: {
     color: Color?.textColor,
     marginVertical: verticalScale(15),
     fontSize: scale(16),
     fontWeight: '500',
-    fontFamily:Font?.PoppinsMedium,
+    fontFamily: Font?.PoppinsMedium,
   },
   inputView: {
     fontSize: scale(12),
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
     marginHorizontal: scale(8),
     // fontFamily:Font?.PoppinsMedium,
     marginTop: verticalScale(2),
-    height: scale(35)
+    height: scale(35),
   },
   clearButton: {
     marginEnd: scale(10),
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     color: Color.textColor,
     fontWeight: '500',
-    fontFamily:Font?.Poppins
+    fontFamily: Font?.Poppins,
   },
   name: {
     fontSize: scale(12),
@@ -231,22 +233,22 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
-    color:'#675A5A',
-    fontFamily:Font?.Poppins
+    color: '#675A5A',
+    fontFamily: Font?.Poppins,
   },
   activity: {
     fontSize: scale(12),
     fontWeight: '500',
     color: Color.textColor,
-    fontFamily:Font?.PoppinsMedium
+    fontFamily: Font?.PoppinsMedium,
   },
   time: {
     fontSize: scale(10),
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
     color: '#999595',
-    fontFamily:Font?.Poppins,
-    paddingBottom: verticalScale(5)
+    fontFamily: Font?.Poppins,
+    paddingBottom: verticalScale(5),
   },
   emptyContainer: {
     padding: scale(20),
@@ -255,7 +257,6 @@ const styles = StyleSheet.create({
   emptyText: {
     color: Color.gray,
     fontSize: scale(14),
-    fontFamily:Font?.Poppins
-
+    fontFamily: Font?.Poppins,
   },
 });

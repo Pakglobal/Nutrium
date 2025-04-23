@@ -126,7 +126,7 @@ const AppointmentScreen = ({selected, setSelected}) => {
       </View>
 
       {loading ? (
-       <CustomLoader style={{marginTop: verticalScale(10)}} />
+        <CustomLoader style={{marginTop: verticalScale(10)}} />
       ) : (
         <View
           style={{

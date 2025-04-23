@@ -1,6 +1,6 @@
 // src/utils/dateFormatter.js
 
-export const FormatDateAndTime = (dateString) => {
+export const FormatDateAndTime = dateString => {
   const date = new Date(dateString);
 
   const optionsDate = {
@@ -15,8 +15,12 @@ export const FormatDateAndTime = (dateString) => {
     hour12: true,
   };
 
-  const formattedDate = new Intl.DateTimeFormat('en-GB', optionsDate).format(date);
-  const formattedTime = new Intl.DateTimeFormat('en-US', optionsTime).format(date);
+  const formattedDate = new Intl.DateTimeFormat('en-GB', optionsDate).format(
+    date,
+  );
+  const formattedTime = new Intl.DateTimeFormat('en-US', optionsTime).format(
+    date,
+  );
 
-  return { formattedDate, formattedTime };
+  return {formattedDate, formattedTime};
 };

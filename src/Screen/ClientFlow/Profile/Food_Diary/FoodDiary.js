@@ -33,10 +33,10 @@ const FoodDiary = () => {
   const [diaryData, setDiaryData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-    const tokenId = useSelector(state => state?.user?.token);
-    const guestTokenId = useSelector(state => state?.user?.guestToken);
-    const token = tokenId?.token || guestTokenId?.token;
-    const id = tokenId?.id || guestTokenId?.id;
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const getDateString = () => {
     if (dayOffset === 0) return 'Today';
@@ -87,8 +87,6 @@ const FoodDiary = () => {
   };
 
   const renderDiaryDataItem = ({item: diary}) => {
-
-
     return (
       <Pressable
         onPress={() =>
@@ -142,12 +140,7 @@ const FoodDiary = () => {
 
   return (
     <View style={styles.container}>
-    
-       <Header
-        screenheader={true}
-        screenName={'Food Diary'}
-        plus={true}
-      />
+      <Header screenheader={true} screenName={'Food Diary'} plus={true} />
       <CalenderHeader
         onPressLeft={() => setDayOffset(dayOffset - 1)}
         onPressRight={() => setDayOffset(dayOffset + 1)}
@@ -156,7 +149,7 @@ const FoodDiary = () => {
         txtFunction={getDateString()}
       />
       {loading ? (
-       <CustomLoader />
+        <CustomLoader />
       ) : diaryData && diaryData?.length > 0 ? (
         <FlatList
           data={diaryData}

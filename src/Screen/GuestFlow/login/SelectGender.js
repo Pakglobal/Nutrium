@@ -19,7 +19,6 @@ import IconStyle, {
 } from '../../../assets/styles/Icon';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
-import {Shadow} from 'react-native-shadow-2';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import {useDispatch} from 'react-redux';
 import {Font} from '../../../assets/styles/Fonts';
@@ -32,8 +31,8 @@ const SelectGender = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [selectedGender, setSelectedGender] = useState('');
-  useAndroidBack()
-  
+  useAndroidBack();
+
   const handleSelect = gender => {
     setSelectedGender(gender);
   };
@@ -49,7 +48,6 @@ const SelectGender = () => {
     }
     navigation.navigate('SelectProfession', {gender: selectedGender});
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,42 +87,41 @@ const SelectGender = () => {
           <View style={{width: '48%'}}>
             <CustomShadow>
               <View style={shadowStyle}>
-
-              <TouchableOpacity
-                style={[
-                  styles.option,
-                  selectedGender === 'Female' && styles.selected,
-                ]}
-                onPress={() => handleSelect('Female')}>
-                <View
+                <TouchableOpacity
                   style={[
-                    styles.iconContainer,
-                    {
-                      backgroundColor:
+                    styles.option,
+                    selectedGender === 'Female' && styles.selected,
+                  ]}
+                  onPress={() => handleSelect('Female')}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      {
+                        backgroundColor:
+                          selectedGender === 'Female'
+                            ? Color.white
+                            : Color.primaryColor,
+                      },
+                    ]}>
+                    <FontAwesome5
+                      name="female"
+                      color={
                         selectedGender === 'Female'
-                          ? Color.white
-                          : Color.primaryColor,
-                    },
-                  ]}>
-                  <FontAwesome5
-                    name="female"
-                    color={
-                      selectedGender === 'Female'
-                        ? Color.primaryColor
-                        : Color.white
-                    }
-                    size={IconStyle.headerIconSize}
-                  />
-                </View>
-                <Text
-                  style={[
-                    styles.titleText,
-                    {fontSize: scale(13)},
-                    selectedGender === 'Female' && {color: Color.white},
-                  ]}>
-                  Female
-                </Text>
-              </TouchableOpacity>
+                          ? Color.primaryColor
+                          : Color.white
+                      }
+                      size={IconStyle.headerIconSize}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.titleText,
+                      {fontSize: scale(13)},
+                      selectedGender === 'Female' && {color: Color.white},
+                    ]}>
+                    Female
+                  </Text>
+                </TouchableOpacity>
               </View>
             </CustomShadow>
           </View>
@@ -132,42 +129,41 @@ const SelectGender = () => {
           <View style={{width: '48%'}}>
             <CustomShadow>
               <View style={shadowStyle}>
-
-              <TouchableOpacity
-                style={[
-                  styles.option,
-                  selectedGender === 'Male' && styles.selected,
-                ]}
-                onPress={() => handleSelect('Male')}>
-                <View
+                <TouchableOpacity
                   style={[
-                    styles.iconContainer,
-                    {
-                      backgroundColor:
+                    styles.option,
+                    selectedGender === 'Male' && styles.selected,
+                  ]}
+                  onPress={() => handleSelect('Male')}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      {
+                        backgroundColor:
+                          selectedGender === 'Male'
+                            ? Color.white
+                            : Color.primaryColor,
+                      },
+                    ]}>
+                    <FontAwesome5
+                      name="male"
+                      color={
                         selectedGender === 'Male'
-                          ? Color.white
-                          : Color.primaryColor,
-                    },
-                  ]}>
-                  <FontAwesome5
-                    name="male"
-                    color={
-                      selectedGender === 'Male'
-                        ? Color.primaryColor
-                        : Color.white
-                    }
-                    size={IconStyle.headerIconSize}
-                  />
-                </View>
-                <Text
-                  style={[
-                    styles.titleText,
-                    {fontSize: scale(13)},
-                    selectedGender === 'Male' && {color: Color.white},
-                  ]}>
-                  Male
-                </Text>
-              </TouchableOpacity>
+                          ? Color.primaryColor
+                          : Color.white
+                      }
+                      size={IconStyle.headerIconSize}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.titleText,
+                      {fontSize: scale(13)},
+                      selectedGender === 'Male' && {color: Color.white},
+                    ]}>
+                    Male
+                  </Text>
+                </TouchableOpacity>
               </View>
             </CustomShadow>
           </View>

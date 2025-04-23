@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   clientAppointmentInfo: {},
@@ -33,11 +33,11 @@ const clientSlice = createSlice({
       state.waterIntake = action.payload;
     },
     updateAppointmentStatus: (state, action) => {
-      const { appointmentId, status } = action.payload;
+      const {appointmentId, status} = action.payload;
       state.clientAppointmentInfo = state.clientAppointmentInfo.map(
         appointment =>
           appointment._id === appointmentId
-            ? { ...appointment, status }
+            ? {...appointment, status}
             : appointment,
       );
     },

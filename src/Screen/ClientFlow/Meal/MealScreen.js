@@ -75,14 +75,11 @@ const MealScreen = () => {
   const getMealsForSelectedDays = () => {
     if (!mealPlan || !selectedDays || !Array.isArray(mealPlan)) return [];
 
-   
     const selectedTemplate = mealPlan.find(template => {
       const templateDays = template?.days;
 
-   
       if (templateDays === 'Everyday') return true;
 
-   
       return (
         Array.isArray(templateDays) &&
         selectedDays.some(day => templateDays.includes(day))
@@ -141,8 +138,6 @@ const MealScreen = () => {
     }
   };
 
-
-
   const isDaySelected = templateDays => {
     if (!Array.isArray(selectedDays)) return false;
     if (templateDays === 'Everyday') return true;
@@ -155,7 +150,6 @@ const MealScreen = () => {
   };
 
   const renderMealItem = ({item, index}) => {
- 
     const hasMealItems =
       (item.meal && item.meal.length > 0) ||
       (item.Appetizer && item.Appetizer.length > 0) ||
@@ -340,7 +334,7 @@ const MealScreen = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <CustomLoader/>
+          <CustomLoader />
         </View>
       ) : mealPlan?.length > 0 ? (
         <ScrollView

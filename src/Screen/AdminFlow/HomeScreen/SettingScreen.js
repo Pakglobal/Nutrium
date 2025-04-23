@@ -101,7 +101,7 @@ const SettingScreen = () => {
           </View>
 
           {isEnabled === null ? (
-           <CustomLoader />
+            <CustomLoader />
           ) : (
             <Switch
               trackColor={{

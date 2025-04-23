@@ -25,7 +25,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
-import {Shadow} from 'react-native-shadow-2';
 import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
@@ -154,7 +153,9 @@ const SelectCountry = ({route}) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: height > 800 ? '47.5%' : '33.5%'}}
+        contentContainerStyle={{
+          paddingBottom: height > 800 ? '47.5%' : '33.5%',
+        }}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
           style={{alignSelf: 'center', marginTop: verticalScale(50)}}

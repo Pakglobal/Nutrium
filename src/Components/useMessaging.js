@@ -151,7 +151,6 @@ const MessageComponent = ({
     });
 
     const messageHandler = newMessage => {
-
       setMessages(prevMessages => {
         const messageExists = prevMessages.some(
           msg =>
@@ -459,7 +458,7 @@ const MessageComponent = ({
         {fileUrl && (
           <View style={styles.imageContainer}>
             {isUploading ? (
-             <CustomLoader style={styles.loadingImageContainer} />
+              <CustomLoader style={styles.loadingImageContainer} />
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
                 <Image source={{uri: fileUrl}} style={styles.image} />

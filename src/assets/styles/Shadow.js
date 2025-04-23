@@ -10,5 +10,5 @@ export const ShadowValues = {
 export const shadowStyle = {
   width: '100%',
   borderRadius: scale(10),
-  backgroundColor: '#FFF'
+  backgroundColor: '#FFF',
 };

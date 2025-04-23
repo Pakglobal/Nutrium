@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   View,
@@ -9,19 +9,18 @@ import {
   Dimensions,
   Linking,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import Carousel from 'react-native-snap-carousel';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Color } from '../assets/styles/Colors';
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import {Color} from '../assets/styles/Colors';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { Shadow } from 'react-native-shadow-2';
-import { Font } from '../assets/styles/Fonts';
-import { ShadowValues } from '../assets/styles/Shadow';
+import {Font} from '../assets/styles/Fonts';
+import {ShadowValues} from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const carouselData = [
   {
@@ -44,15 +43,14 @@ const carouselData = [
   },
 ];
 
-const MoreFor = ({ data }) => {
+const MoreFor = ({data}) => {
   const navigation = useNavigation();
   const userInfo = useSelector(state => state?.user?.userInfo);
   const profileData = userInfo?.user || userInfo?.userData;
 
   const handlePress = () => {
-
     if (data?.buttonText === 'Add Profile Photo') {
-      navigation.navigate('mainProfile', { data: profileData });
+      navigation.navigate('mainProfile', {data: profileData});
     } else if (data?.buttonText === 'Rate Our App') {
       Linking.openURL(
         'https://play.google.com/store/apps/details?id=co.healthium.nutrium',
@@ -66,14 +64,14 @@ const MoreFor = ({ data }) => {
     <View style={styles.cardContainer}>
       <LinearGradient
         colors={['#21972B', '#6BCB77']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
         style={styles.gradientBox}>
         <Text style={styles.description}>{data?.text}</Text>
         <CustomShadow
           distance={1}
           startColor={ShadowValues.blackShadow}
-          style={{ width: '100%' }}>
+          style={{width: '100%'}}>
           <TouchableOpacity
             style={styles.txtIcon}
             onPress={handlePress}
@@ -114,10 +112,10 @@ const MoreForYou = () => {
     return () => clearInterval(interval);
   }, [activeIndex, scrollingForward]);
 
-  const renderCarouselItem = ({ item }) => (
+  const renderCarouselItem = ({item}) => (
     <FlatList
       data={item.items}
-      renderItem={({ item: flatListItem }) => <MoreFor data={flatListItem} />}
+      renderItem={({item: flatListItem}) => <MoreFor data={flatListItem} />}
       keyExtractor={(_, index) => index.toString()}
       showsVerticalScrollIndicator={false}
     />

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import SelectRegistrationType from '../Auth/Registartion/SelectRegistrationType';
 import Registration from '../Auth/Registartion/Registration';
 import UnlockAccess from '../Auth/Registartion/UnlockAccess';
@@ -18,12 +18,12 @@ import LogMeal from '../Screen/ClientFlow/Profile/Food_Diary/LogMeal';
 import WaterIntake from '../Screen/ClientFlow/Profile/Water_Intake/WaterIntake';
 import Measurements from '../Screen/ClientFlow/Profile/Measurements/Measurements';
 import AdminHomeScreen from '../Screen/AdminFlow/HomeScreen/AdminHomeScreen';
-import { persistor, store } from '../redux/Store';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
+import {persistor, store} from '../redux/Store';
+import {Provider, useDispatch, useSelector} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
 import ClientProfileScreen from '../Screen/AdminFlow/Clients/ClientProfileScreen';
 import ClientChatScreen from '../Screen/AdminFlow/Clients/ClientChatScreen';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import SideBar from './SideBar';
 import SettingScreen from '../Screen/AdminFlow/HomeScreen/SettingScreen';
 import WaterIntakeLog from '../Screen/ClientFlow/Profile/Water_Intake/WaterIntakeLog';
@@ -69,7 +69,10 @@ const ClientDrawerNavigator = () => {
         },
       }}>
       <ClientDrawer.Screen name="ClientHome" component={BottomNavigation} />
-      <ClientDrawer.Screen name="ChallengesScreen" component={ChallengesScreen} />
+      <ClientDrawer.Screen
+        name="ChallengesScreen"
+        component={ChallengesScreen}
+      />
     </ClientDrawer.Navigator>
   );
 };
@@ -78,9 +81,9 @@ const MyDrawer = () => {
   const [selectedScreen, setSelectedScreen] = useState('MESSAGES');
 
   const options = [
-    { id: 0, label: 'MESSAGES' },
-    { id: 1, label: 'CLIENTS' },
-    { id: 2, label: 'APPOINTMENTS' },
+    {id: 0, label: 'MESSAGES'},
+    {id: 1, label: 'CLIENTS'},
+    {id: 2, label: 'APPOINTMENTS'},
   ];
 
   return (
@@ -92,7 +95,7 @@ const MyDrawer = () => {
           onSelectScreen={setSelectedScreen}
         />
       )}
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{headerShown: false}}>
       {options.map(item => (
         <Drawer.Screen key={item?.label} name={item?.label}>
           {props => (
@@ -109,7 +112,7 @@ const MyDrawer = () => {
 };
 
 const AdminFlowStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="adminFlow" component={MyDrawer} />
     <Stack.Screen name="ClientProfile" component={ClientProfileScreen} />
     <Stack.Screen name="Chat" component={ClientChatScreen} />
@@ -118,12 +121,11 @@ const AdminFlowStack = () => (
   </Stack.Navigator>
 );
 
-const AuthStack = ({ route }) => {
-  const { onboardingCompleted } = route.params || {};
-
+const AuthStack = ({route}) => {
+  const {onboardingCompleted} = route.params || {};
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       {!onboardingCompleted ? (
         <Stack.Screen name="onBoarding" component={OnboardingScreen} />
       ) : null}
@@ -148,14 +150,20 @@ const AuthStack = ({ route }) => {
 };
 
 const UserFlowStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="ClientDrawer" component={ClientDrawerNavigator} />
     <Stack.Screen name="mainProfile" component={MainProfile} />
     <Stack.Screen name="practitioner" component={Practitioner} />
     <Stack.Screen name="ChallengesScreen" component={ChallengesScreen} />
     <Stack.Screen name="CreateChallenge" component={CreateChallenge} />
-    <Stack.Screen name="ChallengesDetailsScreen" component={ChallengesDetailsScreen} />
-    <Stack.Screen name="ViewChallengDetailsScreen" component={ViewChallengDetailsScreen} />
+    <Stack.Screen
+      name="ChallengesDetailsScreen"
+      component={ChallengesDetailsScreen}
+    />
+    <Stack.Screen
+      name="ViewChallengDetailsScreen"
+      component={ViewChallengDetailsScreen}
+    />
     <Stack.Screen name="JoinRequestScreen" component={JoinRequestScreen} />
     <Stack.Screen name="settings" component={Settings} />
     <Stack.Screen name="foodDiary" component={FoodDiary} />
@@ -181,7 +189,7 @@ const UserFlowStack = () => (
 
 const GuestStack = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="SelectGender" component={SelectGender} />
       <Stack.Screen name="SelectProfession" component={SelectProfession} />
       <Stack.Screen name="SelectCountry" component={SelectCountry} />
@@ -195,16 +203,15 @@ const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
-  const demoClient = useSelector((state) => state?.user?.guestToken?.demoClient);
+  const demoClient = useSelector(state => state?.user?.guestToken?.demoClient);
   console.log(demoClient);
-
 
   if (onboardingCompleted === null) {
     return null;
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       {role === 'Admin' ? (
         <Stack.Screen name="AdminFlow" component={AdminFlowStack} />
       ) : role === 'Client' || demoClient ? (
@@ -213,7 +220,7 @@ const MainStack = () => {
         <Stack.Screen
           name="AuthStack"
           component={AuthStack}
-          initialParams={{ onboardingCompleted }}
+          initialParams={{onboardingCompleted}}
         />
       )}
     </Stack.Navigator>
@@ -223,7 +230,7 @@ const MainStack = () => {
 const RootNavigation = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <NavigationContainer linking={linking} >
+      <NavigationContainer linking={linking}>
         <MainStack />
       </NavigationContainer>
     </PersistGate>

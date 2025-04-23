@@ -167,11 +167,9 @@ const RecommendationScreen = () => {
   );
 
   useEffect(() => {
-    
-      FetchRecommendationData();
-      FetchFoodAvoidData();
-      FetchGoalsData();
-    
+    FetchRecommendationData();
+    FetchFoodAvoidData();
+    FetchGoalsData();
   }, []);
 
   const onRefresh = useCallback(() => {
@@ -193,92 +191,90 @@ const RecommendationScreen = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header logoHeader={true} />
 
-      
-        <View>
-          {loading ? (
-            <CustomLoader />
-          ) : (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }>
-              <View style={styles.container}>
-                <Text style={styles.title}>Foods to avoid</Text>
-                <Text style={styles.subTitle}>
-                  Avoid these foods in your diet to improve your health
-                </Text>
-                <View>
-                  {foodsAvoid && foodsAvoid?.foodAvoids?.length > 0 ? (
-                    foodsAvoid.foodAvoids.map((item, index) => (
-                      <Text key={index} style={{color: Color.black}}>
-                        {item}
-                      </Text>
-                    ))
-                  ) : (
-                    <View style={{marginVertical: verticalScale(10)}}>
-                      <Text style={{color: Color.gray}}>
-                        There are no records of food to avoid
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-
-              <View style={styles.container}>
-                <Text style={styles.title}>Other recommendations</Text>
-                <Text style={styles.subTitle}>
-                  See more recommendations from your professional
-                </Text>
-                <View>
-                  {recommendations && recommendations?.recommendation ? (
-                    <Text style={{color: Color.black}}>
-                      {recommendations.recommendation}
+      <View>
+        {loading ? (
+          <CustomLoader />
+        ) : (
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            <View style={styles.container}>
+              <Text style={styles.title}>Foods to avoid</Text>
+              <Text style={styles.subTitle}>
+                Avoid these foods in your diet to improve your health
+              </Text>
+              <View>
+                {foodsAvoid && foodsAvoid?.foodAvoids?.length > 0 ? (
+                  foodsAvoid.foodAvoids.map((item, index) => (
+                    <Text key={index} style={{color: Color.black}}>
+                      {item}
                     </Text>
-                  ) : (
-                    <View style={{marginVertical: verticalScale(10)}}>
-                      <Text style={{color: Color.gray}}>
-                        There are no records of recommendation
-                      </Text>
-                    </View>
-                  )}
-                </View>
+                  ))
+                ) : (
+                  <View style={{marginVertical: verticalScale(10)}}>
+                    <Text style={{color: Color.gray}}>
+                      There are no records of food to avoid
+                    </Text>
+                  </View>
+                )}
               </View>
+            </View>
 
-              <Pressable
-                style={styles.container}
-                onPress={() => handleOpenBottomSheet()}>
-                <Text style={styles.title}>Next goals</Text>
-                <Text style={styles.subTitle}>
-                  Goals agreed with your professional
-                </Text>
-                <View>
-                  {goals && goals?.length > 0 ? (
-                    <FlatList
-                      showsVerticalScrollIndicator={false}
-                      data={goals[0]?.goals}
-                      keyExtractor={(item, index) =>
-                        item?._id || index.toString()
-                      }
-                      renderItem={renderGoalItem}
-                      contentContainerStyle={{
-                        paddingHorizontal: scale(10),
-                        paddingVertical: verticalScale(5),
-                      }}
-                    />
-                  ) : (
-                    <View style={{marginVertical: verticalScale(10)}}>
-                      <Text style={{color: Color.gray}}>
-                        There are no records of goals
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </Pressable>
-            </ScrollView>
-          )}
-        </View>
-  
+            <View style={styles.container}>
+              <Text style={styles.title}>Other recommendations</Text>
+              <Text style={styles.subTitle}>
+                See more recommendations from your professional
+              </Text>
+              <View>
+                {recommendations && recommendations?.recommendation ? (
+                  <Text style={{color: Color.black}}>
+                    {recommendations.recommendation}
+                  </Text>
+                ) : (
+                  <View style={{marginVertical: verticalScale(10)}}>
+                    <Text style={{color: Color.gray}}>
+                      There are no records of recommendation
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            <Pressable
+              style={styles.container}
+              onPress={() => handleOpenBottomSheet()}>
+              <Text style={styles.title}>Next goals</Text>
+              <Text style={styles.subTitle}>
+                Goals agreed with your professional
+              </Text>
+              <View>
+                {goals && goals?.length > 0 ? (
+                  <FlatList
+                    showsVerticalScrollIndicator={false}
+                    data={goals[0]?.goals}
+                    keyExtractor={(item, index) =>
+                      item?._id || index.toString()
+                    }
+                    renderItem={renderGoalItem}
+                    contentContainerStyle={{
+                      paddingHorizontal: scale(10),
+                      paddingVertical: verticalScale(5),
+                    }}
+                  />
+                ) : (
+                  <View style={{marginVertical: verticalScale(10)}}>
+                    <Text style={{color: Color.gray}}>
+                      There are no records of goals
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </Pressable>
+          </ScrollView>
+        )}
+      </View>
 
       <RBSheet
         ref={bottomSheetRef}

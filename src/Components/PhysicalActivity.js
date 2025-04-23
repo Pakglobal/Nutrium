@@ -1,27 +1,34 @@
-import {
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
 import {useStepTracking} from './StepTrackingService';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
-import {Shadow} from 'react-native-shadow-2';
 import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import {shadowStyle} from '../assets/styles/Shadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 import CustomShadow from './CustomShadow';
 
 const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
   const navigation = useNavigation();
-  const {steps, calories, workouts, isTracking, currentDay} = useStepTracking();
+  const {steps, calories, workouts, isTracking, currentDay, logLast7DaysSteps} =
+    useStepTracking();
+  console.log(steps, 'steps');
+
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const todayIndex = currentDay;
+  const displayDays = daysOfWeek.map((day, index) => ({
+    day,
+    index,
+    isFuture: index > todayIndex,
+    isCurrent: index === todayIndex,
+    steps:
+      index === todayIndex
+        ? steps
+        : index < todayIndex
+        ? workouts[index] || 0
+        : null,
+  }));
 
   const formatNumber = num => {
     if (num >= 10000000) {
@@ -64,36 +71,41 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
                   justifyContent: 'space-between',
                   width: '100%',
                 }}>
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(
-                  (day, index) => (
+                {displayDays.map(({day, index, isFuture, isCurrent, steps}) => (
+                  <View
+                    key={day}
+                    style={{
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
                     <View
-                      key={day}
-                      style={{
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <View style={styles.day}>
-                        {currentDay === index && (
-                          <Text
-                            style={{
-                              color: Color.white,
-                              textAlign: 'center',
-                              fontSize: scale(12),
-                              fontWeight: '500',
-                              fontFamily: Font.PoppinsMedium,
-                              marginTop: verticalScale(2),
-                            }}
-                            numberOfLines={1}
-                            adjustsFontSizeToFit={true}>
-                            {formatNumber(steps)}
-                          </Text>
-                        )}
-                      </View>
-                      <Text style={styles.dayText}>{day}</Text>
+                      style={[
+                        styles.day,
+                        {
+                          backgroundColor:
+                            currentDay === index
+                              ? Color.primaryColor
+                              : Color.primaryLight,
+                        },
+                      ]}>
+                      <Text
+                        style={{
+                          color: Color.white,
+                          textAlign: 'center',
+                          fontSize: scale(12),
+                          fontWeight: '500',
+                          fontFamily: Font.PoppinsMedium,
+                          marginTop: verticalScale(2),
+                        }}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit={true}>
+                        {isFuture ? '' : formatNumber(steps || 0)}
+                      </Text>
                     </View>
-                  ),
-                )}
+                    <Text style={styles.dayText}>{day}</Text>
+                  </View>
+                ))}
               </View>
             </View>
 
@@ -135,7 +147,7 @@ const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
                       ]}>
                       Steps
                     </Text>
-                    <Text style={styles.zero}>{steps}</Text>
+                    <Text style={styles.zero}>{formatNumber(steps)}</Text>
                   </View>
                 </CustomShadow>
               </View>

@@ -7,7 +7,6 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
-import {Shadow} from 'react-native-shadow-2';
 import {Color} from '../../../assets/styles/Colors';
 import PhysicalActivity from '../../../Components/PhysicalActivity';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -126,7 +125,7 @@ const HomeScreen = () => {
         setRefreshing(false);
       });
   }, []);
-  
+
   const handleGoToChallenge = () => {
     navigation.navigate('ChallengesScreen');
   };
@@ -153,9 +152,9 @@ const HomeScreen = () => {
               Go to Challenge
             </Text>
           </TouchableOpacity>
-  
+
           <ScrollView
-            contentContainerStyle={{paddingBottom: 90}} 
+            contentContainerStyle={{paddingBottom: 90}}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
@@ -184,7 +183,6 @@ const HomeScreen = () => {
       )}
     </SafeAreaView>
   );
-  
 };
 
 const styles = StyleSheet.create({

@@ -4,10 +4,8 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {Font} from '../assets/styles/Fonts';
 import {Color} from '../assets/styles/Colors';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
-import {Shadow} from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 import CustomShadow from './CustomShadow';
-import DropShadow from 'react-native-drop-shadow';
 
 const CustomHomeButtonNavigation = ({text, onPress}) => {
   return (

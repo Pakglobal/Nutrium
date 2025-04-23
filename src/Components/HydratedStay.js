@@ -653,7 +653,6 @@ const HydratedStay = ({ route }) => {
   }, [waterData, sevenL, seventeenL]);
 
 
-  // Update progress bar animation
   useEffect(() => {
     if (!hasLoaded || totalGoal === 0) return;
     const progress = localIntake / (totalGoal * 1000);
@@ -795,7 +794,7 @@ const styles = StyleSheet.create({
     color: Color?.primaryColor,
     fontWeight: '500',
     fontSize: scale(14),
-    fontFamily: Font?.Poppins,
+    fontFamily: Font?.PoppinsSemiBold,
     marginTop: verticalScale(2),
   },
   showIntake: {

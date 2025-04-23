@@ -97,6 +97,7 @@ import { useNavigation } from '@react-navigation/native';
 import Food from '../assets/Images/Food.svg';
 import { Font } from '../assets/styles/Fonts';
 import { shadowStyle } from '../assets/styles/Shadow';
+
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 import CustomShadow from './CustomShadow';
 
@@ -109,7 +110,6 @@ const MealsLikeInHome = () => {
         <View style={shadowStyle}>
           <View style={{ padding: scale(10) }}>
             <Text style={styles.title}>What were your meals like?</Text>
-            
             {/* Image container with overlay text */}
             <View style={styles.imageContainer}>
               {/* If SVG doesn't work properly, use Image component instead */}
@@ -124,6 +124,7 @@ const MealsLikeInHome = () => {
               <Text style={styles.overlayText}>
                 Log more meals and get the{'\n'}
                 bigger picture of your days.
+
               </Text>
             </View>
 
@@ -150,6 +151,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     aspectRatio: 16/9,
+
     borderRadius: scale(10),
     overflow: 'hidden',
     position: 'relative',
@@ -160,6 +162,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(10),
   },
   overlayText: {
+
     fontSize: scale(14),
     color: Color.white,
     fontWeight: '500',
@@ -169,3 +172,4 @@ const styles = StyleSheet.create({
     left: scale(15),
   },
 });
+

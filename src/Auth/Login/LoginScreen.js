@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -6,37 +6,35 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  ToastAndroid,
   TouchableOpacity,
   View,
   Image,
   Dimensions,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
 
-import {Color} from '../../assets/styles/Colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
+import { Color } from '../../assets/styles/Colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { ForgotPasswordApi, GoogleLogin, Login } from '../../Apis/Login/AuthApis';
 
 import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
-import {loginData, profileData, setToken} from '../../redux/user';
-import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
+import { loginData, profileData, setToken } from '../../redux/user';
+import { GetAdminProfileData } from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
-import CustomAlert from '../../Components/CustomAlert';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
 import IconStyle from '../../assets/styles/Icon';
 import Google from '../../assets/Icon/google.svg';
-import {Font} from '../../assets/styles/Fonts';
-import {ShadowValues} from '../../assets/styles/Shadow';
+import { Font } from '../../assets/styles/Fonts';
 import CustomShadow from '../../Components/CustomShadow';
 import useKeyboardHandler from '../../Components/useKeyboardHandler';
 import CustomLoader from '../../Components/CustomLoader';
+import CustomAlertBox from '../../Components/CustomAlertBox';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -55,12 +53,14 @@ const LoginScreen = () => {
   const [passwordAlertVisible, setPasswordAlertVisible] = useState(false);
   const [loginAlert, setLoginAlert] = useState([]);
   const [forgotPassword, setForgotPassword] = useState([]);
+  const [alertType, setAlertType] = useState('success');
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
   const FCMtoken = useSelector(state => state?.user?.fcmToken);
+
 
   const validateEmail = value => {
     setEmail(value);
@@ -88,33 +88,41 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (
-      !email ||
-      !emailRegex.test(email) ||
-      !password ||
-      password.length < 8 ||
-      !isAgree
-    ) {
-      let message = '';
-
-      if (!email) {
-        message += 'Email is required.\n';
-      } else if (!emailRegex.test(email)) {
-        message += 'Enter a valid email.\n';
-      }
-
-      if (!password) {
-        message += 'Password is required.\n';
-      } else if (password.length < 8) {
-        message += 'Password must be at least 8 characters.\n';
-      }
-      if (!isAgree) {
-        message += 'Please agree a terms and condition before login';
-      }
-
-      Alert.alert('Error', message.trim());
+    if (!email) {
+      setLoginAlert('Email is required');
+      setAlertType('warning');
+      setAlertVisible(true);
       return;
     }
+
+    if (!emailRegex.test(email)) {
+      setLoginAlert('Enter a valid email');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
+    if (!password) {
+      setLoginAlert('Password is required');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
+    if (password.length < 8) {
+      setLoginAlert('Password must be at least 8 characters');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
+    if (!isAgree) {
+      setLoginAlert('Please agree to the terms and conditions');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
 
     setEmailError('');
     setPasswordError('');
@@ -129,11 +137,18 @@ const LoginScreen = () => {
       setLoading(true);
       const response = await Login(body);
       setLoginAlert(response?.message);
+      setAlertType('success');
+      setAlertVisible(true);
+      console.log('response?.message', response)
+      if (response?.message == 'User not found.' || 'Invalid Credentials') {
+        setAlertType('error')
+      }
 
       const storeTokenId = {
         token: response?.token,
         id: response?.userData?._id,
       };
+
 
       if (response) {
         dispatch(loginData(response));
@@ -143,9 +158,15 @@ const LoginScreen = () => {
         setLoading(false);
       }
       setLoading(false);
-    } catch (error) {
+    }
+    catch (error) {
+      setAlertType('error');
+      setLoginAlert('Something went wrong. Please try again.');
+      setAlertVisible(true);
       setLoading(false);
     }
+
+
   };
 
   GoogleSignin.configure({
@@ -203,12 +224,8 @@ const LoginScreen = () => {
     }
   };
 
-  const showToast = () => {
-    ToastAndroid.show(forgotPassword?.message, ToastAndroid.SHORT);
-  };
-
   const handleForgetPassword = async () => {
-    navigation.navigate('forgotPassword', {data: email});
+    navigation.navigate('forgotPassword', { data: email })
     const body = {
       email: email,
     };
@@ -222,15 +239,23 @@ const LoginScreen = () => {
     }
   };
 
+
+
   return (
     <SafeAreaView style={styles.container}>
-      <CustomAlert
+      <CustomAlertBox
         visible={alertVisible}
+        type={alertType}
         message={alertMessage()}
-        onClose={() => setAlertVisible(false)}
-        singleButton={true}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => {
+          setAlertVisible(false);
+          // if (alertType === 'success') {
+          //   navigation.goBack();
+          // }
+        }}
       />
-      {passwordAlertVisible && showToast()}
+
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}
@@ -255,16 +280,17 @@ const LoginScreen = () => {
           showsVerticalScrollIndicator={false}>
           <LoginHeader
             width={'100%'}
-            style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+            style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
           />
           <NutriumLogo
             width={'100%'}
             height={scale(30)}
-            style={{alignSelf: 'center', marginVertical: verticalScale(20)}}
+            style={{ alignSelf: 'center', marginVertical: verticalScale(20) }}
           />
 
-          <View style={{paddingHorizontal: scale(16)}}>
-            <CustomShadow color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
+          <View style={{ paddingHorizontal: scale(16) }}>
+            <CustomShadow
+              color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
                   height: verticalScale(38),
@@ -286,6 +312,7 @@ const LoginScreen = () => {
             </CustomShadow>
 
             <CustomShadow
+
               color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
@@ -294,7 +321,7 @@ const LoginScreen = () => {
                   justifyContent: 'space-between',
                   backgroundColor: Color.white,
                   marginVertical: verticalScale(13),
-                  borderRadius: scale(6),
+                  borderRadius: scale(6)
                 }}>
                 <View
                   style={{
@@ -337,7 +364,7 @@ const LoginScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.checkbox,
-                  {backgroundColor: isAgree ? Color.primaryColor : Color.white},
+                  { backgroundColor: isAgree ? Color.primaryColor : Color.white },
                 ]}
                 onPress={() => setIsAgree(!isAgree)}>
                 {isAgree && (
@@ -362,11 +389,11 @@ const LoginScreen = () => {
             }}>
             <TouchableOpacity
               onPress={handleLogin}
-              style={[styles.button, {backgroundColor: Color.primaryColor}]}>
+              style={[styles.button, { backgroundColor: Color.primaryColor }]}>
               {loading ? (
                 <CustomLoader color={Color.white} size={'small'} />
               ) : (
-                <Text style={[styles.buttonText, {color: Color.white}]}>
+                <Text style={[styles.buttonText, { color: Color.white }]}>
                   Login
                 </Text>
               )}
@@ -388,12 +415,13 @@ const LoginScreen = () => {
               <Text
                 style={[
                   styles.buttonText,
-                  {color: Color.primaryColor, marginHorizontal: scale(8)},
+                  { color: Color.primaryColor, marginHorizontal: scale(8) },
                 ]}>
                 Continue With Google
               </Text>
             </TouchableOpacity>
           </View>
+
         </ScrollView>
       </View>
     </SafeAreaView>

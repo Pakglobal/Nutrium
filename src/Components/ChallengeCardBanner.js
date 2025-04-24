@@ -15,19 +15,10 @@ import {Font} from '../assets/styles/Fonts';
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = width * 0.85;
 const SPACING = (width - CARD_WIDTH) / 2;
-const ChallengeCardBanner = ({challenge, onJoin}) => {
+const ChallengeCardBanner = ({ challenge, onJoin, btnType = 'Join' }) => {
+  const buttonText = btnType === 'View' ? 'View Now' : 'Join Now';
   return (
-    // <LinearGradient
-    //     colors={[
-    //         Color.primaryColor,
-    //         Color.primaryColor,
-    //         Color.primaryLight
-    //     ]}
-    //     locations={[0, 0.6, 1]}
-    //     start={{ x: 0, y: 0 }}
-    //     end={{ x: 1, y: 1 }}
-    //     style={styles.card}
-    // >
+ 
     <LinearGradient
       colors={['#21972B', '#6BCB77']}
       start={{x: 0, y: 0}}
@@ -60,11 +51,11 @@ const ChallengeCardBanner = ({challenge, onJoin}) => {
                 </View>
 
 
-        <TouchableOpacity
-          style={styles.joinButton}
-          onPress={() => onJoin(challenge)}>
-          <Text style={styles.joinText}>Join Now</Text>
-        </TouchableOpacity>
+                <TouchableOpacity style={styles.joinButton} onPress={() => onJoin(challenge)}>
+                    <Text style={styles.joinText}>
+                        {buttonText}
+                    </Text>
+                </TouchableOpacity>
       </View>
     </LinearGradient>
   );

@@ -60,7 +60,6 @@ const ClientDrawerContent = props => {
     userInfo?.userData?.image ||
     guestInfo?.userData?.image;
 
-  console.log(token, id);
 
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?.fullName;

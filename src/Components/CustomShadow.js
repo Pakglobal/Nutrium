@@ -1,9 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {ShadowValues} from '../assets/styles/Shadow';
 import {Color} from '../assets/styles/Colors';
 import DropShadow from 'react-native-drop-shadow';
-import {scale} from 'react-native-size-matters';
 
 const CustomShadow = ({style, children, color, radius}) => {
   return (

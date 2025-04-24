@@ -213,8 +213,27 @@ const SelectCountry = ({ route }) => {
           {showCountryDropdown && (
             <View style={styles.dropdown}>
               {countries.map(item => (
+                // <TouchableOpacity
+                //   key={item}
+                //   style={[
+                //     styles.dropdownItem,
+                //     country === item && { backgroundColor: Color.primaryColor },
+                //   ]}
+                // onPress={() => {
+                //   setCountry(item);
+                //   setShowCountryDropdown(false);
+                // }}>
+                //   <Text
+                // style={[
+                //   styles.titleText,
+                //   {
+                //     color: country === item ? Color.white : Color.textColor,
+                //   },
+                // ]}>
+                //     {item}
+                //   </Text>
+                // </TouchableOpacity>
                 <CustomeDropDown
-                
                   keyitem={item}
                   dropdownStyle={[
                     styles.dropdownItem,

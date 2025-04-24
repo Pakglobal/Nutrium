@@ -130,9 +130,9 @@ const ChallangeSwiper = ({onTabChange}) => {
 
 export default ChallangeSwiper;
 
-const styles = StyleSheet.create({
-    text: {
-        color: Color.textColor,
-        fontFamily: Font?.Poppins
-    }
+const styles=StyleSheet.create({
+text:{
+    color:Color.textColor,
+    fontFamily:Font?.Poppins
+}
 })

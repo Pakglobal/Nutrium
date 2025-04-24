@@ -163,7 +163,7 @@ const InviteFriendsModal = ({ isInviteModalVisible, onClose, onInvite }) => {
                                 onEndReachedThreshold={0.5}
                                 ListFooterComponent={
                                     loading ? (
-                                        <ActivityIndicator size="small" color="#007AFF" />
+                                        <ActivityIndicator size="small" color={Color?.primaryColor} />
                                     ) : null
                                 }
                             />
@@ -235,13 +235,14 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         marginRight: 10,
+        backgroundColor: Color?.grayshadow,
     },
     friendInfo: {
         flex: 1,
     },
     friendName: {
         fontSize: 16,
-        fontWeight: "bold",
+        color: Color?.textColor
     },
     friendPhone: {
         fontSize: 14,
@@ -271,18 +272,18 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         // borderColor: Color.primaryColor,
     },
-    
+
     searchIcon: {
         marginRight: scale(8),
     },
-    
+
     searchInput: {
         flex: 1,
         height: scale(40),
         fontSize: scale(14),
         color: "#000",
     },
-    
+
 });
 
 export default InviteFriendsModal;

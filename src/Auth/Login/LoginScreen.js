@@ -36,7 +36,7 @@ import { ShadowValues } from '../../assets/styles/Shadow';
 import CustomShadow from '../../Components/CustomShadow';
 import useKeyboardHandler from '../../Components/useKeyboardHandler';
 import CustomLoader from '../../Components/CustomLoader';
-import CustomAlert from '../../Components/CustomAlert';
+import CustomAlertBox from '../../Components/CustomAlertBox';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -55,6 +55,7 @@ const LoginScreen = () => {
   const [passwordAlertVisible, setPasswordAlertVisible] = useState(false);
   const [loginAlert, setLoginAlert] = useState([]);
   const [forgotPassword, setForgotPassword] = useState([]);
+  const [alertType, setAlertType] = useState('success');
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -89,27 +90,41 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (!email || !emailRegex.test(email) || !password || password.length < 8 || !isAgree) {
-      let message = '';
-
-      if (!email) {
-        message += 'Email is required.\n';
-      } else if (!emailRegex.test(email)) {
-        message += 'Enter a valid email.\n';
-      }
-
-      if (!password) {
-        message += 'Password is required.\n';
-      } else if (password.length < 8) {
-        message += 'Password must be at least 8 characters.\n';
-      }
-      if (!isAgree) {
-        message += 'Please agree a terms and condition before login'
-      }
-
-      Alert.alert('Error', message.trim());
+    if (!email) {
+      setLoginAlert('Email is required');
+      setAlertType('warning');
+      setAlertVisible(true);
       return;
     }
+
+    if (!emailRegex.test(email)) {
+      setLoginAlert('Enter a valid email');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
+    if (!password) {
+      setLoginAlert('Password is required');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
+    if (password.length < 8) {
+      setLoginAlert('Password must be at least 8 characters');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
+    if (!isAgree) {
+      setLoginAlert('Please agree to the terms and conditions');
+      setAlertType('warning');
+      setAlertVisible(true);
+      return;
+    }
+
 
     setEmailError('');
     setPasswordError('');
@@ -124,13 +139,13 @@ const LoginScreen = () => {
       setLoading(true);
       const response = await Login(body);
       setLoginAlert(response?.message);
+      setAlertType('success');
+      setAlertVisible(true);
       console.log('response?.message', response)
-      if (response?.message == 'Login successful' ) 
-        {
-        }else{
-          
-          Alert.alert('Error',response?.message)
+      if (response?.message == 'User not found.' || 'Invalid Credentials') {
+        setAlertType('error')
       }
+
       const storeTokenId = {
         token: response?.token,
         id: response?.userData?._id,
@@ -145,9 +160,15 @@ const LoginScreen = () => {
         setLoading(false);
       }
       setLoading(false);
-    } catch (error) {
+    }
+    catch (error) {
+      setAlertType('error');
+      setLoginAlert('Something went wrong. Please try again.');
+      setAlertVisible(true);
       setLoading(false);
     }
+
+
   };
 
   GoogleSignin.configure({
@@ -224,13 +245,19 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomAlert
+      <CustomAlertBox
         visible={alertVisible}
+        type={alertType}
         message={alertMessage()}
-        onClose={() => setAlertVisible(false)}
-        singleButton={true}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => {
+          setAlertVisible(false);
+          // if (alertType === 'success') {
+          //   navigation.goBack();
+          // }
+        }}
       />
-
+      {passwordAlertVisible && showToast()}
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}
@@ -396,6 +423,7 @@ const LoginScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
+
         </ScrollView>
       </View>
     </SafeAreaView>

@@ -151,61 +151,83 @@ import { LeftIcon } from '../../assets/styles/Icon';
 import Header from '../../assets/Images/forgotPassword.svg';
 import CustomShadow from '../../Components/CustomShadow';
 import { ForgotPasswordApi } from '../../Apis/Login/AuthApis';
+import CustomAlertBox from '../../Components/CustomAlertBox';
 
-const ForgotPasswordScreen = ({ route }) => {
+const ForgotPasswordScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // ✅ Alert states
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState('success');
+  const [alertMessageText, setAlertMessageText] = useState('');
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
-  
-    if (!email || !email.includes('@')) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+
+    if (!email) {
+      setAlertType('warning');
+      setAlertMessageText('Email is required.');
+      setAlertVisible(true);
       return;
     }
-  
-    const body = {
-      email: email,
-    };
-  
+
+    if (!email.includes('@')) {
+      setAlertType('warning');
+      setAlertMessageText('Please enter a valid email address.');
+      setAlertVisible(true);
+      return;
+    }
+
+    const body = { email };
+
     try {
       setLoading(true);
-  
+
       const response = await ForgotPasswordApi(body);
       console.log('response=====', response);
-  
+
       const successMsg = 'Password reset email sent.';
-  
+
       if (response?.message?.includes(successMsg)) {
-        Alert.alert(
-          'Email Sent',
-          successMsg,
-          [{
-            text: 'OK',
-            onPress: () => {
-              const encodedEmail = encodeURIComponent(email);
-              Linking.openURL(
-                `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?email=${encodedEmail}`
-              );
-              navigation?.navigate('loginScreen');
-            }
-          }]
-        );
+        setAlertType('success');
+        setAlertMessageText(successMsg);
+        setAlertVisible(true);
       } else {
-        Alert.alert('Error', response?.message || 'Failed to send reset email.');
+        setAlertType('error');
+        setAlertMessageText(response?.message || 'Failed to send reset email.');
+        setAlertVisible(true);
       }
     } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again later.');
+      setAlertType('error');
+      setAlertMessageText('Something went wrong. Please try again later.');
+      setAlertVisible(true);
     } finally {
       setLoading(false);
     }
   };
-  
+
+  const alertMessage = () => alertMessageText;
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomAlertBox
+        visible={alertVisible}
+        type={alertType}
+        message={alertMessage()}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => {
+          setAlertVisible(false);
+          if (alertType === 'success') {
+            const encodedEmail = encodeURIComponent(email);
+            Linking.openURL(
+              `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?email=${encodedEmail}`
+            );
+            navigation.navigate('loginScreen');
+          }
+        }}
+      />
 
       <LeftIcon onGoBack={() => navigation.goBack()} />
       <Header height="40%" width="100%" style={{ marginTop: 50 }} />

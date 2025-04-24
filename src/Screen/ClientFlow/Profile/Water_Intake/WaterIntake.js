@@ -10,7 +10,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
-import BackHeader from '../../../../Components/BackHeader';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   DeleteWaterIntake,
@@ -22,13 +21,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BarChart } from 'react-native-gifted-charts';
 import { scale, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
-import Toast from 'react-native-simple-toast';
-import CustomAlert from '../../../../Components/CustomAlert';
 import Header from '../../../../Components/Header';
 import { Font } from '../../../../assets/styles/Fonts';
 import { Color } from '../../../../assets/styles/Colors';
-import { ShadowValues } from '../../../../assets/styles/Shadow';
-import { Shadow } from 'react-native-shadow-2';
 import ModalComponent from '../../../../Components/ModalComponent';
 import CustomShadow from '../../../../Components/CustomShadow';
 import { getWaterIntake } from '../../../../redux/client';

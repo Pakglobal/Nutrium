@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   accelerometer,
@@ -14,19 +14,16 @@ import {
   resetSteps,
 } from '../redux/stepTracker';
 
-const STORAGE_KEYS = {
-  STEPS: 'steps',
-  WORKOUTS: 'workouts',
-  LAST_RESET: 'lastReset',
-};
-
+ 
 const PEAK_THRESHOLD = 1.5;
 const VALLEY_THRESHOLD = -1.2;
 const MIN_STEP_DELAY = 300;
 const COOLDOWN_TIME = 500;
 const MOTION_THRESHOLD = 0.3;
+ 
 
 export const useStepTracking = () => {
+
   const dispatch = useDispatch();
   const { steps, workouts, currentDay, isTracking } = useSelector(
     state => state.stepTracker,

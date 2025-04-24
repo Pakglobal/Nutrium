@@ -18,8 +18,6 @@ import Logo from '../assets/Images/logoWhite.svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
-import { Shadow } from 'react-native-shadow-2';
 import IconStyle, { IconPadding } from '../assets/styles/Icon';
 import { Font } from '../assets/styles/Fonts';
 import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
@@ -139,7 +137,7 @@ const Header = ({
                 ) : (
                   <TouchableOpacity
                     onPress={handleSave}
-                    style={{ padding: scale(8), width: '20%' }}>
+                    style={{ padding: scale(8) }}>
                     <Text style={styles.saveStyle}>Save</Text>
                   </TouchableOpacity>
                 ))}

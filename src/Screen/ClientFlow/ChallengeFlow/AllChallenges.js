@@ -15,12 +15,15 @@ import { Font } from '../../../assets/styles/Fonts';
 import ChallengeCard from './ChallengeCard';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.92;
 const SPACING = (width - CARD_WIDTH) / 2;
 
 const CustomPagination = ({ paginationIndex, data }) => {
+
+
     return (
         <View style={styles.pagination}>
             {data.map((_, index) => {
@@ -40,6 +43,9 @@ const CustomPagination = ({ paginationIndex, data }) => {
 };
 
 const AllChallenges = ({ challenges, onJoin }) => {
+
+    const navigation = useNavigation()
+
     const topChallenges = challenges.slice(0, 4);
     const remainingChallenges = challenges.slice(4);
 
@@ -59,6 +65,7 @@ const AllChallenges = ({ challenges, onJoin }) => {
                                 challenge={item}
                                 onJoin={onJoin}
                                 btnType="Join"
+                                onPress={() => navigation.navigate('ChallengeDetailsScreen')}
                             />
 
                         </View>

@@ -54,8 +54,9 @@ const JoinChallenges = ({ challenges, onJoin }) => {
                                     challenge={item}
                                     onJoin={onJoin}
                                     btnType="View"
-                                    onPress={() => navigation.navigate('LeaderboardScreen')}
+                                    onPress={() => navigation.navigate('LeaderboardScreen',{item})}
                                 />
+                                {console.log('---', item?.participants)}
                             </View>
                         )}
                         keyExtractor={(item) => item._id}

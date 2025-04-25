@@ -1,6 +1,6 @@
 import { AppRegistry, AppState } from 'react-native';
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
-import { incrementSteps, setIsTracking } from '../redux/stepTracker';
+import { incrementSteps, resetSteps, setIsTracking, setWorkouts } from '../redux/stepTracker';
 import { connectSocket, getSocket } from './SocketService';
 import { store } from '../redux/Store';
 
@@ -98,7 +98,7 @@ const checkDayChange = () => {
   try {
     const stepTracker = store.getState().stepTracker;
     const workouts = stepTracker.workouts;
-    
+
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const storedDay = new Date(workouts.lastReset || 0);
@@ -110,7 +110,7 @@ const checkDayChange = () => {
     ) {
       console.log('Day changed in background, resetting steps');
       store.dispatch(resetSteps());
-      store.dispatch(setWorkouts({...workouts, lastReset: now.toISOString()}));
+      store.dispatch(setWorkouts({ ...workouts, lastReset: now.toISOString() }));
     }
   } catch (error) {
     console.error('Error checking day change in background:', error);
@@ -148,7 +148,7 @@ const startTracking = async () => {
     store.dispatch(setIsTracking(true));
     initializeSocket();
     state.dayCheckInterval = setInterval(checkDayChange, 60000);
-    
+
     console.log('Background step tracking service started');
   } catch (error) {
     console.error('Error starting background tracking:', error);
@@ -162,20 +162,20 @@ const stopTracking = () => {
     state.subscription.unsubscribe();
     state.subscription = null;
   }
-  
+
   if (state.socketInterval) {
     clearInterval(state.socketInterval);
     state.socketInterval = null;
   }
-  
+
   if (state.dayCheckInterval) {
     clearInterval(state.dayCheckInterval);
     state.dayCheckInterval = null;
   }
-  
+
   const socket = getSocket();
   if (socket) socket.disconnect();
-  
+
   store.dispatch(setIsTracking(false));
   console.log('Background step tracking service stopped');
 };
@@ -189,7 +189,7 @@ const handleAppStateChange = (nextAppState) => {
     // App is coming to foreground
     console.log('App coming to foreground');
   }
-  
+
   state.appState = nextAppState;
 };
 
@@ -197,10 +197,10 @@ const handleAppStateChange = (nextAppState) => {
 const BackgroundStepTrackingService = async () => {
   // Set up app state change listener
   AppState.addEventListener('change', handleAppStateChange);
-  
+
   // Start tracking
   startTracking();
-  
+
   // Return a headless task
   return () => {
     // This function gets called when the app is terminated

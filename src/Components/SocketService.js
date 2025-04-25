@@ -123,6 +123,7 @@ export const sendMessage = async (
 
     if (socket && socket.connected) {
       socket.emit('sendMessage', messageData);
+      console.log('messageData', messageData)
       return messageData;
     } else {
       console.error('❌ Socket is not connected');

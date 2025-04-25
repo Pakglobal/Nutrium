@@ -5,12 +5,14 @@ import ChallengeCard from './ChallengeCard';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import ChallengeCardBanner from '../../../Components/ChallengeCardBanner';
 import { Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.92;
 const SPACING = (width - CARD_WIDTH) / 2;
 
 const JoinChallenges = ({ challenges, onJoin }) => {
+    const navigation = useNavigation()
     const privateChallenges = challenges.filter(c => c.privacy === 'private');
     const publicChallenges = challenges.filter(c => c.privacy !== 'private');
 
@@ -52,6 +54,7 @@ const JoinChallenges = ({ challenges, onJoin }) => {
                                     challenge={item}
                                     onJoin={onJoin}
                                     btnType="View"
+                                    onPress={() => navigation.navigate('LeaderboardScreen')}
                                 />
                             </View>
                         )}

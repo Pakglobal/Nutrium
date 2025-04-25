@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {
   SafeAreaView,
   ImageBackground,
   AppState,
+  ActivityIndicator,
 } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {
@@ -25,17 +26,19 @@ import {
   onMessagesSeen,
 } from '../Components/SocketService';
 
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
+import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
 
 import uuid from 'react-native-uuid';
-import {Color} from '../assets/styles/Colors';
+import { Color } from '../assets/styles/Colors';
 import CustomLoader from './CustomLoader';
+import { BASE_URL } from '../Apis/Base_Url/Baseurl';
+import { useSelector } from 'react-redux';
 
 const MessageComponent = ({
   userId,
@@ -49,10 +52,10 @@ const MessageComponent = ({
   const navigation = useNavigation();
 
   const userImage = image
-    ? {uri: image}
+    ? { uri: image }
     : gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -63,6 +66,8 @@ const MessageComponent = ({
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploadingFiles, setUploadingFiles] = useState({});
+  const profileInfo = useSelector(state => state?.user?.profileInfo);
+  const profileName = profileInfo?.fullName;
 
   const scale = useRef(new Animated.Value(1)).current;
   const lastScale = useRef(1);
@@ -90,7 +95,7 @@ const MessageComponent = ({
 
           const distance = Math.sqrt(
             Math.pow(touch2.pageX - touch1.pageX, 2) +
-              Math.pow(touch2.pageY - touch1.pageY, 2),
+            Math.pow(touch2.pageY - touch1.pageY, 2),
           );
 
           const newScale = Math.max(1, Math.min(5, distance / 100));
@@ -126,6 +131,111 @@ const MessageComponent = ({
     }),
   ).current;
 
+  // useEffect(() => {
+  //   const socket = connectSocket();
+  //   if (socket) {
+  //     setLoading(true);
+  //   }
+  //   joinRoom(userId, otherUserId);
+
+  //   getChatHistory(userId, otherUserId, history => {
+  //     setMessages(history?.reverse());
+  //     setLoading(false);
+
+  //     const unseenMessagesFromOther = history?.filter(
+  //       msg =>
+  //         !msg?.seen && msg.senderId !== userId && msg.receiverId === userId,
+  //     );
+
+  //     if (unseenMessagesFromOther?.length > 0) {
+  //       const messageIds = unseenMessagesFromOther
+  //         .map(msg => msg?._id)
+  //         .filter(Boolean);
+  //       socket.emit('messageSeen', { userId, otherUserId, messageIds });
+  //     }
+  //   });
+
+  //   const messageHandler = newMessage => {
+  //     setMessages(prevMessages => {
+  //       const messageExists = prevMessages.some(
+  //         msg =>
+  //           (msg._id && msg._id === newMessage._id) ||
+  //           (msg.tempId && msg.tempId === newMessage.tempId),
+  //       );
+
+  //       if (messageExists) {
+  //         return prevMessages.map(msg =>
+  //           (msg._id && msg._id === newMessage._id) ||
+  //             (msg.tempId && msg.tempId === newMessage.tempId)
+  //             ? { ...newMessage, tempId: msg.tempId || newMessage.tempId }
+  //             : msg,
+  //         );
+  //       }
+
+  //       return [newMessage, ...prevMessages];
+  //     });
+
+  //     if (
+  //       newMessage?.senderId !== userId &&
+  //       newMessage?.receiverId === userId
+  //     ) {
+  //       markMessagesAsSeen([newMessage._id]);
+  //     }
+  //   };
+
+  //   onReceiveMessage(messageHandler);
+
+  //   const messagesSeenHandler = data => {
+  //     if (
+  //       data?.messageIds &&
+  //       data?.senderId === userId &&
+  //       data?.receiverId === otherUserId
+  //     ) {
+  //       setMessages(prevMessages =>
+  //         prevMessages.map(msg =>
+  //           data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
+  //         ),
+  //       );
+  //     }
+  //   };
+
+  //   onMessagesSeen(messagesSeenHandler);
+
+  //   const markMessagesAsSeen = (specificIds = null) => {
+  //     const unseenMessages = specificIds
+  //       ? messages.filter(
+  //         msg =>
+  //           specificIds.includes(msg._id) &&
+  //           !msg?.seen &&
+  //           msg.receiverId === userId,
+  //       )
+  //       : messages.filter(
+  //         msg =>
+  //           !msg?.seen &&
+  //           msg.senderId !== userId &&
+  //           msg.receiverId === userId,
+  //       );
+
+  //     if (unseenMessages.length > 0) {
+  //       const messageIds = unseenMessages.map(msg => msg?._id).filter(Boolean);
+  //       if (messageIds.length > 0) {
+  //         console.log('Marking messages as seen:', messageIds);
+  //         socket.emit('messageSeen', { userId, otherUserId, messageIds });
+  //       }
+  //     }
+  //   };
+
+  //   markMessagesAsSeen();
+
+  //   return () => {
+  //     socket.off('receiveMessage', messageHandler);
+  //     socket.off('messagesSeen', messagesSeenHandler);
+  //     socket.disconnect();
+  //   };
+  // }, [userId, otherUserId]);
+
+
+
   useEffect(() => {
     const socket = connectSocket();
     if (socket) {
@@ -134,10 +244,16 @@ const MessageComponent = ({
     joinRoom(userId, otherUserId);
 
     getChatHistory(userId, otherUserId, history => {
-      setMessages(history?.reverse());
+      // Ensure 'seen' status is properly loaded from the server.
+      const updatedHistory = history?.reverse().map(msg => ({
+        ...msg,
+        seen: msg.seen || false, // Ensure seen is set to false if not already present
+      }));
+
+      setMessages(updatedHistory);
       setLoading(false);
 
-      const unseenMessagesFromOther = history?.filter(
+      const unseenMessagesFromOther = updatedHistory?.filter(
         msg =>
           !msg?.seen && msg.senderId !== userId && msg.receiverId === userId,
       );
@@ -146,12 +262,13 @@ const MessageComponent = ({
         const messageIds = unseenMessagesFromOther
           .map(msg => msg?._id)
           .filter(Boolean);
-        socket.emit('messageSeen', {userId, otherUserId, messageIds});
+        socket.emit('messageSeen', { userId, otherUserId, messageIds });
       }
     });
 
     const messageHandler = newMessage => {
       setMessages(prevMessages => {
+        // Check if the message already exists in the state.
         const messageExists = prevMessages.some(
           msg =>
             (msg._id && msg._id === newMessage._id) ||
@@ -161,8 +278,8 @@ const MessageComponent = ({
         if (messageExists) {
           return prevMessages.map(msg =>
             (msg._id && msg._id === newMessage._id) ||
-            (msg.tempId && msg.tempId === newMessage.tempId)
-              ? {...newMessage, tempId: msg.tempId || newMessage.tempId}
+              (msg.tempId && msg.tempId === newMessage.tempId)
+              ? { ...newMessage, tempId: msg.tempId || newMessage.tempId }
               : msg,
           );
         }
@@ -188,7 +305,7 @@ const MessageComponent = ({
       ) {
         setMessages(prevMessages =>
           prevMessages.map(msg =>
-            data.messageIds.includes(msg._id) ? {...msg, seen: true} : msg,
+            data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
           ),
         );
       }
@@ -199,23 +316,23 @@ const MessageComponent = ({
     const markMessagesAsSeen = (specificIds = null) => {
       const unseenMessages = specificIds
         ? messages.filter(
-            msg =>
-              specificIds.includes(msg._id) &&
-              !msg?.seen &&
-              msg.receiverId === userId,
-          )
+          msg =>
+            specificIds.includes(msg._id) &&
+            !msg?.seen &&
+            msg.receiverId === userId,
+        )
         : messages.filter(
-            msg =>
-              !msg?.seen &&
-              msg.senderId !== userId &&
-              msg.receiverId === userId,
-          );
+          msg =>
+            !msg?.seen &&
+            msg.senderId !== userId &&
+            msg.receiverId === userId,
+        );
 
       if (unseenMessages.length > 0) {
         const messageIds = unseenMessages.map(msg => msg?._id).filter(Boolean);
         if (messageIds.length > 0) {
           console.log('Marking messages as seen:', messageIds);
-          socket.emit('messageSeen', {userId, otherUserId, messageIds});
+          socket.emit('messageSeen', { userId, otherUserId, messageIds });
         }
       }
     };
@@ -228,7 +345,6 @@ const MessageComponent = ({
       socket.disconnect();
     };
   }, [userId, otherUserId]);
-
   const formatTime = isoString => {
     return moment(isoString).format('h.mm A');
   };
@@ -341,7 +457,7 @@ const MessageComponent = ({
 
   const flatListData = createFlatListData(sortedMessages);
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     if (item.type === 'date') {
       return (
         <View style={styles.dateSeparator}>
@@ -351,7 +467,7 @@ const MessageComponent = ({
         </View>
       );
     } else {
-      return renderMessage({item});
+      return renderMessage({ item });
     }
   };
 
@@ -366,14 +482,16 @@ const MessageComponent = ({
     lastY.current = 0;
   };
 
+
   const handleSendFile = async () => {
     try {
       const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.images],
       });
 
-      if (result && result[0]) {
-        const fileId = `temp-${Date.now()}`;
+      if (result[0]?.uri?.length > 0) {
+        const fileId = uuid.v4();
+        const now = new Date().toISOString();
 
         setUploadingFiles(prev => ({
           ...prev,
@@ -385,8 +503,9 @@ const MessageComponent = ({
           senderId: userId,
           receiverId: otherUserId,
           file: result[0].uri,
-          createdAt: new Date().toISOString(),
+          createdAt: now,
           isTemp: true,
+          seen: false, // if needed
         };
 
         setMessages(prevMessages => [tempMessage, ...prevMessages]);
@@ -394,16 +513,27 @@ const MessageComponent = ({
         try {
           const uploadedFile = await uploadFileAndGetUrl(result[0]);
 
-          sendMessage(userId, otherUserId, '', uploadedFile.url);
+
+          sendMessage(userId, otherUserId, '', uploadedFile.url, fileId);
+
 
           setMessages(prevMessages =>
-            prevMessages.filter(msg => msg._id !== fileId),
+            prevMessages.map(msg =>
+              msg._id === fileId
+                ? {
+                  ...msg,
+                  file: uploadedFile.url,
+                  isTemp: false,
+
+                }
+                : msg
+            )
           );
         } catch (error) {
           console.error('Upload failed:', error);
         } finally {
           setUploadingFiles(prev => {
-            const newState = {...prev};
+            const newState = { ...prev };
             delete newState[fileId];
             return newState;
           });
@@ -411,7 +541,7 @@ const MessageComponent = ({
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
-        console.error('User cancelled file picker');
+        console.warn('User cancelled file picker');
       } else {
         console.error('DocumentPicker Error: ', err);
       }
@@ -419,6 +549,7 @@ const MessageComponent = ({
   };
 
   const uploadFileAndGetUrl = async file => {
+
     const formData = new FormData();
     formData.append('file', {
       uri: file?.uri,
@@ -426,7 +557,8 @@ const MessageComponent = ({
       type: file?.type,
     });
 
-    const response = await fetch('${BASE_URL}upload', {
+
+    const response = await fetch(`${BASE_URL}upload`, {
       method: 'POST',
       body: formData,
       headers: {
@@ -441,7 +573,7 @@ const MessageComponent = ({
     return await response.json();
   };
 
-  const renderMessage = ({item}) => {
+  const renderMessage = ({ item }) => {
     const isSender = item?.senderId === userId;
     const fileUrl = item?.file || item?.fileUrl;
     const time = formatTime(item?.createdAt || item?.timestamp);
@@ -458,10 +590,11 @@ const MessageComponent = ({
         {fileUrl && (
           <View style={styles.imageContainer}>
             {isUploading ? (
-              <CustomLoader style={styles.loadingImageContainer} />
+              // <CustomLoader style={styles.loadingImageContainer} />
+              <ActivityIndicator />
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                <Image source={{uri: fileUrl}} style={styles.image} />
+                <Image source={{ uri: fileUrl }} style={styles.image} />
                 <View style={styles.messageContent}>
                   <Text style={styles.timestampText}>{time}</Text>
                   <View style={styles.messageFooter}>
@@ -536,10 +669,10 @@ const MessageComponent = ({
             />
           </TouchableOpacity>
           <Image style={styles.profileImage} source={userImage} />
-          <Text style={styles.backTxt}>{userName}</Text>
+          <Text style={styles.backTxt}>{profileName}</Text>
         </View>
 
-        <TouchableOpacity style={{marginHorizontal: scaleSize(16)}}>
+        <TouchableOpacity style={{ marginHorizontal: scaleSize(16) }}>
           <Feather
             name="info"
             color={Color.primaryColor}
@@ -550,15 +683,71 @@ const MessageComponent = ({
     );
   };
 
+  // const handleSendFile = async () => {
+  //   try {
+  //     const result = await DocumentPicker.pick({
+  //       type: [DocumentPicker.types.images],
+  //     });
+  //     if (result[0].uri.length > 0) {
+  //       const fileId = uuid.v4();
+  //       const now = new Date().toISOString();
+
+  //       setUploadingFiles(prev => ({
+  //         ...prev,
+  //         [fileId]: true,
+  //       }));
+
+  //       const tempMessage = {
+  //         _id: fileId,
+  //         senderId: userId,
+  //         receiverId: otherUserId,
+  //         file: result[0].uri,
+  //         createdAt: now,
+  //         isTemp: true,
+  //       };
+  //       setMessages(prevMessages => [tempMessage, ...prevMessages]);
+
+
+  //       try {
+  //         const uploadedFile = await uploadFileAndGetUrl(result[0]);
+  //         console.log('uploadedFile', uploadedFile)
+
+  //         sendMessage(userId, otherUserId, '', uploadedFile.url);
+
+  //         setMessages(prevMessages =>
+  //           prevMessages.filter(msg => msg._id !== fileId),
+  //         );
+  //       } catch (error) {
+  //         console.error('Upload failed:', error);
+  //       } finally {
+  //         setUploadingFiles(prev => {
+  //           const newState = { ...prev };
+  //           delete newState[fileId];
+  //           console.log(fileId,'===');
+  //           return newState;
+
+  //         });
+  //       }
+  //     }
+  //   } catch (err) {
+  //     if (DocumentPicker.isCancel(err)) {
+  //       console.error('User cancelled file picker');
+  //     } else {
+  //       console.error('DocumentPicker Error: ', err);
+  //     }
+  //   }
+  // };
+
+
   return (
     <SafeAreaView style={[styles.container, containerStyle]}>
       {renderHeader()}
 
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
-          <CustomLoader />
+          <ActivityIndicator color={Color?.primaryColor} size={'large'} style={{ flex: 1, justifyContent: "center", alignSelf: 'center' }} />
         ) : (
           <FlatList
             data={flatListData}
@@ -580,7 +769,7 @@ const MessageComponent = ({
             <Ionicons
               name="attach"
               size={24}
-              color={fileUploading ? Color.lightGray : Color.gray}
+              color={fileUploading ? Color.lightgray : Color.gray}
             />
           </TouchableOpacity>
           <TextInput
@@ -633,9 +822,9 @@ const MessageComponent = ({
                 styles.imageViewerWrapper,
                 {
                   transform: [
-                    {scale: scale},
-                    {translateX: offsetX},
-                    {translateY: offsetY},
+                    { scale: scale },
+                    { translateX: offsetX },
+                    { translateY: offsetY },
                   ],
                 },
               ]}>
@@ -650,7 +839,7 @@ const MessageComponent = ({
                 }}
                 delayLongPress={200}>
                 <Animated.Image
-                  source={{uri: selectedImage}}
+                  source={{ uri: selectedImage }}
                   style={styles.fullScreenImage}
                   resizeMode="contain"
                 />
@@ -760,7 +949,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Color?.white,
     borderRadius: scaleSize(25),
     paddingHorizontal: scaleSize(10),
     marginHorizontal: scaleSize(10),

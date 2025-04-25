@@ -29,6 +29,7 @@ import {loginData, profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
 import {TouchableOpacity} from 'react-native';
 import CustomLoader from '../../../Components/CustomLoader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -148,7 +149,7 @@ const HomeScreen = () => {
               marginHorizontal: 20,
             }}
             onPress={handleGoToChallenge}>
-            <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+            <Text style={{color: Color?.white, fontSize: 16, fontFamily:Font?.PoppinsMedium}}>
               Go to Challenge
             </Text>
           </TouchableOpacity>

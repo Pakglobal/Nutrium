@@ -8,54 +8,55 @@ import {
   Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Color} from '../assets/styles/Colors';
-import {scale} from 'react-native-size-matters';
-import {Font} from '../assets/styles/Fonts';
+import { Color } from '../assets/styles/Colors';
+import { scale } from 'react-native-size-matters';
+import { Font } from '../assets/styles/Fonts';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.85;
 const SPACING = (width - CARD_WIDTH) / 2;
-const ChallengeCardBanner = ({ challenge, onJoin, btnType = 'Join' }) => {
+const ChallengeCardBanner = ({ challenge, onJoin, btnType = 'Join' ,onPress}) => {
   const buttonText = btnType === 'View' ? 'View Now' : 'Join Now';
   return (
- 
+
     <LinearGradient
       colors={['#21972B', '#6BCB77']}
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 1}}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
       style={styles.card}>
       <View style={styles.badge}>
         <Text style={styles.badgeText}>Featured</Text>
       </View>
 
 
-      <Text style={[styles.title, {marginTop: 20}]}>{challenge.name}</Text>
+      <Text style={[styles.title, { marginTop: 20 }]}>{challenge.name}</Text>
       <Text style={styles.description}>
         Complete {challenge.targetValue} {challenge.type?.unitLabel || 'units'}{' '}
         by {new Date(challenge.endDate).toDateString()}
       </Text>
 
 
-            <View style={styles.footer}>
-                <View style={styles.participants}>
-                    {challenge.participants.slice(0, 3).map((participant, index) => (
-                        <Image
-                            key={participant.clientId._id}
-                            source={{ uri: participant.clientId.image }}
-                            style={[styles.avatar, { marginLeft: index === 0 ? 0 : -10 }]}
-                        />
-                    ))}
-                    <Text style={styles.participantText}>
-                        +{challenge.participants.length} participants
-                    </Text>
-                </View>
+      <View style={styles.footer}>
+        <View style={styles.participants}>
+          {challenge.participants.slice(0, 3).map((participant, index) => (
+            <Image
+              key={participant.clientId._id}
+              source={{ uri: participant.clientId.image }}
+              style={[styles.avatar, { marginLeft: index === 0 ? 0 : -10 }]}
+            />
+          ))}
+          <Text style={styles.participantText}>
+            +{challenge.participants.length} participants
+          </Text>
+        </View>
 
 
-                <TouchableOpacity style={styles.joinButton} onPress={() => onJoin(challenge)}>
-                    <Text style={styles.joinText}>
-                        {buttonText}
-                    </Text>
-                </TouchableOpacity>
+        <TouchableOpacity style={styles.joinButton} onPress={onPress}>
+        {/* <TouchableOpacity style={styles.joinButton} onPress={() => onJoin(challenge)}> */}
+          <Text style={styles.joinText}>
+            {buttonText}
+          </Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -77,17 +78,16 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   badgeText: {
-    color: '#fff',
+    color: Color?.white,
     fontSize: 13,
     fontWeight: '400',
     fontFamily: Font?.Poppins,
   },
   title: {
-    color: '#fff',
+    color: Color?.white,
     fontSize: 16,
-    fontWeight: 'bold',
     marginVertical: 8,
-    fontFamily: Font?.Poppins,
+    fontFamily: Font?.PoppinsMedium,
   },
   description: {
     color: '#f0f0f0',
@@ -109,23 +109,23 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: Color?.white,
   },
   participantText: {
-    color: '#fff',
+    color: Color?.white,
     marginLeft: 6,
     fontSize: 13,
     fontFamily: Font?.Poppins,
   },
   joinButton: {
-    borderColor: '#fff',
+    borderColor: Color?.white,
     borderWidth: 1,
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
   joinText: {
-    color: '#fff',
+    color: Color?.white,
     fontSize: 14,
     fontFamily: Font?.Poppins,
   },

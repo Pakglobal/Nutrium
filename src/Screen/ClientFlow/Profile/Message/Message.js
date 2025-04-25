@@ -11,11 +11,14 @@ const Message = ({route}) => {
   const otherUserId = route?.params?.data?._id;
   const userName = route?.params?.data?.fullName;
   const userImage = route?.params?.data?.image;
+  const profileInfo = useSelector(state => state?.user?.profileInfo);
+  const profileName = profileInfo?._id;
+
 
   return (
     <MessageComponent
       userId={userId}
-      otherUserId={otherUserId}
+      otherUserId={profileName}
       userName={userName}
       image={userImage}
       showHeader={true}

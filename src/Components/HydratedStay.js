@@ -87,14 +87,11 @@ const HydratedStay = ({route}) => {
   const handleAddWater = amount => {
     const mlAmount = amount * 1000;
 
-    // Get the current value from redux to ensure we're working with up-to-date data
     const currentIntake = intake || 0;
     const newIntake = currentIntake + mlAmount;
 
-    // Update Redux state
     dispatch(getWaterIntake(newIntake));
 
-    // Update local state
     if (amount === 0.2) {
       setSevenL(prev => prev + amount);
     } else if (amount === 0.3) {

@@ -9,47 +9,10 @@ import {store} from './src/redux/Store';
 import SplashScreen from 'react-native-splash-screen';
 import NetInfo from '@react-native-community/netinfo';
 import RNRestart from 'react-native-restart';
-import { useStepTracking } from './src/Components/StepTrackingService';
-
-// import { startBackgroundStepTracking, stopBackgroundStepTracking } from './hooks/BackgroundStepTrackingService';
-// import { NativeModules } from 'react-native';
-// import { useStepTracking } from './src/Components/StepTrackingService';
-// import { startBackgroundStepTracking, stopBackgroundStepTracking } from './src/Components/BackgroundStepTracking';
-// const { BackgroundTaskModule } = NativeModules;
+import { getSdkStatus, initialize, SdkAvailabilityStatus } from 'react-native-health-connect';
 
 const AppContent = () => {
   const dispatch = useDispatch();
-  const { isLoggedIn } = useStepTracking();
-  const { user } = useSelector(state => state);
-
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     console.log('User logged in, starting background step tracking');
-      
-  //     // For Android, we need to start a foreground service
-  //     if (Platform.OS === 'android') {
-  //       BackgroundTaskModule.startService();
-  //     }
-      
-  //     startBackgroundStepTracking();
-  //   } else {
-  //     console.log('User not logged in, stopping background step tracking');
-      
-  //     if (Platform.OS === 'android') {
-  //       BackgroundTaskModule.stopService();
-  //     }
-      
-  //     stopBackgroundStepTracking();
-  //   }
-    
-  //   return () => {
-  //     // Clean up on app close
-  //     if (Platform.OS === 'android') {
-  //       BackgroundTaskModule.stopService();
-  //     }
-  //     stopBackgroundStepTracking();
-  //   };
-  // }, [isLoggedIn]);
 
   const fetchToken = async () => {
     try {
@@ -78,6 +41,27 @@ const AppContent = () => {
     }
   }
 
+  const netInfo = NetInfo.addEventListener(state => {
+    try {
+      if (state.isConnected === false) {
+        Alert.alert('No Internet', 'Please Connect!', [
+          {
+            text: 'Reload app',
+            onPress: () => {
+              try {
+                RNRestart.restart();
+              } catch (restartError) {
+                console.error('Error restarting app:', restartError);
+              }
+            },
+          },
+        ]);
+      }
+    } catch (netInfoError) {
+      console.error('Error in NetInfo callback:', netInfoError);
+    }
+  });
+
   messaging().onMessage(async remoteMessage => {
     console.log('remoteMessage', remoteMessage);
     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -88,32 +72,8 @@ const AppContent = () => {
   });
 
   useEffect(() => {
-    requestUserPermission();
-
     SplashScreen.hide();
-
-    const netInfo = NetInfo.addEventListener(state => {
-      try {
-        console.log('Network state:', state.type, state.isConnected);
-        if (state.isConnected === false) {
-          Alert.alert('No Internet', 'Please Connect!', [
-            {
-              text: 'Reload app',
-              onPress: () => {
-                try {
-                  RNRestart.restart();
-                } catch (restartError) {
-                  console.error('Error restarting app:', restartError);
-                }
-              },
-            },
-          ]);
-        }
-      } catch (netInfoError) {
-        console.error('Error in NetInfo callback:', netInfoError);
-      }
-    });
-
+    requestUserPermission();
     netInfo();
   }, []);
 

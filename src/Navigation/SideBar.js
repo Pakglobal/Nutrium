@@ -7,7 +7,6 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginData} from '../redux/user';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import CustomLoader from '../Components/CustomLoader';
 
 const SideBar = ({onSelectScreen}) => {

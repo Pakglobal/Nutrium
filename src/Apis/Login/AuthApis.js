@@ -59,7 +59,6 @@ export const GuestLoGin = async data => {
 };
 
 export const ForgotPasswordApi = async data => {
-  console.log(data, 'data');
 
   try {
     const body = {

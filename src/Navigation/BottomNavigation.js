@@ -6,7 +6,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HomeScreen from '../Screen/ClientFlow/Home/HomeScreen';
@@ -14,14 +14,16 @@ import MealScreen from '../Screen/ClientFlow/Meal/MealScreen';
 import RecommendationScreen from '../Screen/ClientFlow/Recommend/RecommendationScreen';
 import ProfileMenuScreen from '../Screen/ClientFlow/Profile/ProfileMenuScreen';
 import Deo from './Deo';
-import {Color} from '../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import CustomShadow from '../Components/CustomShadow';
+import { shadowStyle } from '../assets/styles/Shadow';
 
 const Tab = createBottomTabNavigator();
 
-const CustomTabBarButton = ({children, onPress}) => (
+const CustomTabBarButton = ({ children, onPress }) => (
   <TouchableOpacity
-    style={styles.customButtonContainer}
+    style={{ bottom: scale(10), height: scale(40) }}
     onPress={onPress}
     activeOpacity={0.9}>
     <View style={styles.customButton}>{children}</View>
@@ -30,14 +32,14 @@ const CustomTabBarButton = ({children, onPress}) => (
 
 const BottomNavigation = () => {
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <View style={{ flex: 1, backgroundColor: Color.white }}>
       <Tab.Navigator
-        screenOptions={({route}) => ({
+        screenOptions={({ route }) => ({
           headerShown: false,
           tabBarShowLabel: false,
           tabBarHideOnKeyboard: true,
-          tabBarStyle: [styles.tabBarStyle, {display: 'flex'}, null],
-          tabBarIcon: ({focused, color, size}) => {
+          tabBarStyle: [styles.tabBarStyle, { display: 'flex' }, null],
+          tabBarIcon: ({ focused, color, size }) => {
             let iconName;
             switch (route.name) {
               case 'home':
@@ -67,11 +69,21 @@ const BottomNavigation = () => {
                     : null,
                 ]}>
                 {route.name === 'deo' ? (
-                  <Image
-                    source={require('../assets/Icon/1221.png')}
-                    style={{padding: 35}}
-                    resizeMode="contain"
-                  />
+                  // <Image
+                  //   source={require('../assets/Icon/1221.png')}
+                  //   style={{padding: 35}}
+                  //   resizeMode="contain"
+                  // />
+                  <CustomShadow radius={5} style={shadowStyle} color={Color?.gray} >
+                    <View style={{ backgroundColor: Color?.white, borderRadius: scale(50), height: scale(45), width: scale(45), justifyContent: "center" }} >
+                      <MaterialIcons
+                        name={'add'}
+                        size={30}
+                        color={Color.primaryColor}
+                        style={{ alignSelf: 'center' }}
+                      />
+                    </View>
+                  </CustomShadow>
                 ) : route.name == 'recommendation' ? (
                   <MaterialIcons
                     name={'checklist'}
@@ -112,7 +124,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: verticalScale(10),
     height: verticalScale(65),
-    borderRadius: 30,
+    borderRadius: scale(25),
     backgroundColor: Color.primaryColor,
     elevation: 0,
     paddingHorizontal: scale(10),
@@ -126,10 +138,11 @@ const styles = StyleSheet.create({
   plusBtn: {
     position: 'absolute',
     bottom: verticalScale(38),
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // alignSelf: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    backgroundColor: 'red'
+
   },
   customButton: {
     width: scale(30),

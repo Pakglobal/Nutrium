@@ -3,7 +3,6 @@ import {
     View,
     StyleSheet,
     Dimensions,
-    Animated,
     Text,
     FlatList,
     ScrollView,
@@ -60,12 +59,11 @@ const AllChallenges = ({ challenges, onJoin }) => {
                     data={topChallenges}
                     renderItem={({ item }) => (
                         <View style={{ width: CARD_WIDTH, marginHorizontal: SPACING / 2 }}>
-                            {/* <ChallengeCardBanner challenge={item} onJoin={onJoin} /> */}
                             <ChallengeCardBanner
                                 challenge={item}
                                 onJoin={onJoin}
                                 btnType="Join"
-                                onPress={() => navigation.navigate('ChallengeDetailsScreen')}
+                                onPress={() => navigation.navigate('StepChallengeScreen', { item })}
                             />
 
                         </View>
@@ -105,7 +103,7 @@ const AllChallenges = ({ challenges, onJoin }) => {
                             data={remainingChallenges}
                             keyExtractor={(item, index) => item?._id?.toString() || index.toString()}
                             renderItem={({ item }) => (
-                                <ChallengeCard challenge={item} onJoin={onJoin} />
+                                <ChallengeCard challenge={item} onJoin={onJoin} handleJoinNow={() => navigation.navigate('StepChallengeScreen', { item })} />
                             )}
                         />
                     </>
@@ -186,3 +184,5 @@ const styles = StyleSheet.create({
         fontFamily: Font?.Poppins,
     },
 });
+
+

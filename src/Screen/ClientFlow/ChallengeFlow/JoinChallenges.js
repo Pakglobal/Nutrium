@@ -43,20 +43,17 @@ const JoinChallenges = ({ challenges, onJoin }) => {
                     <Text style={styles.text}>Join Challenges</Text>
                 </View>
 
-                {/* Swiper for Private Challenges */}
                 {privateChallenges.length > 0 && (
                     <SwiperFlatList
                         data={privateChallenges}
                         renderItem={({ item }) => (
                             <View style={{ width: CARD_WIDTH, marginHorizontal: SPACING / 2 }}>
-                                {/* <ChallengeCardBanner challenge={item} onJoin={onJoin} /> */}
                                 <ChallengeCardBanner
                                     challenge={item}
                                     onJoin={onJoin}
                                     btnType="View"
-                                    onPress={() => navigation.navigate('LeaderboardScreen',{item})}
+                                    onPress={() => navigation.navigate('LeaderboardScreen', { item })}
                                 />
-                                {console.log('---', item?.participants)}
                             </View>
                         )}
                         keyExtractor={(item) => item._id}
@@ -70,12 +67,11 @@ const JoinChallenges = ({ challenges, onJoin }) => {
 
                 )}
 
-                {/* List for Public Challenges */}
                 <FlatList
                     data={publicChallenges}
                     keyExtractor={(item, index) => item?._id?.toString() || index.toString()}
                     renderItem={({ item }) => (
-                        <ChallengeCard challenge={item} onJoin={onJoin} btnType="View" />
+                        <ChallengeCard challenge={item} onJoin={onJoin} btnType="View" handleJoinNow={() => navigation.navigate('LeaderboardScreen', { item })} />
                     )}
                     showsVerticalScrollIndicator={false}
                 />

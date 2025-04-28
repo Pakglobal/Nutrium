@@ -35,14 +35,12 @@ const WaterIntake = () => {
 
   const [dateLabels, setDateLabels] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedIntake, setSelectedIntake] = useState([]);
+  const [selectedIntacurrentke, setSelectedIntake] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [waterIntake, setWaterIntake] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dataFetched, setDataFetched] = useState(false);
-  const [alertVisible, setAlertVisible] = useState(false);
 
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const tokenId = useSelector(state => state?.user?.token);

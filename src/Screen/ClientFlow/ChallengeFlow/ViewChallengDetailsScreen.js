@@ -6,8 +6,6 @@ import {verticalScale} from 'react-native-size-matters';
 import {getChallengeLederBoardData} from '../../../Apis/ClientApis/ChallengesApi';
 import {useSelector} from 'react-redux';
 
-// Static JSON data
-
 const ViewChallengDetailsScreen = ({route}) => {
   const navigation = useNavigation();
   const {challenge} = route.params;
@@ -44,7 +42,6 @@ const ViewChallengDetailsScreen = ({route}) => {
 
   return (
     <View style={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}>

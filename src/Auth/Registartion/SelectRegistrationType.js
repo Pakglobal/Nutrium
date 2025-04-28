@@ -111,13 +111,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: verticalScale(50),
   },
-  btnContainer: {
-    width: '100%',
-    height: verticalScale(35),
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    borderRadius: 30,
-    marginTop: verticalScale(20),
-  },
 });

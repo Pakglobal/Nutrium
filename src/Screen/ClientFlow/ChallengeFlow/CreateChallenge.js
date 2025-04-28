@@ -5,7 +5,6 @@ import { StyleSheet, Text, View, TextInput, Button, Alert, Switch, ScrollView, T
 import DatePicker from 'react-native-date-picker';
 import InviteFriendsModal from './InviteFriendsModal';
 import { useSelector } from 'react-redux';
-import CustomDropdown1 from './CustomDropdown1';
 import { createChallenge, getChallengeRange, getChallengeType } from '../../../Apis/ClientApis/ChallengesApi';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
 import { Color } from '../../../assets/styles/Colors';
@@ -15,10 +14,7 @@ import Header from '../../../Components/Header';
 import CustomeDropDown from '../../../Components/CustomeDropDown';
 import CustomShadow from '../../../Components/CustomShadow';
 import { shadowStyle } from '../../../assets/styles/Shadow';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import ErrorModal from '../../../Components/CustomAlertBox';
-
 
 
 const CreateChallenge = () => {
@@ -33,7 +29,6 @@ const CreateChallenge = () => {
     const [participantsLimit, setParticipantsLimit] = useState(100);
     const [coinReward, setCoinReward] = useState();
     const [isPublic, setIsPublic] = useState(false);
-    const [inviteMethod, setInviteMethod] = useState('email');
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
     const [selectedDateField, setSelectedDateField] = useState('start');
     const [isInviteModalVisible, setInviteModalVisible] = useState(false);
@@ -45,7 +40,6 @@ const CreateChallenge = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertType, setAlertType] = useState('success'); // 'success' or 'error'
     const [alertMessage, setAlertMessage] = useState('');
-    const [selected, setSelected] = useState('Private');
 
     const userInfo = useSelector(state => state?.user?.userInfo);
     useEffect(() => {
@@ -57,7 +51,7 @@ const CreateChallenge = () => {
             const response = await getChallengeType(userInfo?.token);
             if (response?.success) {
                 setChallengeTypeOptions(response?.data)
-                console.log('response?.data', response?.data)
+                
             } else {
             }
         } catch (error) {
@@ -171,7 +165,6 @@ const CreateChallenge = () => {
 
     const handleSlectChalangeRangeType = (value) => {
         setCoinReward(value?.coin)
-        console.log('coinReward', coinReward)
         setselectChallengeRange(value)
 
     }

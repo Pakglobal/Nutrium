@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   Linking,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { scale, verticalScale } from 'react-native-size-matters';
 import { Color } from '../../assets/styles/Colors';
@@ -27,7 +27,7 @@ const ForgotPasswordScreen = ({ route }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ✅ Alert states
+
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertType, setAlertType] = useState('success');
   const [alertMessageText, setAlertMessageText] = useState('');

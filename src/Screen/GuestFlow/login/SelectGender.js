@@ -4,11 +4,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert,
-  BackHandler,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import React, {  useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../../assets/styles/Colors';
 import { scale, verticalScale } from 'react-native-size-matters';
@@ -17,7 +14,7 @@ import IconStyle, {
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {  useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import { useDispatch } from 'react-redux';

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
-import {Color} from './yourColorConfig'; // Adjust the color import as needed
+import { Color } from '../../../assets/styles/Colors';
 
 const CustomDropdown = ({
   label,

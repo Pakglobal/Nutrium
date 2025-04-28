@@ -4,8 +4,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert,
-  BackHandler,
 } from 'react-native';
 import React, { useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -13,11 +11,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../../assets/styles/Colors';
 import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
-  IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {  useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectProfession.svg';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import Feather from 'react-native-vector-icons/Feather';

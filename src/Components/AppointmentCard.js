@@ -22,7 +22,7 @@ import {
 } from '../Apis/ClientApis/ClientAppointmentApi';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import {shadowStyle} from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
 import CustomLoader from './CustomLoader';
 

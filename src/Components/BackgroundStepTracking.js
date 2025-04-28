@@ -226,3 +226,5 @@ export const stopBackgroundStepTracking = () => {
 export const isBackgroundTrackingActive = () => {
   return !!state.subscription;
 };
+
+

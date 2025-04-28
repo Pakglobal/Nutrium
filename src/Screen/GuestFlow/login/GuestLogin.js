@@ -11,35 +11,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/GuestLogin.svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   guestLoginData,
-  loginData,
   setGuestToken,
-  setIsGuest,
-  setToken,
 } from '../../../redux/user';
-import {Font} from '../../../assets/styles/Fonts';
-import {ShadowValues} from '../../../assets/styles/Shadow';
-import {Progress} from '../../../assets/styles/Progress';
-import {GuestLoGin, GuestLOGin} from '../../../Apis/Login/AuthApis';
+import { Font } from '../../../assets/styles/Fonts';
+import { Progress } from '../../../assets/styles/Progress';
+import { GuestLoGin } from '../../../Apis/Login/AuthApis';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
@@ -51,7 +47,6 @@ const GuestLogin = ({ route }) => {
   const navigation = useNavigation();
 
   const [loading, setLoading] = useState(false);
-  const [isAgree, setIsAgree] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -63,7 +58,7 @@ const GuestLogin = ({ route }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [alertType, setAlertType] = useState('error'); // "error", "success", etc.
+  const [alertType, setAlertType] = useState('error'); 
 
   useKeyboardHandler();
   useAndroidBack();
@@ -290,7 +285,6 @@ const GuestLogin = ({ route }) => {
                 </View>
               </CustomShadow>
             </View>
-
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.button}

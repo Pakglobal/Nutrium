@@ -52,7 +52,6 @@ const ChallengeCardBanner = ({ challenge, onJoin, btnType = 'Join' ,onPress}) =>
 
 
         <TouchableOpacity style={styles.joinButton} onPress={onPress}>
-        {/* <TouchableOpacity style={styles.joinButton} onPress={() => onJoin(challenge)}> */}
           <Text style={styles.joinText}>
             {buttonText}
           </Text>
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
     marginVertical: scale(5),
   },
   badge: {
-    backgroundColor: '#4dac55', // 15% opacity
+    backgroundColor: '#4dac55', 
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,

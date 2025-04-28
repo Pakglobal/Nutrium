@@ -6,7 +6,6 @@ import ChallangeSwiper from './ChallangeSwiper';
 import Header from '../../../Components/Header';
 import { scale } from 'react-native-size-matters';
 import { Color } from '../../../assets/styles/Colors';
-import { IconPadding } from '../../../assets/styles/Icon';
 import { Font } from '../../../assets/styles/Fonts';
 
 const ChallengesScreen = () => {
@@ -17,7 +16,6 @@ const ChallengesScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header screenheader={true} rightHeaderButton={false} screenName={selectedTitle} />
-      {/* <Header logoHeader={true} /> */}
       <View style={{ flex: 1, backgroundColor: Color.white, paddingHorizontal: scale(8) }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: scale(10) }}>
           <TouchableOpacity style={{ backgroundColor: "green", padding: 10, borderRadius: 5 }}

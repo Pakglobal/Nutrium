@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Dimensions, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AllChallenges from './AllChallenges';
 import JoinChallenges from './JoinChallenges';
-import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import {  useIsFocused, useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { getAllChallenge, getAllChallengeJoinDatawithId } from '../../../Apis/ClientApis/ChallengesApi';
 import { Color } from '../../../assets/styles/Colors';
 import { scale } from 'react-native-size-matters';
 import { Font } from '../../../assets/styles/Fonts';
 
-const ChallangeSwiper = ({onTabChange}) => {
+const ChallangeSwiper = ({ onTabChange }) => {
     const [index, setIndex] = useState(0);
     const navigation = useNavigation()
     const [allChallengeData, setAllChallengeData] = useState([])
@@ -27,11 +26,11 @@ const ChallangeSwiper = ({onTabChange}) => {
     ]);
 
 
-  useEffect(() => {
-    if (onTabChange) {
-      onTabChange(routes[index].title);
-    }
-  }, [index]);
+    useEffect(() => {
+        if (onTabChange) {
+            onTabChange(routes[index].title);
+        }
+    }, [index]);
 
     const InvitationScreen = () => (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -134,5 +133,11 @@ const styles = StyleSheet.create({
     text: {
         color: Color.textColor,
         fontFamily: Font?.Poppins
+    },
+    socialButton: {
+        padding: scale(10),
+        backgroundColor: '#e1f3e1',
+        borderRadius: scale(8),
     }
+
 })

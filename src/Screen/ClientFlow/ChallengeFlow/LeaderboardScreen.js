@@ -9,51 +9,18 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Font } from '../../../assets/styles/Fonts'
 import { useNavigation } from '@react-navigation/native'
 
-// const leaderboardData = [
-//   { id: '4', name: 'Nina', points: 1250 },
-//   { id: '5', name: 'Nina', points: 1220 },
-//   { id: '6', name: 'Nina', points: 124578 },
-//   { id: '7', name: 'Nina', points: 1050 },
-//   { id: '8', name: 'Nina', points: 1200 },
-//   { id: '8', name: 'Nina', points: 112457 },
-//   { id: '8', name: 'Nina', points: 1010 },
-// ]
-
-
-
 const LeaderboardScreen = ({ route }) => {
   const navigation = useNavigation()
   const [activeTab, setActiveTab] = useState('Day');
 
   const participantData = route?.params?.item?.participants
-  console.log('participantData', participantData)
 
-
-  const renderItem = ({ item }) => {
-    return (
-      <CustomShadow radius={2} style={shadowStyle} color={Color?.lightgray} >
-        <View style={styles?.userData} >
-          <View style={{ flexDirection: 'row', width: '65%' }} >
-            <Text style={styles.text}>{index + 1}.{'  '}</Text>
-            <Image style={styles?.avatar} source={{ uri: item?.clientId?.image }} />
-            <Text style={styles.text}>{item?.clientId?.fullName}</Text>
-          </View>
-          <View style={{ flexDirection: 'row', width: '32%', alignSelf: 'center' }} >
-            <Text style={styles.pointText} >Points : <Text style={{ color: Color?.primaryColor }} >{item?.earnedCoins}</Text></Text>
-          </View>
-        </View>
-
-
-      </CustomShadow>
-    );
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerBackground}>
         <LeaderboardBackground width="100%" height={scale(400)} style={{ top: -30 }} preserveAspectRatio="xMidYMid slice" />
 
-        {/* Top Content */}
         <View style={styles.headerContent}>
           <View style={{
             flexDirection: 'row',
@@ -62,8 +29,6 @@ const LeaderboardScreen = ({ route }) => {
             paddingHorizontal: scale(10)
           }}>
             <TouchableOpacity style={{ alignSelf: "center", padding: scale(5) }} onPress={() => navigation.goBack()} >
-
-
               <AntDesign
                 name="arrowleft"
                 size={20}
@@ -74,7 +39,7 @@ const LeaderboardScreen = ({ route }) => {
             <TouchableOpacity style={{ alignSelf: "center", padding: scale(5) }} >
 
               <AntDesign
-                name="share"
+                name="sharealt"
                 size={20}
                 color={Color.white}
               />
@@ -104,25 +69,30 @@ const LeaderboardScreen = ({ route }) => {
             ))}
           </View>
 
-          <Text style={styles.subtitle}>Burn 500 calories daily to climb the leaderboard.</Text>
+          <Text style={styles.subtitle}>Burn 500 calories daily to climb{'\n'}the leaderboard.</Text>
 
-          {/* Top 3 users (just sample placeholders) */}
           <View style={styles.topUsers}>
             <View style={styles.userCircle}>
-              {/* <Image source={require('../../../assets/Images/user1.png')} style={styles.userImage} /> */}
               <Text style={styles.points}>1250</Text>
+              <Image style={styles?.userImage} source={require('../../../assets/Images/man.png')} />
+
               <Text style={styles.rank}>3</Text>
             </View>
 
-            <View style={[styles.userCircle, { marginTop: -20 }]}>
-              {/* <Image source={require('../../../assets/Images/user2.png')} style={styles.userImage} /> */}
+            <View style={[styles.userCircle, { marginTop: -35, }]}>
               <Text style={styles.points}>1280</Text>
-              <Text style={styles.rank}>1</Text>
+              <Image style={[styles.userImage, {
+                width: scale(90),
+                height: scale(90),
+              }]} source={require('../../../assets/Images/woman.png')} />
+              <Text style={[styles.rank, {
+                bottom: scale(7)
+              }]}>1</Text>
             </View>
 
             <View style={styles.userCircle}>
-              {/* <Image source={require('../../../assets/Images/user3.png')} style={styles.userImage} /> */}
               <Text style={styles.points}>1260</Text>
+              <Image style={styles?.userImage} source={require('../../../assets/Images/man.png')} />
               <Text style={styles.rank}>2</Text>
             </View>
           </View>
@@ -135,7 +105,7 @@ const LeaderboardScreen = ({ route }) => {
           data={participantData}
           keyExtractor={(item) => item}
           renderItem={({ item, index }) => (
-            <CustomShadow radius={2} style={shadowStyle} color={Color?.lightgray}>
+            <CustomShadow radius={3} style={shadowStyle} color={Color?.lightgray}>
               <View style={styles?.userData}>
                 <View style={{ flexDirection: 'row', width: '65%' }}>
                   <Text style={styles.text}>{index + 1}.{'  '}</Text>
@@ -187,7 +157,7 @@ const styles = StyleSheet.create({
 
   },
   tabButton: {
-    paddingVertical: scale(8),
+    paddingVertical: scale(5),
     paddingHorizontal: 20,
     borderRadius: scale(4)
   },
@@ -207,45 +177,55 @@ const styles = StyleSheet.create({
     width: '100%',
     fontFamily: Font?.PoppinsMedium,
     color: Color?.textColor,
-    fontSize: scale(15)
+    fontSize: scale(14)
   },
   subtitle: {
     color: Color?.white,
-    fontSize: 14,
+    fontSize: scale(14),
     textAlign: 'center',
     marginVertical: 10,
+    fontFamily: Font?.Poppins
   },
   topUsers: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginTop: 10,
-    width: '100%',
+    marginTop: scale(40),
+    width: '80%',
+
   },
   userCircle: {
     alignItems: 'center',
   },
   userImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: scale(70),
+    height: scale(70),
+    borderRadius: scale(50),
     marginBottom: 5,
+    borderColor: Color?.white,
+    borderWidth: scale(3),
   },
   points: {
     color: Color?.white,
-    fontWeight: 'bold',
+    fontFamily: Font?.PoppinsSemiBold
   },
   rank: {
-    color: Color?.white,
-    backgroundColor: Color?.primary,
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    marginTop: 2,
+    color: Color?.primaryColor,
+    backgroundColor: Color?.white,
+    borderRadius: scale(50),
+    width: scale(20),
+    height: scale(20),
+    textAlign: 'center',
+    position: 'absolute',
+    bottom: scale(-3),
   },
   bottomContainer: {
-    backgroundColor: Color?.white,
+    backgroundColor: 'rgba(107, 203, 118, 0.3)',
     flex: 1,
-    borderTopColor: Color?.primary,
-    borderRadius: scale(20),
+    borderTopColor: Color?.primaryColor,
+    borderTopWidth: 5,
+    borderWidth:0.1,
+    borderTopEndRadius: scale(20),
+    borderTopStartRadius: scale(20),
     paddingTop: 10,
     paddingHorizontal: 10,
   },

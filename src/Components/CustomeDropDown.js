@@ -17,13 +17,13 @@ const CustomeDropDown = ({
     textStyle,
     dropdownStyle,
     inputStyle,
-    shadowR
+    shadowRadius
 }) => {
     const [showDropDown, setShowDropDown] = useState(false);
 
     return (
         <View>
-            <CustomShadow radius={shadowR || 2} style={shadowStyle}>
+            <CustomShadow radius={shadowRadius || 2} style={shadowStyle}>
 
                 <TouchableOpacity
                     activeOpacity={0.9}
@@ -62,6 +62,7 @@ const CustomeDropDown = ({
                                 style={[
                                     {
                                         color: Color.textColor,
+                                        fontFamily:Font?.Poppins
                                     },
                                     selectedItem === (item?.value || item) && {
                                         color: Color.white,

@@ -334,7 +334,7 @@ const MealScreen = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <CustomLoader style={{backgroundColor:"red"}} />
+          <CustomLoader style={{}} />
         </View>
       ) : mealPlan?.length > 0 ? (
         <ScrollView

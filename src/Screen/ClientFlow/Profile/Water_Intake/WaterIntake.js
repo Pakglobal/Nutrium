@@ -35,7 +35,7 @@ const WaterIntake = () => {
 
   const [dateLabels, setDateLabels] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedIntacurrentke, setSelectedIntake] = useState([]);
+  const [selectedIntake, setSelectedIntake] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [waterIntake, setWaterIntake] = useState([]);
@@ -177,11 +177,11 @@ const WaterIntake = () => {
 
         setSelectedIntake(matchingRecords);
       }
-      setDataFetched(true); // Mark data as fetched
+      setDataFetched(true); 
       setLoading(false);
     } catch (error) {
       console.error('Error in getWaterIntakeData:', error);
-      setDataFetched(true); // Still mark as fetched even if there's an error
+      setDataFetched(true); 
       setLoading(false);
     }
   };

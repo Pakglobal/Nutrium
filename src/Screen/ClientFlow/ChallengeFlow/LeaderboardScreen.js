@@ -10,10 +10,17 @@ import { Font } from '../../../assets/styles/Fonts'
 import { useNavigation } from '@react-navigation/native'
 
 const LeaderboardScreen = ({ route }) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('Day');
 
-  const participantData = route?.params?.item?.participants
+  const participantData = route?.params?.item?.participants || [];
+
+  const sortedParticipants = [...participantData].sort((a, b) => b?.earnedCoins - a?.earnedCoins);
+
+  const topThree = sortedParticipants.slice(0, 3);
+
+  const remainingParticipants = sortedParticipants.slice(3);
+
 
 
   return (
@@ -72,29 +79,44 @@ const LeaderboardScreen = ({ route }) => {
           <Text style={styles.subtitle}>Burn 500 calories daily to climb{'\n'}the leaderboard.</Text>
 
           <View style={styles.topUsers}>
-            <View style={styles.userCircle}>
-              <Text style={styles.points}>1250</Text>
-              <Image style={styles?.userImage} source={require('../../../assets/Images/man.png')} />
+            <View style={[
+              topThree.length === 1 ? { alignItems: 'center', marginTop: scale(30) } :
+                topThree.length === 2 ? { flexDirection: 'row', justifyContent: 'space-evenly', width: '100%'} :
+                  styles.topUsers
+            ]}>
+              {topThree.map((item, index) => (
+                <View
+                  key={item?.clientId?._id || index}
+                  style={[
+                    styles.userCircle,
+                    topThree.length === 1 && { marginTop: scale(-35)},
+                    topThree.length === 2 && { marginTop: 0 },
+                    topThree.length === 3 && (index === 1 ? { marginTop: -35 } : {})
+                  ]}
+                >
+                  <Text style={styles.points}>{item?.earnedCoins}</Text>
 
-              <Text style={styles.rank}>3</Text>
+                  <Image
+                    style={[
+                      styles.userImage,
+                      topThree.length === 1 && { width: scale(100), height: scale(100) },
+                      topThree.length === 2 && { width: scale(80), height: scale(80) },
+                      topThree.length === 3 && index === 1 && { width: scale(90), height: scale(90) }
+                    ]}
+                    source={{ uri: item?.clientId?.image }}
+                  />
+
+                  <Text style={[
+                    styles.rank,
+                    topThree.length === 1 && { bottom: scale(-5) },
+                    topThree.length === 3 && index === 1 && { bottom: scale(7) }
+                  ]}>
+                    {index + 1}
+                  </Text>
+                </View>
+              ))}
             </View>
 
-            <View style={[styles.userCircle, { marginTop: -35, }]}>
-              <Text style={styles.points}>1280</Text>
-              <Image style={[styles.userImage, {
-                width: scale(90),
-                height: scale(90),
-              }]} source={require('../../../assets/Images/woman.png')} />
-              <Text style={[styles.rank, {
-                bottom: scale(7)
-              }]}>1</Text>
-            </View>
-
-            <View style={styles.userCircle}>
-              <Text style={styles.points}>1260</Text>
-              <Image style={styles?.userImage} source={require('../../../assets/Images/man.png')} />
-              <Text style={styles.rank}>2</Text>
-            </View>
           </View>
         </View>
       </View>
@@ -102,13 +124,14 @@ const LeaderboardScreen = ({ route }) => {
       <View style={styles.bottomContainer}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={participantData}
-          keyExtractor={(item) => item}
+          data={remainingParticipants}
+          keyExtractor={(item, index) => item?.clientId?._id?.toString() || index.toString()}
           renderItem={({ item, index }) => (
             <CustomShadow radius={3} style={shadowStyle} color={Color?.lightgray}>
               <View style={styles?.userData}>
                 <View style={{ flexDirection: 'row', width: '65%' }}>
-                  <Text style={styles.text}>{index + 1}.{'  '}</Text>
+                  <Text style={styles.text}>{index + 4}.{'  '}</Text>
+
                   <Image style={styles?.avatar} source={{ uri: item?.clientId?.image }} />
                   <Text style={styles.text}>{item?.clientId?.fullName}</Text>
                 </View>
@@ -191,7 +214,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     marginTop: scale(40),
     width: '80%',
-
   },
   userCircle: {
     alignItems: 'center',
@@ -206,7 +228,7 @@ const styles = StyleSheet.create({
   },
   points: {
     color: Color?.white,
-    fontFamily: Font?.PoppinsSemiBold
+    fontFamily: Font?.PoppinsSemiBold,
   },
   rank: {
     color: Color?.primaryColor,
@@ -218,12 +240,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: scale(-3),
   },
+
   bottomContainer: {
     backgroundColor: 'rgba(107, 203, 118, 0.3)',
     flex: 1,
     borderTopColor: Color?.primaryColor,
     borderTopWidth: 5,
-    borderWidth:0.1,
+    borderWidth: 0.1,
     borderTopEndRadius: scale(20),
     borderTopStartRadius: scale(20),
     paddingTop: 10,

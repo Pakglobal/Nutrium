@@ -192,7 +192,7 @@ const CreateChallenge = () => {
                     selectedItem={challengeType || 'Select Challenge'}
                     onSelect={(e) => handleSlectChalangeType(e)}
                     textStyle={!challengeType ? { color: Color.textColor } : {}}
-                    shadowR={1}
+                    shadowRadius={1}
                 />
                 <Text style={styles?.nameText}>Challenge Range</Text>
 
@@ -201,7 +201,7 @@ const CreateChallenge = () => {
                     selectedItem={selectChallengeRange?.value || 'Select Range'}
                     onSelect={(e) => handleSlectChalangeRangeType(e)}
                     textStyle={!selectChallengeRange?.value ? { color: Color.textColor } : {}}
-                    shadowR={1}
+                    shadowRadius={1}
                 />
                 <Text style={styles?.nameText}  >Coin Reward</Text>
                 <CustomShadow radius={1} style={shadowStyle} >

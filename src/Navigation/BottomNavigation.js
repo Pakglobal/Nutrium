@@ -74,7 +74,7 @@ const BottomNavigation = () => {
                   //   style={{padding: 35}}
                   //   resizeMode="contain"
                   // />
-                  <CustomShadow radius={5} style={shadowStyle} color={Color?.gray} >
+                  <CustomShadow radius={3} style={shadowStyle} color={Color?.gray} >
                     <View style={{ backgroundColor: Color?.white, borderRadius: scale(50), height: scale(45), width: scale(45), justifyContent: "center" }} >
                       <MaterialIcons
                         name={'add'}
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     // alignSelf: 'center',
     // alignItems: 'center',
     // justifyContent: 'center',
-    backgroundColor: 'red'
+    // backgroundColor: 'red'
 
   },
   customButton: {

@@ -7,9 +7,10 @@ const CustomLoader = ({ style, color, size, viewStyle }) => {
         <View style={viewStyle} >
             <ActivityIndicator size={size || "large"} color={color || Color.primaryColor}
                 style={{
-                    flex: 1,
+                    // flex: 1,
                     alignItems: 'center',
                     justifyContent: 'center',
+                    // backgroundColor:'red',
                     ...style
                 }} />
         </View>

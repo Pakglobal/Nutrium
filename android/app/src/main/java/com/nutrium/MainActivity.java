@@ -7,7 +7,6 @@ import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 import org.devio.rn.splashscreen.SplashScreen;
-import dev.matinzd.healthconnect.permissions.HealthConnectPermissionDelegate;
 
 public class MainActivity extends ReactActivity {
 
@@ -20,13 +19,11 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "Nutrium";
   }
-  
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     SplashScreen.show(this);
     super.onCreate(savedInstanceState);
-    // In order to handle permission contract results, we need to set the permission delegate.
-    HealthConnectPermissionDelegate.INSTANCE.setPermissionDelegate(this, "com.google.android.apps.healthdata");
   }
 
   /**

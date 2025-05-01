@@ -17,7 +17,6 @@ import MoreForYou from '../../../Components/MoreForYou';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  GetProfileImageApi,
   GetUserApi,
 } from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
@@ -29,6 +28,7 @@ import {loginData, profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
 import {TouchableOpacity} from 'react-native';
 import CustomLoader from '../../../Components/CustomLoader';
+import { GetClientData } from '../../../Apis/AdminScreenApi/ClientApi';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -63,7 +63,7 @@ const HomeScreen = () => {
 
   const GetProfileImage = async () => {
     try {
-      const response = await GetProfileImageApi(token, id);
+      const response = await GetClientData(token, id);
 
       if (response) {
         dispatch(setImage(response[0]?.image));

@@ -28,20 +28,15 @@ const CustomModal = ({
       <Pressable onPress={onClose} style={styles.modalView}>
         <View style={styles.modalContainer}>
           <View style={{marginHorizontal: scale(20)}}>
-            <Text style={styles.modalTitle}>
-              Revoke Access to Physical Activity Data
-            </Text>
-            <Text style={styles.description}>
-              Revoke authorization for synchronizing activities through Google
-              Fit.
-            </Text>
+            <Text style={styles.modalTitle}>{title}</Text>
+            <Text style={styles.description}>{message}</Text>
           </View>
           <View style={styles.modalBtnView}>
             <TouchableOpacity onPress={onClose}>
-              <Text style={styles.modalBtnTxt}>NOT NOW</Text>
+              <Text style={styles.modalBtnTxt}>{cancelText}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onConfirm}>
-              <Text style={styles.modalBtnTxt}>CONTINUE</Text>
+              <Text style={styles.modalBtnTxt}>{confirmText}</Text>
             </TouchableOpacity>
           </View>
         </View>

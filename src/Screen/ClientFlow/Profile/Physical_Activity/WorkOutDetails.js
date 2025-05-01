@@ -18,16 +18,12 @@ import {
   UpdatePhysicalActivity,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
 import {useSelector} from 'react-redux';
-import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
 import {Font} from '../../../../assets/styles/Fonts';
 import {ShadowValues} from '../../../../assets/styles/Shadow';
 import CustomShadow from '../../../../Components/CustomShadow';
 
 const WorkOutDetails = ({route}) => {
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
 
   const plus = route?.params?.plus;
   const activity = plus
@@ -99,12 +95,12 @@ const WorkOutDetails = ({route}) => {
       ) {
         navigation.navigate('physicalActivity');
       } else {
-        showToast(response?.message);
+        console.log(response?.message);
         setLoading(false);
       }
       setLoading(false);
     } catch (error) {
-      showToast(error);
+      console.log(error);
       setLoading(false);
     }
   };
@@ -130,12 +126,12 @@ const WorkOutDetails = ({route}) => {
       ) {
         navigation.navigate('physicalActivity');
       } else {
-        showToast(response?.message);
+        console.log(response?.message);
         setLoading(false);
       }
       setLoading(false);
     } catch (error) {
-      showToast(error);
+      console.log(error);
       setLoading(false);
     }
   };

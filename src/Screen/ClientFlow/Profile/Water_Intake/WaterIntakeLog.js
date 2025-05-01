@@ -17,7 +17,6 @@ import {
   UpdateWaterIntake,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
 import { Color } from '../../../../assets/styles/Colors';
-import Toast from 'react-native-simple-toast';
 import Glass from '../../../../assets/Images/glass.svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -98,10 +97,6 @@ const WaterIntakeLog = ({ route }) => {
     : routeData?.time;
   const [time, setTime] = useState(parseTimeStringToDate(backendTime));
 
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
-
   const formattedTime = `${String(time.getHours()).padStart(2, '0')}:${String(
     time.getMinutes(),
   ).padStart(2, '0')}`;
@@ -139,13 +134,13 @@ const WaterIntakeLog = ({ route }) => {
       ) {
         navigation.goBack();
       } else {
-        showToast(response?.message);
+        console.log(response?.message);
         setLoading(false);
       }
       setLoading(false);
     } catch (error) {
       console.error(error);
-      showToast('An error occurred');
+      console.log('An error occurred');
       setLoading(false);
     }
   };
@@ -168,13 +163,13 @@ const WaterIntakeLog = ({ route }) => {
       ) {
         navigation.goBack();
       } else {
-        showToast(response?.message);
+        console.log(response?.message);
         setLoading(false);
       }
       setLoading(false);
     } catch (error) {
       console.error(error);
-      showToast('An error occurred');
+      console.log('An error occurred');
       setLoading(false);
     }
   };

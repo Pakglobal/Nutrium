@@ -11,7 +11,7 @@ import CustomShadow from './CustomShadow';
 
 const PhysicalActivity = ({style, header, subHeader, bottomButton}) => {
   const navigation = useNavigation();
-  const {steps, calories, workouts, isTracking, currentDay, logLast7DaysSteps} =
+  const {steps, calories, workouts, isTracking, currentDay} =
     useStepTracking();
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];

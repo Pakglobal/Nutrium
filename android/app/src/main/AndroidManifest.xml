@@ -1,4 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.nutrium"> 
+
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -9,10 +12,9 @@
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.health.READ_HEART_RATE"/>
-    <uses-permission android:name="android.permission.health.WRITE_HEART_RATE"/>
-    <uses-permission android:name="android.permission.health.READ_STEPS"/>
-    <uses-permission android:name="android.permission.health.WRITE_STEPS"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"
@@ -20,24 +22,47 @@
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
-      android:theme="@style/AppTheme">
-      <service
-      android:name=".StepTrackingService"
-      android:enabled="true"
-      android:exported="false" />
+      android:theme="@style/AppTheme"
+      tools:replace="android:label">
 
-      <service
-      android:name=".StepTrackingService$StepTrackingHeadlessTask"
-      android:enabled="true"
-      android:exported="false" />
+        <meta-data  
+          android:name="com.dieam.reactnativepushnotification.notification_foreground"
+          android:value="false"/>
 
-      <service android:name="com.transistorsoft.rnbackgroundfetch.HeadlessTask"
-         android:exported="false"/>
+        <meta-data  
+          android:name="com.dieam.reactnativepushnotification.notification_color"
+          android:resource="@color/white"/> 
 
+        <meta-data
+          android:name="com.google.firebase.messaging.default_notification_channel_id"
+          android:value="@string/default_notification_channel_id"
+          tools:replace="android:value" />
 
-      <!-- <queries>
-        <package android:name="com.google.android.apps.healthdata" />
-      </queries>      -->
+        <meta-data
+          android:name="com.dieam.reactnativepushnotification.default_notification_channel_id"
+          android:value="@string/default_notification_channel_id"
+          tools:replace="android:value"  />
+
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
+        <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
+        <!-- <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver> -->
+
+        <service
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name="com.transistorsoft.rnbackgroundfetch.HeadlessTask"
+          android:exported="false"/>
 
       <activity
         android:name=".MainActivity"
@@ -52,9 +77,6 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         <intent-filter>
-         <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
-       </intent-filter>
-        <intent-filter>
             <action android:name="android.intent.action.VIEW" />
 
             <category android:name="android.intent.category.DEFAULT" />
@@ -64,24 +86,5 @@
         </intent-filter>
 
       </activity>
-
-       <activity
-      android:name=".PermissionsRationaleActivity"
-      android:exported="true">
-      <intent-filter>
-        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
-      </intent-filter>
-    </activity>
-
-    <activity-alias
-      android:name="ViewPermissionUsageActivity"
-      android:exported="true"
-      android:targetActivity=".MainActivity"
-      android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
-        <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
-      </intent-filter>
-    </activity-alias>
     </application>
 </manifest>

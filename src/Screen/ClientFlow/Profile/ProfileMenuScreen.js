@@ -24,7 +24,6 @@ import {
   setToken,
 } from '../../../redux/user';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
-import Toast from 'react-native-simple-toast';
 import {setImage} from '../../../redux/client';
 import {GetMeasurementData} from '../../../Apis/ClientApis/MeasurementApi';
 import {
@@ -50,10 +49,6 @@ const ProfileMenuScreen = () => {
 
   const demoClient = useSelector(state => state?.user?.guestToken?.demoClient);
   const guestData = useSelector(state => state.user?.guestUserData?.userData);
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
 
   const handleLogout = async () => {
     dispatch(guestLoginData());

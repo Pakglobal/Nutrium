@@ -1,6 +1,6 @@
 import { AppRegistry, AppState } from 'react-native';
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
-import { incrementSteps, setIsTracking } from '../redux/stepTracker';
+import { incrementSteps, setIsTracking, setWorkouts } from '../redux/stepTracker';
 import { connectSocket, getSocket } from './SocketService';
 import { store } from '../redux/Store';
 
@@ -220,9 +220,13 @@ export const startBackgroundStepTracking = () => {
 };
 
 export const stopBackgroundStepTracking = () => {
+  console.log('stopBackgroundStepTracking');
+  
   stopTracking();
 };
 
 export const isBackgroundTrackingActive = () => {
+  console.log('isBackgroundTrackingActive');
+  
   return !!state.subscription;
 };

@@ -21,7 +21,6 @@ import {
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
-import Toast from 'react-native-simple-toast';
 import Header from '../../../../Components/Header';
 import {ShadowValues} from '../../../../assets/styles/Shadow';
 import {Font} from '../../../../assets/styles/Fonts';
@@ -68,10 +67,6 @@ const PhysicalActivityScreen = () => {
     })}`;
   };
 
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
-
   const fetchPhysicalActivityData = useCallback(async () => {
     if (!token || !id) return;
 
@@ -81,11 +76,11 @@ const PhysicalActivityScreen = () => {
       if (response?.success === true) {
         setPhysicalActivity(response?.data);
       } else {
-        showToast(response?.message || 'Failed to fetch activity data');
+        console.log(response?.message || 'Failed to fetch activity data');
       }
     } catch (error) {
       console.error('Error fetching physical activity data:', error);
-      showToast('An error occurred while fetching activity data');
+      console.log('An error occurred while fetching activity data');
     } finally {
       setLoading(false);
     }
@@ -120,7 +115,7 @@ const PhysicalActivityScreen = () => {
 
   const handleEdit = () => {
     if (!selectedEntry) {
-      showToast('No entry selected for editing');
+      console.log('No entry selected for editing');
       return;
     }
 
@@ -136,7 +131,7 @@ const PhysicalActivityScreen = () => {
     setModalVisible(false);
 
     if (!selectedEntry?.id) {
-      showToast('No entry selected for deletion');
+      console.log('No entry selected for deletion');
       return;
     }
 
@@ -152,13 +147,13 @@ const PhysicalActivityScreen = () => {
 
       if (response?.success === true) {
         await fetchPhysicalActivityData();
-        showToast('Activity deleted successfully');
+        console.log('Activity deleted successfully');
       } else {
-        showToast(response?.message || 'Failed to delete activity');
+        console.log(response?.message || 'Failed to delete activity');
       }
     } catch (error) {
       console.error('Error deleting activity:', error);
-      showToast('An error occurred while deleting the activity');
+      console.log('An error occurred while deleting the activity');
     } finally {
       setLoading(false);
     }

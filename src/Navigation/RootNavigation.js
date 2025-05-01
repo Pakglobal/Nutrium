@@ -196,7 +196,6 @@ const GuestStack = () => {
       <Stack.Screen name="SelectProfession" component={SelectProfession} />
       <Stack.Screen name="SelectCountry" component={SelectCountry} />
       <Stack.Screen name="GuestLogin" component={GuestLogin} />
-      {/* <Stack.Screen name="BottomNavigation" component={BottomNavigation} /> */}
     </Stack.Navigator>
   );
 };
@@ -206,7 +205,6 @@ const MainStack = () => {
   const role = userInfo?.user?.role || userInfo?.userData?.role;
   const onboardingCompleted = useSelector(state => state.user?.isCompleted);
   const demoClient = useSelector(state => state?.user?.guestToken?.demoClient);
-  // console.log(demoClient);
 
   if (onboardingCompleted === null) {
     return null;

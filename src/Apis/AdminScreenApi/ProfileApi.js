@@ -1,9 +1,9 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
+import { GET_PROFILE_DATA } from '../AllAPI/API';
 
 export const GetAdminProfileData = async token => {
   try {
-    const url = `${BASE_URL}professionals`;
+    const url = GET_PROFILE_DATA;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,

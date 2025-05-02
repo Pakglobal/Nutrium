@@ -35,7 +35,7 @@ import {
 } from '../../../redux/user';
 import { Font } from '../../../assets/styles/Fonts';
 import { Progress } from '../../../assets/styles/Progress';
-import { GuestLoGin } from '../../../Apis/Login/AuthApis';
+import { HandleGuestLOGIN } from '../../../Apis/Login/AuthApis';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
@@ -175,7 +175,7 @@ const GuestLogin = ({ route }) => {
         isDemoClient: true,
       };
 
-      const response = await GuestLoGin(body);
+      const response = await HandleGuestLOGIN(body);
 
       const storeTokenId = {
         token: response?.data?.token,

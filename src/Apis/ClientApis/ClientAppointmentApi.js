@@ -1,9 +1,9 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
+import { GET_APPOINTMENT, UPDATE_APPOINTMENT } from '../AllAPI/API';
 
 export const GetAppointmentByClientId = async (token, id) => {
   try {
-    const url = `${BASE_URL}getAppointmentsByClientId/${id}`;
+    const url = `${GET_APPOINTMENT}/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -25,7 +25,7 @@ export const GetAppointmentByClientId = async (token, id) => {
 
 export const UpdateAppointmentStatus = async (token, appointmentId, data) => {
   try {
-    const url = `${BASE_URL}updateAppointmentStatus/${appointmentId}`;
+    const url = `${UPDATE_APPOINTMENT}/${appointmentId}`;
     const body = {
       status: data?.status,
     };

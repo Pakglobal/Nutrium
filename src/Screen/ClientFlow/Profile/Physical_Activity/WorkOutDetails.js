@@ -24,7 +24,6 @@ import {ShadowValues} from '../../../../assets/styles/Shadow';
 import CustomShadow from '../../../../Components/CustomShadow';
 
 const WorkOutDetails = ({route}) => {
-
   const plus = route?.params?.plus;
   const activity = plus
     ? route?.params?.name

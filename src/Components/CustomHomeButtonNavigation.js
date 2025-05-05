@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Font} from '../assets/styles/Fonts';
@@ -8,9 +8,9 @@ import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import Entypo from 'react-native-vector-icons/Entypo';
 import CustomShadow from './CustomShadow';
 
-const CustomHomeButtonNavigation = ({ text, onPress }) => {
+const CustomHomeButtonNavigation = ({text, onPress}) => {
   return (
-    <View style={{ marginTop: scale(10) }}>
+    <View style={{marginTop: scale(10)}}>
       <CustomShadow color={Color.lightgray}>
         <View
           style={{

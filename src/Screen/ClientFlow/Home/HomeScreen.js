@@ -16,9 +16,7 @@ import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  GetUserApi,
-} from '../../../Apis/ClientApis/ProfileApi';
+import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
@@ -28,7 +26,7 @@ import {loginData, profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
 import {TouchableOpacity} from 'react-native';
 import CustomLoader from '../../../Components/CustomLoader';
-import { GetClientData } from '../../../Apis/AdminScreenApi/ClientApi';
+import {GetClientData} from '../../../Apis/AdminScreenApi/ClientApi';
 
 const HomeScreen = () => {
   const navigation = useNavigation();

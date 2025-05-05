@@ -16,7 +16,6 @@ import {
 } from 'react-native-sensors';
 import {GetClientData} from '../Apis/AdminScreenApi/ClientApi';
 import BackgroundService from 'react-native-background-actions';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PEAK_THRESHOLD = 1.2;
 const VALLEY_THRESHOLD = -1.0;
@@ -35,15 +34,13 @@ const backgroundOptions = {
   color: '#ffffff',
 };
 
+const USER_STEPS_CACHE = {};
+
 export const useStepTracking = () => {
   const dispatch = useDispatch();
   const {steps, workouts, currentDay, isTracking} = useSelector(
     state => state.stepTracker,
   );
-
-  const appStateRef = useRef(AppState.currentState);
-  const subscriptionRef = useRef(null);
-  const stopListenerRef = useRef(null);
 
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
@@ -51,6 +48,9 @@ export const useStepTracking = () => {
   const id = tokenId?.id || guestTokenId?.id;
   const isLoggedIn = !!id;
 
+  const appStateRef = useRef(AppState.currentState);
+  const subscriptionRef = useRef(null);
+  const stopListenerRef = useRef(null);
   const lastAccelerationRef = useRef({x: 0, y: 0, z: 0});
   const lastStepTimeRef = useRef(0);
   const isCooldownRef = useRef(false);
@@ -60,6 +60,8 @@ export const useStepTracking = () => {
   const socketIntervalRef = useRef(null);
   const lastSyncedStepsRef = useRef(0);
   const isBackgroundRunningRef = useRef(false);
+  const prevUserIdRef = useRef(null);
+  const dataLoadedForUserRef = useRef(null);
 
   const calculateCalories = stepCount => {
     const CALORIES_PER_STEP = 0.03;
@@ -68,32 +70,62 @@ export const useStepTracking = () => {
 
   const fetchHistoricalStepsData = useCallback(async () => {
     console.log(`Fetching historical data for user ${id}`);
+    if (!id) return;
+    if (dataLoadedForUserRef.current === id) {
+      console.log(`Data already loaded for user ${id}, skipping fetch`);
+      return;
+    }
+  
     try {
       const response = await GetClientData(token, id);
       const stepLogsData = response[0]?.stepLogs;
       const updatedWorkouts = {};
-
+  
       const today = new Date().toISOString().split('T')[0];
-
-      dispatch(resetSteps());
-
-      stepLogsData.forEach(entry => {
-        const date = new Date(entry.date).toISOString().split('T')[0];
-        const dayOfWeek = new Date(entry.date).getDay();
-        const adjustedIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-
-        if (date === today) {
-          dispatch(setSteps(entry.steps));
-          lastSyncedStepsRef.current = entry.steps;
-          console.log(
-            `Fetched current day steps for user ${id}: ${entry.steps}`,
-          );
+  
+      let todaySteps = USER_STEPS_CACHE[id] || 0; // Start with cached steps
+      let latestTimestamp = 0;
+  
+      if (stepLogsData && stepLogsData.length > 0) {
+        stepLogsData.forEach(entry => {
+          const date = new Date(entry.date).toISOString().split('T')[0];
+          const entryTimestamp = new Date(entry.date).getTime();
+          const dayOfWeek = new Date(entry.date).getDay();
+          const adjustedIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  
+          if (date === today) {
+            // Update todaySteps only if this entry is more recent or has more steps
+            if (entryTimestamp > latestTimestamp || entry.steps > todaySteps) {
+              todaySteps = entry.steps;
+              latestTimestamp = entryTimestamp;
+            }
+            console.log(
+              `Fetched current day steps for user ${id}: ${entry.steps} (timestamp: ${entry.date})`,
+            );
+          } else {
+            updatedWorkouts[adjustedIndex] = entry.steps;
+          }
+        });
+  
+        // Only update steps if server data is valid and not lower than cached steps
+        if (todaySteps >= (USER_STEPS_CACHE[id] || 0)) {
+          dispatch(setSteps(todaySteps));
+          lastSyncedStepsRef.current = todaySteps;
+          USER_STEPS_CACHE[id] = todaySteps;
         } else {
-          updatedWorkouts[adjustedIndex] = entry.steps;
+          console.log(
+            `Preserving cached steps (${USER_STEPS_CACHE[id]}) over server steps (${todaySteps})`,
+          );
         }
-      });
-
+      } else {
+        // No server data; use cached steps or 0
+        dispatch(setSteps(todaySteps));
+        lastSyncedStepsRef.current = todaySteps;
+        USER_STEPS_CACHE[id] = todaySteps;
+      }
+  
       dispatch(setWorkouts(updatedWorkouts));
+      dataLoadedForUserRef.current = id;
     } catch (error) {
       console.error('Error fetching step history:', error);
     }
@@ -131,41 +163,46 @@ export const useStepTracking = () => {
     try {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
+      const todayString = today.toISOString().split('T')[0];
+  
       const storedDay = workouts.lastReset
         ? new Date(workouts.lastReset)
         : new Date(0);
-
       const storedDate = new Date(
         storedDay.getFullYear(),
         storedDay.getMonth(),
         storedDay.getDate(),
       );
-
+  
       const lastCheckedDay = workouts.lastCheckedDay || '';
-      const todayString = today.toISOString().split('T')[0];
-
+  
+      // Only reset if the day has changed
       if (
         todayString !== lastCheckedDay &&
-        today.getTime() !== storedDate.getTime()
+        today.getTime() > storedDate.getTime()
       ) {
         console.log('Day changed, archiving steps and resetting');
         console.log(
-          'Today:',
-          today.toISOString(),
-          'Stored day:',
-          storedDate.toISOString(),
+          `Today: ${today.toISOString()}, Stored day: ${storedDate.toISOString()}`,
         );
-
+  
         const updatedWorkouts = {
           ...workouts,
           [currentDay]: steps,
           lastReset: today.toISOString(),
           lastCheckedDay: todayString,
         };
-
+  
         dispatch(setWorkouts(updatedWorkouts));
         dispatch(resetSteps());
+  
+        // Clear cache and synced steps
+        Object.keys(USER_STEPS_CACHE).forEach(userId => {
+          USER_STEPS_CACHE[userId] = 0;
+        });
+        lastSyncedStepsRef.current = 0;
+      } else {
+        console.log('No day change detected, maintaining current steps');
       }
     } catch (error) {
       console.error('Error checking day change:', error);
@@ -186,6 +223,8 @@ export const useStepTracking = () => {
 
   const detectStep = ({x, y, z}) => {
     try {
+      if (!id) return;
+
       const currentTime = Date.now();
       const timeDiff = currentTime - lastStepTimeRef.current;
 
@@ -235,6 +274,8 @@ export const useStepTracking = () => {
 
   const syncStepsToServer = useCallback(() => {
     try {
+      if (!id) return;
+
       const socket = getSocket();
       if (!socket || !socket.connected) {
         console.log('Socket not connected, skipping sync');
@@ -250,6 +291,7 @@ export const useStepTracking = () => {
 
         socket.emit('logProgressSocket', stepData);
         lastSyncedStepsRef.current = steps;
+        USER_STEPS_CACHE[id] = steps;
         console.log('Steps synced to server:', stepData);
       }
     } catch (error) {
@@ -258,20 +300,24 @@ export const useStepTracking = () => {
   }, [steps, id]);
 
   const initializeSocket = useCallback(() => {
+    if (!id) return;
+
     try {
       const socket = connectSocket();
 
       socket.on('connect', () => {
-        console.log('-special to step tracking server');
+        console.log('Connected to step tracking server');
 
         socket.emit('getCurrentDaySteps', {userId: id}, response => {
           if (response && response.steps !== undefined) {
-            dispatch(setSteps(response.steps));
-            lastSyncedStepsRef.current = response.steps;
-            console.log(
-              'Fetched current day steps from server:',
-              response.steps,
-            );
+            if (id === prevUserIdRef.current) {
+              dispatch(setSteps(response.steps));
+              lastSyncedStepsRef.current = response.steps;
+              USER_STEPS_CACHE[id] = response.steps;
+              console.log(
+                `Fetched current day steps from server: ${response.steps} for user ${id}`,
+              );
+            }
           }
         });
 
@@ -282,7 +328,9 @@ export const useStepTracking = () => {
         }
 
         socketIntervalRef.current = setInterval(() => {
-          syncStepsToServer();
+          if (id === prevUserIdRef.current) {
+            syncStepsToServer();
+          }
         }, 5000);
       });
 
@@ -294,59 +342,67 @@ export const useStepTracking = () => {
     }
   }, [syncStepsToServer, id, dispatch]);
 
-  const cleanupOnTermination = useCallback(async () => {
-    console.log('Initiating cleanup on app termination');
-    await AsyncStorage.setItem('isAppActive', 'false');
-    await stopBackgroundService();
-  }, [stopBackgroundService]);
-
   const handleLogout = useCallback(async () => {
     try {
-      await AsyncStorage.removeItem('isAppActive');
+      if (id) {
+        console.log(`Logging out user ${id} with ${steps} steps`);
+        USER_STEPS_CACHE[id] = steps;
+        syncStepsToServer();
+      }
+
       await stopBackgroundService();
       dispatch(resetSteps());
       dispatch(setWorkouts({}));
+      dispatch(setIsTracking(false));
+
+      lastSyncedStepsRef.current = 0;
+      dataLoadedForUserRef.current = null;
     } catch (error) {
       console.error('Error during logout:', error);
     }
-  }, [stopBackgroundService, dispatch]);
+  }, [stopBackgroundService, dispatch, id, syncStepsToServer, steps]);
 
   const backgroundTaskHandler = async () => {
-    const isAppActive = await AsyncStorage.getItem('isAppActive');
-    if (!isLoggedIn || isAppActive !== 'true') {
+    if (!isLoggedIn) {
       console.log('App is not active, stopping background service');
       await BackgroundService.stop();
+      isBackgroundRunningRef.current = false;
       return;
     }
 
     let subscription = null;
     let bgSocketInterval = null;
+    let checkAppAliveInterval = null;
 
     try {
       await new Promise(resolve => {
         console.log('Starting background task');
         setUpdateIntervalForType(SensorTypes.accelerometer, 100);
+
         subscription = accelerometer.subscribe(
           acceleration => detectStep(acceleration),
           error => console.error('Background accelerometer error:', error),
         );
 
-        bgSocketInterval = setInterval(syncStepsToServer, 15000);
+        bgSocketInterval = setInterval(() => {
+          if (id) {
+            syncStepsToServer();
+          }
+        }, 15000);
 
-        const checkAppAlive = setInterval(async () => {
+        checkAppAliveInterval = setInterval(async () => {
           if (AppState.currentState !== 'background') {
-            console.log('App is no longer in background, stopping task');
-            clearInterval(checkAppAlive);
-            if (subscription) subscription.unsubscribe();
-            if (bgSocketInterval) clearInterval(bgSocketInterval);
-            await BackgroundService.stop();
+            console.log(
+              'App is no longer in background or active state changed, stopping task',
+            );
+            clearInterval(checkAppAliveInterval);
             resolve();
           }
         }, 10000);
 
         stopListenerRef.current = () => {
           console.log('Background task stopped via stop event');
-          clearInterval(checkAppAlive);
+          if (checkAppAliveInterval) clearInterval(checkAppAliveInterval);
           if (subscription) subscription.unsubscribe();
           if (bgSocketInterval) clearInterval(bgSocketInterval);
           resolve();
@@ -358,12 +414,26 @@ export const useStepTracking = () => {
       console.error('Background task error:', error);
     } finally {
       console.log('Cleaning up background task');
-      if (subscription) subscription.unsubscribe();
-      if (bgSocketInterval) clearInterval(bgSocketInterval);
+      if (subscription) {
+        subscription.unsubscribe();
+        subscription = null;
+      }
+
+      if (bgSocketInterval) {
+        clearInterval(bgSocketInterval);
+        bgSocketInterval = null;
+      }
+
+      if (checkAppAliveInterval) {
+        clearInterval(checkAppAliveInterval);
+        checkAppAliveInterval = null;
+      }
+
       if (stopListenerRef.current) {
         BackgroundService.off('stopped', stopListenerRef.current);
         stopListenerRef.current = null;
       }
+
       isBackgroundRunningRef.current = false;
       console.log('Background task fully cleaned up');
     }
@@ -403,7 +473,7 @@ export const useStepTracking = () => {
         subscriptionRef.current.unsubscribe();
         subscriptionRef.current = null;
       }
-
+  
       setUpdateIntervalForType(SensorTypes.accelerometer, 100);
       subscriptionRef.current = accelerometer.subscribe(
         acceleration => {
@@ -414,60 +484,111 @@ export const useStepTracking = () => {
           dispatch(setIsTracking(false));
         },
       );
-
+  
       dispatch(setIsTracking(true));
       initializeSocket();
+      // Sync steps to ensure server data is up-to-date
+      syncStepsToServer();
     } catch (error) {
       console.error('Error starting foreground tracking:', error);
       dispatch(setIsTracking(false));
     }
-  }, [dispatch, initializeSocket]);
+  }, [dispatch, initializeSocket, syncStepsToServer]);
 
   const handleAppStateChange = useCallback(
     nextAppState => {
       const previousState = appStateRef.current;
       appStateRef.current = nextAppState;
-
+  
       console.log(`App state changed from ${previousState} to ${nextAppState}`);
-
+  
       if (nextAppState === 'background' || nextAppState === 'inactive') {
         if (subscriptionRef.current) {
           subscriptionRef.current.unsubscribe();
           subscriptionRef.current = null;
         }
-
+  
         if (isLoggedIn) {
           syncStepsToServer();
           startBackgroundService();
         }
       } else if (nextAppState === 'active') {
         stopBackgroundService();
-
-        setTimeout(() => {
-          startForegroundTracking();
-        }, 500);
+  
+        if (isLoggedIn && dataLoadedForUserRef.current !== id) {
+          fetchHistoricalStepsData();
+          setTimeout(() => {
+            startForegroundTracking();
+          }, 500);
+        } else if (isLoggedIn) {
+          setTimeout(() => {
+            startForegroundTracking();
+          }, 500);
+        }
       }
     },
     [
       isLoggedIn,
       syncStepsToServer,
-      dispatch,
       startBackgroundService,
       stopBackgroundService,
       startForegroundTracking,
-    ],
+      fetchHistoricalStepsData,
+      id,
+    ]
   );
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (id !== prevUserIdRef.current) {
+      console.log(
+        `User changed from ${prevUserIdRef.current || 'none'} to ${
+          id || 'none'
+        }`,
+      );
+  
+      // Save steps for the previous user
+      if (prevUserIdRef.current && steps > 0) {
+        USER_STEPS_CACHE[prevUserIdRef.current] = steps;
+        console.log(
+          `Saved ${steps} steps for previous user ${prevUserIdRef.current}`,
+        );
+      }
+  
+      prevUserIdRef.current = id;
+  
+      // Restore steps from cache if available
+      if (id && USER_STEPS_CACHE[id] !== undefined) {
+        console.log(
+          `Restoring cached steps (${USER_STEPS_CACHE[id]}) for user ${id}`,
+        );
+        dispatch(setSteps(USER_STEPS_CACHE[id]));
+        lastSyncedStepsRef.current = USER_STEPS_CACHE[id];
+        // Fetch data only if not already loaded
+        if (dataLoadedForUserRef.current !== id) {
+          fetchHistoricalStepsData();
+        }
+      } else if (id) {
+        // Fetch data for new user
+        fetchHistoricalStepsData();
+      } else {
+        // No user logged in
+        dispatch(resetSteps());
+        dispatch(setWorkouts({}));
+        lastSyncedStepsRef.current = 0;
+        dataLoadedForUserRef.current = null;
+      }
+    }
+  }, [id, dispatch, steps, fetchHistoricalStepsData]);
+
+  useEffect(() => {
+    if (isLoggedIn && dataLoadedForUserRef.current !== id) {
       console.log(
         `Running useEffect for user ${id}, resetting steps and fetching data`,
       );
-      dispatch(resetSteps());
       fetchHistoricalStepsData();
       logLast7DaysSteps();
     }
-  }, [id, isLoggedIn, fetchHistoricalStepsData, dispatch]);
+  }, [id, isLoggedIn, fetchHistoricalStepsData]);
 
   useEffect(() => {
     if (dayCheckIntervalRef.current) {
@@ -527,14 +648,6 @@ export const useStepTracking = () => {
     }
   }, [isLoggedIn, steps, syncStepsToServer]);
 
-  useEffect(() => {
-    AsyncStorage.setItem('isAppActive', 'true');
-    return () => {
-      AsyncStorage.setItem('isAppActive', 'false');
-      cleanupOnTermination();
-    };
-  }, [cleanupOnTermination]);
-
   return {
     steps,
     calories: calculateCalories(steps),
@@ -546,3 +659,4 @@ export const useStepTracking = () => {
     handleLogout,
   };
 };
+

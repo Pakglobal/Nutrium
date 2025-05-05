@@ -248,24 +248,24 @@
 
 //   const handleSendMessage = async (isFile = false) => {
 //     if (!isFile && !text?.trim() && !selectedFile) return;
-  
+
 //     try {
 //       let fileUrl = null;
 //       // tempId is defined here, but only if isFile is true
 //       const tempId = uuid.v4();
 //       const now = new Date().toISOString();
-  
+
 //       if (isFile) {
 //         setFileUploading(true);
 //         const result = await DocumentPicker.pick({
 //           type: [DocumentPicker.types.images],
 //         });
-  
+
 //         if (!result[0]?.uri) {
 //           setFileUploading(false);
 //           return;
 //         }
-  
+
 //         setUploadingFiles(prev => ({ ...prev, [tempId]: true }));
 //         setMessages(prevMessages => [
 //           {
@@ -280,11 +280,11 @@
 //           },
 //           ...prevMessages,
 //         ]);
-  
+
 //         const uploadedFile = await uploadFileAndGetUrl(result[0]);
 //         fileUrl = uploadedFile.url;
 //       }
-  
+
 //       const tempMessage = {
 //         _id: tempId,
 //         tempId,
@@ -296,7 +296,7 @@
 //         seen: false,
 //         isTemp: !!fileUrl,
 //       };
-  
+
 //       if (!isFile) {
 //         setMessages(prevMessages => [tempMessage, ...prevMessages]);
 //       } else {
@@ -308,9 +308,9 @@
 //           ),
 //         );
 //       }
-  
+
 //       sendMessage(userId, otherUserId, tempMessage.message, tempMessage.file, tempId);
-  
+
 //       if (!isFile) {
 //         setText('');
 //         setSelectedFile(null);
@@ -883,9 +883,7 @@
 //   },
 // });
 
-
-
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -910,16 +908,16 @@ import {
   sendMessage,
   onMessagesSeen,
 } from '../Components/SocketService';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
+import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-import { Color } from '../assets/styles/Colors';
-import { BASE_URL } from '../Apis/Base_Url/Baseurl';
-import { useSelector } from 'react-redux';
+import {Color} from '../assets/styles/Colors';
+import {BASE_URL} from '../Apis/Base_Url/Baseurl';
+import {useSelector} from 'react-redux';
 
 const MessageComponent = ({
   userId,
@@ -933,7 +931,7 @@ const MessageComponent = ({
   const navigation = useNavigation();
 
   const userImage = image
-    ? { uri: image }
+    ? {uri: image}
     : gender === 'Female'
     ? require('../assets/Images/woman.png')
     : require('../assets/Images/man.png');
@@ -1036,12 +1034,16 @@ const MessageComponent = ({
         const messageIds = unseenMessagesFromOther
           .map(msg => msg?._id)
           .filter(Boolean);
-        socket.emit('messageSeen', { userId, otherUserId, messageIds });
+        socket.emit('messageSeen', {userId, otherUserId, messageIds});
       }
     });
 
     const messageHandler = newMessage => {
-      if (!newMessage?._id || !newMessage?.senderId || !newMessage?.receiverId) {
+      if (
+        !newMessage?._id ||
+        !newMessage?.senderId ||
+        !newMessage?.receiverId
+      ) {
         console.error('Invalid message received:', newMessage);
         return;
       }
@@ -1056,14 +1058,18 @@ const MessageComponent = ({
         const messageExists = prevMessages.some(
           msg =>
             (msg._id && msg._id === safeNewMessage._id) ||
-            (msg.tempId && safeNewMessage.tempId && msg.tempId === safeNewMessage.tempId),
+            (msg.tempId &&
+              safeNewMessage.tempId &&
+              msg.tempId === safeNewMessage.tempId),
         );
 
         if (messageExists) {
           return prevMessages.map(msg =>
             (msg._id && msg._id === safeNewMessage._id) ||
-            (msg.tempId && safeNewMessage.tempId && msg.tempId === safeNewMessage.tempId)
-              ? { ...safeNewMessage, tempId: msg.tempId || safeNewMessage.tempId }
+            (msg.tempId &&
+              safeNewMessage.tempId &&
+              msg.tempId === safeNewMessage.tempId)
+              ? {...safeNewMessage, tempId: msg.tempId || safeNewMessage.tempId}
               : msg,
           );
         }
@@ -1090,7 +1096,7 @@ const MessageComponent = ({
       ) {
         setMessages(prevMessages =>
           prevMessages.map(msg =>
-            data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
+            data.messageIds.includes(msg._id) ? {...msg, seen: true} : msg,
           ),
         );
       }
@@ -1115,7 +1121,7 @@ const MessageComponent = ({
       if (unseenMessages.length > 0) {
         const messageIds = unseenMessages.map(msg => msg?._id).filter(Boolean);
         if (messageIds.length > 0) {
-          socket.emit('messageSeen', { userId, otherUserId, messageIds });
+          socket.emit('messageSeen', {userId, otherUserId, messageIds});
         }
       }
     };
@@ -1153,7 +1159,7 @@ const MessageComponent = ({
           return;
         }
 
-        setUploadingFiles(prev => ({ ...prev, [tempId]: true }));
+        setUploadingFiles(prev => ({...prev, [tempId]: true}));
         setMessages(prevMessages => [
           {
             _id: tempId,
@@ -1189,14 +1195,18 @@ const MessageComponent = ({
       } else {
         setMessages(prevMessages =>
           prevMessages.map(msg =>
-            msg._id === tempId
-              ? { ...msg, file: fileUrl, isTemp: false }
-              : msg,
+            msg._id === tempId ? {...msg, file: fileUrl, isTemp: false} : msg,
           ),
         );
       }
 
-      sendMessage(userId, otherUserId, tempMessage.message, tempMessage.file, tempId);
+      sendMessage(
+        userId,
+        otherUserId,
+        tempMessage.message,
+        tempMessage.file,
+        tempId,
+      );
 
       if (!isFile) {
         setText('');
@@ -1212,7 +1222,7 @@ const MessageComponent = ({
       if (isFile && tempId) {
         setFileUploading(false);
         setUploadingFiles(prev => {
-          const newState = { ...prev };
+          const newState = {...prev};
           delete newState[tempId];
           return newState;
         });
@@ -1305,7 +1315,7 @@ const MessageComponent = ({
 
   const flatListData = createFlatListData(sortedMessages);
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({item}) => {
     if (item.type === 'date') {
       return (
         <View style={styles.dateSeparator}>
@@ -1315,7 +1325,7 @@ const MessageComponent = ({
         </View>
       );
     } else {
-      return renderMessage({ item });
+      return renderMessage({item});
     }
   };
 
@@ -1353,7 +1363,7 @@ const MessageComponent = ({
     return await response.json();
   };
 
-  const renderMessage = ({ item }) => {
+  const renderMessage = ({item}) => {
     const isSender = item?.senderId === userId;
     const fileUrl = item?.file || item?.fileUrl;
     const time = formatTime(item?.createdAt || item?.timestamp);
@@ -1373,7 +1383,7 @@ const MessageComponent = ({
               <ActivityIndicator />
             ) : (
               <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                <Image source={{ uri: fileUrl }} style={styles.image} />
+                <Image source={{uri: fileUrl}} style={styles.image} />
                 <View style={styles.messageContent}>
                   <Text style={styles.timestampText}>{time}</Text>
                   <View style={styles.messageFooter}>
@@ -1451,7 +1461,7 @@ const MessageComponent = ({
           <Text style={styles.backTxt}>{profileName}</Text>
         </View>
 
-        <TouchableOpacity style={{ marginHorizontal: scaleSize(16) }}>
+        <TouchableOpacity style={{marginHorizontal: scaleSize(16)}}>
           <Feather
             name="info"
             color={Color.primaryColor}
@@ -1467,13 +1477,13 @@ const MessageComponent = ({
       {renderHeader()}
 
       <ImageBackground
-        style={{ flex: 1 }}
+        style={{flex: 1}}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
           <ActivityIndicator
             color={Color?.primaryColor}
             size={'large'}
-            style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}
+            style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
           />
         ) : (
           <FlatList
@@ -1550,9 +1560,9 @@ const MessageComponent = ({
                 styles.imageViewerWrapper,
                 {
                   transform: [
-                    { scale: scale },
-                    { translateX: offsetX },
-                    { translateY: offsetY },
+                    {scale: scale},
+                    {translateX: offsetX},
+                    {translateY: offsetY},
                   ],
                 },
               ]}>
@@ -1567,7 +1577,7 @@ const MessageComponent = ({
                 }}
                 delayLongPress={200}>
                 <Animated.Image
-                  source={{ uri: selectedImage }}
+                  source={{uri: selectedImage}}
                   style={styles.fullScreenImage}
                   resizeMode="contain"
                 />

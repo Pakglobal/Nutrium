@@ -8,7 +8,7 @@ const linking = {
       resetPassword: {
         path: 'accounts/clientPassword/resetPassword',
         parse: {
-          email: (email) => `${email}`,
+          email: email => `${email}`,
         },
       },
     },

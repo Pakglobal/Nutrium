@@ -164,24 +164,4 @@ export const {
   hydrateFromStorage,
 } = stepTrackerSlice.actions;
 
-export const loadStepDataFromStorage = () => async dispatch => {
-  try {
-    const [stepsData, workoutsData, currentDayData] = await Promise.all([
-      AsyncStorage.getItem(STORAGE_KEYS.STEPS),
-      AsyncStorage.getItem(STORAGE_KEYS.WORKOUTS),
-      AsyncStorage.getItem(STORAGE_KEYS.CURRENT_DAY),
-    ]);
-
-    const payload = {};
-
-    if (stepsData) payload.steps = JSON.parse(stepsData);
-    if (workoutsData) payload.workouts = JSON.parse(workoutsData);
-    if (currentDayData) payload.currentDay = JSON.parse(currentDayData);
-
-    dispatch(hydrateFromStorage(payload));
-  } catch (error) {
-    console.error('Error loading step data from storage:', error);
-  }
-};
-
 export default stepTrackerSlice.reducer;

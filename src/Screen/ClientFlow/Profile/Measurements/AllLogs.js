@@ -1,12 +1,12 @@
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
-import React, { useMemo } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { format } from 'date-fns';
+import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {format} from 'date-fns';
 import BackHeader from '../../../../Components/BackHeader';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { Color } from '../../../../assets/styles/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import Header from '../../../../Components/Header';
-import { Font } from '../../../../assets/styles/Fonts';
+import {Font} from '../../../../assets/styles/Fonts';
 
 const AllLogs = () => {
   const route = useRoute();
@@ -25,17 +25,29 @@ const AllLogs = () => {
     });
   }, [displaydata?.entries]);
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({item}) => {
     return (
       <View style={styles.logContainer}>
         <View>
-          <Text style={{ color: Color.lightGrayText, fontFamily: Font?.Poppins }}>You</Text>
+          <Text style={{color: Color.lightGrayText, fontFamily: Font?.Poppins}}>
+            You
+          </Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} >
-          <Text style={{ color: Color.textColor, fontSize: scale(13), fontFamily: Font?.Poppins }}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Text
+            style={{
+              color: Color.textColor,
+              fontSize: scale(13),
+              fontFamily: Font?.Poppins,
+            }}>
             {item?.value || 'N/A'} {item?.unit || 'N/A'}
           </Text>
-          <Text style={{ color: Color.textColor, fontSize: scale(12), fontFamily: Font?.Poppins }}>
+          <Text
+            style={{
+              color: Color.textColor,
+              fontSize: scale(12),
+              fontFamily: Font?.Poppins,
+            }}>
             {item?.date ? format(new Date(item?.date), 'MMMM dd, yyyy') : 'N/A'}
           </Text>
         </View>
@@ -52,7 +64,7 @@ const AllLogs = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: Color.white }}>
+    <View style={{flex: 1, backgroundColor: Color.white}}>
       {/* <BackHeader
         titleName={'All logs'}
         showRightButton={false}
@@ -65,9 +77,8 @@ const AllLogs = () => {
         rightHeaderButton={false}
       />
 
-      <View style={{ marginHorizontal: scale(16), }} >
-
-        <Text style={styles.lebal} >{'All logs'}</Text>
+      <View style={{marginHorizontal: scale(16)}}>
+        <Text style={styles.lebal}>{'All logs'}</Text>
         <FlatList
           data={sortedEntries}
           renderItem={renderItem}
@@ -105,6 +116,6 @@ const styles = StyleSheet.create({
     fontFamily: Font?.Poppins,
     fontWeight: '500',
     fontSize: scale(18),
-    marginTop: scale(8)
-  }
+    marginTop: scale(8),
+  },
 });

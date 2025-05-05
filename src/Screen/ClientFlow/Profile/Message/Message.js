@@ -3,7 +3,7 @@ import React from 'react';
 import MessageComponent from '../../../../Components/useMessaging';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
- 
+
 const Message = ({route}) => {
   const navigation = useNavigation();
   const getId = useSelector(state => state?.user?.token);
@@ -13,8 +13,7 @@ const Message = ({route}) => {
   const userImage = route?.params?.data?.image;
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?._id;
- 
- 
+
   return (
     <MessageComponent
       userId={userId}
@@ -27,7 +26,7 @@ const Message = ({route}) => {
     />
   );
 };
- 
+
 export default Message;
- 
+
 const styles = StyleSheet.create({});

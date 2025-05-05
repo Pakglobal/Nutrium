@@ -15,10 +15,9 @@ import {Font} from '../assets/styles/Fonts';
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = width * 0.85;
 const SPACING = (width - CARD_WIDTH) / 2;
-const ChallengeCardBanner = ({ challenge, onJoin, btnType = 'Join' }) => {
+const ChallengeCardBanner = ({challenge, onJoin, btnType = 'Join'}) => {
   const buttonText = btnType === 'View' ? 'View Now' : 'Join Now';
   return (
- 
     <LinearGradient
       colors={['#21972B', '#6BCB77']}
       start={{x: 0, y: 0}}
@@ -28,34 +27,31 @@ const ChallengeCardBanner = ({ challenge, onJoin, btnType = 'Join' }) => {
         <Text style={styles.badgeText}>Featured</Text>
       </View>
 
-
       <Text style={[styles.title, {marginTop: 20}]}>{challenge.name}</Text>
       <Text style={styles.description}>
         Complete {challenge.targetValue} {challenge.type?.unitLabel || 'units'}{' '}
         by {new Date(challenge.endDate).toDateString()}
       </Text>
 
+      <View style={styles.footer}>
+        <View style={styles.participants}>
+          {challenge.participants.slice(0, 3).map((participant, index) => (
+            <Image
+              key={participant.clientId._id}
+              source={{uri: participant.clientId.image}}
+              style={[styles.avatar, {marginLeft: index === 0 ? 0 : -10}]}
+            />
+          ))}
+          <Text style={styles.participantText}>
+            +{challenge.participants.length} participants
+          </Text>
+        </View>
 
-            <View style={styles.footer}>
-                <View style={styles.participants}>
-                    {challenge.participants.slice(0, 3).map((participant, index) => (
-                        <Image
-                            key={participant.clientId._id}
-                            source={{ uri: participant.clientId.image }}
-                            style={[styles.avatar, { marginLeft: index === 0 ? 0 : -10 }]}
-                        />
-                    ))}
-                    <Text style={styles.participantText}>
-                        +{challenge.participants.length} participants
-                    </Text>
-                </View>
-
-
-                <TouchableOpacity style={styles.joinButton} onPress={() => onJoin(challenge)}>
-                    <Text style={styles.joinText}>
-                        {buttonText}
-                    </Text>
-                </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.joinButton}
+          onPress={() => onJoin(challenge)}>
+          <Text style={styles.joinText}>{buttonText}</Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );

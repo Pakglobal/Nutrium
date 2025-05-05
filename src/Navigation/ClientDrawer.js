@@ -60,7 +60,6 @@ const ClientDrawerContent = props => {
     userInfo?.userData?.image ||
     guestInfo?.userData?.image;
 
-
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?.fullName;
   const profileImage = profileInfo?.image
@@ -95,7 +94,7 @@ const ClientDrawerContent = props => {
         style: 'destructive',
         onPress: async () => {
           let success = false;
-  
+
           try {
             if (guestInfo) {
               dispatch(setGuestToken());
@@ -107,15 +106,15 @@ const ClientDrawerContent = props => {
               dispatch(setToken());
               success = true;
             }
-  
+
             if (success) {
               props.navigation.reset({
                 index: 0,
                 routes: [
                   {
                     name: 'AuthStack',
-                    params: { screen: 'loginChoice' }
-                  }
+                    params: {screen: 'loginChoice'},
+                  },
                 ],
               });
             } else {

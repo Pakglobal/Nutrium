@@ -14,7 +14,7 @@ import Header from '../../../Components/Header';
 import AppointmentCard from '../../../Components/AppointmentCard';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   GetProfileImageApi,
@@ -23,19 +23,16 @@ import {
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
-import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
-import CustomShadow from '../../../Components/CustomShadow';
-import {loginData, profileData} from '../../../redux/user';
+import { profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
 import {TouchableOpacity} from 'react-native';
 import CustomLoader from '../../../Components/CustomLoader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [receivedMessage, setReceivedMessage] = useState(null);
 
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -148,7 +145,7 @@ const HomeScreen = () => {
               marginHorizontal: 20,
             }}
             onPress={handleGoToChallenge}>
-            <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+            <Text style={{color: Color?.white, fontSize: 16, fontFamily:Font?.PoppinsMedium}}>
               Go to Challenge
             </Text>
           </TouchableOpacity>

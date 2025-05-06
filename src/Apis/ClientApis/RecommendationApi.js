@@ -1,9 +1,10 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
+import { GET_FOOD_AVOID_DATA, GET_GOALS, GET_RECOMMENDATION_DATA } from '../AllAPI/API';
 
 export const GetRecommendationApiData = async (token, id) => {
   try {
-    const url = `${BASE_URL}get-other-recommendation/${id}`;
+    const url = `${GET_RECOMMENDATION_DATA}/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -18,7 +19,7 @@ export const GetRecommendationApiData = async (token, id) => {
 
 export const GetFoodAvoidApiData = async (token, id) => {
   try {
-    const url = `${BASE_URL}get-food-avoid/${id}`;
+    const url = `${GET_FOOD_AVOID_DATA}/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -32,7 +33,7 @@ export const GetFoodAvoidApiData = async (token, id) => {
 
 export const GetGoalsApiData = async (token, id) => {
   try {
-    const url = `${BASE_URL}client/allGoals/${id}`;
+    const url = `${GET_GOALS}/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,

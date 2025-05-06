@@ -44,12 +44,10 @@ const ChallengesDetailsScreen = ({ route }) => {
     };
     return (
         <View style={styles.container}>
-            {/* Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <AntDesign name="arrowleft" color={"#3F3F4E"} size={verticalScale(22)} />
             </TouchableOpacity>
 
-            {/* Challenge Details */}
             <Text style={styles.title}>{challenge.name}</Text>
             <Text>Type: {challenge?.type?.unitLabel}</Text>
             <Text>Start Date: {challenge.startDate}</Text>
@@ -58,13 +56,11 @@ const ChallengesDetailsScreen = ({ route }) => {
             <Text>Privacy: {challenge.privacy}</Text>
             <Text>Reward: {challenge.coinReward} Coins</Text>
 
-            {/* Progress Section */}
             <View style={styles.progressContainer}>
                 <Text style={styles.progressText}>
                     Joined: {joinedParticipants} / {totalParticipants}
                 </Text>
 
-                {/* Progress Bar */}
                 <View style={styles.progressBarBackground}>
                     <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
                 </View>
@@ -74,7 +70,6 @@ const ChallengesDetailsScreen = ({ route }) => {
                 </Text>
             </View>
 
-            {/* Buttons */}
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.joinButton} onPress={handleJoinChllange} disabled={loading}>
                     {loading ? (
@@ -120,7 +115,7 @@ const styles = StyleSheet.create({
     progressBarBackground: {
         width: '100%',
         height: 10,
-        backgroundColor: '#ddd', 
+        backgroundColor: '#ddd',
         borderRadius: 5,
         overflow: 'hidden',
     },

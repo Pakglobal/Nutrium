@@ -1,10 +1,11 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
+import { DELETE_PHYSICAL_ACTIVITY, GET_PHYSICAL_ACTIVITY_DETAILS, GET_PHYSICAL_ACTIVITY_LIST, GET_QUICK_ACCESS_DATA, SET_PHYSICAL_ACTIVITY_DETAILS, SET_QUICK_ACCESS_DATA, UPDATE_PHYSICAL_ACTIVITY } from '../AllAPI/API';
 
 export const SetPhysicalActivityDetails = async payload => {
   try {
     const {id, time, token, activity, byactivity, timeunit} = payload;
-    const url = `${BASE_URL}clientSidePhysicalActivity/${id}`;
+    const url = `${SET_PHYSICAL_ACTIVITY_DETAILS}/${id}`;
     const body = {
       physicalActivity: [
         {
@@ -30,7 +31,7 @@ export const SetPhysicalActivityDetails = async payload => {
 
 export const GetPhysicalActivityDetails = async (token, id) => {
   try {
-    const url = `${BASE_URL}client-physical-activity/${id}`;
+    const url = `${GET_PHYSICAL_ACTIVITY_DETAILS}/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -45,7 +46,7 @@ export const GetPhysicalActivityDetails = async (token, id) => {
 export const DeletePhysicalActivity = async payload => {
   try {
     const {clientId, activityId, token} = payload;
-    const url = `${BASE_URL}delete-physical-activity/${clientId}/${activityId}`;
+    const url = `${DELETE_PHYSICAL_ACTIVITY}/${clientId}/${activityId}`;
 
     const response = await axios.delete(url, {
       headers: {
@@ -71,7 +72,7 @@ export const UpdatePhysicalActivity = async payload => {
       activity,
     } = payload;
 
-    const url = `${BASE_URL}update-physical-activity/${clientId}/${activityId}`;
+    const url = `${UPDATE_PHYSICAL_ACTIVITY}/${clientId}/${activityId}`;
     const body = {
       time: time,
       timeunit: timeunit,
@@ -94,7 +95,7 @@ export const UpdatePhysicalActivity = async payload => {
 
 export const GetPhysicalActivities = async () => {
   try {
-    const url = `${BASE_URL}activities`;
+    const url = `${GET_PHYSICAL_ACTIVITY_LIST}`;
     const response = await axios.get(url);
     return response?.data;
   } catch (error) {
@@ -104,7 +105,7 @@ export const GetPhysicalActivities = async () => {
 
 export const GetQuickAccess = async (token, id) => {
   try {
-    const url = `${BASE_URL}get-quick-access-activity/${id}`;
+    const url = `${GET_QUICK_ACCESS_DATA}/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -120,7 +121,7 @@ export const GetQuickAccess = async (token, id) => {
 export const SetQuickAccess = async payload => {
   try {
     const {id, time, token, timeunit, byactivity, activity} = payload;
-    const url = `${BASE_URL}recommendations/${id}`;
+    const url = `${SET_QUICK_ACCESS_DATA}/${id}`;
     const body = {
       physicalActivity: [
         {

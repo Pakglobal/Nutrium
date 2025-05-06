@@ -44,6 +44,7 @@
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-gifted-charts": "^1.4.56",
+    "react-native-gifted-chat": "^2.8.1",
     "react-native-gradle-plugin": "^0.71.19",
     "react-native-image-picker": "^4.9.0",
     "react-native-keyboard-controller": "^1.16.5",

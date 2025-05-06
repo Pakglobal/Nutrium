@@ -5,7 +5,6 @@ import { StyleSheet, Text, View, TextInput, Button, Alert, Switch, ScrollView, T
 import DatePicker from 'react-native-date-picker';
 import InviteFriendsModal from './InviteFriendsModal';
 import { useSelector } from 'react-redux';
-import CustomDropdown1 from './CustomDropdown1';
 import { createChallenge, getChallengeRange, getChallengeType } from '../../../Apis/ClientApis/ChallengesApi';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
 import { Color } from '../../../assets/styles/Colors';
@@ -15,10 +14,7 @@ import Header from '../../../Components/Header';
 import CustomeDropDown from '../../../Components/CustomeDropDown';
 import CustomShadow from '../../../Components/CustomShadow';
 import { shadowStyle } from '../../../assets/styles/Shadow';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import ErrorModal from '../../../Components/CustomAlertBox';
-
 
 
 const CreateChallenge = () => {
@@ -33,7 +29,6 @@ const CreateChallenge = () => {
     const [participantsLimit, setParticipantsLimit] = useState(100);
     const [coinReward, setCoinReward] = useState();
     const [isPublic, setIsPublic] = useState(false);
-    const [inviteMethod, setInviteMethod] = useState('email');
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
     const [selectedDateField, setSelectedDateField] = useState('start');
     const [isInviteModalVisible, setInviteModalVisible] = useState(false);
@@ -45,7 +40,6 @@ const CreateChallenge = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertType, setAlertType] = useState('success'); // 'success' or 'error'
     const [alertMessage, setAlertMessage] = useState('');
-    const [selected, setSelected] = useState('Private');
 
     const userInfo = useSelector(state => state?.user?.userInfo);
     useEffect(() => {
@@ -57,7 +51,7 @@ const CreateChallenge = () => {
             const response = await getChallengeType(userInfo?.token);
             if (response?.success) {
                 setChallengeTypeOptions(response?.data)
-                console.log('response?.data', response?.data)
+                
             } else {
             }
         } catch (error) {
@@ -171,11 +165,10 @@ const CreateChallenge = () => {
 
     const handleSlectChalangeRangeType = (value) => {
         setCoinReward(value?.coin)
-        console.log('coinReward', coinReward)
         setselectChallengeRange(value)
 
     }
- 
+
 
     return (
         <SafeAreaView style={styles?.mainContainer} >
@@ -189,37 +182,27 @@ const CreateChallenge = () => {
                         style={styles.input}
                         placeholder="Enter challenge name"
                         placeholderTextColor={Color?.gray}
-
-                        fontFamily={Font?.Poppins}
                         value={challengeName}
                         onChangeText={setChallengeName} />
                 </CustomShadow>
 
                 <Text style={styles?.nameText}>Challenge Type</Text>
-                {/* <CustomDropdown1
-                    data={challengeTypeOptions}
-                    onSelect={(e) => handleSlectChalangeType(e)}
-                    value={challengeType} /> */}
                 <CustomeDropDown
                     items={challengeTypeOptions}
                     selectedItem={challengeType || 'Select Challenge'}
                     onSelect={(e) => handleSlectChalangeType(e)}
                     textStyle={!challengeType ? { color: Color.textColor } : {}}
+                    shadowRadius={1}
                 />
                 <Text style={styles?.nameText}>Challenge Range</Text>
-                {/* <TextInput style={styles.input} value={challengeType} onChangeText={setChallengeType} /> */}
-                {/* <CustomDropdown1
-                    data={challengeRange}
-                    onSelect={(e) => handleSlectChalangeRangeType(e)}
-                    value={selectChallengeRange?.value} /> */}
 
                 <CustomeDropDown
                     items={challengeRange}
                     selectedItem={selectChallengeRange?.value || 'Select Range'}
                     onSelect={(e) => handleSlectChalangeRangeType(e)}
                     textStyle={!selectChallengeRange?.value ? { color: Color.textColor } : {}}
+                    shadowRadius={1}
                 />
-
                 <Text style={styles?.nameText}  >Coin Reward</Text>
                 <CustomShadow radius={1} style={shadowStyle} >
                     <View style={[styles?.input, { justifyContent: "center" }]}>
@@ -290,7 +273,6 @@ const CreateChallenge = () => {
                         style={styles.input}
                         placeholder="Enter description"
                         placeholderTextColor={Color?.gray}
-                        fontFamily={Font?.Poppins}
                         value={description}
                         onChangeText={setDescription}
                         multiline />
@@ -304,7 +286,6 @@ const CreateChallenge = () => {
                         placeholder={`Enter target goal for ${challengeType}`}
                         keyboardType="numeric"
                         placeholderTextColor={Color?.gray}
-                        fontFamily={Font?.Poppins}
                         value={targetGoal}
                         onChangeText={setTargetGoal} />
                 </CustomShadow>
@@ -359,7 +340,7 @@ const CreateChallenge = () => {
                 </View>
 
                 {/* Invite Friends Button (Only for Private Challenges) */}
-                {isPublic && (
+                {!isPublic && (
                     <TouchableOpacity style={[styles.inviteButton, {
                         backgroundColor: selectedFriend?.length > 0 ? Color?.primaryColor : Color?.white,
 
@@ -377,7 +358,8 @@ const CreateChallenge = () => {
                         backgroundColor: Color?.primaryColor,
                         padding: scale(10),
                         borderRadius: scale(8),
-                        width: '100%'
+                        width: '100%',
+                        marginBottom: scale(10)
                     }}
                 >
                     <Text style={{
@@ -404,7 +386,7 @@ const CreateChallenge = () => {
                     visible={alertVisible}
                     type={alertType}
                     message={alertMessage}
-                    closeAlert={()=> setAlertVisible(false)}
+                    closeAlert={() => setAlertVisible(false)}
                     onClose={() => {
                         setAlertVisible(false);
                         if (alertType === 'success') {
@@ -421,7 +403,7 @@ const CreateChallenge = () => {
 const styles = StyleSheet.create({
     mainContainer: {
 
-        backgroundColor: 'white',
+        backgroundColor: Color?.white,
         flex: 1,
     },
     container: {
@@ -468,17 +450,15 @@ const styles = StyleSheet.create({
     input: {
         height: scale(38),
         backgroundColor: Color?.white,
-        // borderColor: '#ccc',
-        // borderWidth: 1,
-        // marginBottom: 10,
         paddingHorizontal: scale(10),
-        fontSize: 16,
+        fontSize: scale(14),
         fontFamily: Font?.Poppins,
         color: Color?.gray,
         width: "98%",
         alignSelf: "center",
         borderRadius: scale(6),
-        color: Color?.black
+        color: Color?.black,
+        paddingVertical: scale(5)
 
     },
     switchContainer: {
@@ -538,7 +518,7 @@ const styles = StyleSheet.create({
         color: Color?.textColor,
         paddingHorizontal: scale(4),
         paddingVertical: scale(5),
-        marginTop: scale(9)
+        marginTop: scale(9),
     },
     radioGroup: {
         flexDirection: 'row',

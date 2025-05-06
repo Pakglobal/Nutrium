@@ -1,9 +1,10 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
+import { ADD_MEAL_IN_FOOD, DELETE_MEAL_IN_FOOD, DELETE_SPECIFIC_MEAL_IN_FOOD, GET_FOOD_DIARY, SEARCH_FOOD } from '../AllAPI/API';
 
 export const FetchFoodDiary = async (token, id) => {
   try {
-    const url = `${BASE_URL}food-diary/12123`;
+    const url = `${GET_FOOD_DIARY}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -18,7 +19,7 @@ export const FetchFoodDiary = async (token, id) => {
 export const AddMealInFoodDiary = async payload => {
   try {
     const {token, registrationDate, mealType, time, foodId, comments} = payload;
-    const url = `${BASE_URL}food-diary-add-meal/12123`;
+    const url = `${ADD_MEAL_IN_FOOD}`;
     const body = {
       registrationDate: registrationDate,
       mealType: mealType,
@@ -41,7 +42,7 @@ export const AddMealInFoodDiary = async payload => {
 
 export const SearchFoodApi = async token => {
   try {
-    const url = `${BASE_URL}search-foods`;
+    const url = `${SEARCH_FOOD}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -57,7 +58,7 @@ export const DeleteMealInFoodDiary = async payload => {
   try {
     const {token, registrationDate, scheduleId} = payload;
 
-    const url = `${BASE_URL}food-diary/12123/delete-meal-schedule`;
+    const url = `${DELETE_MEAL_IN_FOOD}`;
     const response = await axios.delete(url, {
       headers: {
         Authorization: token,
@@ -76,7 +77,7 @@ export const DeleteMealInFoodDiary = async payload => {
 export const DeleteSpecificMealInFoodDiary = async payload => {
   try {
     const {token, registrationDate, scheduleId, foodIndex} = payload;
-    const url = `${BASE_URL}food-diary/12123/delete-food`;
+    const url = `${DELETE_SPECIFIC_MEAL_IN_FOOD}`;
 
     const response = await axios.delete(url, {
       headers: {

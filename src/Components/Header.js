@@ -2,15 +2,11 @@ import React from 'react';
 import {
   View,
   TouchableOpacity,
-  LogBox,
   Text,
   StyleSheet,
   SafeAreaView,
-  Pressable,
-  Image,
 } from 'react-native';
 import { scale, verticalScale } from 'react-native-size-matters';
-import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Color } from '../assets/styles/Colors';
 import { useNavigation } from '@react-navigation/native';
@@ -20,7 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import IconStyle, { IconPadding } from '../assets/styles/Icon';
 import { Font } from '../assets/styles/Fonts';
-import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
+import { shadowStyle } from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
 import CustomLoader from './CustomLoader';
 

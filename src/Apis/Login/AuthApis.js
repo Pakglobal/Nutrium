@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
+import { BASE_URL } from '../Base_Url/Baseurl';
+import { FORGOT_PASSWORD, GOOGLE_LOGIN, GUEST_LOGIN, LOGIN } from '../AllAPI/API';
 
 export const Login = async data => {
   try {
@@ -9,7 +10,7 @@ export const Login = async data => {
       deviceToken: data?.deviceToken,
     };
 
-    const url = `${BASE_URL}sign_in`;
+    const url = LOGIN;
     const response = await axios.post(url, body);
 
     return response?.data;
@@ -25,7 +26,7 @@ export const GoogleLogin = async data => {
       email: data?.email,
       deviceToken: data?.deviceToken,
     };
-    const url = `${BASE_URL}verify-google`;
+    const url = GOOGLE_LOGIN;
     const response = await axios.post(url, body);
     return response?.data;
   } catch (error) {
@@ -33,7 +34,7 @@ export const GoogleLogin = async data => {
   }
 };
 
-export const GuestLoGin = async data => {
+export const HandleGuestLOGIN = async data => {
   try {
     const body = {
       firstName: data?.firstName,
@@ -49,7 +50,7 @@ export const GuestLoGin = async data => {
       deviceToken: data?.deviceToken,
       isDemoClient: true,
     };
-    const url = `${BASE_URL}demo-auth`;
+    const url = GUEST_LOGIN;
     const response = await axios.post(url, body);
 
     return response;
@@ -59,14 +60,13 @@ export const GuestLoGin = async data => {
 };
 
 export const ForgotPasswordApi = async data => {
-  console.log(data, 'data');
 
   try {
     const body = {
       email: data?.email,
     };
 
-    const url = `${BASE_URL}forget-password`;
+    const url = FORGOT_PASSWORD;
     const response = await axios.post(url, body);
 
     return response?.data;

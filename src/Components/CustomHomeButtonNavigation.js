@@ -3,8 +3,6 @@ import React from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Font} from '../assets/styles/Fonts';
 import {Color} from '../assets/styles/Colors';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
-
 import Entypo from 'react-native-vector-icons/Entypo';
 import CustomShadow from './CustomShadow';
 

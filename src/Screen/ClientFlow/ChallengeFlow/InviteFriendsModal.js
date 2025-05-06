@@ -214,15 +214,7 @@ const styles = StyleSheet.create({
         color: Color?.white,
         fontFamily: Font?.PoppinsMedium
     },
-    searchInput: {
-        backgroundColor: Color?.gray,
-        borderRadius: 5,
-        marginBottom: 10,
-        width: '90%',
-        alignSelf: 'center',
-        padding: scale(5),
 
-    },
     friendItem: {
         flexDirection: "row",
         alignItems: "center",
@@ -242,11 +234,13 @@ const styles = StyleSheet.create({
     },
     friendName: {
         fontSize: 16,
-        color: Color?.textColor
+        color: Color?.textColor,
+        fontFamily:Font?.Poppins
     },
     friendPhone: {
         fontSize: 14,
         color: Color?.gray,
+        fontFamily:Font?.Poppins,
     },
     inviteButton: {
         marginVertical: scale(12),
@@ -269,8 +263,6 @@ const styles = StyleSheet.create({
         borderRadius: scale(10),
         paddingHorizontal: scale(10),
         margin: scale(10),
-        // borderWidth: 1,
-        // borderColor: Color.primaryColor,
     },
 
     searchIcon: {
@@ -279,11 +271,13 @@ const styles = StyleSheet.create({
 
     searchInput: {
         flex: 1,
-        height: scale(40),
-        fontSize: scale(14),
-        color: "#000",
+        backgroundColor: Color?.white,
+        width: '90%',
+        alignSelf: 'center',
+        padding: scale(5),
+        fontFamily: Font?.Poppins,justifyContent:'center',
+        color:Color?.textColor
     },
-
 });
 
 export default InviteFriendsModal;

@@ -8,9 +8,12 @@ const Message = ({route}) => {
   const navigation = useNavigation();
   const getId = useSelector(state => state?.user?.token);
   const userId = getId?.id;
-  const otherUserId = route?.params?.data?._id;
+  // const otherUserId = route?.params?.data?._id;
   const userName = route?.params?.data?.fullName;
   const userImage = route?.params?.data?.image;
+  const profileInfo = useSelector(state => state?.user?.profileInfo);
+  const otherUserId = profileInfo?._id;
+
 
   return (
     <MessageComponent

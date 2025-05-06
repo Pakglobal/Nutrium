@@ -15,16 +15,19 @@ const CustomeDropDown = ({
     selectedItem,
     onSelect,
     textStyle,
-    dropdownStyle
+    dropdownStyle,
+    inputStyle,
+    shadowRadius
 }) => {
     const [showDropDown, setShowDropDown] = useState(false);
 
     return (
         <View>
-            <CustomShadow radius={1} style={shadowStyle}>
+            <CustomShadow radius={shadowRadius || 2} style={shadowStyle}>
+
                 <TouchableOpacity
                     activeOpacity={0.9}
-                    style={styles.inputContainer}
+                    style={[styles.inputContainer,inputStyle]}
                     onPress={() => setShowDropDown(!showDropDown)}
                 >
                     <Text style={[styles.selectedText, textStyle]}>
@@ -59,6 +62,7 @@ const CustomeDropDown = ({
                                 style={[
                                     {
                                         color: Color.textColor,
+                                        fontFamily:Font?.Poppins
                                     },
                                     selectedItem === (item?.value || item) && {
                                         color: Color.white,
@@ -105,12 +109,15 @@ const styles = StyleSheet.create({
         borderColor: Color.borderColor,
         backgroundColor: Color.white,
         marginTop: verticalScale(4),
-        elevation: 2,
-        zIndex: 10,
+        // elevation: 2,
+        // zIndex: 10,
+        marginTop: scale(5),
+        width: '98%',
+        alignSelf: "center"
     },
     dropdownItem: {
         padding: scale(10),
-        borderBottomWidth: 1,
-        borderBottomColor: Color.borderColor,
+        // borderBottomWidth: 1,
+        // borderBottomColor: Color.borderColor,
     },
 });

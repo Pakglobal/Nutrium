@@ -53,6 +53,8 @@ import ChallengesDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/Challeng
 import ViewChallengDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ViewChallengDetailsScreen';
 import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScreen';
 import ForgotPasswordScreen from '../Auth/Login/ForgotPasswordScreen';
+import LeaderboardScreen from '../Screen/ClientFlow/ChallengeFlow/LeaderboardScreen';
+import StepChallengeScreen from '../Screen/ClientFlow/ChallengeFlow/StepChallengeScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -158,6 +160,8 @@ const UserFlowStack = () => (
     <Stack.Screen name="practitioner" component={Practitioner} />
     <Stack.Screen name="ChallengesScreen" component={ChallengesScreen} />
     <Stack.Screen name="CreateChallenge" component={CreateChallenge} />
+    <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen} />
+    <Stack.Screen name="StepChallengeScreen" component={StepChallengeScreen} />
     <Stack.Screen
       name="ChallengesDetailsScreen"
       component={ChallengesDetailsScreen}

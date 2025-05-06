@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,23 +7,17 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Image,
-  Dimensions,
 } from 'react-native';
 import { scale, verticalScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
-
 import { Color } from '../../assets/styles/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { ForgotPasswordApi, GoogleLogin, Login } from '../../Apis/Login/AuthApis';
-
 import {
   GoogleSignin,
-  GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
 import { loginData, profileData, setToken } from '../../redux/user';
-import { GetAdminProfileData } from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
@@ -442,15 +435,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: '35%',
   },
-  buttonContainer: {
-    width: '100%',
-    paddingBottom: verticalScale(15),
-  },
-  errorMessage: {
-    color: '#F44336',
-    fontSize: scale(13),
-    marginTop: verticalScale(4),
-  },
   forgotText: {
     color: Color?.textColor,
     fontSize: scale(12),
@@ -483,27 +467,6 @@ const styles = StyleSheet.create({
     fontSize: scale(12),
     fontWeight: '400',
     fontFamily: Font.Poppins,
-  },
-  googleButton: {
-    flexDirection: 'row',
-    height: verticalScale(38),
-    borderRadius: scale(8),
-    borderWidth: 1,
-    borderColor: Color?.primaryColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: verticalScale(10),
-    marginTop: scale(15),
-  },
-  googleIcon: {
-    width: scale(22),
-    height: scale(22),
-    marginRight: 8,
-  },
-  googleText: {
-    color: Color.primaryColor,
-    fontSize: scale(14),
-    fontWeight: '600',
   },
   buttonText: {
     fontSize: scale(14),

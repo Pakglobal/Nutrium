@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -8,22 +8,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
-import { Color } from '../../assets/styles/Colors';
-import { useDispatch, useSelector } from 'react-redux';
-import { ForgotPasswordApi, GoogleLogin, Login } from '../../Apis/Login/AuthApis';
+
+import {Color} from '../../assets/styles/Colors';
+import {useDispatch, useSelector} from 'react-redux';
+import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
+
 import {
   GoogleSignin,
 } from '@react-native-google-signin/google-signin';
-import { loginData, profileData, setToken } from '../../redux/user';
+import {loginData, profileData, setToken} from '../../redux/user';
+import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
 import IconStyle from '../../assets/styles/Icon';
 import Google from '../../assets/Icon/google.svg';
-import { Font } from '../../assets/styles/Fonts';
+import {Font} from '../../assets/styles/Fonts';
 import CustomShadow from '../../Components/CustomShadow';
 import useKeyboardHandler from '../../Components/useKeyboardHandler';
 import CustomLoader from '../../Components/CustomLoader';
@@ -53,7 +56,6 @@ const LoginScreen = () => {
   };
 
   const FCMtoken = useSelector(state => state?.user?.fcmToken);
-
 
   const validateEmail = value => {
     setEmail(value);
@@ -116,7 +118,6 @@ const LoginScreen = () => {
       return;
     }
 
-
     setEmailError('');
     setPasswordError('');
 
@@ -132,16 +133,15 @@ const LoginScreen = () => {
       setLoginAlert(response?.message);
       setAlertType('success');
       setAlertVisible(true);
-      console.log('response?.message', response)
+      console.log('response?.message', response);
       if (response?.message == 'User not found.' || 'Invalid Credentials') {
-        setAlertType('error')
+        setAlertType('error');
       }
 
       const storeTokenId = {
         token: response?.token,
         id: response?.userData?._id,
       };
-
 
       if (response) {
         dispatch(loginData(response));
@@ -151,15 +151,12 @@ const LoginScreen = () => {
         setLoading(false);
       }
       setLoading(false);
-    }
-    catch (error) {
+    } catch (error) {
       setAlertType('error');
       setLoginAlert('Something went wrong. Please try again.');
       setAlertVisible(true);
       setLoading(false);
     }
-
-
   };
 
   GoogleSignin.configure({
@@ -218,7 +215,7 @@ const LoginScreen = () => {
   };
 
   const handleForgetPassword = async () => {
-    navigation.navigate('forgotPassword', { data: email })
+    navigation.navigate('forgotPassword', {data: email});
     const body = {
       email: email,
     };
@@ -231,8 +228,6 @@ const LoginScreen = () => {
       console.log('-----', error);
     }
   };
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -248,7 +243,6 @@ const LoginScreen = () => {
           // }
         }}
       />
-
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}
@@ -273,17 +267,16 @@ const LoginScreen = () => {
           showsVerticalScrollIndicator={false}>
           <LoginHeader
             width={'100%'}
-            style={{ alignSelf: 'center', marginTop: verticalScale(50) }}
+            style={{alignSelf: 'center', marginTop: verticalScale(50)}}
           />
           <NutriumLogo
             width={'100%'}
             height={scale(30)}
-            style={{ alignSelf: 'center', marginVertical: verticalScale(20) }}
+            style={{alignSelf: 'center', marginVertical: verticalScale(20)}}
           />
 
-          <View style={{ paddingHorizontal: scale(16) }}>
-            <CustomShadow
-              color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
+          <View style={{paddingHorizontal: scale(16)}}>
+            <CustomShadow color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
                   height: verticalScale(38),
@@ -305,7 +298,6 @@ const LoginScreen = () => {
             </CustomShadow>
 
             <CustomShadow
-
               color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
               <View
                 style={{
@@ -314,7 +306,7 @@ const LoginScreen = () => {
                   justifyContent: 'space-between',
                   backgroundColor: Color.white,
                   marginVertical: verticalScale(13),
-                  borderRadius: scale(6)
+                  borderRadius: scale(6),
                 }}>
                 <View
                   style={{
@@ -357,7 +349,7 @@ const LoginScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.checkbox,
-                  { backgroundColor: isAgree ? Color.primaryColor : Color.white },
+                  {backgroundColor: isAgree ? Color.primaryColor : Color.white},
                 ]}
                 onPress={() => setIsAgree(!isAgree)}>
                 {isAgree && (
@@ -382,11 +374,11 @@ const LoginScreen = () => {
             }}>
             <TouchableOpacity
               onPress={handleLogin}
-              style={[styles.button, { backgroundColor: Color.primaryColor }]}>
+              style={[styles.button, {backgroundColor: Color.primaryColor}]}>
               {loading ? (
                 <CustomLoader color={Color.white} size={'small'} />
               ) : (
-                <Text style={[styles.buttonText, { color: Color.white }]}>
+                <Text style={[styles.buttonText, {color: Color.white}]}>
                   Login
                 </Text>
               )}
@@ -408,13 +400,12 @@ const LoginScreen = () => {
               <Text
                 style={[
                   styles.buttonText,
-                  { color: Color.primaryColor, marginHorizontal: scale(8) },
+                  {color: Color.primaryColor, marginHorizontal: scale(8)},
                 ]}>
                 Continue With Google
               </Text>
             </TouchableOpacity>
           </View>
-
         </ScrollView>
       </View>
     </SafeAreaView>

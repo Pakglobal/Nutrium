@@ -60,7 +60,6 @@ const ClientDrawerContent = props => {
     userInfo?.userData?.image ||
     guestInfo?.userData?.image;
 
-
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?.fullName;
   const profileImage = profileInfo?.image
@@ -111,7 +110,12 @@ const ClientDrawerContent = props => {
             if (success) {
               props.navigation.reset({
                 index: 0,
-                routes: [{name: 'loginChoice'}],
+                routes: [
+                  {
+                    name: 'AuthStack',
+                    params: {screen: 'loginChoice'},
+                  },
+                ],
               });
             } else {
               Alert.alert('Error', 'Failed to sign out. Please try again.', [

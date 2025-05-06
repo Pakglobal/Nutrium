@@ -1,13 +1,11 @@
-
-
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Font } from '../assets/styles/Fonts';
+import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Font} from '../assets/styles/Fonts';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { scale } from 'react-native-size-matters';
-import { Color } from '../assets/styles/Colors';
+import {scale} from 'react-native-size-matters';
+import {Color} from '../assets/styles/Colors';
 
-const CustomAlertBox = ({ visible, type, message, onClose, closeAlert }) => {
+const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
   const getColors = () => {
     switch (type) {
       case 'success':
@@ -52,33 +50,37 @@ const CustomAlertBox = ({ visible, type, message, onClose, closeAlert }) => {
     <Modal transparent animationType="fade" visible={visible}>
       <View style={styles.modalBackground}>
         <View style={styles.alertBox}>
-          <TouchableOpacity onPress={closeAlert} style={{ alignSelf: 'flex-end' }}>
+          <TouchableOpacity
+            onPress={closeAlert}
+            style={{alignSelf: 'flex-end'}}>
             <AntDesign name="close" size={25} color={Color?.black} />
           </TouchableOpacity>
 
-          <View style={[
-            styles.iconContainer,
-            {
-              borderColor: colors.borderColor,
-              backgroundColor: colors.backgroundColor,
-            }
-          ]}>
-            <AntDesign name={colors.iconName} size={25} color={colors.iconColor} />
+          <View
+            style={[
+              styles.iconContainer,
+              {
+                borderColor: colors.borderColor,
+                backgroundColor: colors.backgroundColor,
+              },
+            ]}>
+            <AntDesign
+              name={colors.iconName}
+              size={25}
+              color={colors.iconColor}
+            />
           </View>
 
-          <Text style={[styles.title, { color: colors.textColor }]}>
+          <Text style={[styles.title, {color: colors.textColor}]}>
             {colors.title}
           </Text>
 
-          <Text style={styles.message}>
-            {message}
-          </Text>
+          <Text style={styles.message}>{message}</Text>
 
           <TouchableOpacity
-            style={[styles.button, { borderColor: colors.buttonBorder }]}
-            onPress={onClose}
-          >
-            <Text style={[styles.buttonText, { color: colors.buttonText }]}>
+            style={[styles.button, {borderColor: colors.buttonBorder}]}
+            onPress={onClose}>
+            <Text style={[styles.buttonText, {color: colors.buttonText}]}>
               OK
             </Text>
           </TouchableOpacity>

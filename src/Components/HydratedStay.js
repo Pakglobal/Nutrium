@@ -1,5 +1,3 @@
-
-
 import {
   StyleSheet,
   Text,

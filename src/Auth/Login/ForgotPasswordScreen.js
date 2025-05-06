@@ -1,4 +1,3 @@
-
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,18 +13,18 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {  useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { Color } from '../../assets/styles/Colors';
-import { Font } from '../../assets/styles/Fonts';
-import { LeftIcon } from '../../assets/styles/Icon';
+import React, {useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../assets/styles/Colors';
+import {Font} from '../../assets/styles/Fonts';
+import {LeftIcon} from '../../assets/styles/Icon';
 import Header from '../../assets/Images/forgotPassword.svg';
 import CustomShadow from '../../Components/CustomShadow';
-import { ForgotPasswordApi } from '../../Apis/Login/AuthApis';
+import {ForgotPasswordApi} from '../../Apis/Login/AuthApis';
 import CustomAlertBox from '../../Components/CustomAlertBox';
 
-const ForgotPasswordScreen = ({ route }) => {
+const ForgotPasswordScreen = ({route}) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,7 +51,7 @@ const ForgotPasswordScreen = ({ route }) => {
       return;
     }
 
-    const body = { email };
+    const body = {email};
 
     try {
       setLoading(true);
@@ -154,64 +153,53 @@ const ForgotPasswordScreen = ({ route }) => {
           if (alertType === 'success') {
             const encodedEmail = encodeURIComponent(email);
             Linking.openURL(
-              `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?email=${encodedEmail}`
+              `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?email=${encodedEmail}`,
             );
             navigation.navigate('loginScreen');
           }
         }}
       />
-  
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 20}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
-            keyboardShouldPersistTaps="handled"
-          >
-            <LeftIcon onGoBack={() => navigation.goBack()} />
-            <Header height="40%" width="100%" style={{ marginTop: 50 }} />
-  
-            <View style={styles.formContainer}>
-              <Text style={styles.titleText}>Please Enter your Registered Email</Text>
-              <Text style={styles.subtitleText}>
-                We will send a verification link to your email to reset your password.
-              </Text>
-  
-              <View style={{ marginTop: verticalScale(20) }}>
-                <CustomShadow>
-                  <View style={styles.inputWrapper}>
-                    <TextInput
-                      placeholder="Enter your email"
-                      value={email}
-                      onChangeText={setEmail}
-                      placeholderTextColor={Color.textColor}
-                      style={styles.textInput}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                    />
-                  </View>
-                </CustomShadow>
-              </View>
+
+      <LeftIcon onGoBack={() => navigation.goBack()} />
+      <Header height="40%" width="100%" style={{marginTop: 50}} />
+
+      <View style={styles.formContainer}>
+        <Text style={styles.titleText}>Please Enter your Registered Email</Text>
+        <Text style={styles.subtitleText}>
+          We will send a verification link to your email to reset your password.
+        </Text>
+
+        <View style={{marginTop: verticalScale(20)}}>
+          <CustomShadow>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+                placeholderTextColor={Color.textColor}
+                style={styles.textInput}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
             </View>
-  
-            <View style={styles.buttonWrapper}>
-              <TouchableOpacity
-                onPress={handleSubmit}
-                disabled={loading}
-                style={[styles.button, { backgroundColor: Color.primaryColor }]}>
-                {loading ? (
-                  <ActivityIndicator size="small" color={Color.white} />
-                ) : (
-                  <Text style={[styles.buttonText, { color: Color.white }]}>Send Reset Link</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+          </CustomShadow>
+        </View>
+      </View>
+
+      <View style={styles.buttonWrapper}>
+        <TouchableOpacity
+          onPress={handleSubmit}
+          disabled={loading}
+          style={[styles.button, {backgroundColor: Color.primaryColor}]}>
+          {loading ? (
+            <ActivityIndicator size="small" color={Color.white} />
+          ) : (
+            <Text style={[styles.buttonText, {color: Color.white}]}>
+              Send Reset Link
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
   

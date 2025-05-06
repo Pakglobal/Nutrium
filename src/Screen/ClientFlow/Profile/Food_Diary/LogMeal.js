@@ -25,7 +25,6 @@ import {
   DeleteMealInFoodDiary,
   DeleteSpecificMealInFoodDiary,
 } from '../../../../Apis/ClientApis/FoodDiaryApi';
-import Toast from 'react-native-simple-toast';
 
 const LogMeal = () => {
   const dispatch = useDispatch();
@@ -41,10 +40,6 @@ const LogMeal = () => {
   const foodIndex = meal?.foodIndex;
   const scheduleId = meal?.id;
   const registrationDate = '2025-02-21T18:30:00.023Z';
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
 
   const navigation = useNavigation();
   const [showAction, setShowAction] = useState(false);
@@ -190,7 +185,7 @@ const LogMeal = () => {
     ) {
       navigation.navigate('foodDiary');
     } else {
-      showToast(response?.message);
+      console.log(response?.message);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,23 +7,18 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { Color } from '../../../../assets/styles/Colors';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import DatePicker from 'react-native-date-picker';
-import { SetMeasurementData } from '../../../../Apis/ClientApis/MeasurementApi';
-import Toast from 'react-native-simple-toast';
+import {SetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
 
 const AddMeasurement = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const unit = route?.params?.routeData?.unit;
-
-  const showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.BOTTOM);
-  };
 
   const measurementType = route?.params?.routeData?.measurementType;
   const measurementId = route?.params?.routeData?.measurementId;
@@ -75,12 +70,12 @@ const AddMeasurement = () => {
       ) {
         navigation.goBack();
       } else {
-        showToast(response?.message);
+        console.log(response?.message);
         setLoading(false);
       }
       setLoading(false);
     } catch (error) {
-      showToast(error);
+      console.log(error);
       setLoading(false);
     }
   };
@@ -111,7 +106,7 @@ const AddMeasurement = () => {
               }}
               placeholderTextColor={Color.black}
             />
-            <Text style={{ marginLeft: 5, color: Color.black }}>{unit}</Text>
+            <Text style={{marginLeft: 5, color: Color.black}}>{unit}</Text>
           </View>
           {errorMessage ? (
             <Text style={styles.error}>{errorMessage}</Text>
@@ -122,7 +117,7 @@ const AddMeasurement = () => {
         <TouchableOpacity
           style={styles.picker}
           onPress={() => setShowDatePicker(true)}>
-          <Text style={{ color: Color.black }}>{date.toLocaleDateString()}</Text>
+          <Text style={{color: Color.black}}>{date.toLocaleDateString()}</Text>
         </TouchableOpacity>
 
         {showDatePicker && (

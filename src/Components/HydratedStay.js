@@ -17,6 +17,7 @@ import HydratedView from './HydratedView';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   GetWaterIntakeDetails,
+  GetWaterintakeLimitData,
   SetWaterIntakeDetails,
 } from '../Apis/ClientApis/WaterIntakeApi';
 import Feather from 'react-native-vector-icons/Feather';
@@ -38,6 +39,7 @@ const HydratedStay = ({ route }) => {
   const [waterIntake, setWaterIntake] = useState([]);
   const [getwaterIntake, setGetWaterIntake] = useState([]);
   const [currentProgress, setCurrentProgress] = useState(0);
+  const [limit, setLimit] = useState('');
   const [loading, setLoading] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -137,11 +139,16 @@ const HydratedStay = ({ route }) => {
     }, 0);
   };
 
+  const getWaterLimit = async () => {
+    const data = await GetWaterintakeLimitData(token, id);
+    setLimit(data?.waterIntakeLimit?.waterIntakeLimit)
+  }
+
+
   const getData = async () => {
     try {
       const data = await GetWaterIntakeDetails(token, id);
       const allRecords = data?.waterIntakeData?.waterIntakeRecords || [];
-      
       const today = new Date().toISOString().split('T')[0];
       const todayRecord = allRecords.find(record => {
         return record?.date?.split('T')[0] === today;
@@ -188,6 +195,7 @@ const HydratedStay = ({ route }) => {
       }
       prevUserIdRef.current = id;
     }
+    getWaterLimit()
   }, [token, id]);
 
   useEffect(() => {
@@ -248,7 +256,7 @@ const HydratedStay = ({ route }) => {
                   <Text style={styles.intakeTxt}>
                     {localIntake >= 1000
                       ? `${(localIntake / 1000).toFixed(1)} L`
-                      : `${localIntake} ml`}
+                      : `${localIntake} ml`}/{limit}
                   </Text>
                 </View>
 

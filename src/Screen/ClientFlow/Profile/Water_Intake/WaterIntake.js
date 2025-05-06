@@ -14,6 +14,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
+  GetWaterintakeLimitData,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -41,6 +42,8 @@ const WaterIntake = () => {
   const [waterIntake, setWaterIntake] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dataFetched, setDataFetched] = useState(false);
+  const [limit, setLimit] = useState('');
+
 
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const tokenId = useSelector(state => state?.user?.token);
@@ -177,11 +180,11 @@ const WaterIntake = () => {
 
         setSelectedIntake(matchingRecords);
       }
-      setDataFetched(true); 
+      setDataFetched(true);
       setLoading(false);
     } catch (error) {
       console.error('Error in getWaterIntakeData:', error);
-      setDataFetched(true); 
+      setDataFetched(true);
       setLoading(false);
     }
   };
@@ -199,10 +202,18 @@ const WaterIntake = () => {
     if (dataFetched && selectedDate) {
       handleDate({ fullDate: new Date(selectedDate) });
     }
+    getWaterLimit()
   }, [selectedDate, dataFetched]);
+  const getWaterLimit = async () => {
+    const data = await GetWaterintakeLimitData(token, id);
+    setLimit(data?.waterIntakeLimit?.waterIntakeLimit)
+  }
 
-  const dailyGoal =
-    waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
+
+  // const dailyGoal =
+  //   waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
+
+  const dailyGoal = limit;
 
   const calculateDailyIntake = (date, records) => {
     if (!records || !date) return 0;
@@ -470,7 +481,7 @@ const WaterIntake = () => {
         </View>
 
         {loading ? (
-         <CustomLoader style={{marginTop: verticalScale(25)}} />
+          <CustomLoader style={{ marginTop: verticalScale(25) }} />
         ) : hasData ? (
           <View style={styles.entriesContainer}>
             <FlatList

@@ -354,8 +354,6 @@
 
 
 
-
-import { Alert } from 'react-native';
 import io from 'socket.io-client';
 
 const SOCKET_SERVER_URL = 'https://nutrium-back-end-1.onrender.com';
@@ -385,7 +383,6 @@ export const connectSocket = () => {
 
     socket.on('connect_error', error => {
       console.error('❌ Socket connection error:', error);
-      Alert.alert('❌ Socket connection error:', error)
     });
 
     socket.on('disconnect', reason => {

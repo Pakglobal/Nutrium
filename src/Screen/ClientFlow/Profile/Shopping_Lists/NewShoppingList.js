@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import BackHeader from '../../../../Components/BackHeader';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../../assets/styles/Colors';
 import {useNavigation} from '@react-navigation/native';
@@ -44,7 +43,6 @@ const NewShoppingList = () => {
         <Header
           screenheader={true}
           screenName={'New shopping lists'}
-          rightHeaderButton={false}
         />
 
         <View style={{marginHorizontal: scale(16)}}>

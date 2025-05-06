@@ -1,6 +1,17 @@
 import axios from 'axios';
-import { BASE_URL } from '../Base_Url/Baseurl';
-import { CHALLENGE_ACCEPT_REJECT, CREATE_CHALLENGE, GET_ALL_CHALLENGE, GET_ALL_USER, GET_CHALLENGE_DATA_WITHID, GET_CHALLENGE_PENDING_REQUEST, GET_CHALLENGE_RANGE, GET_CHALLENGE_TYPE, JOIN_PUBLIC_CHALLENGE, LEADERBOARD_DATA } from '../AllAPI/API';
+import {BASE_URL} from '../Base_Url/Baseurl';
+import {
+  CHALLENGE_ACCEPT_REJECT,
+  CREATE_CHALLENGE,
+  GET_ALL_CHALLENGE,
+  GET_ALL_USER,
+  GET_CHALLENGE_DATA_WITHID,
+  GET_CHALLENGE_PENDING_REQUEST,
+  GET_CHALLENGE_RANGE,
+  GET_CHALLENGE_TYPE,
+  JOIN_PUBLIC_CHALLENGE,
+  LEADERBOARD_DATA,
+} from '../AllAPI/API';
 
 export const getAllChallenge = async token => {
   try {
@@ -30,7 +41,7 @@ export const getAllChallengeJoinDatawithId = async (token, userId) => {
 };
 export const getAllChallengePendingRequest = async (token, userId) => {
   try {
-    const url = `${GET_CHALLENGE_PENDING_REQUEST}${userId}`;
+    const url = `${GET_CHALLENGE_PENDING_REQUEST}/${userId}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -57,8 +68,6 @@ export const challengeAcceptAndRejectedApi = async (
     });
     return response?.data;
   } catch (error) {
-    console.log('errorerrorerrorerrorerror', error);
-
     throw error;
   }
 };
@@ -117,7 +126,6 @@ export const getChallengeType = async token => {
 };
 
 export const getChallengeRange = async (token, id) => {
-  console.log('ididid', id);
   try {
     const url = `${GET_CHALLENGE_RANGE}/${id}`;
     const response = await axios.get(url, {

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BASE_URL } from '../Base_Url/Baseurl';
-import { FORGOT_PASSWORD, GOOGLE_LOGIN, GUEST_LOGIN, LOGIN } from '../AllAPI/API';
+import {BASE_URL} from '../Base_Url/Baseurl';
+import {FORGOT_PASSWORD, GOOGLE_LOGIN, GUEST_LOGIN, LOGIN} from '../AllAPI/API';
 
 export const Login = async data => {
   try {
@@ -60,7 +60,6 @@ export const HandleGuestLOGIN = async data => {
 };
 
 export const ForgotPasswordApi = async data => {
-
   try {
     const body = {
       email: data?.email,

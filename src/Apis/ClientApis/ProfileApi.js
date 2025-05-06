@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BASE_URL } from '../Base_Url/Baseurl';
-import { GET_PROFILE_IMAGE, GET_USER, UPDATE_PROFILE_IMAGE } from '../AllAPI/API';
+import {BASE_URL} from '../Base_Url/Baseurl';
+import {GET_PROFILE_IMAGE, GET_USER, UPDATE_PROFILE_IMAGE} from '../AllAPI/API';
 
 export const GetUserApi = async token => {
   try {

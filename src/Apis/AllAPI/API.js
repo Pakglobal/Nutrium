@@ -1,7 +1,7 @@
 export const BASE_URL = `https://nutrium-back-end-1.onrender.com/api/v1/`;
 
 //Login Flow
-export const LOGIN = `${BASE_URL}sign_in`
+export const LOGIN = `${BASE_URL}sign_in`;
 export const GOOGLE_LOGIN = `${BASE_URL}verify-google`;
 export const GUEST_LOGIN = `${BASE_URL}demo-auth`;
 export const FORGOT_PASSWORD = `${BASE_URL}forget-password`;
@@ -12,7 +12,7 @@ export const GET_ALL_CLIENT_DATA = `${BASE_URL}client`;
 export const GET_CLIENT_DATA = `${BASE_URL}client`;
 export const GET_PROFILE_DATA = `${BASE_URL}professionals`;
 
-// client flow 
+// client flow
 
 //CHALLENGE FLOW
 export const GET_ALL_CHALLENGE = `${BASE_URL}challenge/public`;
@@ -68,36 +68,3 @@ export const SET_WATER_INTAKE_DETAILS = `${BASE_URL}setwaterintake`;
 export const DELETE_WATER_INTAKE = `${BASE_URL}deletewaterintake`;
 export const UPDATE_WATER_INTAKE = `${BASE_URL}updatewaterintake`;
 export const GET_WATER_INTAKE_LIMIT = `${BASE_URL}getWaterIntakeLimit`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,22 +5,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {  useState } from 'react';
+import React, {useState} from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { Color } from '../../../assets/styles/Colors';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {Color} from '../../../assets/styles/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {  useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
-import { useDispatch } from 'react-redux';
-import { Font } from '../../../assets/styles/Fonts';
-import { Progress } from '../../../assets/styles/Progress';
-import { shadowStyle, ShadowValues } from '../../../assets/styles/Shadow';
+import {useDispatch} from 'react-redux';
+import {Font} from '../../../assets/styles/Fonts';
+import {Progress} from '../../../assets/styles/Progress';
+import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
@@ -38,7 +38,6 @@ const SelectGender = () => {
     setSelectedGender(gender);
   };
 
-
   const handleNavigation = () => {
     if (!selectedGender) {
       setAlertMsg('Please select your gender to continue');
@@ -46,7 +45,7 @@ const SelectGender = () => {
       setAlertVisible(true);
       return;
     }
-    navigation.navigate('SelectProfession', { gender: selectedGender });
+    navigation.navigate('SelectProfession', {gender: selectedGender});
   };
 
   return (
@@ -62,7 +61,7 @@ const SelectGender = () => {
 
       <LeftIcon onGoBack={() => navigation.goBack()} />
 
-      <LoginHeader height={'45%'} width={'100%'} style={{ marginTop: 50 }} />
+      <LoginHeader height={'45%'} width={'100%'} style={{marginTop: 50}} />
 
       <View
         style={{
@@ -71,7 +70,7 @@ const SelectGender = () => {
         <Text
           style={[
             styles.titleText,
-            { color: Color.primaryColor, marginTop: verticalScale(20) },
+            {color: Color.primaryColor, marginTop: verticalScale(20)},
           ]}>
           Hi
         </Text>
@@ -86,12 +85,12 @@ const SelectGender = () => {
           ]}>
           Select Gender
         </Text>
-        <Text style={[styles.titleText, { fontSize: scale(12) }]}>
+        <Text style={[styles.titleText, {fontSize: scale(12)}]}>
           Please select your gender to continue
         </Text>
 
         <View style={styles.selectionContainer}>
-          <View style={{ width: '48%' }}>
+          <View style={{width: '48%'}}>
             <CustomShadow>
               <View style={shadowStyle}>
                 <TouchableOpacity
@@ -123,8 +122,8 @@ const SelectGender = () => {
                   <Text
                     style={[
                       styles.titleText,
-                      { fontSize: scale(13) },
-                      selectedGender === 'Female' && { color: Color.white },
+                      {fontSize: scale(13)},
+                      selectedGender === 'Female' && {color: Color.white},
                     ]}>
                     Female
                   </Text>
@@ -133,7 +132,7 @@ const SelectGender = () => {
             </CustomShadow>
           </View>
 
-          <View style={{ width: '48%' }}>
+          <View style={{width: '48%'}}>
             <CustomShadow>
               <View style={shadowStyle}>
                 <TouchableOpacity
@@ -165,8 +164,8 @@ const SelectGender = () => {
                   <Text
                     style={[
                       styles.titleText,
-                      { fontSize: scale(13) },
-                      selectedGender === 'Male' && { color: Color.white },
+                      {fontSize: scale(13)},
+                      selectedGender === 'Male' && {color: Color.white},
                     ]}>
                     Male
                   </Text>

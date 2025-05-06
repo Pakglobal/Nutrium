@@ -4,7 +4,6 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
@@ -52,14 +51,6 @@ const AddMeal = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <BackHeader
-        onPressBack={() => navigation.goBack()}
-        titleName="Add meal"
-        backText="Food diary"
-        onSave={true}
-        onPress={() => handleSave()}
-      />
-
       <View style={{marginHorizontal: scale(16)}}>
         <View>
           <Text style={styles.label}>Meal</Text>

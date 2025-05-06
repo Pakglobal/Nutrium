@@ -44,7 +44,6 @@ const WaterIntake = () => {
   const [dataFetched, setDataFetched] = useState(false);
   const [limit, setLimit] = useState('');
 
-
   const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
@@ -201,13 +200,12 @@ const WaterIntake = () => {
     if (dataFetched && selectedDate) {
       handleDate({fullDate: new Date(selectedDate)});
     }
-    getWaterLimit()
+    getWaterLimit();
   }, [selectedDate, dataFetched]);
   const getWaterLimit = async () => {
     const data = await GetWaterintakeLimitData(token, id);
-    setLimit(data?.waterIntakeLimit?.waterIntakeLimit)
-  }
-
+    setLimit(data?.waterIntakeLimit?.waterIntakeLimit);
+  };
 
   // const dailyGoal =
   //   waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
@@ -406,6 +404,7 @@ const WaterIntake = () => {
           navigation.navigate('waterIntakeLog', {plusData: plusData})
         }
         plus={true}
+        rightHeaderButton={true}
       />
 
       <View style={{height: verticalScale(220)}}>

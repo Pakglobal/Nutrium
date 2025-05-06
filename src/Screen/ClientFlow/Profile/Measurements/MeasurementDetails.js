@@ -14,7 +14,6 @@ import {
 } from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import {LineChart} from 'react-native-chart-kit';
 import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
 import {useDispatch, useSelector} from 'react-redux';
@@ -387,7 +386,6 @@ const MeasurementDetail = () => {
       <Header
         screenheader={true}
         screenName={measurementType}
-        rightHeaderButton={false}
       />
       <View style={{paddingHorizontal: scale(16), flex: 1}}>
         <Text style={styles.lebal}>{measurementType}</Text>

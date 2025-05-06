@@ -1,30 +1,28 @@
-import React, {useRef, useState, useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
   Dimensions,
+  Animated,
   Text,
   FlatList,
   ScrollView,
-  Animated,
   TouchableOpacity,
 } from 'react-native';
-import {SwiperFlatList} from 'react-native-swiper-flatlist';
+import {SwiperFlatList, Pagination} from 'react-native-swiper-flatlist';
 import ChallengeCardBanner from '../../../Components/ChallengeCardBanner';
 import {scale} from 'react-native-size-matters';
 import {Font} from '../../../assets/styles/Fonts';
 import ChallengeCard from './ChallengeCard';
+import {useNavigation} from '@react-navigation/native';
+import CustomLoader from '../../../Components/CustomLoader';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Color} from '../../../assets/styles/Colors';
-import {useNavigation} from '@react-navigation/native';
 
-const {width, height} = Dimensions.get('window');
-const CARD_WIDTH = width * 0.9; // Match the card width in ChallengeCardBanner
+const {width} = Dimensions.get('window');
+const CARD_WIDTH = width * 0.92;
+const SPACING = (width - CARD_WIDTH) / 2;
 const CARD_HEIGHT = 150;
-import CustomLoader from '../../../Components/CustomLoader';
-
-// Only animate FlatList if needed
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const CustomPagination = ({paginationIndex, data}) => {
   return (
@@ -44,26 +42,9 @@ const CustomPagination = ({paginationIndex, data}) => {
     </View>
   );
 };
-
 const AllChallenges = ({challenges, onJoin}) => {
-  console.log('onJoin', onJoin)
   const swiperRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [loader, setLoader] = useState(false)
   const navigation = useNavigation();
-
-  const viewabilityConfigCallbackPairs = useRef([
-    {
-      viewabilityConfig: {
-        itemVisiblePercentThreshold: 50,
-      },
-      onViewableItemsChanged: ({viewableItems}) => {
-        if (viewableItems.length > 0) {
-          setCurrentIndex(viewableItems[0].index);
-        }
-      },
-    },
-  ]).current;
 
   const cardioChallenges = challenges.filter(
     challenge => challenge.type.unitLabel === 'Cardio',
@@ -76,18 +57,11 @@ const AllChallenges = ({challenges, onJoin}) => {
   const topChallenges = challenges.slice(0, 4);
   const remainingChallenges = challenges.slice(4);
 
-  // Center the first card on initial render
   useEffect(() => {
     if (swiperRef.current && topChallenges.length > 0) {
       swiperRef.current.scrollToIndex({index: 0, animated: false});
     }
   }, [topChallenges]);
-
-  useEffect(() => {
-    if (challenges && challenges.length > 0) {
-      setLoader(false);
-    }
-  }, [challenges]);
 
   const handleNavigateCardio = () => {
     navigation.navigate('CardioDetailsScreen', {
@@ -103,68 +77,42 @@ const AllChallenges = ({challenges, onJoin}) => {
     });
   };
 
-  const renderItem = useCallback(
-    ({item}) => {
-      return (
-        <View style={styles.swiperItem}>
-         <ChallengeCardBanner
-         challenge={item}
-         onJoin={onJoin}
-         btnType="Join"
-         onPress={() => navigation.navigate('StepChallengeScreen', { item })}
-     />
-        </View>
-      );
-    },
-    [onJoin],
-  );
-
-  const renderChallengeCard = useCallback(
-    ({item}) => <ChallengeCard challenge={item} onJoin={onJoin} />,
+  const renderSwiperItem = useCallback(
+    ({item}) => (
+      <View style={{width: CARD_WIDTH, marginHorizontal: SPACING / 2}}>
+        <ChallengeCardBanner challenge={item} onJoin={onJoin} btnType="Join" />
+      </View>
+    ),
     [onJoin],
   );
 
   return (
     <View style={styles.container}>
-      {
-        loader ? <CustomLoader /> :
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        removeClippedSubviews={true}
-        contentContainerStyle={styles.scrollContent}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.containerText}>
           <Text style={styles.text}>All Challenges</Text>
         </View>
-
-        <View style={styles.swiperWrapper}>
-          <SwiperFlatList
-            ref={swiperRef}
-            data={topChallenges}
-            renderItem={renderItem}
-            keyExtractor={item => item._id}
-            showPagination
-            PaginationComponent={props => (
-              <CustomPagination {...props} data={topChallenges} />
-            )}
-            snapToInterval={width} // Snap to full screen width
-            snapToAlignment="center"
-            decelerationRate="fast"
-            bounces={false}
-            contentContainerStyle={styles.swiperContainer}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs}
-            initialNumToRender={1}
-            maxToRenderPerBatch={1}
-            removeClippedSubviews={true}
-            windowSize={1}
-            contentInset={{
-              left: (width - CARD_WIDTH) / 2,
-              right: (width - CARD_WIDTH) / 2,
-            }} // Center the cards
-            initialScrollIndex={0} // Ensure the first item is initially selected
-          />
-        </View>
+        <SwiperFlatList
+          data={topChallenges}
+          renderItem={renderSwiperItem}
+          keyExtractor={item => item._id}
+          showPagination
+          PaginationComponent={props => (
+            <CustomPagination {...props} data={topChallenges} />
+          )}
+          snapToAlignment="center"
+          snapToInterval={CARD_WIDTH + SPACING}
+          decelerationRate="fast"
+          disableIntervalMomentum
+          showsHorizontalScrollIndicator={false}
+          ref={swiperRef}
+          initialScrollIndex={0}
+          getItemLayout={(data, index) => ({
+            length: CARD_WIDTH + SPACING,
+            offset: (CARD_WIDTH + SPACING) * index,
+            index,
+          })}
+        />
 
         <View style={styles.categoriesContainer}>
           <TouchableOpacity
@@ -216,16 +164,13 @@ const AllChallenges = ({challenges, onJoin}) => {
                 <ChallengeCard
                   challenge={item}
                   onJoin={onJoin}
-                  handleJoinNow={() =>
-                    navigation.navigate('StepChallengeScreen', {item})
-                  }
+                  btnType="Join"
                 />
               )}
             />
           </>
         )}
       </ScrollView>
-      }
     </View>
   );
 };
@@ -256,10 +201,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   swiperItem: {
-    width: width, // Full width to allow centering via contentInset
+    width: width,
     height: CARD_HEIGHT,
     justifyContent: 'center',
-    alignItems: 'center', // Center the card horizontally within the item
+    alignItems: 'center',
   },
   swiperContainer: {
     paddingVertical: 0,

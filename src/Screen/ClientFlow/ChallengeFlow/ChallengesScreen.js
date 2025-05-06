@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import ChallangeSwiper from './ChallangeSwiper';
@@ -17,16 +17,10 @@ import {Font} from '../../../assets/styles/Fonts';
 
 const ChallengesScreen = () => {
   const navigation = useNavigation();
-  const [selectedTitle, setSelectedTitle] = useState('All Challenge');
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Header
-        screenheader={true}
-        rightHeaderButton={false}
-        screenName={selectedTitle}
-      />
-      {/* <Header logoHeader={true} /> */}
+      <Header logoHeader={true} />
       <View
         style={{
           flex: 1,
@@ -42,7 +36,7 @@ const ChallengesScreen = () => {
           <TouchableOpacity
             style={{backgroundColor: 'green', padding: 10, borderRadius: 5}}
             onPress={() => navigation.navigate('JoinRequestScreen')}>
-            <Text style={{color: Color?.white}}>Join Challenge request</Text>
+            <Text style={{color: 'white'}}>Join Challenge request</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.buttonStyle}
@@ -56,7 +50,7 @@ const ChallengesScreen = () => {
             <Text style={styles.btnText}>Create Challenge</Text>
           </TouchableOpacity>
         </View>
-        <ChallangeSwiper onTabChange={setSelectedTitle} />
+        <ChallangeSwiper />
       </View>
     </SafeAreaView>
   );

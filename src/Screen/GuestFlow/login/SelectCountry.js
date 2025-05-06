@@ -21,17 +21,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {Font} from '../../../assets/styles/Fonts';
 import {Progress} from '../../../assets/styles/Progress';
-import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import CustomDatePicker from '../../../Components/CustomeDateTimePicker';
 import CustomeDropDown from '../../../Components/CustomeDropDown';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
 
-const SelectCountry = ({ route }) => {
-  const { height, width } = Dimensions.get('screen');
+const SelectCountry = ({route}) => {
+  const {height, width} = Dimensions.get('screen');
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [country, setCountry] = useState('');
@@ -101,11 +98,13 @@ const SelectCountry = ({ route }) => {
         message =
           'Please select your country, enter your number, and select your date of birth to continue';
       } else if (!country && !number) {
-        message = 'Please select your country and enter your number to continue';
+        message =
+          'Please select your country and enter your number to continue';
       } else if (!country && !dateOfBirth) {
         message = 'Please select your country and date of birth to continue';
       } else if (!number && !dateOfBirth) {
-        message = 'Please enter your number and select your date of birth to continue';
+        message =
+          'Please enter your number and select your date of birth to continue';
       } else if (!country) {
         message = 'Please select your country to continue';
       } else if (!number) {
@@ -152,22 +151,22 @@ const SelectCountry = ({ route }) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: height > 800 ? '47.5%' : '37%', }}
+        contentContainerStyle={{paddingBottom: height > 800 ? '47.5%' : '37%'}}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
           style={{alignSelf: 'center', marginTop: verticalScale(50)}}
         />
 
-        <View
-          style={{ marginHorizontal: scale(16) }}>
+        <View style={{marginHorizontal: scale(16)}}>
           <CustomeDropDown
             items={countries}
-            inputStyle={{ width: '100%', marginVertical: scale(6) }}
+            inputStyle={{width: '100%', marginVertical: scale(6)}}
             selectedItem={country || 'Select country'}
-            onSelect={(item) => setCountry(item)}
-            textStyle={!country ? { color: Color.textColor } : {}}
+            onSelect={item => setCountry(item)}
+            textStyle={!country ? {color: Color.textColor} : {}}
           />
-          <CustomShadow color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>
+          <CustomShadow
+            color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>
             <View style={styles.inputContainer}>
               {country && (
                 <Text style={[styles.titleText, styles.countryCode]}>
@@ -197,7 +196,7 @@ const SelectCountry = ({ route }) => {
               <Text
                 style={[
                   styles.titleText,
-                  !dateOfBirth && { color: Color.textColor },
+                  !dateOfBirth && {color: Color.textColor},
                 ]}>
                 {dateOfBirth || 'Date of Birth'}
               </Text>
@@ -242,7 +241,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
     color: Color.textColor,
-    paddingVertical: scale(5)
+    paddingVertical: scale(5),
   },
   inputContainer: {
     borderRadius: 8,
@@ -296,5 +295,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
-

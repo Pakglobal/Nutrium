@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
-import { GET_MEAL_PLAN } from '../AllAPI/API';
+import {GET_MEAL_PLAN} from '../AllAPI/API';
 
 export const FetchMealPlanApi = async id => {
   try {

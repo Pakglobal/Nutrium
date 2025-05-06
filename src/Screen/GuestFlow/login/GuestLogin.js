@@ -11,38 +11,35 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { Color } from '../../../assets/styles/Colors';
-import { scale, verticalScale } from 'react-native-size-matters';
+import {Color} from '../../../assets/styles/Colors';
+import {scale, verticalScale} from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/GuestLogin.svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {
-  guestLoginData,
-  setGuestToken,
-} from '../../../redux/user';
-import { Font } from '../../../assets/styles/Fonts';
-import { Progress } from '../../../assets/styles/Progress';
-import { HandleGuestLOGIN } from '../../../Apis/Login/AuthApis';
+import {guestLoginData, setGuestToken} from '../../../redux/user';
+import {Font} from '../../../assets/styles/Fonts';
+import {Progress} from '../../../assets/styles/Progress';
+import {HandleGuestLOGIN} from '../../../Apis/Login/AuthApis';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
 import CustomLoader from '../../../Components/CustomLoader';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
 
-const GuestLogin = ({ route }) => {
+const GuestLogin = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -58,7 +55,7 @@ const GuestLogin = ({ route }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [alertType, setAlertType] = useState('error'); 
+  const [alertType, setAlertType] = useState('error');
 
   useKeyboardHandler();
   useAndroidBack();
@@ -212,7 +209,7 @@ const GuestLogin = ({ route }) => {
       />
 
       {loading ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <CustomLoader />
         </View>
       ) : (
@@ -222,12 +219,19 @@ const GuestLogin = ({ route }) => {
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: '32%' }}
+            contentContainerStyle={{paddingBottom: '32%'}}
             keyboardShouldPersistTaps="handled">
-            <LoginHeader style={{ alignSelf: 'center', marginTop: verticalScale(50) }} />
+            <LoginHeader
+              style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+            />
 
-            <View style={{ marginHorizontal: scale(16), marginVertical: verticalScale(20) }}>
-              <CustomShadow color={firstNameError ? 'rgba(255,0,0,0.3)' : undefined}>
+            <View
+              style={{
+                marginHorizontal: scale(16),
+                marginVertical: verticalScale(20),
+              }}>
+              <CustomShadow
+                color={firstNameError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={firstName}
@@ -239,7 +243,8 @@ const GuestLogin = ({ route }) => {
                 </View>
               </CustomShadow>
 
-              <CustomShadow color={lastNameError ? 'rgba(255,0,0,0.3)' : undefined}>
+              <CustomShadow
+                color={lastNameError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={lastName}
@@ -251,7 +256,8 @@ const GuestLogin = ({ route }) => {
                 </View>
               </CustomShadow>
 
-              <CustomShadow color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
+              <CustomShadow
+                color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={email}
@@ -263,7 +269,8 @@ const GuestLogin = ({ route }) => {
                 </View>
               </CustomShadow>
 
-              <CustomShadow color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
+              <CustomShadow
+                color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={password}
@@ -302,7 +309,6 @@ const GuestLogin = ({ route }) => {
     </SafeAreaView>
   );
 };
-
 
 export default GuestLogin;
 

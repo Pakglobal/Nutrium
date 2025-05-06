@@ -2,7 +2,6 @@ import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import React, {useMemo} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {format} from 'date-fns';
-import BackHeader from '../../../../Components/BackHeader';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../../assets/styles/Colors';
 import Header from '../../../../Components/Header';
@@ -65,16 +64,9 @@ const AllLogs = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      {/* <BackHeader
-        titleName={'All logs'}
-        showRightButton={false}
-        backText={measurementType}
-        onPressBack={() => navigation.goBack()}
-      /> */}
       <Header
         screenheader={true}
         screenName={measurementType}
-        rightHeaderButton={false}
       />
 
       <View style={{marginHorizontal: scale(16)}}>

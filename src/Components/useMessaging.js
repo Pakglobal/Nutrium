@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -27,7 +27,7 @@ import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
+import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
 import {Color} from '../assets/styles/Colors';
@@ -46,10 +46,10 @@ const MessageComponent = ({
   const navigation = useNavigation();
 
   const userImage = image
-    ? { uri: image }
+    ? {uri: image}
     : gender === 'Female'
-      ? require('../assets/Images/woman.png')
-      : require('../assets/Images/man.png');
+    ? require('../assets/Images/woman.png')
+    : require('../assets/Images/man.png');
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -93,7 +93,7 @@ const MessageComponent = ({
 
           const distance = Math.sqrt(
             Math.pow(touch2.pageX - touch1.pageX, 2) +
-            Math.pow(touch2.pageY - touch1.pageY, 2),
+              Math.pow(touch2.pageY - touch1.pageY, 2),
           );
 
           const newScale = Math.max(1, Math.min(5, distance / 100));
@@ -222,7 +222,7 @@ const MessageComponent = ({
         const messageIds = unseenMessagesFromOther
           .map(msg => msg?._id)
           .filter(Boolean);
-        socket.emit('messageSeen', { userId, otherUserId, messageIds });
+        socket.emit('messageSeen', {userId, otherUserId, messageIds});
       }
     });
 
@@ -265,7 +265,7 @@ const MessageComponent = ({
       ) {
         setMessages(prevMessages =>
           prevMessages.map(msg =>
-            data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
+            data.messageIds.includes(msg._id) ? {...msg, seen: true} : msg,
           ),
         );
       }
@@ -276,11 +276,11 @@ const MessageComponent = ({
     const markMessagesAsSeen = (specificIds = null) => {
       const unseenMessages = specificIds
         ? messages.filter(
-          msg =>
-            specificIds.includes(msg._id) &&
-            !msg?.seen &&
-            msg.receiverId === userId,
-        )
+            msg =>
+              specificIds.includes(msg._id) &&
+              !msg?.seen &&
+              msg.receiverId === userId,
+          )
         : messages.filter(
             msg =>
               !msg?.seen &&
@@ -667,7 +667,7 @@ const MessageComponent = ({
           <Text style={styles.backTxt}>{profileName}</Text>
         </View>
 
-        <TouchableOpacity style={{ marginHorizontal: scaleSize(16) }}>
+        <TouchableOpacity style={{marginHorizontal: scaleSize(16)}}>
           <Feather
             name="info"
             color={Color.primaryColor}
@@ -683,7 +683,7 @@ const MessageComponent = ({
       {renderHeader()}
 
       <ImageBackground
-        style={{ flex: 1 }}
+        style={{flex: 1}}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
           <ActivityIndicator
@@ -765,9 +765,9 @@ const MessageComponent = ({
                 styles.imageViewerWrapper,
                 {
                   transform: [
-                    { scale: scale },
-                    { translateX: offsetX },
-                    { translateY: offsetY },
+                    {scale: scale},
+                    {translateX: offsetX},
+                    {translateY: offsetY},
                   ],
                 },
               ]}>
@@ -782,7 +782,7 @@ const MessageComponent = ({
                 }}
                 delayLongPress={200}>
                 <Animated.Image
-                  source={{ uri: selectedImage }}
+                  source={{uri: selectedImage}}
                   style={styles.fullScreenImage}
                   resizeMode="contain"
                 />
@@ -794,10 +794,6 @@ const MessageComponent = ({
     </SafeAreaView>
   );
 };
-
-
-
-
 
 export default MessageComponent;
 

@@ -16,9 +16,7 @@ import {Color} from '../../assets/styles/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
 
-import {
-  GoogleSignin,
-} from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {loginData, profileData, setToken} from '../../redux/user';
 import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';

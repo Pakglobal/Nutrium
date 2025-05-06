@@ -4,7 +4,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -23,13 +23,24 @@ import {
 import {Color} from '../../../assets/styles/Colors';
 import {scale} from 'react-native-size-matters';
 import {Font} from '../../../assets/styles/Fonts';
+import InvitationScreen from './InvitationScreen';
 
-const ChallangeSwiper = ({onTabChange}) => {
+const ChallangeSwiper = () => {
   const [index, setIndex] = useState(0);
   const navigation = useNavigation();
   const [allChallengeData, setAllChallengeData] = useState([]);
   const [allChallengeJoinData, setAllChallengeJoinData] = useState([]);
+  const [loadingAll, setLoadingAll] = useState(false);
+  const [loadingJoin, setLoadingJoin] = useState(false);
   
+  useEffect(() => {
+    if (index === 0 && allChallengeData.length === 0) {
+      fetchChallangeDetails();
+    } else if (index === 1 && allChallengeJoinData.length === 0) {
+      fetchChallangeJoinData();
+    }
+  }, [index]);
+
   const userInfo = useSelector(state => state?.user?.userInfo);
 
   const [routes] = useState([
@@ -38,62 +49,54 @@ const ChallangeSwiper = ({onTabChange}) => {
     {key: 'invitation', title: 'Invitation'},
   ]);
 
-    useEffect(() => {
-        if (onTabChange) {
-            onTabChange(routes[index].title);
-        }
-    }, [index]);
-
-  const InvitationScreen = () => (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={styles.text}>No Invitations</Text>
-    </View>
-  );
-  const [joinedChallenges, setJoinedChallenges] = useState([]);
-
-  const isFocused = useIsFocused();
-  useEffect(() => {
-    if (isFocused) {
-      fetchChallangeDetails();
-      fetchChallangeJoinData();
-    }
-  }, [isFocused]);
-
   const fetchChallangeDetails = async () => {
+    setLoadingAll(true);
     const response = await getAllChallenge(userInfo?.token);
-    if (response?.success == true) {
-      setAllChallengeData(response?.challenges);
-    } else {
-      setAllChallengeData([]);
-    }
+    setAllChallengeData(response?.success ? response?.challenges : []);
+    setLoadingAll(false);
   };
+
   const fetchChallangeJoinData = async () => {
+    setLoadingJoin(true);
     const response = await getAllChallengeJoinDatawithId(
       userInfo?.token,
       userInfo?.userData?._id,
     );
-    if (response?.success == true) {
-      setAllChallengeJoinData(response?.challenges);
-    } else {
-      setAllChallengeData([]);
-    }
+    setAllChallengeJoinData(response?.success ? response?.challenges : []);
+    setLoadingJoin(false);
   };
+
   const renderScene = SceneMap({
-    all: () => (
-      <AllChallenges challenges={allChallengeData} onJoin={handleJoin} />
-    ),
-    join: () => (
-      <JoinChallenges
-        challenges={allChallengeJoinData}
-        onJoin={viewHandleJoinChallenge}
-      />
-    ),
-    invitation: InvitationScreen,
+    all: () =>
+      loadingAll ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.primaryColor}
+          style={{marginTop: 20}}
+        />
+      ) : (
+        <AllChallenges challenges={allChallengeData} onJoin={handleJoin} />
+      ),
+    join: () =>
+      loadingJoin ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.primaryColor}
+          style={{marginTop: 20}}
+        />
+      ) : (
+        <JoinChallenges
+          challenges={allChallengeJoinData}
+          onJoin={viewHandleJoinChallenge}
+        />
+      ),
+    invitation: () => <InvitationScreen />,
   });
 
   const handleJoin = challenge => {
     navigation.navigate('ChallengesDetailsScreen', {challenge});
   };
+
   const viewHandleJoinChallenge = challenge => {
     navigation.navigate('ViewChallengDetailsScreen', {challenge});
   };
@@ -104,11 +107,10 @@ const ChallangeSwiper = ({onTabChange}) => {
         style={{
           flexDirection: 'row',
           backgroundColor: '#e1f3e1',
-          borderRadius: scale(6),
+          borderRadius: 12,
           overflow: 'hidden',
           justifyContent: 'space-around',
           padding: scale(6),
-          paddingHorizontal: scale(10),
         }}>
         {props.navigationState.routes.map((route, i) => {
           const isSelected = index === i;
@@ -117,9 +119,9 @@ const ChallangeSwiper = ({onTabChange}) => {
               key={route.key}
               onPress={() => setIndex(i)}
               style={{
-                paddingVertical: scale(8),
-                paddingHorizontal: scale(10),
-                borderRadius: scale(4),
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: scale(6),
                 backgroundColor: isSelected
                   ? Color?.primaryColor
                   : 'transparent',
@@ -147,15 +149,9 @@ const ChallangeSwiper = ({onTabChange}) => {
       onIndexChange={setIndex}
       initialLayout={{width: Dimensions.get('window').width}}
       renderTabBar={renderTabBar}
+      lazy
     />
   );
 };
 
 export default ChallangeSwiper;
-
-const styles = StyleSheet.create({
-  text: {
-    color: Color.textColor,
-    fontFamily: Font?.Poppins,
-  },
-});

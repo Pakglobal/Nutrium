@@ -173,8 +173,6 @@
 // //   }
 // // };
 
-
-
 // import io from 'socket.io-client';
 
 // const SOCKET_SERVER_URL = 'https://nutrium-back-end-1.onrender.com';
@@ -349,11 +347,6 @@
 //   }
 // };
 
-
-
-
-
-
 import io from 'socket.io-client';
 
 const SOCKET_SERVER_URL = 'https://nutrium-back-end-1.onrender.com';
@@ -401,7 +394,7 @@ export const disconnectSocket = () => {
 
 export const joinRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
-    socket.emit('join', { userId, otherUserId });
+    socket.emit('join', {userId, otherUserId});
   } else {
     console.error('Cannot join room: Socket not connected');
     const newSocket = connectSocket();
@@ -424,7 +417,7 @@ export const markMessagesAsSeen = (messageIds, senderId, receiverId) => {
     return false;
   }
 
-  socket.emit('messagesSeen', { messageIds, senderId, receiverId });
+  socket.emit('messagesSeen', {messageIds, senderId, receiverId});
   return true;
 };
 
@@ -502,7 +495,7 @@ export const getChatHistory = (userId, otherUserId, callback) => {
     callback(history);
   });
 
-  socket.emit('getHistory', { userId, otherUserId });
+  socket.emit('getHistory', {userId, otherUserId});
 };
 
 export const onReceiveMessage = callback => {
@@ -520,7 +513,7 @@ export const onReceiveMessage = callback => {
 
 export const leaveRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
-    socket.emit('leave', { userId, otherUserId });
+    socket.emit('leave', {userId, otherUserId});
     return true;
   } else {
     console.error('❌ Cannot leave room: Socket not connected');

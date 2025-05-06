@@ -185,6 +185,7 @@ const WaterIntakeLog = ({route}) => {
         screenName={'Water Intake Log'}
         handleSave={() => handleSave()}
         loading={loading}
+        rightHeaderButton={true}
       />
 
       <ScrollView style={styles.scrollView}>

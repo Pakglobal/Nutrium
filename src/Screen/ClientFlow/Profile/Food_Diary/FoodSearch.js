@@ -11,7 +11,6 @@ import {
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {SearchFoodApi} from '../../../../Apis/ClientApis/FoodDiaryApi';
 import {useSelector} from 'react-redux';
@@ -55,12 +54,6 @@ const FoodSearch = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <BackHeader
-        onPressBack={() => navigation.goBack()}
-        titleName="Food search"
-        backText="Swap a food"
-        showRightButton={false}
-      />
       <View style={{marginHorizontal: scale(16)}}>
         <View style={styles.searchContainer}>
           <TextInput

@@ -12,7 +12,6 @@ import {
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import {useDispatch} from 'react-redux';
 
 const SwapMeal = ({route}) => {
@@ -63,13 +62,6 @@ const SwapMeal = ({route}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <BackHeader
-        onPressBack={() => navigation.goBack()}
-        titleName="Swap a food"
-        backText="Log your meal"
-        onSave={true}
-        onPress={() => handleSave()}
-      />
       <View style={{marginHorizontal: scale(16)}}>
         <Text style={styles.title}>Add food</Text>
 

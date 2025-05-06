@@ -267,6 +267,7 @@ const PhysicalActivityScreen = () => {
         screenName={'Physical Activity'}
         handlePlus={navigateToLogActivity}
         plus={true}
+        rightHeaderButton={true}
       />
 
       <View style={{marginTop: verticalScale(10)}}>

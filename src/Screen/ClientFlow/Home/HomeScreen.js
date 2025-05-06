@@ -14,18 +14,18 @@ import Header from '../../../Components/Header';
 import AppointmentCard from '../../../Components/AppointmentCard';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
-import { useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
-import { profileData} from '../../../redux/user';
+import {profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
 import {TouchableOpacity} from 'react-native';
 import CustomLoader from '../../../Components/CustomLoader';
 import {GetClientData} from '../../../Apis/AdminScreenApi/ClientApi';
-import { Font } from '../../../assets/styles/Fonts';
+import {Font} from '../../../assets/styles/Fonts';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -143,7 +143,12 @@ const HomeScreen = () => {
               marginHorizontal: 20,
             }}
             onPress={handleGoToChallenge}>
-            <Text style={{color: Color?.white, fontSize: 16, fontFamily:Font?.PoppinsMedium}}>
+            <Text
+              style={{
+                color: Color?.white,
+                fontSize: 16,
+                fontFamily: Font?.PoppinsMedium,
+              }}>
               Go to Challenge
             </Text>
           </TouchableOpacity>

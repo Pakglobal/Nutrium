@@ -18,7 +18,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CalenderHeader from '../../../../Components/CalenderHeader';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import {FetchFoodDiary} from '../../../../Apis/ClientApis/FoodDiaryApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {addData} from '../../../../redux/client';
@@ -227,6 +226,3 @@ const styles = StyleSheet.create({
     fontSize: scale(11),
   },
 });
-
-
-

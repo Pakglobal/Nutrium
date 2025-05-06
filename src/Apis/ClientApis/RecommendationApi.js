@@ -1,6 +1,10 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
-import { GET_FOOD_AVOID_DATA, GET_GOALS, GET_RECOMMENDATION_DATA } from '../AllAPI/API';
+import {
+  GET_FOOD_AVOID_DATA,
+  GET_GOALS,
+  GET_RECOMMENDATION_DATA,
+} from '../AllAPI/API';
 
 export const GetRecommendationApiData = async (token, id) => {
   try {

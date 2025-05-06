@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_PROFILE_DATA } from '../AllAPI/API';
+import {GET_PROFILE_DATA} from '../AllAPI/API';
 
 export const GetAdminProfileData = async token => {
   try {

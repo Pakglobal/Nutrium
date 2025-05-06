@@ -1,6 +1,12 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
-import { ADD_MEAL_IN_FOOD, DELETE_MEAL_IN_FOOD, DELETE_SPECIFIC_MEAL_IN_FOOD, GET_FOOD_DIARY, SEARCH_FOOD } from '../AllAPI/API';
+import {
+  ADD_MEAL_IN_FOOD,
+  DELETE_MEAL_IN_FOOD,
+  DELETE_SPECIFIC_MEAL_IN_FOOD,
+  GET_FOOD_DIARY,
+  SEARCH_FOOD,
+} from '../AllAPI/API';
 
 export const FetchFoodDiary = async (token, id) => {
   try {

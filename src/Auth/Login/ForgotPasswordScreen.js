@@ -29,7 +29,6 @@ const ForgotPasswordScreen = ({route}) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertType, setAlertType] = useState('success');
   const [alertMessageText, setAlertMessageText] = useState('');
@@ -140,7 +139,6 @@ const ForgotPasswordScreen = ({route}) => {
   //   </SafeAreaView>
   // );
 
-
   return (
     <SafeAreaView style={styles.container}>
       <CustomAlertBox
@@ -202,8 +200,6 @@ const ForgotPasswordScreen = ({route}) => {
       </View>
     </SafeAreaView>
   );
-  
-
 };
 
 export default ForgotPasswordScreen;

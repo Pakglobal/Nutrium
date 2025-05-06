@@ -30,7 +30,7 @@ const Header = ({
   handleSave,
   handleNotification,
   handleAward,
-  rightHeaderButton = true,
+  rightHeaderButton = false,
   loading,
 }) => {
   const navigation = useNavigation();

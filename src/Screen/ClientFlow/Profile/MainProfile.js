@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, {useState} from 'react';
 
 import {
   View,
@@ -19,7 +19,7 @@ import {UpdateImage} from '../../../Apis/ClientApis/ProfileApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {setImage} from '../../../redux/client';
 import CustomLoader from '../../../Components/CustomLoader';
-import { Font } from '../../../assets/styles/Fonts';
+import {Font} from '../../../assets/styles/Fonts';
 
 const MainProfile = ({route}) => {
   const data = route?.params?.data;
@@ -184,7 +184,7 @@ const MainProfile = ({route}) => {
                   color: Color.gray,
                   fontWeight: '600',
                   fontSize: scale(12),
-                  fontFamily:Font?.Poppins
+                  fontFamily: Font?.Poppins,
                 }}>
                 {item?.label}
               </Text>
@@ -193,7 +193,7 @@ const MainProfile = ({route}) => {
                   fontSize: scale(13),
                   fontWeight: '700',
                   color: Color.black,
-                  fontFamily:Font?.Poppins
+                  fontFamily: Font?.Poppins,
                 }}>
                 {item?.value}
               </Text>

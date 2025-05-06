@@ -10,7 +10,6 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import DatePicker from 'react-native-date-picker';
 import {
   SetPhysicalActivityDetails,
@@ -146,6 +145,7 @@ const WorkOutDetails = ({route}) => {
         screenName={'Physical Activity'}
         handleSave={handleSave}
         loading={loading}
+        rightHeaderButton={true}
       />
       <View style={styles.content}>
         <Text style={styles.topTitle}>Workout Details</Text>

@@ -12,7 +12,6 @@ import {
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import {useDispatch, useSelector} from 'react-redux';
 import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
 import {measurementData} from '../../../../redux/client';
@@ -247,15 +246,9 @@ const Measurements = () => {
 
   return (
     <View style={styles.container}>
-      {/* <BackHeader
-        onPressBack={() => navigation.goBack()}
-        titleName="Measurements"
-        showRightButton={false}
-      /> */}
       <Header
         screenheader={true}
         screenName={'Measurements'}
-        rightHeaderButton={false}
       />
       {loading ? (
         <ActivityIndicator color={Color?.primaryColor} size={'large'} />

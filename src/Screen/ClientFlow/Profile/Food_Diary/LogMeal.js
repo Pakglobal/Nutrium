@@ -18,7 +18,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   AddMealInFoodDiary,
@@ -202,14 +201,6 @@ const LogMeal = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <BackHeader
-        onPressBack={() => navigation.goBack()}
-        titleName="Log your meal"
-        backText="Add meal"
-        onSave={true}
-        onPress={() => handleSave()}
-      />
-
       <ScrollView
         style={{marginHorizontal: scale(16)}}
         showsVerticalScrollIndicator={false}>

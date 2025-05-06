@@ -3,10 +3,13 @@ import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import moment from 'moment';
 import {Font} from '../../../assets/styles/Fonts';
 import {Color} from '../../../assets/styles/Colors';
+import {Scale} from 'lucide-react';
+import {shadowStyle} from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
 
-const ChallengeCard = ({challenge, onJoin, btnType = 'Join',handleJoinNow}) => {
+const ChallengeCard = ({challenge, onJoin, btnType}) => {
   const {name, description, startDate, endDate, participants = []} = challenge;
+
   const days = moment(endDate).diff(moment(startDate), 'days') + 1;
 
   return (
@@ -44,11 +47,15 @@ const ChallengeCard = ({challenge, onJoin, btnType = 'Join',handleJoinNow}) => {
           </View>
 
           <TouchableOpacity
-            onPress={handleJoinNow}
+            onPress={() => onJoin(challenge)}
             style={styles.joinButton}>
-            <Text style={styles.joinButtonText}>
-              {btnType === 'Join' ? 'Join Now' : 'View Now'}
-            </Text>
+            {btnType === 'Join' && (
+              <Text style={styles.joinButtonText}>Join now</Text>
+            )}
+
+            {btnType === 'View' && (
+              <Text style={styles.joinButtonText}>View now</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -58,6 +65,8 @@ const ChallengeCard = ({challenge, onJoin, btnType = 'Join',handleJoinNow}) => {
 
 const styles = StyleSheet.create({
   card: {
+    // borderWidth: 1,
+    // borderColor: '#4CAF50',
     borderRadius: 12,
     padding: 15,
     margin: 10,
@@ -87,13 +96,14 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: '600',
     fontSize: 14,
-    fontFamily: Font?.PoppinsSemiBold || 'System',
-    color: Color?.primaryColor || '#2E7D32',
+    // marginBottom: 1,
+    fontFamily: Font?.PoppinsSemiBold,
+    color: Color?.primaryColor,
   },
   description: {
     color: '#575252',
     fontSize: 12,
-    fontFamily: Font?.Poppins || 'System',
+    fontFamily: Font?.Poppins,
     fontWeight: '400',
   },
   daysBox: {
@@ -107,7 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#2E7D32',
     fontSize: 12,
-    fontFamily: Font?.Poppins || 'System',
+    fontFamily: Font?.Poppins,
   },
   bottomRow: {
     marginTop: 14,
@@ -127,14 +137,15 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   joinButton: {
+    // paddingHorizontal: 5,
     borderBottomWidth: 1,
-    borderBottomColor: Color?.primaryColor || '#2E7D32',
+    borderBottomColor: Color.primaryColor,
   },
   joinButtonText: {
-    color: Color?.primaryColor || '#2E7D32',
+    color: Color?.primaryColor,
     fontWeight: '500',
     fontSize: 14,
-    fontFamily: Font?.PoppinsSemiBold || 'System',
+    fontFamily: Font?.PoppinsSemiBold,
   },
 });
 

@@ -1,11 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import SelectRegistrationType from '../Auth/Registartion/SelectRegistrationType';
-import Registration from '../Auth/Registartion/Registration';
-import UnlockAccess from '../Auth/Registartion/UnlockAccess';
-import GetAccess from '../Auth/Registartion/GetAccess';
-import HelpForRegistration from '../Auth/Registartion/HelpForRegistration';
 import LoginScreen from '../Auth/Login/LoginScreen';
 import BottomNavigation from './BottomNavigation';
 import MainProfile from '../Screen/ClientFlow/Profile/MainProfile';
@@ -55,8 +50,6 @@ import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScr
 import ForgotPasswordScreen from '../Auth/Login/ForgotPasswordScreen';
 import CardioDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/CardioDetailsScreen';
 import NutritionDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/NutritionDetailsScreen';
-import LeaderboardScreen from '../Screen/ClientFlow/ChallengeFlow/LeaderboardScreen';
-import StepChallengeScreen from '../Screen/ClientFlow/ChallengeFlow/StepChallengeScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -139,17 +132,6 @@ const AuthStack = ({route}) => {
       <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen name="loginScreen" component={LoginScreen} />
       <Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} />
-      <Stack.Screen
-        name="registrationType"
-        component={SelectRegistrationType}
-      />
-      <Stack.Screen name="registration" component={Registration} />
-      <Stack.Screen name="unlockAccess" component={UnlockAccess} />
-      <Stack.Screen name="getAccess" component={GetAccess} />
-      <Stack.Screen
-        name="helpForRegistration"
-        component={HelpForRegistration}
-      />
     </Stack.Navigator>
   );
 };
@@ -161,8 +143,6 @@ const UserFlowStack = () => (
     <Stack.Screen name="practitioner" component={Practitioner} />
     <Stack.Screen name="ChallengesScreen" component={ChallengesScreen} />
     <Stack.Screen name="CreateChallenge" component={CreateChallenge} />
-    <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen} />
-    <Stack.Screen name="StepChallengeScreen" component={StepChallengeScreen} />
     <Stack.Screen
       name="ChallengesDetailsScreen"
       component={ChallengesDetailsScreen}
@@ -172,7 +152,10 @@ const UserFlowStack = () => (
       component={ViewChallengDetailsScreen}
     />
     <Stack.Screen name="CardioDetailsScreen" component={CardioDetailsScreen} />
-    <Stack.Screen name="NutritionDetailsScreen" component={NutritionDetailsScreen} />
+    <Stack.Screen
+      name="NutritionDetailsScreen"
+      component={NutritionDetailsScreen}
+    />
     <Stack.Screen name="JoinRequestScreen" component={JoinRequestScreen} />
     <Stack.Screen name="settings" component={Settings} />
     <Stack.Screen name="foodDiary" component={FoodDiary} />

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_APPOINTMENT, UPDATE_APPOINTMENT } from '../AllAPI/API';
+import {GET_APPOINTMENT, UPDATE_APPOINTMENT} from '../AllAPI/API';
 
 export const GetAppointmentByClientId = async (token, id) => {
   try {

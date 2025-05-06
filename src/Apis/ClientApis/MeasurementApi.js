@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BASE_URL } from '../Base_Url/Baseurl';
-import { GET_MEASUREMENT_DATA } from '../AllAPI/API';
+import {BASE_URL} from '../Base_Url/Baseurl';
+import {GET_MEASUREMENT_DATA} from '../AllAPI/API';
 
 export const GetMeasurementData = async (token, id) => {
   try {
@@ -18,7 +18,7 @@ export const GetMeasurementData = async (token, id) => {
 
 export const SetMeasurementData = async payload => {
   try {
-    const { token, id, value, date, unit, measurementtype } = payload;
+    const {token, id, value, date, unit, measurementtype} = payload;
     const url = `${BASE_URL}client/update-measurements/${id}`;
     const body = {
       date: date,

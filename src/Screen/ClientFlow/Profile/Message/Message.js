@@ -14,7 +14,6 @@ const Message = ({route}) => {
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const otherUserId = profileInfo?._id;
 
-
   return (
     <MessageComponent
       userId={userId}

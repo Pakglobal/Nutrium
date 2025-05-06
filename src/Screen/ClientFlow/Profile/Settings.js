@@ -13,7 +13,6 @@ import {
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BackHeader from '../../../Components/BackHeader';
 import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
@@ -21,6 +20,7 @@ import {updateUnits} from '../../../redux/unit';
 import {useDispatch} from 'react-redux';
 import Glass from '../../../assets/Images/glass.svg';
 import Bottle from '../../../assets/Images/bottel.svg';
+import Header from '../../../Components/Header';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -183,12 +183,7 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <BackHeader
-        showRightButton={false}
-        titleName={'Settings'}
-        onPressBack={handleGoBack}
-      />
-
+      <Header screenheader={true} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{marginHorizontal: scale(16)}}>

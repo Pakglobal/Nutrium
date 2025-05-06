@@ -10,7 +10,6 @@ import {
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../../assets/styles/Colors';
-import BackHeader from '../../../../Components/BackHeader';
 import {useSelector} from 'react-redux';
 import DatePicker from 'react-native-date-picker';
 import {SetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
@@ -82,15 +81,6 @@ const AddMeasurement = () => {
 
   return (
     <View style={styles.container}>
-      <BackHeader
-        onPressBack={() => navigation.goBack()}
-        titleName={`${measurementType} log`}
-        onSave={true}
-        onPress={() => handleSave()}
-        backText={measurementType}
-        loading={loading}
-      />
-
       <View style={styles.content}>
         <Text style={styles.label}>Value ({unit})</Text>
         <View>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useRef} from 'react';
 import {FlatList, StyleSheet, View, Dimensions, ScrollView} from 'react-native';
 import ChallengeCard from './ChallengeCard';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
@@ -14,6 +14,7 @@ const JoinChallenges = ({challenges, onJoin}) => {
   const navigation = useNavigation();
   const privateChallenges = challenges.filter(c => c.privacy === 'private');
   const publicChallenges = challenges.filter(c => c.privacy !== 'private');
+  const swiperRef = useRef(null);
 
   const CustomPagination = ({paginationIndex, data}) => {
     return (
@@ -34,6 +35,15 @@ const JoinChallenges = ({challenges, onJoin}) => {
     );
   };
 
+  const renderSwiperItem = useCallback(
+    ({item}) => (
+      <View style={{width: CARD_WIDTH, marginHorizontal: SPACING / 2}}>
+        <ChallengeCardBanner challenge={item} onJoin={onJoin} btnType="View" />
+      </View>
+    ),
+    [onJoin],
+  );
+
   return (
     <View style={{flex: 1}}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -44,24 +54,24 @@ const JoinChallenges = ({challenges, onJoin}) => {
         {privateChallenges.length > 0 && (
           <SwiperFlatList
             data={privateChallenges}
-            renderItem={({item}) => (
-              <View style={{width: CARD_WIDTH, marginHorizontal: SPACING / 2}}>
-                <ChallengeCardBanner
-                  challenge={item}
-                  onJoin={onJoin}
-                  btnType="View"
-                  onPress={() =>
-                    navigation.navigate('LeaderboardScreen', {item})
-                  }
-                />
-              </View>
-            )}
+            renderItem={renderSwiperItem}
             keyExtractor={item => item._id}
             showPagination
             PaginationComponent={props => (
               <CustomPagination {...props} data={privateChallenges} />
             )}
             snapToAlignment="center"
+            snapToInterval={CARD_WIDTH + SPACING}
+            decelerationRate="fast"
+            disableIntervalMomentum
+            showsHorizontalScrollIndicator={false}
+            ref={swiperRef}
+            initialScrollIndex={0}
+            getItemLayout={(data, index) => ({
+              length: CARD_WIDTH + SPACING,
+              offset: (CARD_WIDTH + SPACING) * index,
+              index,
+            })}
           />
         )}
 
@@ -71,14 +81,7 @@ const JoinChallenges = ({challenges, onJoin}) => {
             item?._id?.toString() || index.toString()
           }
           renderItem={({item}) => (
-            <ChallengeCard
-              challenge={item}
-              onJoin={onJoin}
-              btnType="View"
-              handleJoinNow={() =>
-                navigation.navigate('LeaderboardScreen', {item})
-              }
-            />
+            <ChallengeCard challenge={item} onJoin={onJoin} btnType="View" />
           )}
           showsVerticalScrollIndicator={false}
         />

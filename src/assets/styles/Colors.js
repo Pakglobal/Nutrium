@@ -15,7 +15,7 @@ export const Color = {
   grayshadow: '#e3dfde',
   subText: '#6E7071',
   blackShadow: 'rgba(0,0,0,0.025)',
-  red:'#E04141',
-  dateText:'#5C5959',
-  lightText:'505253'
+  red: '#E04141',
+  dateText: '#5C5959',
+  lightText: '505253',
 };

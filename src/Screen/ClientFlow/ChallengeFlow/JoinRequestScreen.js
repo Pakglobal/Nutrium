@@ -93,6 +93,7 @@ const JoinRequestScreen = () => {
     };
     aceeptAndRejectAnctionHandle(id);
   };
+
   const aceeptAndRejectAnctionHandle = async (id, action) => {
     try {
       setLoading(true);

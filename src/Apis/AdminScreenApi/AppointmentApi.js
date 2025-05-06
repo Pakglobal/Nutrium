@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
-import { GET_APPOINTMENT_DATA } from '../AllAPI/API';
+import {GET_APPOINTMENT_DATA} from '../AllAPI/API';
 
 export const GetAppointmentData = async token => {
   try {

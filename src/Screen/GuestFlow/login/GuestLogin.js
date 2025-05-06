@@ -11,46 +11,42 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import IconStyle, {
   IconPadding,
   LeftIcon,
   RightIcon,
 } from '../../../assets/styles/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/GuestLogin.svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   guestLoginData,
-  loginData,
   setGuestToken,
-  setIsGuest,
-  setToken,
 } from '../../../redux/user';
-import {Font} from '../../../assets/styles/Fonts';
-import {ShadowValues} from '../../../assets/styles/Shadow';
-import {Progress} from '../../../assets/styles/Progress';
-import {GuestLoGin, GuestLOGin} from '../../../Apis/Login/AuthApis';
+import { Font } from '../../../assets/styles/Fonts';
+import { Progress } from '../../../assets/styles/Progress';
+import { HandleGuestLOGIN } from '../../../Apis/Login/AuthApis';
 import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
 import CustomLoader from '../../../Components/CustomLoader';
+import CustomAlertBox from '../../../Components/CustomAlertBox';
 
-const GuestLogin = ({route}) => {
+const GuestLogin = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const [loading, setLoading] = useState(false);
-  const [isAgree, setIsAgree] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -61,16 +57,20 @@ const GuestLogin = ({route}) => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [login, setLogin] = useState([]);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [alertType, setAlertType] = useState('error'); 
 
   useKeyboardHandler();
-
   useAndroidBack();
 
   const token = useSelector(state => state?.user?.fcmToken);
-
   const data = route?.params;
+
+  const showAlert = (message, type = 'error') => {
+    setAlertMsg(message);
+    setAlertType(type);
+    setAlertVisible(true);
+  };
 
   const validateFirstName = value => {
     setFirstName(value);
@@ -96,7 +96,7 @@ const GuestLogin = ({route}) => {
 
   const validateEmail = value => {
     setEmail(value);
-    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
     if (!value) {
       setEmailError('Email is required');
     } else if (!emailRegex.test(value)) {
@@ -123,44 +123,32 @@ const GuestLogin = ({route}) => {
 
   const handleGuestLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
+    let message = '';
 
-    if (
-      !email ||
-      !emailRegex.test(email) ||
-      !password ||
-      password.length < 8 ||
-      !firstName ||
-      firstName.length < 3 ||
-      !lastName ||
-      lastName.length < 3
-    ) {
-      let message = '';
+    if (!firstName || firstName.length < 3) {
+      message += firstName
+        ? 'First name must be at least 3 characters.\n'
+        : 'First name is required.\n';
+    }
 
-      if (!firstName) {
-        message += 'First name is required.\n';
-      } else if (firstName.length < 3) {
-        message += 'First name must be at least 8 characters.\n';
-      }
+    if (!lastName || lastName.length < 3) {
+      message += lastName
+        ? 'Last name must be at least 3 characters.\n'
+        : 'Last name is required.\n';
+    }
 
-      if (!lastName) {
-        message += 'Last name is required.\n';
-      } else if (lastName.length < 3) {
-        message += 'Last name must be at least 8 characters.\n';
-      }
+    if (!email || !emailRegex.test(email)) {
+      message += email ? 'Enter a valid email.\n' : 'Email is required.\n';
+    }
 
-      if (!email) {
-        message += 'Email is required.\n';
-      } else if (!emailRegex.test(email)) {
-        message += 'Enter a valid email.\n';
-      }
+    if (!password || password.length < 8) {
+      message += password
+        ? 'Password must be at least 8 characters.\n'
+        : 'Password is required.\n';
+    }
 
-      if (!password) {
-        message += 'Password is required.\n';
-      } else if (password.length < 8) {
-        message += 'Password must be at least 8 characters.\n';
-      }
-
-      Alert.alert('Error', message.trim());
+    if (message) {
+      showAlert(message.trim(), 'error');
       return;
     }
 
@@ -171,11 +159,12 @@ const GuestLogin = ({route}) => {
 
     try {
       setLoading(true);
+
       const body = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
+        firstName,
+        lastName,
+        email,
+        password,
         goal: data?.goal,
         profession: data?.profession,
         gender: data?.Gender,
@@ -186,7 +175,7 @@ const GuestLogin = ({route}) => {
         isDemoClient: true,
       };
 
-      const response = await GuestLoGin(body);
+      const response = await HandleGuestLOGIN(body);
 
       const storeTokenId = {
         token: response?.data?.token,
@@ -198,23 +187,32 @@ const GuestLogin = ({route}) => {
         dispatch(setGuestToken(storeTokenId));
         dispatch(guestLoginData(response?.data));
         setLoading(false);
+        showAlert('Signup successful', 'success');
       } else if (response?.data?.message === 'Signin successful') {
-        Alert.alert('Error', 'User Already exist');
         setLoading(false);
+        showAlert('User already exists', 'error');
       } else {
-        Alert.alert(response?.message);
         setLoading(false);
+        showAlert(response?.message || 'Something went wrong', 'error');
       }
+    } catch (err) {
       setLoading(false);
-    } catch {
-      setLoading(false);
+      showAlert('Network error, please try again.', 'error');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomAlertBox
+        visible={alertVisible}
+        type={alertType}
+        message={alertMsg}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => setAlertVisible(false)}
+      />
+
       {loading ? (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <CustomLoader />
         </View>
       ) : (
@@ -224,20 +222,12 @@ const GuestLogin = ({route}) => {
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            style={{}}
-            contentContainerStyle={{paddingBottom: '32%'}}
+            contentContainerStyle={{ paddingBottom: '32%' }}
             keyboardShouldPersistTaps="handled">
-            <LoginHeader
-              style={{alignSelf: 'center', marginTop: verticalScale(50)}}
-            />
+            <LoginHeader style={{ alignSelf: 'center', marginTop: verticalScale(50) }} />
 
-            <View
-              style={{
-                marginHorizontal: scale(16),
-                marginVertical: verticalScale(20),
-              }}>
-              <CustomShadow
-                color={firstNameError ? 'rgba(255,0,0,0.3)' : undefined}>
+            <View style={{ marginHorizontal: scale(16), marginVertical: verticalScale(20) }}>
+              <CustomShadow color={firstNameError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={firstName}
@@ -249,8 +239,7 @@ const GuestLogin = ({route}) => {
                 </View>
               </CustomShadow>
 
-              <CustomShadow
-                color={lastNameError ? 'rgba(255,0,0,0.3)' : undefined}>
+              <CustomShadow color={lastNameError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={lastName}
@@ -262,8 +251,7 @@ const GuestLogin = ({route}) => {
                 </View>
               </CustomShadow>
 
-              <CustomShadow
-                color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
+              <CustomShadow color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={email}
@@ -275,8 +263,7 @@ const GuestLogin = ({route}) => {
                 </View>
               </CustomShadow>
 
-              <CustomShadow
-                color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
+              <CustomShadow color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View style={styles.shadowView}>
                   <TextInput
                     value={password}
@@ -298,7 +285,6 @@ const GuestLogin = ({route}) => {
                 </View>
               </CustomShadow>
             </View>
-
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.button}
@@ -316,6 +302,7 @@ const GuestLogin = ({route}) => {
     </SafeAreaView>
   );
 };
+
 
 export default GuestLogin;
 

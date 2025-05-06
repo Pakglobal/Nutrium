@@ -227,3 +227,6 @@ const styles = StyleSheet.create({
     fontSize: scale(11),
   },
 });
+
+
+

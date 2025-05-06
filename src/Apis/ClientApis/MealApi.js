@@ -1,9 +1,10 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
+import { GET_MEAL_PLAN } from '../AllAPI/API';
 
 export const FetchMealPlanApi = async id => {
   try {
-    const url = `${BASE_URL}meal-plan/${id}`;
+    const url = `${GET_MEAL_PLAN}/${id}`;
     const response = await axios.get(url);
     return response?.data;
   } catch (error) {

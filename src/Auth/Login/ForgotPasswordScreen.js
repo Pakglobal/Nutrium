@@ -9,6 +9,9 @@ import {
   Keyboard,
   ActivityIndicator,
   Linking,
+  KeyboardAvoidingView,
+  ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -26,7 +29,7 @@ const ForgotPasswordScreen = ({route}) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ✅ Alert states
+
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertType, setAlertType] = useState('success');
   const [alertMessageText, setAlertMessageText] = useState('');
@@ -76,6 +79,67 @@ const ForgotPasswordScreen = ({route}) => {
   };
 
   const alertMessage = () => alertMessageText;
+
+  // return (
+  //   <SafeAreaView style={styles.container}>
+  //     <CustomAlertBox
+  //       visible={alertVisible}
+  //       type={alertType}
+  //       message={alertMessage()}
+  //       closeAlert={() => setAlertVisible(false)}
+  //       onClose={() => {
+  //         setAlertVisible(false);
+  //         if (alertType === 'success') {
+  //           const encodedEmail = encodeURIComponent(email);
+  //           Linking.openURL(
+  //             `https://nutrium-front-end-ci66-git-feature-val-rahulbodaras-projects.vercel.app/accounts/clientPassword/resetPassword?email=${encodedEmail}`
+  //           );
+  //           navigation.navigate('loginScreen');
+  //         }
+  //       }}
+  //     />
+
+  //     <LeftIcon onGoBack={() => navigation.goBack()} />
+  //     <Header height="40%" width="100%" style={{ marginTop: 50 }} />
+
+  //     <View style={styles.formContainer}>
+  //       <Text style={styles.titleText}>Please Enter your Registered Email</Text>
+  //       <Text style={styles.subtitleText}>
+  //         We will send a verification link to your email to reset your password.
+  //       </Text>
+
+  //       <View style={{ marginTop: verticalScale(20) }}>
+  //         <CustomShadow>
+  //           <View style={styles.inputWrapper}>
+  //             <TextInput
+  //               placeholder="Enter your email"
+  //               value={email}
+  //               onChangeText={setEmail}
+  //               placeholderTextColor={Color.textColor}
+  //               style={styles.textInput}
+  //               keyboardType="email-address"
+  //               autoCapitalize="none"
+  //             />
+  //           </View>
+  //         </CustomShadow>
+  //       </View>
+  //     </View>
+
+  //     <View style={styles.buttonWrapper}>
+  //       <TouchableOpacity
+  //         onPress={handleSubmit}
+  //         disabled={loading}
+  //         style={[styles.button, { backgroundColor: Color.primaryColor }]}>
+  //         {loading ? (
+  //           <ActivityIndicator size="small" color={Color.white} />
+  //         ) : (
+  //           <Text style={[styles.buttonText, { color: Color.white }]}>Send Reset Link</Text>
+  //         )}
+  //       </TouchableOpacity>
+  //     </View>
+  //   </SafeAreaView>
+  // );
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -138,6 +202,8 @@ const ForgotPasswordScreen = ({route}) => {
       </View>
     </SafeAreaView>
   );
+  
+
 };
 
 export default ForgotPasswordScreen;

@@ -5,7 +5,7 @@ import {Font} from '../../../assets/styles/Fonts';
 import {Color} from '../../../assets/styles/Colors';
 import CustomShadow from '../../../Components/CustomShadow';
 
-const ChallengeCard = ({challenge, onJoin, btnType = 'Join'}) => {
+const ChallengeCard = ({challenge, onJoin, btnType = 'Join',handleJoinNow}) => {
   const {name, description, startDate, endDate, participants = []} = challenge;
   const days = moment(endDate).diff(moment(startDate), 'days') + 1;
 
@@ -44,7 +44,7 @@ const ChallengeCard = ({challenge, onJoin, btnType = 'Join'}) => {
           </View>
 
           <TouchableOpacity
-            onPress={() => onJoin(challenge)}
+            onPress={handleJoinNow}
             style={styles.joinButton}>
             <Text style={styles.joinButtonText}>
               {btnType === 'Join' ? 'Join Now' : 'View Now'}

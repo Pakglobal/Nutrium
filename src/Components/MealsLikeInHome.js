@@ -1,15 +1,13 @@
 import {
-  ImageBackground,
+  Image,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
-import {useNavigation} from '@react-navigation/native';
-
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
+import { useNavigation } from '@react-navigation/native';
 import Food from '../assets/Images/Food.svg';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
@@ -48,25 +46,31 @@ const MealsLikeInHome = () => {
 export default MealsLikeInHome;
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    // alignSelf: 'center',
-    // width: '100%',
-    backgroundColor: Color.white,
-    borderRadius: scale(10),
-  },
-  discription: {
-    fontSize: scale(14),
-    color: Color.white,
-    fontWeight: '500',
-    position: 'absolute',
-    bottom: scale(20),
-    left: scale(10),
-    fontFamily: Font?.Poppins,
-  },
   title: {
     fontSize: scale(14),
     fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font?.PoppinsMedium,
+  },
+  imageContainer: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: scale(10),
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  foodImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: scale(10),
+  },
+  overlayText: {
+    fontSize: scale(14),
+    color: Color.white,
+    fontWeight: '500',
+    fontFamily: Font?.Poppins,
+    position: 'absolute',
+    bottom: scale(20),
+    left: scale(15),
   },
 });

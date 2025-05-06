@@ -9,23 +9,23 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BackHeader from '../../../../Components/BackHeader';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../../assets/styles/Colors';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../../../../assets/styles/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
   GetPhysicalActivities,
   GetQuickAccess,
 } from '../../../../Apis/ClientApis/PhysicalActivityApi';
 import Header from '../../../../Components/Header';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
-import {Font} from '../../../../assets/styles/Fonts';
+import { ShadowValues } from '../../../../assets/styles/Shadow';
+import { Font } from '../../../../assets/styles/Fonts';
 import CustomShadow from '../../../../Components/CustomShadow';
 import CustomLoader from '../../../../Components/CustomLoader';
 
-const LogPhysicalActivity = ({route}) => {
+const LogPhysicalActivity = ({ route }) => {
   const token = route?.params?.plusData?.token;
   const id = route?.params?.plusData?.id;
   const plus = route?.params?.plusData?.press === 'plus';
@@ -104,14 +104,14 @@ const LogPhysicalActivity = ({route}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <Header
         screenheader={true}
         screenName={'Physical Activity'}
         rightHeaderButton={false}
       />
 
-      <View style={{marginHorizontal: scale(16)}}>
+      <View style={{ marginHorizontal: scale(16) }}>
         <Text style={styles.topTitle}>Log Physical Activity</Text>
         <CustomShadow>
           <View style={styles.searchContainer}>
@@ -134,18 +134,18 @@ const LogPhysicalActivity = ({route}) => {
       </View>
 
       {loading ? (
-        <CustomLoader />
+        <CustomLoader  />
       ) : filteredData?.length > 0 ? (
         <FlatList
           data={filteredData}
           ListHeaderComponent={
-            <View style={{marginHorizontal: scale(16)}}>
+            <View style={{ marginHorizontal: scale(16) }}>
               {quickAccessData?.length > 0 && (
                 <View>
                   <Text style={styles.title}>Quick access</Text>
                   {quickAccessData?.map((item, index) => (
                     <TouchableOpacity
-                      style={{marginVertical: verticalScale(5)}}
+                      style={{ marginVertical: verticalScale(5) }}
                       key={index}
                       onPress={() =>
                         handlePressItem(item?.activity, item?.time)
@@ -162,10 +162,10 @@ const LogPhysicalActivity = ({route}) => {
               <Text style={styles.title}>All physical activities</Text>
             </View>
           }
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handlePressItem(item?.activity)}
-              style={{marginHorizontal: scale(16)}}>
+              style={{ marginHorizontal: scale(16) }}>
               <Text style={styles.name}>{item?.activity}</Text>
             </TouchableOpacity>
           )}

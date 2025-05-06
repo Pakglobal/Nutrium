@@ -145,12 +145,9 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.9; // 90% of screen width for the card
 
 // Using memo to prevent unnecessary re-renders
-const ChallengeCardBanner = memo(({ challenge, onJoin, btnType = 'Join' }) => {
+const ChallengeCardBanner = memo(({ challenge, onPress, btnType = 'Join', onJoin }) => {
   const buttonText = btnType === 'View' ? 'View Now' : 'Join Now';
 
-  const handlePress = () => {
-    onJoin(challenge);
-  };
 
   // Format the date to match screenshot
   const formattedDate = new Date(challenge.endDate).toLocaleDateString('en-US', {
@@ -164,8 +161,7 @@ const ChallengeCardBanner = memo(({ challenge, onJoin, btnType = 'Join' }) => {
       colors={['#21972B', '#6BCB77']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.card}
-    >
+      style={styles.card}>
       <View style={styles.badge}>
         <Text style={styles.badgeText}>Featured</Text>
       </View>
@@ -193,7 +189,7 @@ const ChallengeCardBanner = memo(({ challenge, onJoin, btnType = 'Join' }) => {
 
         <TouchableOpacity
           style={styles.joinButton}
-          onPress={handlePress}
+          onPress={onPress}
           activeOpacity={0.7}
         >
           <Text style={styles.joinText}>{buttonText}</Text>
@@ -228,7 +224,7 @@ const styles = StyleSheet.create({
     fontFamily: Font?.Poppins,
   },
   title: {
-    color: '#fff',
+    color: Color?.white,
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 8,
@@ -256,16 +252,16 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: Color?.white,
   },
   participantText: {
-    color: '#fff',
+    color: Color?.white,
     marginLeft: 6,
     fontSize: 12,
     fontFamily: Font?.Poppins,
   },
   joinButton: {
-    borderColor: '#fff',
+    borderColor: Color?.white,
     borderWidth: 1,
     borderRadius: 8,
     paddingVertical: 4,

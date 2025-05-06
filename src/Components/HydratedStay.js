@@ -6,29 +6,30 @@ import {
   TouchableOpacity,
   Easing,
 } from 'react-native';
-import React, {useEffect, useState, useRef, useCallback, useMemo} from 'react';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import HydratedView from './HydratedView';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GetWaterIntakeDetails,
+  GetWaterintakeLimitData,
   SetWaterIntakeDetails,
 } from '../Apis/ClientApis/WaterIntakeApi';
 import Feather from 'react-native-vector-icons/Feather';
 import Drop from '../assets/Images/drop.svg';
 import Bottle from '../assets/Images/bottel.svg';
 import Glass from '../assets/Images/glass.svg';
-import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import { Font } from '../assets/styles/Fonts';
+import { shadowStyle, ShadowValues } from '../assets/styles/Shadow';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {addWaterData, getWaterIntake} from '../redux/client';
+import { addWaterData, getWaterIntake } from '../redux/client';
 import CustomShadow from './CustomShadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
-const HydratedStay = ({route}) => {
+const HydratedStay = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [sevenL, setSevenL] = useState(0);
@@ -36,6 +37,7 @@ const HydratedStay = ({route}) => {
   const [waterIntake, setWaterIntake] = useState([]);
   const [getwaterIntake, setGetWaterIntake] = useState([]);
   const [currentProgress, setCurrentProgress] = useState(0);
+  const [limit, setLimit] = useState('');
   const [loading, setLoading] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -85,14 +87,11 @@ const HydratedStay = ({route}) => {
   const handleAddWater = amount => {
     const mlAmount = amount * 1000;
 
-    // Get the current value from redux to ensure we're working with up-to-date data
     const currentIntake = intake || 0;
     const newIntake = currentIntake + mlAmount;
 
-    // Update Redux state
     dispatch(getWaterIntake(newIntake));
 
-    // Update local state
     if (amount === 0.2) {
       setSevenL(prev => prev + amount);
     } else if (amount === 0.3) {
@@ -107,9 +106,9 @@ const HydratedStay = ({route}) => {
       .getHours()
       .toString()
       .padStart(2, '0')}:${currentDate
-      .getMinutes()
-      .toString()
-      .padStart(2, '0')}`;
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}`;
 
     const payload = {
       waterIntakeId: waterIntake?.waterIntakeData?._id,
@@ -138,11 +137,16 @@ const HydratedStay = ({route}) => {
     }, 0);
   };
 
+  const getWaterLimit = async () => {
+    const data = await GetWaterintakeLimitData(token, id);
+    setLimit(data?.waterIntakeLimit?.waterIntakeLimit)
+  }
+
+
   const getData = async () => {
     try {
       const data = await GetWaterIntakeDetails(token, id);
       const allRecords = data?.waterIntakeData?.waterIntakeRecords || [];
-
       const today = new Date().toISOString().split('T')[0];
       const todayRecord = allRecords.find(record => {
         return record?.date?.split('T')[0] === today;
@@ -153,12 +157,11 @@ const HydratedStay = ({route}) => {
       // Calculate total from server data
       const total = todayRecord?.waterIntakeAmount
         ? todayRecord.waterIntakeAmount.reduce((sum, item) => {
-            const ml = parseFloat(item.amount.replace('ml', '')) || 0;
-            return sum + ml;
-          }, 0)
+          const ml = parseFloat(item.amount.replace('ml', '')) || 0;
+          return sum + ml;
+        }, 0)
         : 0;
 
-      // Update local intake based on server data
       setLocalIntake(total);
 
       // Update Redux store with the latest value
@@ -190,6 +193,7 @@ const HydratedStay = ({route}) => {
       }
       prevUserIdRef.current = id;
     }
+    getWaterLimit()
   }, [token, id]);
 
   useEffect(() => {
@@ -231,7 +235,7 @@ const HydratedStay = ({route}) => {
   };
 
   return (
-    <View style={{marginVertical: verticalScale(18)}}>
+    <View style={{ marginVertical: verticalScale(18) }}>
       <CustomShadow radius={3}>
         <View style={shadowStyle}>
           <View style={styles.waterContainer}>
@@ -250,7 +254,7 @@ const HydratedStay = ({route}) => {
                   <Text style={styles.intakeTxt}>
                     {localIntake >= 1000
                       ? `${(localIntake / 1000).toFixed(1)} L`
-                      : `${localIntake} ml`}
+                      : `${localIntake} ml`}/{limit}
                   </Text>
                 </View>
 
@@ -288,10 +292,10 @@ const HydratedStay = ({route}) => {
                     label: 'Custom',
                     Icon: Drop,
                     onPress: () =>
-                      navigation.navigate('waterIntakeLog', {plusData}),
+                      navigation.navigate('waterIntakeLog', { plusData }),
                   },
-                ].map(({label, Icon, onPress}, idx) => (
-                  <View style={{width: '30%'}} key={label + idx}>
+                ].map(({ label, Icon, onPress }, idx) => (
+                  <View style={{ width: '30%' }} key={label + idx}>
                     <CustomShadow color={Color.lightgray}>
                       <View>
                         <TouchableOpacity
@@ -348,7 +352,7 @@ const styles = StyleSheet.create({
     color: Color?.primaryColor,
     fontWeight: '500',
     fontSize: scale(14),
-    fontFamily: Font?.PoppinsSemiBold,
+    fontFamily: Font?.Poppins,
     marginTop: verticalScale(2),
   },
   showIntake: {

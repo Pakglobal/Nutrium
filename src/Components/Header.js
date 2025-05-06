@@ -2,12 +2,9 @@ import React from 'react';
 import {
   View,
   TouchableOpacity,
-  LogBox,
   Text,
   StyleSheet,
   SafeAreaView,
-  Pressable,
-  Image,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';

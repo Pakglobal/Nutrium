@@ -6,10 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Alert,
   Keyboard,
-  Platform,
-  Button,
+  Dimensions,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Color} from '../../../assets/styles/Colors';
@@ -19,7 +17,6 @@ import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectCountry.svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {Font} from '../../../assets/styles/Fonts';
@@ -31,17 +28,20 @@ import CustomShadow from '../../../Components/CustomShadow';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomDatePicker from '../../../Components/CustomeDateTimePicker';
 import CustomeDropDown from '../../../Components/CustomeDropDown';
+import CustomAlertBox from '../../../Components/CustomAlertBox';
 
-const SelectCountry = ({route}) => {
+const SelectCountry = ({ route }) => {
+  const { height, width } = Dimensions.get('screen');
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [country, setCountry] = useState('');
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [number, setNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-
   const [hasNumberError, setHasNumberError] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState('error');
+  const [alertMsg, setAlertMsg] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const selectGender = route?.params;
   const countryData = {country, number, dateOfBirth, ...selectGender};
@@ -80,7 +80,6 @@ const SelectCountry = ({route}) => {
       setHasNumberError(true);
     }
   };
-
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
@@ -93,7 +92,6 @@ const SelectCountry = ({route}) => {
     const formattedDate = `${day}/${month}/${year}`;
     setDateOfBirth(formattedDate);
   };
-
   const handleNavigation = () => {
     Keyboard.dismiss();
 
@@ -103,13 +101,11 @@ const SelectCountry = ({route}) => {
         message =
           'Please select your country, enter your number, and select your date of birth to continue';
       } else if (!country && !number) {
-        message =
-          'Please select your country and enter your number to continue';
+        message = 'Please select your country and enter your number to continue';
       } else if (!country && !dateOfBirth) {
         message = 'Please select your country and date of birth to continue';
       } else if (!number && !dateOfBirth) {
-        message =
-          'Please enter your number and select your date of birth to continue';
+        message = 'Please enter your number and select your date of birth to continue';
       } else if (!country) {
         message = 'Please select your country to continue';
       } else if (!number) {
@@ -118,121 +114,60 @@ const SelectCountry = ({route}) => {
         message = 'Please select your date of birth to continue';
       }
 
-      Alert.alert('Selection Required', message, [
-        {text: 'OK', style: 'cancel'},
-      ]);
+      setAlertMsg(message);
+      setAlertType('warning');
+      setAlertVisible(true);
       return;
     }
 
     if (!validateNumberInput(number)) {
       setHasNumberError(true);
-      Alert.alert('Invalid Number', 'Please enter numbers only', [
-        {text: 'OK', style: 'cancel'},
-      ]);
+      setAlertMsg('Please enter numbers only');
+      setAlertType('warning');
+      setAlertVisible(true);
       return;
     }
 
     if (number.length !== 10) {
-      Alert.alert(
-        'Invalid Number',
-        'Please enter a valid 10-digit mobile number to continue',
-        [{text: 'OK', style: 'cancel'}],
-      );
+      setAlertMsg('Please enter a valid 10-digit mobile number to continue');
+      setAlertType('warning');
+      setAlertVisible(true);
       return;
     }
 
     navigation.navigate('GuestLogin', countryData);
   };
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-
-  // const showDatePicker = () => {
-  //   setDatePickerVisibility(true);
-  // };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = date => {
-    setSelectedDate(date.toLocaleString());
-    hideDatePicker();
-  };
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomAlertBox
+        visible={alertVisible}
+        type={alertType}
+        message={alertMsg}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => setAlertVisible(false)}
+      />
       <GuestFlowHeader progress={Progress.selectCountry} />
       <LeftIcon onGoBack={() => navigation.goBack()} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: '47.5%'}}
+        contentContainerStyle={{ paddingBottom: height > 800 ? '47.5%' : '37%', }}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
           style={{alignSelf: 'center', marginTop: verticalScale(50)}}
         />
 
         <View
-          style={{marginHorizontal: scale(16), marginTop: verticalScale(20)}}>
-          <CustomShadow style={shadowStyle}>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={styles.inputContainer}
-              onPress={() => {
-                Keyboard.dismiss();
-                setShowCountryDropdown(!showCountryDropdown);
-              }}>
-              <Text
-                style={[
-                  styles.titleText,
-                  !country && {color: Color.textColor},
-                ]}>
-                {country || 'Select country'}
-              </Text>
-              {showCountryDropdown ? (
-                <MaterialIcons
-                  name="keyboard-arrow-up"
-                  size={20}
-                  color={Color.primaryColor}
-                />
-              ) : (
-                <MaterialIcons
-                  name="keyboard-arrow-down"
-                  size={20}
-                  color={Color.primaryColor}
-                />
-              )}
-            </TouchableOpacity>
-          </CustomShadow>
-
-          {showCountryDropdown && (
-            <View style={styles.dropdown}>
-              {countries.map(item => (
-                <CustomeDropDown
-                  keyitem={item}
-                  dropdownStyle={[
-                    styles.dropdownItem,
-                    country === item && {backgroundColor: Color.primaryColor},
-                  ]}
-                  singleSelected={true}
-                  onPress={() => {
-                    setCountry(item);
-                    setShowCountryDropdown(false);
-                  }}
-                  textStyle={[
-                    styles.titleText,
-                    {
-                      color: country === item ? Color.white : Color.textColor,
-                    },
-                  ]}
-                  item={item}
-                />
-              ))}
-            </View>
-          )}
-
-          <CustomShadow
-            color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>
+          style={{ marginHorizontal: scale(16) }}>
+          <CustomeDropDown
+            items={countries}
+            inputStyle={{ width: '100%', marginVertical: scale(6) }}
+            selectedItem={country || 'Select country'}
+            onSelect={(item) => setCountry(item)}
+            textStyle={!country ? { color: Color.textColor } : {}}
+          />
+          <CustomShadow color={hasNumberError ? 'rgba(255,0,0,0.3)' : Color.primaryColor}>
             <View style={styles.inputContainer}>
               {country && (
                 <Text style={[styles.titleText, styles.countryCode]}>
@@ -251,7 +186,7 @@ const SelectCountry = ({route}) => {
             </View>
           </CustomShadow>
 
-          {/* <CustomShadow>
+          <CustomShadow>
             <TouchableOpacity
               activeOpacity={1}
               style={styles.inputContainer}
@@ -282,30 +217,8 @@ const SelectCountry = ({route}) => {
               onChange={onDateChange}
               maximumDate={new Date()}
             />
-          )} */}
-
-          <CustomDatePicker
-            label="Date of Birth"
-            value={selectedDate}
-            onChange={setSelectedDate}
-            placeholder="Select your date of birth"
-          />
-        </View>
-
-        {/* <Button title="Show Date Picker" onPress={showDatePicker} /> */}
-        <Text>{selectedDate}</Text>
-        <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="datetime"
-          onConfirm={handleConfirm}
-          onCancel={hideDatePicker}
-          pickerStyleIOS={{
-            backgroundColor: 'white',
-          }}
-          customHeaderIOS={() => (
-            <Text style={{textAlign: 'center', fontSize: 18}}>Pick Date</Text>
           )}
-        />
+        </View>
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleNavigation}>
@@ -329,6 +242,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
     color: Color.textColor,
+    paddingVertical: scale(5)
   },
   inputContainer: {
     borderRadius: 8,
@@ -382,3 +296,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+

@@ -38,11 +38,11 @@ const ChallangeSwiper = ({onTabChange}) => {
     {key: 'invitation', title: 'Invitation'},
   ]);
 
-  useEffect(() => {
-    if (onTabChange) {
-      onTabChange(routes[index].title);
-    }
-  }, [index]);
+    useEffect(() => {
+        if (onTabChange) {
+            onTabChange(routes[index].title);
+        }
+    }, [index]);
 
   const InvitationScreen = () => (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

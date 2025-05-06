@@ -14,6 +14,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
+  GetWaterintakeLimitData,
 } from '../../../../Apis/ClientApis/WaterIntakeApi';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -37,12 +38,12 @@ const WaterIntake = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIntake, setSelectedIntake] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [waterIntake, setWaterIntake] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dataFetched, setDataFetched] = useState(false);
-  const [alertVisible, setAlertVisible] = useState(false);
+  const [limit, setLimit] = useState('');
+
 
   const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
   const tokenId = useSelector(state => state?.user?.token);
@@ -179,11 +180,11 @@ const WaterIntake = () => {
 
         setSelectedIntake(matchingRecords);
       }
-      setDataFetched(true); // Mark data as fetched
+      setDataFetched(true);
       setLoading(false);
     } catch (error) {
       console.error('Error in getWaterIntakeData:', error);
-      setDataFetched(true); // Still mark as fetched even if there's an error
+      setDataFetched(true);
       setLoading(false);
     }
   };
@@ -200,10 +201,18 @@ const WaterIntake = () => {
     if (dataFetched && selectedDate) {
       handleDate({fullDate: new Date(selectedDate)});
     }
+    getWaterLimit()
   }, [selectedDate, dataFetched]);
+  const getWaterLimit = async () => {
+    const data = await GetWaterintakeLimitData(token, id);
+    setLimit(data?.waterIntakeLimit?.waterIntakeLimit)
+  }
 
-  const dailyGoal =
-    waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
+
+  // const dailyGoal =
+  //   waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
+
+  const dailyGoal = limit;
 
   const calculateDailyIntake = (date, records) => {
     if (!records || !date) return 0;

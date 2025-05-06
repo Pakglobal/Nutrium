@@ -639,7 +639,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   title: {
-    color: Color.lightGrayText,
+    color: Color.lightgray,
     fontSize: scale(13),
     marginHorizontal: scale(8),
   },

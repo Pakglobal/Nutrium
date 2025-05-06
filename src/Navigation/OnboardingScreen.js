@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   Dimensions,
 } from 'react-native';
 import {Color} from '../assets/styles/Colors';

@@ -1,9 +1,10 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
+import { BASE_URL } from '../Base_Url/Baseurl';
+import { GET_PROFILE_IMAGE, GET_USER, UPDATE_PROFILE_IMAGE } from '../AllAPI/API';
 
 export const GetUserApi = async token => {
   try {
-    const url = `${BASE_URL}getUser`;
+    const url = `${GET_USER}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -28,7 +29,7 @@ export const UpdateImage = async (token, id, imageUrl) => {
       type: imageUrl?.type || 'image/jpeg',
     });
 
-    const url = `${BASE_URL}client/${id}`;
+    const url = `${UPDATE_PROFILE_IMAGE}/${id}`;
 
     const response = await axios.put(url, formData, {
       headers: {
@@ -40,5 +41,19 @@ export const UpdateImage = async (token, id, imageUrl) => {
     return response.data;
   } catch (error) {
     return error?.message?.data;
+  }
+};
+
+export const GetProfileImageApi = async (token, id) => {
+  try {
+    const url = `${GET_PROFILE_IMAGE}/${id}`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    return response?.data;
+  } catch (error) {
+    console.error('Error fetching get profile image', error);
   }
 };

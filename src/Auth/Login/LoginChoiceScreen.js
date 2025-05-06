@@ -12,12 +12,10 @@ import {Color} from '../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {setGuestMode} from '../../redux/user';
 import {Font} from '../../assets/styles/Fonts';
 
 const LoginChoiceScreen = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>

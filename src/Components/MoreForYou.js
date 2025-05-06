@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Carousel from 'react-native-snap-carousel';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Color} from '../assets/styles/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';

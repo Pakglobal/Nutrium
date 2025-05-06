@@ -1,9 +1,10 @@
 import axios from 'axios';
 import {BASE_URL} from '../Base_Url/Baseurl';
+import { DELETE_WATER_INTAKE, GET_WATER_INTAKE_DETAILS, GET_WATER_INTAKE_LIMIT, SET_WATER_INTAKE_DETAILS, UPDATE_WATER_INTAKE } from '../AllAPI/API';
 
 export const GetWaterintakeLimitData = async (token, id) => {
   try {
-    const url = `${BASE_URL}getWaterIntakeLimit/${id}`;
+    const url = `${GET_WATER_INTAKE_LIMIT}/${id}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -17,7 +18,7 @@ export const GetWaterintakeLimitData = async (token, id) => {
 
 export const GetWaterIntakeDetails = async (token, id) => {
   try {
-    const url = `${BASE_URL}getWaterIntake/${id}`;
+    const url = `${GET_WATER_INTAKE_DETAILS}/${id}`;
 
     const response = await axios.get(url, {
       headers: {
@@ -34,7 +35,7 @@ export const SetWaterIntakeDetails = async payload => {
   try {
     const {clientId, token, amount, time, date} = payload;
 
-    const url = `${BASE_URL}setwaterintake/${clientId}`;
+    const url = `${SET_WATER_INTAKE_DETAILS}/${clientId}`;
     const body = {
       waterIntake: amount,
       time: time,
@@ -56,7 +57,7 @@ export const SetWaterIntakeDetails = async payload => {
 export const DeleteWaterIntake = async payload => {
   try {
     const {waterIntakeId, waterRecordId, waterIntakeAmountId, token} = payload;
-    const url = `${BASE_URL}deletewaterintake/${waterIntakeId}/${waterRecordId}/${waterIntakeAmountId}`;
+    const url = `${DELETE_WATER_INTAKE}/${waterIntakeId}/${waterRecordId}/${waterIntakeAmountId}`;
 
     const response = await axios.delete(url, {
       headers: {
@@ -80,7 +81,7 @@ export const UpdateWaterIntake = async payload => {
       date,
       amount,
     } = payload;
-    const url = `${BASE_URL}updatewaterintake/${waterIntakeId}/${waterRecordId}/${waterIntakeAmountId}`;
+    const url = `${UPDATE_WATER_INTAKE}/${waterIntakeId}/${waterRecordId}/${waterIntakeAmountId}`;
     const body = {
       waterIntake: amount,
       time: time,

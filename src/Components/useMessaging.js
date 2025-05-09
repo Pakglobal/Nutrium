@@ -69,11 +69,6 @@ const MessageComponent = ({
   const lastX = useRef(0);
   const lastY = useRef(0);
 
-  const messageQueue = useRef([]);
-  const isProcessingQueue = useRef(false);
-  const uploadQueue = useRef([]);
-  const isUploading = useRef(false);
-
   const sortedMessages = [...messages]?.sort(
     (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
   );
@@ -129,74 +124,6 @@ const MessageComponent = ({
     }),
   ).current;
 
-  const processMessageQueue = useCallback(() => {
-    if (isProcessingQueue.current || messageQueue.current.length === 0) return;
-
-    isProcessingQueue.current = true;
-    const nextMessage = messageQueue.current.shift();
-
-    setMessages(prevMessages => {
-      const messageExists = prevMessages.some(
-        msg =>
-          (msg._id && msg._id === nextMessage._id) ||
-          (msg.tempId &&
-            nextMessage.tempId &&
-            msg.tempId === nextMessage.tempId),
-      );
-
-      if (messageExists) {
-        return prevMessages.map(msg =>
-          (msg._id && msg._id === nextMessage._id) ||
-          (msg.tempId &&
-            nextMessage.tempId &&
-            msg.tempId === nextMessage.tempId)
-            ? {...nextMessage, tempId: msg.tempId || nextMessage.tempId}
-            : msg,
-        );
-      }
-
-      return [nextMessage, ...prevMessages];
-    });
-
-    isProcessingQueue.current = false;
-    processMessageQueue();
-  }, []);
-
-  const enqueueMessage = useCallback(
-    newMessage => {
-      messageQueue.current.push(newMessage);
-      processMessageQueue();
-    },
-    [processMessageQueue],
-  );
-
-  const processUploadQueue = useCallback(async () => {
-    if (isUploading.current || uploadQueue.current.length === 0) return;
-
-    isUploading.current = true;
-    const {file, tempId, resolve, reject} = uploadQueue.current.shift();
-
-    try {
-      const uploadedFile = await uploadFileAndGetUrl(file);
-      resolve(uploadedFile);
-    } catch (err) {
-      reject(err);
-    } finally {
-      isUploading.current = false;
-      processUploadQueue();
-    }
-  }, []);
-
-  const enqueueUpload = useCallback(
-    (file, tempId) => {
-      return new Promise((resolve, reject) => {
-        uploadQueue.current.push({file, tempId, resolve, reject});
-        processUploadQueue();
-      });
-    },
-    [processUploadQueue],
-  );
-
   useEffect(() => {
     const socket = connectSocket();
     if (socket) {
@@ -236,15 +163,34 @@ const MessageComponent = ({
         return;
       }
 
-      const safeNewMessage = {
-        ...newMessage,
-        tempId: newMessage.tempId || null,
-        seen: newMessage.seen || false,
-        createdAt: newMessage.createdAt || new Date().toISOString(),
-      };
+      setMessages(prevMessages => {
+        const safeNewMessage = {
+          ...newMessage,
+          tempId: newMessage.tempId || null,
+          seen: newMessage.seen || false,
+        };
 
-      console.log(`Received message: ${JSON.stringify(safeNewMessage)}`);
-      enqueueMessage(safeNewMessage);
+        const messageExists = prevMessages.some(
+          msg =>
+            (msg._id && msg._id === safeNewMessage._id) ||
+            (msg.tempId &&
+              safeNewMessage.tempId &&
+              msg.tempId === safeNewMessage.tempId),
+        );
+
+        if (messageExists) {
+          return prevMessages.map(msg =>
+            (msg._id && msg._id === safeNewMessage._id) ||
+            (msg.tempId &&
+              safeNewMessage.tempId &&
+              msg.tempId === safeNewMessage.tempId)
+              ? {...safeNewMessage, tempId: msg.tempId || safeNewMessage.tempId}
+              : msg,
+          );
+        }
+
+        return [safeNewMessage, ...prevMessages];
+      });
 
       if (
         newMessage?.senderId !== userId &&
@@ -302,7 +248,7 @@ const MessageComponent = ({
       socket.off('messagesSeen', messagesSeenHandler);
       socket.disconnect();
     };
-  }, [userId, otherUserId, enqueueMessage]);
+  }, [userId, otherUserId]);
 
   const formatTime = isoString => {
     return moment(isoString).format('h.mm A');
@@ -329,34 +275,22 @@ const MessageComponent = ({
         }
 
         setUploadingFiles(prev => ({...prev, [tempId]: true}));
-        enqueueMessage({
-          _id: tempId,
-          tempId,
-          senderId: userId,
-          receiverId: otherUserId,
-          file: result[0].uri,
-          createdAt: now,
-          isTemp: true,
-          seen: false,
-        });
-
-        try {
-          const uploadedFile = await enqueueUpload(result[0], tempId);
-          fileUrl = uploadedFile.url;
-        } catch (err) {
-          enqueueMessage({
+        setMessages(prevMessages => [
+          {
             _id: tempId,
             tempId,
             senderId: userId,
             receiverId: otherUserId,
-            message: 'Failed to upload file',
-            file: '',
+            file: result[0].uri,
             createdAt: now,
-            isTemp: false,
+            isTemp: true,
             seen: false,
-          });
-          throw err;
-        }
+          },
+          ...prevMessages,
+        ]);
+
+        const uploadedFile = await uploadFileAndGetUrl(result[0]);
+        fileUrl = uploadedFile.url;
       }
 
       const tempMessage = {
@@ -365,21 +299,21 @@ const MessageComponent = ({
         senderId: userId,
         receiverId: otherUserId,
         message: isFile ? '' : text,
-        file: fileUrl || selectedFile?.url || '',
+        file: fileUrl || selectedFile?.url,
         createdAt: now,
         seen: false,
         isTemp: !!fileUrl,
       };
-
-      console.log(`Sending message: ${JSON.stringify(tempMessage)}`);
+      console.log('tempMessage', tempMessage);
 
       if (!isFile) {
-        enqueueMessage(tempMessage);
+        setMessages(prevMessages => [tempMessage, ...prevMessages]);
       } else {
-        enqueueMessage({
-          ...tempMessage,
-          isTemp: false,
-        });
+        setMessages(prevMessages =>
+          prevMessages.map(msg =>
+            msg._id === tempId ? {...msg, file: fileUrl, isTemp: false} : msg,
+          ),
+        );
       }
 
       sendMessage(
@@ -497,106 +431,19 @@ const MessageComponent = ({
 
   const flatListData = createFlatListData(sortedMessages);
 
-  const keyExtractor = useCallback(
-    item =>
-      item?.type === 'date'
-        ? item?.id
-        : item?._id?.toString() || `msg-${item?.tempId}-${item?.createdAt}`,
-    [],
-  );
-
-  const renderItem = useCallback(
-    ({item}) => {
-      if (item.type === 'date') {
-        return (
-          <View style={styles.dateSeparator}>
-            <Text style={styles.dateSeparatorText}>
-              {formatDateForSeparator(item?.date)}
-            </Text>
-          </View>
-        );
-      } else {
-        return renderMessage({item});
-      }
-    },
-    [formatDateForSeparator],
-  );
-
-  const renderMessage = useCallback(
-    ({item}) => {
-      const isSender = item?.senderId === userId;
-      const fileUrl = item?.file || item?.fileUrl;
-      const time = formatTime(item?.createdAt || item?.timestamp);
-      const isUploading = item.isTemp || uploadingFiles[item._id];
-      const isSeen = item?.seen;
-      const isTemp = item._id?.startsWith('temp-');
-
-      console.log(
-        `Rendering message: ${item._id}, isUploading: ${isUploading}`,
-      );
-
+  const renderItem = ({item}) => {
+    if (item.type === 'date') {
       return (
-        <View
-          style={[
-            styles.messageContainer,
-            isSender ? styles.sent : styles.received,
-          ]}>
-          {fileUrl && (
-            <View style={styles.imageContainer}>
-              {isUploading ? (
-                <ActivityIndicator />
-              ) : (
-                <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                  <Image source={{uri: fileUrl}} style={styles.image} />
-                  <View style={styles.messageContent}>
-                    <Text style={styles.timestampText}>{time}</Text>
-                    <View style={styles.messageFooter}>
-                      {isSender && (
-                        <Ionicons
-                          name={isSeen ? 'checkmark-done' : 'checkmark'}
-                          size={16}
-                          color={isSeen ? Color.primaryColor : Color.gray}
-                          style={styles.readStatus}
-                        />
-                      )}
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-
-          {item?.message && (
-            <View>
-              <Text style={styles.messageText}>{item?.message}</Text>
-              <View style={styles.messageContent}>
-                <Text style={styles.timestampText}>{time}</Text>
-                <View style={styles.messageFooter}>
-                  {isSender && !isTemp && (
-                    <Ionicons
-                      name={isSeen ? 'checkmark-done' : 'checkmark'}
-                      size={16}
-                      color={isSeen ? Color.primaryColor : Color.gray}
-                      style={styles.readStatus}
-                    />
-                  )}
-                  {isSender && isTemp && (
-                    <Ionicons
-                      name="time-outline"
-                      size={16}
-                      color={Color.gray}
-                      style={styles.readStatus}
-                    />
-                  )}
-                </View>
-              </View>
-            </View>
-          )}
+        <View style={styles.dateSeparator}>
+          <Text style={styles.dateSeparatorText}>
+            {formatDateForSeparator(item?.date)}
+          </Text>
         </View>
       );
-    },
-    [userId, uploadingFiles, openImageViewer],
-  );
+    } else {
+      return renderMessage({item});
+    }
+  };
 
   const openImageViewer = fileUrl => {
     setSelectedImage(fileUrl);
@@ -632,11 +479,74 @@ const MessageComponent = ({
     return await response.json();
   };
 
-  const getItemLayout = (data, index) => ({
-    length: verticalScale(50),
-    offset: verticalScale(50) * index,
-    index,
-  });
+  const renderMessage = ({item}) => {
+    const isSender = item?.senderId === userId;
+    const fileUrl = item?.file || item?.fileUrl;
+    const time = formatTime(item?.createdAt || item?.timestamp);
+    const isUploading = item.isTemp || uploadingFiles[item._id];
+    const isSeen = item?.seen;
+    const isTemp = item._id?.startsWith('temp-');
+
+    return (
+      <View
+        style={[
+          styles.messageContainer,
+          isSender ? styles.sent : styles.received,
+        ]}>
+        {fileUrl && (
+          <View style={styles.imageContainer}>
+            {isUploading ? (
+              <ActivityIndicator />
+            ) : (
+              <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
+                <Image source={{uri: fileUrl}} style={styles.image} />
+                <View style={styles.messageContent}>
+                  <Text style={styles.timestampText}>{time}</Text>
+                  <View style={styles.messageFooter}>
+                    {isSender && (
+                      <Ionicons
+                        name={isSeen ? 'checkmark-done' : 'checkmark'}
+                        size={16}
+                        color={isSeen ? Color.primaryColor : Color.gray}
+                        style={styles.readStatus}
+                      />
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+
+        {item?.message && (
+          <View>
+            <Text style={styles.messageText}>{item?.message}</Text>
+            <View style={styles.messageContent}>
+              <Text style={styles.timestampText}>{time}</Text>
+              <View style={styles.messageFooter}>
+                {isSender && !isTemp && (
+                  <Ionicons
+                    name={isSeen ? 'checkmark-done' : 'checkmark'}
+                    size={16}
+                    color={isSeen ? Color.primaryColor : Color.gray}
+                    style={styles.readStatus}
+                  />
+                )}
+                {isSender && isTemp && (
+                  <Ionicons
+                    name="time-outline"
+                    size={16}
+                    color={Color.gray}
+                    style={styles.readStatus}
+                  />
+                )}
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   const renderHeader = () => {
     if (!showHeader) return null;
@@ -694,12 +604,13 @@ const MessageComponent = ({
         ) : (
           <FlatList
             data={flatListData}
-            keyExtractor={keyExtractor}
+            keyExtractor={item =>
+              item?.type === 'date'
+                ? item?.id
+                : item?._id?.toString() || `msg-${item?.tempId}`
+            }
             renderItem={renderItem}
             inverted
-            initialNumToRender={10}
-            windowSize={5}
-            getItemLayout={getItemLayout}
           />
         )}
 

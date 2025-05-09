@@ -104,10 +104,7 @@ const LogPhysicalActivity = ({route}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
-      <Header
-        screenheader={true}
-        screenName={'Physical Activity'}
-      />
+      <Header screenheader={true} screenName={'Physical Activity'} />
 
       <View style={{marginHorizontal: scale(16)}}>
         <Text style={styles.topTitle}>Log Physical Activity</Text>

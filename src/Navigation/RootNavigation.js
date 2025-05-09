@@ -48,8 +48,8 @@ import ChallengesDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/Challeng
 import ViewChallengDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/ViewChallengDetailsScreen';
 import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScreen';
 import ForgotPasswordScreen from '../Auth/Login/ForgotPasswordScreen';
-import CardioDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/CardioDetailsScreen';
-import NutritionDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/NutritionDetailsScreen';
+import CardioNutritionDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/CardioNutritionDetailsScreen';
+import AllPrivateChallengeScreen from '../Screen/ClientFlow/ChallengeFlow/AllPrivateChallengeScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -70,7 +70,6 @@ const ClientDrawerNavigator = () => {
         name="ChallengesScreen"
         component={ChallengesScreen}
       />
-      <ClientDrawer.Screen name="CreateChallenge" component={CreateChallenge} />
     </ClientDrawer.Navigator>
   );
 };
@@ -144,17 +143,20 @@ const UserFlowStack = () => (
     <Stack.Screen name="ChallengesScreen" component={ChallengesScreen} />
     <Stack.Screen name="CreateChallenge" component={CreateChallenge} />
     <Stack.Screen
+      name="CardioNutritionDetails"
+      component={CardioNutritionDetailsScreen}
+    />
+    <Stack.Screen
+      name="AllPrivateChallenge"
+      component={AllPrivateChallengeScreen}
+    />
+    <Stack.Screen
       name="ChallengesDetailsScreen"
       component={ChallengesDetailsScreen}
     />
     <Stack.Screen
       name="ViewChallengDetailsScreen"
       component={ViewChallengDetailsScreen}
-    />
-    <Stack.Screen name="CardioDetailsScreen" component={CardioDetailsScreen} />
-    <Stack.Screen
-      name="NutritionDetailsScreen"
-      component={NutritionDetailsScreen}
     />
     <Stack.Screen name="JoinRequestScreen" component={JoinRequestScreen} />
     <Stack.Screen name="settings" component={Settings} />

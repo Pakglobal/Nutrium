@@ -2,7 +2,7 @@ import React from 'react';
 import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Font} from '../assets/styles/Fonts';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {scale} from 'react-native-size-matters';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
 
 const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
@@ -10,12 +10,12 @@ const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
     switch (type) {
       case 'success':
         return {
-          borderColor: '#26B8872B',
-          backgroundColor: '#26B88789',
-          iconColor: '#21972b',
+          borderColor: 'rgba(107, 203, 119, 0.2)',
+          backgroundColor: 'rgba(107, 203, 119, 0.5)',
+          iconColor: Color.primaryColor,
           textColor: Color?.black,
-          buttonBorder: '#26B887',
-          buttonText: '#26B887',
+          buttonBorder: Color?.primaryColor,
+          buttonText: Color?.primaryColor,
           iconName: 'check',
           title: 'Success!',
         };
@@ -24,7 +24,7 @@ const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
           iconName: 'warning',
           title: 'Warning!',
           borderColor: '#F246462B',
-          backgroundColor: '#F2464650',
+          backgroundColor: 'rgba(242, 70, 70, 1)',
           iconColor: '#F24646',
           textColor: Color?.textColor,
           buttonBorder: '#F24646',
@@ -99,48 +99,45 @@ const styles = StyleSheet.create({
   },
   alertBox: {
     width: '80%',
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 20,
+    backgroundColor: Color.white,
+    borderRadius: moderateScale(15),
+    padding: moderateScale(20),
     alignItems: 'center',
     elevation: 10,
   },
   iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: scale(50),
+    height: verticalScale(50),
+    borderRadius: scale(25),
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: verticalScale(15),
     borderWidth: scale(5),
-    borderRadius: scale(50),
     padding: scale(5),
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    fontFamily: Font?.PoppinsMedium,
+    fontSize: moderateScale(20),
+    marginBottom: verticalScale(5),
+    fontFamily: Font?.PoppinsSemiBold,
   },
   message: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     color: Color?.gray,
     fontFamily: Font?.Poppins,
   },
   button: {
     width: '90%',
-    padding: 12,
-    borderRadius: 30,
+    padding: verticalScale(12),
+    borderRadius: moderateScale(30),
     alignItems: 'center',
     backgroundColor: 'white',
-    borderWidth: 1,
+    borderWidth: scale(1),
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: Font?.PoppinsMedium,
+    fontSize: moderateScale(16),
+    fontFamily: Font?.PoppinsSemiBold,
   },
 });
 

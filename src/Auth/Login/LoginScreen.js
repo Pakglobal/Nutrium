@@ -17,8 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
 
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {loginData, profileData, setToken} from '../../redux/user';
-import {GetAdminProfileData} from '../../Apis/AdminScreenApi/ProfileApi';
+import {loginData, setToken} from '../../redux/user';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
@@ -236,9 +235,6 @@ const LoginScreen = () => {
         closeAlert={() => setAlertVisible(false)}
         onClose={() => {
           setAlertVisible(false);
-          // if (alertType === 'success') {
-          //   navigation.goBack();
-          // }
         }}
       />
 
@@ -427,7 +423,6 @@ const styles = StyleSheet.create({
   forgotText: {
     color: Color?.textColor,
     fontSize: scale(12),
-    fontWeight: '600',
     alignSelf: 'flex-end',
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
@@ -454,12 +449,10 @@ const styles = StyleSheet.create({
   termsText: {
     color: Color.black,
     fontSize: scale(12),
-    fontWeight: '400',
     fontFamily: Font.Poppins,
   },
   buttonText: {
     fontSize: scale(14),
-    fontWeight: '600',
     fontFamily: Font.PoppinsMedium,
     textAlign: 'center',
     letterSpacing: 1,

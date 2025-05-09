@@ -383,10 +383,7 @@ const MeasurementDetail = () => {
 
   return (
     <View style={styles.container}>
-      <Header
-        screenheader={true}
-        screenName={measurementType}
-      />
+      <Header screenheader={true} screenName={measurementType} />
       <View style={{paddingHorizontal: scale(16), flex: 1}}>
         <Text style={styles.lebal}>{measurementType}</Text>
         <View>

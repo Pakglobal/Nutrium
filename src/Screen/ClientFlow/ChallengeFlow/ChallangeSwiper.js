@@ -7,64 +7,112 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {TabView, SceneMap} from 'react-native-tab-view';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import AllChallenges from './AllChallenges';
-import JoinChallenges from './JoinChallenges';
-import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {
   getAllChallenge,
   getAllChallengeJoinDatawithId,
+  getAllChallengePendingRequest,
 } from '../../../Apis/ClientApis/ChallengesApi';
 import {Color} from '../../../assets/styles/Colors';
-import {scale} from 'react-native-size-matters';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {Font} from '../../../assets/styles/Fonts';
+import AllChallenges from './AllChallenges';
+import JoinChallenges from './JoinChallenges';
 import InvitationScreen from './InvitationScreen';
 
-const ChallangeSwiper = () => {
+const ChallengeSwiper = ({onTabChange}) => {
   const [index, setIndex] = useState(0);
   const navigation = useNavigation();
   const [allChallengeData, setAllChallengeData] = useState([]);
   const [allChallengeJoinData, setAllChallengeJoinData] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [loadingAll, setLoadingAll] = useState(false);
   const [loadingJoin, setLoadingJoin] = useState(false);
-  
-  useEffect(() => {
-    if (index === 0 && allChallengeData.length === 0) {
-      fetchChallangeDetails();
-    } else if (index === 1 && allChallengeJoinData.length === 0) {
-      fetchChallangeJoinData();
-    }
-  }, [index]);
+  const [loadingInvitations, setLoadingInvitations] = useState(false);
 
-  const userInfo = useSelector(state => state?.user?.userInfo);
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
-  const [routes] = useState([
-    {key: 'all', title: 'All Challenge'},
-    {key: 'join', title: 'Join Challenge'},
-    {key: 'invitation', title: 'Invitation'},
-  ]);
-
-  const fetchChallangeDetails = async () => {
+  const fetchChallangeDetails = useCallback(async () => {
     setLoadingAll(true);
-    const response = await getAllChallenge(userInfo?.token);
-    setAllChallengeData(response?.success ? response?.challenges : []);
-    setLoadingAll(false);
-  };
+    try {
+      const response = await getAllChallenge(token, id);
+      setAllChallengeData(response?.challenges || response?.challenge || []);
+    } catch (error) {
+      console.error('Error fetching challenges:', error);
+      setAllChallengeData([]);
+    } finally {
+      setLoadingAll(false);
+    }
+  }, []);
 
-  const fetchChallangeJoinData = async () => {
+  const fetchChallangeJoinData = useCallback(async () => {
     setLoadingJoin(true);
-    const response = await getAllChallengeJoinDatawithId(
-      userInfo?.token,
-      userInfo?.userData?._id,
-    );
-    setAllChallengeJoinData(response?.success ? response?.challenges : []);
-    setLoadingJoin(false);
-  };
+    try {
+      const response = await getAllChallengeJoinDatawithId(token, id);
+      setAllChallengeJoinData(
+        response?.success && Array.isArray(response?.challenges)
+          ? response.challenges
+          : [],
+      );
+    } catch (error) {
+      console.error('Error fetching joined challenges:', error);
+      setAllChallengeJoinData([]);
+    } finally {
+      setLoadingJoin(false);
+    }
+  }, []);
+
+  const getJoiningRequest = useCallback(async () => {
+    setLoadingInvitations(true);
+    try {
+      const response = await getAllChallengePendingRequest(token, id);
+      if (response?.success) {
+        setRequests(response?.challenges || []);
+      }
+    } catch (error) {
+      console.error('Error fetching pending requests:', error);
+      setRequests([]);
+    } finally {
+      setLoadingInvitations(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (index === 0) {
+      fetchChallangeDetails();
+    } else if (index === 1) {
+      fetchChallangeJoinData();
+    } else if (index === 2) {
+      getJoiningRequest();
+    }
+  }, [index, fetchChallangeDetails, fetchChallangeJoinData, getJoiningRequest]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (index === 0) {
+        fetchChallangeDetails();
+      } else if (index === 1) {
+        fetchChallangeJoinData();
+      } else if (index === 2) {
+        getJoiningRequest();
+      }
+    }, [
+      index,
+      fetchChallangeDetails,
+      fetchChallangeJoinData,
+      getJoiningRequest,
+    ]),
+  );
+
+  const routes = [
+    {key: 'all', title: 'All Challenges'},
+    {key: 'join', title: 'Joined Challenges'},
+    {key: 'invitation', title: 'Invitations'},
+  ];
 
   const renderScene = SceneMap({
     all: () =>
@@ -72,7 +120,7 @@ const ChallangeSwiper = () => {
         <ActivityIndicator
           size="large"
           color={Color.primaryColor}
-          style={{marginTop: 20}}
+          style={{marginTop: verticalScale(20)}}
         />
       ) : (
         <AllChallenges challenges={allChallengeData} onJoin={handleJoin} />
@@ -82,7 +130,7 @@ const ChallangeSwiper = () => {
         <ActivityIndicator
           size="large"
           color={Color.primaryColor}
-          style={{marginTop: 20}}
+          style={{marginTop: verticalScale(20)}}
         />
       ) : (
         <JoinChallenges
@@ -90,7 +138,16 @@ const ChallangeSwiper = () => {
           onJoin={viewHandleJoinChallenge}
         />
       ),
-    invitation: () => <InvitationScreen />,
+    invitation: () =>
+      loadingInvitations ? (
+        <ActivityIndicator
+          size="large"
+          color={Color.primaryColor}
+          style={{marginTop: verticalScale(20)}}
+        />
+      ) : (
+        <InvitationScreen challenges={requests} setRequests={setRequests} />
+      ),
   });
 
   const handleJoin = challenge => {
@@ -101,13 +158,19 @@ const ChallangeSwiper = () => {
     navigation.navigate('ViewChallengDetailsScreen', {challenge});
   };
 
+  useEffect(() => {
+    if (onTabChange) {
+      onTabChange(routes[index].title);
+    }
+  }, [index, onTabChange]);
+
   const renderTabBar = props => (
-    <View style={{}}>
+    <View>
       <View
         style={{
           flexDirection: 'row',
-          backgroundColor: '#e1f3e1',
-          borderRadius: 12,
+          backgroundColor: Color.challengeBg,
+          borderRadius: moderateScale(12),
           overflow: 'hidden',
           justifyContent: 'space-around',
           padding: scale(6),
@@ -119,19 +182,18 @@ const ChallangeSwiper = () => {
               key={route.key}
               onPress={() => setIndex(i)}
               style={{
-                paddingVertical: 8,
-                paddingHorizontal: 16,
+                padding: scale(8),
                 borderRadius: scale(6),
                 backgroundColor: isSelected
-                  ? Color?.primaryColor
+                  ? Color.primaryColor
                   : 'transparent',
               }}>
               <Text
                 style={{
                   color: isSelected ? Color.white : Color.primaryColor,
                   fontWeight: '500',
-                  fontSize: 14,
-                  fontFamily: Font?.Poppins,
+                  fontSize: moderateScale(13),
+                  fontFamily: Font.Poppins,
                 }}>
                 {route.title}
               </Text>
@@ -149,9 +211,9 @@ const ChallangeSwiper = () => {
       onIndexChange={setIndex}
       initialLayout={{width: Dimensions.get('window').width}}
       renderTabBar={renderTabBar}
-      lazy
+      lazy={false}
     />
   );
 };
 
-export default ChallangeSwiper;
+export default ChallengeSwiper;

@@ -61,7 +61,9 @@ const Header = ({
                   <Logo style={{marginLeft: scale(7)}} />
 
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <TouchableOpacity onPress={handleAward} style={{}}>
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{}}>
                       <FontAwesome5
                         style={IconPadding}
                         name="award"

@@ -301,7 +301,7 @@ const AppointmentCard = ({navigation}) => {
   return (
     <View style={styles.container}>
       {filteredAppointments?.length > 0 ? (
-        <>
+        <View>
           <Carousel
             ref={carouselRef}
             data={filteredAppointments}
@@ -316,7 +316,7 @@ const AppointmentCard = ({navigation}) => {
             keyExtractor={item => item?._id}
           />
           {renderPagination()}
-        </>
+        </View>
       ) : // renderEmptyState()
       null}
 
@@ -390,13 +390,11 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: scale(16),
-    fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font.PoppinsMedium,
   },
   statusText: {
     fontSize: scale(14),
-    fontWeight: '500',
     fontFamily: Font.PoppinsMedium,
     color: Color.primaryColor,
   },
@@ -416,7 +414,6 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: scale(14),
-    fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font.PoppinsMedium,
   },
@@ -424,7 +421,6 @@ const styles = StyleSheet.create({
     fontSize: scale(12),
     color: Color.textColor,
     fontFamily: Font.Poppins,
-    fontWeight: '400',
   },
   confirmButton: {
     backgroundColor: Color.primaryColor,
@@ -435,9 +431,8 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     color: Color.white,
-    fontWeight: '600',
     fontSize: scale(16),
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
   paginationContainer: {
     flexDirection: 'row',
@@ -470,14 +465,13 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: scale(16),
-    fontWeight: '600',
     color: Color.textColor,
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
   closeButton: {
     fontSize: scale(18),
     color: Color.textColor,
-    fontWeight: '600',
+    fontFamily: Font.PoppinsMedium,
   },
   modalDivider: {
     height: 1,
@@ -512,9 +506,8 @@ const styles = StyleSheet.create({
   },
   noAppointmentsTitle: {
     fontSize: scale(18),
-    fontWeight: '600',
     color: Color.textColor,
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
     marginBottom: verticalScale(8),
   },
   noAppointmentsText: {
@@ -533,7 +526,6 @@ const styles = StyleSheet.create({
   bookAppointmentText: {
     color: Color.white,
     fontSize: scale(14),
-    fontWeight: '600',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
 });

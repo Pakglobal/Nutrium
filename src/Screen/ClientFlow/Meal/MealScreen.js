@@ -197,7 +197,7 @@ const MealScreen = () => {
                 No items scheduled for this meal
               </Text>
             ) : (
-              <>
+              <View>
                 {/* Render meal items from all possible properties */}
                 {item.meal?.map((mealItem, i) => (
                   <View key={`meal-${i}`} style={styles.detailItem}>
@@ -230,7 +230,7 @@ const MealScreen = () => {
                     <Text style={styles.detailText}>{item?.displayName}</Text>
                   </View>
                 ))}
-              </>
+              </View>
             )}
 
             <TouchableOpacity

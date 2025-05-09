@@ -90,7 +90,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   selectedText: {
-    fontWeight: '500',
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
     color: Color.textColor,

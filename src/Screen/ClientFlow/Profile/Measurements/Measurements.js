@@ -246,10 +246,7 @@ const Measurements = () => {
 
   return (
     <View style={styles.container}>
-      <Header
-        screenheader={true}
-        screenName={'Measurements'}
-      />
+      <Header screenheader={true} screenName={'Measurements'} />
       {loading ? (
         <ActivityIndicator color={Color?.primaryColor} size={'large'} />
       ) : (

@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontSize: scale(12),
     color: Color.primaryColor,
-    fontWeight: '600',
     marginHorizontal: scale(5),
   },
   description: {

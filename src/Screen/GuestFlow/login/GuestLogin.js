@@ -333,8 +333,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(5),
     paddingHorizontal: scale(8),
     fontSize: scale(14),
-    fontWeight: '500',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
     letterSpacing: 1,
     color: Color.textColor,
   },
@@ -351,11 +350,10 @@ const styles = StyleSheet.create({
   forgotText: {
     color: Color?.textColor,
     fontSize: scale(12),
-    fontWeight: '600',
     marginTop: verticalScale(10),
     alignSelf: 'flex-end',
     letterSpacing: 1,
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
   termsContainer: {
     flexDirection: 'row',
@@ -380,7 +378,6 @@ const styles = StyleSheet.create({
   termsText: {
     color: Color.black,
     fontSize: scale(12),
-    fontWeight: '400',
     fontFamily: Font.Poppins,
   },
   googleButton: {
@@ -402,12 +399,10 @@ const styles = StyleSheet.create({
   googleText: {
     color: Color.primaryColor,
     fontSize: scale(14),
-    fontWeight: '600',
   },
   buttonText: {
     fontSize: scale(16),
-    fontWeight: '600',
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
     textAlign: 'center',
     letterSpacing: 1,
     marginTop: verticalScale(2),
@@ -431,7 +426,6 @@ const styles = StyleSheet.create({
     width: scale(32),
   },
   titleText: {
-    fontWeight: '500',
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
     color: Color.textColor,

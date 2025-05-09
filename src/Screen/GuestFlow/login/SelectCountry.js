@@ -237,7 +237,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   titleText: {
-    fontWeight: '500',
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
     color: Color.textColor,
@@ -292,6 +291,6 @@ const styles = StyleSheet.create({
   countryCode: {
     marginRight: scale(5),
     color: Color.primaryColor,
-    fontWeight: '600',
+    fontFamily: Font.PoppinsMedium,
   },
 });

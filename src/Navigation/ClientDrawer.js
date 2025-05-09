@@ -106,22 +106,6 @@ const ClientDrawerContent = props => {
               dispatch(setToken());
               success = true;
             }
-
-            if (success) {
-              props.navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'AuthStack',
-                    params: {screen: 'loginChoice'},
-                  },
-                ],
-              });
-            } else {
-              Alert.alert('Error', 'Failed to sign out. Please try again.', [
-                {text: 'OK'},
-              ]);
-            }
           } catch (error) {
             console.error('Sign out error:', error);
             Alert.alert('Error', 'Something went wrong. Please try again.', [

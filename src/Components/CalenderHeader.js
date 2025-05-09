@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
   dateTxt: {
     fontSize: scale(14),
     color: Color.primaryColor,
-    fontWeight: '600',
     fontFamily: Font?.PoppinsMedium,
     marginTop: verticalScale(2),
   },

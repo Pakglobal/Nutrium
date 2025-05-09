@@ -27,7 +27,6 @@ const CustomHomeButtonNavigation = ({text, onPress}) => {
                 style={{
                   fontSize: scale(12),
                   color: Color.primaryColor,
-                  fontWeight: '500',
                   fontFamily: Font?.PoppinsSemiBold,
                   marginTop: verticalScale(2),
                   marginLeft: scale(5),

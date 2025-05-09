@@ -30,7 +30,6 @@ import {Font} from '../../../assets/styles/Fonts';
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
 
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -46,9 +45,9 @@ const HomeScreen = () => {
 
   const GetUserApiData = async () => {
     try {
+      console.log('token', token);
       const response = await GetUserApi(token);
       if (response) {
-        setUserData(response?.data);
         dispatch(profileData(response?.data));
       }
     } catch (error) {
@@ -98,19 +97,9 @@ const HomeScreen = () => {
     }
   };
 
-  useEffect(() => {
-    FetchAppointmentData();
-    GetProfileImage();
-    if (tokenId) {
-      GetUserApiData();
-    }
-  }, [token, id]);
-
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    if (tokenId) {
-      GetUserApiData();
-    }
+    GetUserApiData();
     GetProfileImage();
     FetchAppointmentData()
       .then(() => {
@@ -195,7 +184,7 @@ const styles = StyleSheet.create({
   box: {
     width: 150,
     height: 100,
-    backgroundColor: 'white',
+    backgroundColor: Color.white,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,

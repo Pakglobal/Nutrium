@@ -40,10 +40,7 @@ const NewShoppingList = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <TouchableOpacity onPress={() => navigation.navigate('myLists')}>
-        <Header
-          screenheader={true}
-          screenName={'New shopping lists'}
-        />
+        <Header screenheader={true} screenName={'New shopping lists'} />
 
         <View style={{marginHorizontal: scale(16)}}>
           <View style={styles.cardContainer}>

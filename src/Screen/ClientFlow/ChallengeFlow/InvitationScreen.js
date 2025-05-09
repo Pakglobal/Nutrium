@@ -1,198 +1,4 @@
-// import {
-//     StyleSheet,
-//     Text,
-//     View,
-//     FlatList,
-//     TouchableOpacity,
-//     Alert,
-//   } from 'react-native';
-//   import React, {useEffect, useState} from 'react';
-//   import {
-//     challengeAcceptAndRejectedApi,
-//     getAllChallengePendingRequest,
-//   } from '../../../Apis/ClientApis/ChallengesApi';
-//   import {useSelector} from 'react-redux';
-//   import {useNavigation} from '@react-navigation/native';
-//   import moment from 'moment';
-//   import CustomLoader from '../../../Components/CustomLoader';
-
-//   const InvitationScreen = () => {
-//     const userInfo = useSelector(state => state?.user?.userInfo);
-//     const [requests, setRequests] = useState([]);
-//     const [loading, setLoading] = useState(true);
-//     const navigation = useNavigation();
-
-//     useEffect(() => {
-//       GetJoiningRequest();
-//     }, []);
-
-//     const GetJoiningRequest = async () => {
-//       try {
-//         setLoading(true);
-//         const response = await getAllChallengePendingRequest(
-//           userInfo?.token,
-//           userInfo?.userData?._id,
-//         );
-//         if (response?.success) {
-//           setRequests(response?.challenges || []);
-//         }
-//       } catch (error) {
-//         if (error?.response) {
-//           const statusCode = error.response.status;
-//           const message = error.response.data?.message || 'Something went wrong';
-//           Alert.alert(`Error ${statusCode}`, message);
-//         } else {
-//           Alert.alert('Error', 'Network error or server not responding');
-//         }
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     const renderRequest = ({item}) => {
-//       return (
-//         <View style={styles.card}>
-//           <Text style={styles.title}>{item.name}</Text>
-//           <Text style={styles.detail}>
-//             From {item.createdBy?.name || 'Unknown'} {'\n'}
-//             {moment(item.startDate).format('MMM DD, YYYY')}
-//           </Text>
-//           <View style={styles.buttonRow}>
-//             <TouchableOpacity
-//               style={styles.rejectBtn}
-//               onPress={() => handleReject(item._id)}>
-//               <Text style={styles.btnText}>Reject</Text>
-//             </TouchableOpacity>
-//             <TouchableOpacity
-//               style={styles.acceptBtn}
-//               onPress={() => handleAccept(item._id)}>
-//               <Text style={styles.btnText}>Accept</Text>
-//             </TouchableOpacity>
-//           </View>
-//         </View>
-//       );
-//     };
-
-//     const handleAccept = id => {
-//       const action = {
-//         action: 'accepted',
-//       };
-//       aceeptAndRejectAnctionHandle(id, action);
-//     };
-
-//     const handleReject = id => {
-//       const action = {
-//         action: 'rejected',
-//       };
-//       aceeptAndRejectAnctionHandle(id);
-//     };
-
-//     const aceeptAndRejectAnctionHandle = async (id, action) => {
-//       try {
-//         setLoading(true);
-//         const response = await challengeAcceptAndRejectedApi(
-//           userInfo?.token,
-//           id,
-//           userInfo?.userData?._id,
-//           action,
-//         );
-//         if (response?.success) {
-//           Alert.alert('Success', response.message, [
-//             {text: 'OK', onPress: () => navigation.goBack()},
-//           ]);
-//         }
-//       } catch (error) {
-//         if (error?.response) {
-//           const statusCode = error.response.status;
-//           const message = error.response.data?.message || 'Something went wrong';
-//           Alert.alert(`Error ${statusCode}`, message);
-//         } else {
-//           Alert.alert('Error', 'Network error or server not responding');
-//         }
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     if (loading) {
-//       return <CustomLoader />;
-//     }
-
-//     return (
-//       <View style={styles.container}>
-//         <FlatList
-//           data={requests}
-//           keyExtractor={item => item._id}
-//           renderItem={renderRequest}
-//           contentContainerStyle={{paddingBottom: 20}}
-//           ListEmptyComponent={
-//             <Text style={styles.emptyText}>No requests available</Text>
-//           }
-//         />
-//       </View>
-//     );
-//   };
-
-//   export default InvitationScreen;
-
-//   const styles = StyleSheet.create({
-//     container: {
-//       flex: 1,
-//       padding: 16,
-//       backgroundColor: '#F7F7F7',
-//     },
-//     card: {
-//       backgroundColor: '#fff',
-//       borderRadius: 8,
-//       padding: 12,
-//       marginBottom: 10,
-//       shadowColor: '#000',
-//       shadowOpacity: 0.1,
-//       shadowOffset: {width: 0, height: 2},
-//       shadowRadius: 4,
-//       elevation: 2,
-//     },
-//     title: {
-//       fontSize: 16,
-//       fontWeight: 'bold',
-//       color: '#000',
-//       marginBottom: 4,
-//     },
-//     detail: {
-//       fontSize: 14,
-//       color: '#666',
-//       marginBottom: 8,
-//     },
-//     buttonRow: {
-//       flexDirection: 'row',
-//       justifyContent: 'flex-end',
-//     },
-//     acceptBtn: {
-//       backgroundColor: '#4CAF50',
-//       paddingVertical: 6,
-//       paddingHorizontal: 12,
-//       borderRadius: 4,
-//       marginLeft: 8,
-//     },
-//     rejectBtn: {
-//       backgroundColor: '#F44336',
-//       paddingVertical: 6,
-//       paddingHorizontal: 12,
-//       borderRadius: 4,
-//     },
-//     btnText: {
-//       color: '#fff',
-//       fontSize: 14,
-//       fontWeight: '600',
-//     },
-//     emptyText: {
-//       marginTop: 20,
-//       textAlign: 'center',
-//       color: '#888',
-//       fontSize: 16,
-//     },
-//   });
-
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -203,151 +9,195 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
-import CustomLoader from '../../../Components/CustomLoader';
-import {Color} from '../../../assets/styles/Colors';
-import CustomShadow from '../../../Components/CustomShadow';
-import {shadowStyle} from '../../../assets/styles/Shadow';
-import {scale} from 'react-native-size-matters';
 import {GestureHandlerRootView, Swipeable} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
+import {challengeAcceptAndRejectedApi} from '../../../Apis/ClientApis/ChallengesApi';
+import {Color} from '../../../assets/styles/Colors';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {Font} from '../../../assets/styles/Fonts';
+import CustomShadow from '../../../Components/CustomShadow';
+import CustomAlertBox from '../../../Components/CustomAlertBox';
 
-const InvitationScreen = () => {
+const InvitationScreen = ({challenges, setRequests}) => {
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
+
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState('success');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [selectedChallengeId, setSelectedChallengeId] = useState(null);
 
-  const staticRequests = [
-    {
-      _id: '1',
-      name: 'Weekly Challenge',
-      createdBy: {name: 'John Doe'},
-      startDate: '2025-04-24',
-    },
-    {
-      _id: '2',
-      name: 'Fitness Challenge',
-      createdBy: {name: 'Jane Smith'},
-      startDate: '2025-04-23',
-    },
-    {
-      _id: '3',
-      name: 'Fitness Challenge',
-      createdBy: {name: 'Jane Smith'},
-      startDate: '2025-04-23',
-    },
-  ];
-
-  const handleAccept = id => {
-    Alert.alert('Success', `Challenge ${id} accepted!`, [
-      {text: 'OK', onPress: () => console.log('accept')},
-    ]);
+  const handleAccept = async challengeId => {
+    try {
+      setLoading(true);
+      const response = await challengeAcceptAndRejectedApi(
+        token,
+        id,
+        challengeId,
+        {
+          action: 'accepted',
+        },
+      );
+      if (response?.success) {
+        setAlertType('success');
+        setAlertMessage(response.message);
+        setAlertVisible(true);
+        setSelectedChallengeId(challengeId);
+      }
+    } catch (error) {
+      const message =
+        error.response?.data?.message || 'Failed to accept challenge';
+      setAlertType('error');
+      setAlertMessage(message);
+      setAlertVisible(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleReject = id => {
-    Alert.alert('Success', `Challenge ${id} rejected!`, [
-      {text: 'OK', onPress: () => console.log('reject')},
-    ]);
+  const handleReject = async challengeId => {
+    try {
+      setLoading(true);
+      const response = await challengeAcceptAndRejectedApi(
+        token,
+        id,
+        challengeId,
+        {
+          action: 'rejected',
+        },
+      );
+      if (response?.success) {
+        setAlertType('error');
+        setAlertMessage(response.message);
+        setAlertVisible(true);
+        setSelectedChallengeId(challengeId);
+      }
+    } catch (error) {
+      const message =
+        error.response?.data?.message || 'Failed to reject challenge';
+      setAlertType('error');
+      setAlertMessage(message);
+      setAlertVisible(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Get screen width to calculate 10% threshold
   const screenWidth = Dimensions.get('window').width;
-  const swipeThreshold = 0.1; // 10% of screen width
 
-  const renderRightActions = (progress, dragX) => {
+  const renderRightActions = progress => {
     const opacity = progress.interpolate({
-      inputRange: [0, swipeThreshold, swipeThreshold + 0.1], // Start showing at 10% swipe
-      outputRange: [0, 0, 1], // Stay invisible until threshold, then fade in
+      inputRange: [0, 0.3, 0.4],
+      outputRange: [0, 0, 1],
       extrapolate: 'clamp',
     });
 
     return (
-      <Animated.View style={[styles.rightAction, {opacity}]}>
-        <Text style={styles.actionText}>Accept</Text>
-      </Animated.View>
-    );
-  };
-
-  const renderLeftActions = (progress, dragX) => {
-    const opacity = progress.interpolate({
-      inputRange: [0, swipeThreshold, swipeThreshold + 0.1], // Start showing at 10% swipe
-      outputRange: [0, 0, 1], // Stay invisible until threshold, then fade in
-      extrapolate: 'clamp',
-    });
-
-    return (
-      <Animated.View style={[styles.leftAction, {opacity}]}>
+      <Animated.View
+        style={[styles.actionButton, {opacity, backgroundColor: Color.red}]}>
         <Text style={styles.actionText}>Reject</Text>
       </Animated.View>
     );
   };
 
-  const renderRequest = ({item}) => {
+  const renderLeftActions = progress => {
+    const opacity = progress.interpolate({
+      inputRange: [0, 0.3, 0.4],
+      outputRange: [0, 0, 1],
+      extrapolate: 'clamp',
+    });
+
     return (
-      <View style={{marginHorizontal: 5, marginTop: 12}}>
-        <CustomShadow style={shadowStyle} shadowColor={'#000'}>
-          <Swipeable
-            renderRightActions={renderRightActions}
-            renderLeftActions={renderLeftActions}
-            onSwipeableRightOpen={() => handleAccept(item._id)}
-            onSwipeableLeftOpen={() => handleReject(item._id)}
-            friction={2}
-            overshootLeft={false}
-            overshootRight={false}
-            // Optional: Adjust the swipe distance required to trigger the action
-            leftThreshold={screenWidth * swipeThreshold * 2} // Adjust for left swipe
-            rightThreshold={screenWidth * swipeThreshold * 2} // Adjust for right swipe
-          >
-            <View style={styles.card}>
-              <View style={{width: '60%'}}>
-                <Text style={styles.title}>{item.name}</Text>
-                <Text style={styles.detail}>
-                  From {item.createdBy?.name || 'Unknown'} {'\n'}
-                  {moment(item.startDate).format('MMM DD, YYYY')}
-                </Text>
-              </View>
-              <View
-                style={{
-                  width: '40%',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <TouchableOpacity
-                  style={[styles.button, {backgroundColor: '#F44336'}]}
-                  onPress={() => handleReject(item._id)}>
-                  <Text style={styles.btnText}>Reject</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => handleAccept(item._id)}>
-                  <Text style={styles.btnText}>Accept</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Swipeable>
-        </CustomShadow>
-      </View>
+      <Animated.View
+        style={[
+          styles.actionButton,
+          {opacity, backgroundColor: Color.primaryColor},
+        ]}>
+        <Text style={styles.actionText}>Accept</Text>
+      </Animated.View>
     );
   };
 
-  if (loading) {
-    return <CustomLoader />;
-  }
+  const renderRequest = ({item}) => (
+    <CustomShadow color={Color.lightgray}>
+      <Swipeable
+        renderRightActions={renderRightActions}
+        renderLeftActions={renderLeftActions}
+        onSwipeableRightOpen={() => handleReject(item?._id)}
+        onSwipeableLeftOpen={() => handleAccept(item?._id)}
+        friction={2}
+        overshootLeft={false}
+        overshootRight={false}
+        leftThreshold={screenWidth * 0.3}
+        rightThreshold={screenWidth * 0.3}>
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <View style={{width: '55%'}}>
+              <Text style={styles.title} numberOfLines={2}>
+                {item?.name}
+              </Text>
+              <Text style={styles.detail}>
+                From: {item?.createdBy?.fullName || 'Unknown'}
+              </Text>
+              <Text style={styles.detail}>
+                {moment(item.startDate).format('DD MMM YYYY')}
+              </Text>
+            </View>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={[styles.button, {backgroundColor: Color.primaryColor}]}
+                onPress={() => handleAccept(item?._id)}
+                accessibilityRole="button"
+                accessibilityLabel="Accept challenge"
+                disabled={loading}>
+                <Text style={styles.btnText}>Accept</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, {backgroundColor: Color.red}]}
+                onPress={() => handleReject(item?._id)}
+                accessibilityRole="button"
+                accessibilityLabel="Reject challenge"
+                disabled={loading}>
+                <Text style={styles.btnText}>Reject</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Swipeable>
+    </CustomShadow>
+  );
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={styles.container}>
+        <CustomAlertBox
+          visible={alertVisible}
+          type={alertType}
+          message={alertMessage}
+          closeAlert={() => setAlertVisible(false)}
+          onClose={() => {
+            setAlertVisible(false);
+            setRequests(prev =>
+              prev.filter(item => item._id !== selectedChallengeId),
+            );
+            setSelectedChallengeId(null);
+          }}
+        />
         <FlatList
-          data={staticRequests}
+          style={{marginVertical: verticalScale(10)}}
+          data={challenges}
           keyExtractor={item => item._id}
           renderItem={renderRequest}
-          contentContainerStyle={{paddingBottom: 20}}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No requests available</Text>
           }
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={21}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={11}
         />
       </View>
     </GestureHandlerRootView>
@@ -361,65 +211,65 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.white,
   },
-  card: {
-    backgroundColor: Color.white,
-    borderRadius: 8,
-    padding: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 4,
+    fontSize: moderateScale(16),
+    color: Color.textColor,
+    fontFamily: Font.PoppinsMedium,
   },
   detail: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    fontSize: moderateScale(14),
+    color: Color.gray,
+    fontFamily: Font.PoppinsRegular,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '30%',
   },
   button: {
-    backgroundColor: '#4CAF50',
-    borderRadius: scale(6),
-    margin: scale(4),
-    flex: 1,
+    paddingHorizontal: scale(10),
+    borderRadius: moderateScale(8),
+    marginLeft: scale(8),
+    height: verticalScale(28),
     alignItems: 'center',
     justifyContent: 'center',
-    height: 35,
   },
   btnText: {
-    color: '#fff',
-    fontSize: 14,
+    color: Color.white,
     fontWeight: '600',
+    fontSize: moderateScale(14),
+    fontFamily: Font.PoppinsMedium,
   },
   emptyText: {
-    marginTop: 20,
+    marginTop: verticalScale(20),
     textAlign: 'center',
-    color: '#888',
-    fontSize: 16,
+    color: Color.gray,
+    fontSize: moderateScale(16),
+    fontFamily: Font.Poppins,
   },
-  rightAction: {
-    backgroundColor: '#4CAF50',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
+  actionButton: {
     flex: 1,
-    paddingRight: 20,
-    borderTopRightRadius: 8,
-    borderBottomRightRadius: 8,
-  },
-  leftAction: {
-    backgroundColor: '#F44336',
+    borderRadius: moderateScale(11),
+    padding: scale(12),
+    marginHorizontal: scale(3),
+    marginVertical: verticalScale(6),
     justifyContent: 'center',
-    alignItems: 'flex-start',
-    flex: 1,
-    paddingLeft: 20,
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
   },
   actionText: {
-    color: '#fff',
+    color: Color.white,
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: moderateScale(16),
+    fontFamily: Font.PoppinsMedium,
+  },
+  card: {
+    borderRadius: moderateScale(11),
+    padding: scale(8),
+    marginHorizontal: scale(3),
+    marginVertical: verticalScale(6),
+    backgroundColor: Color.white,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });

@@ -68,4 +68,13 @@ const styles = StyleSheet.create({
     bottom: scale(20),
     left: scale(15),
   },
+  discription: {
+    fontSize: scale(14),
+    color: Color.white,
+    fontWeight: '500',
+    position: 'absolute',
+    bottom: scale(20),
+    left: scale(10),
+    fontFamily: Font?.Poppins,
+  },
 });

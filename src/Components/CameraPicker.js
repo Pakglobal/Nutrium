@@ -12,6 +12,7 @@ import {
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {verticalScale, scale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
+import {Font} from '../assets/styles/Fonts';
 
 const CameraPicker = ({visible, onClose, onImageSelect}) => {
   const requestCameraPermission = async () => {
@@ -120,13 +121,13 @@ const styles = StyleSheet.create({
   },
   whiteContainer: {
     width: '65%',
-    backgroundColor: 'white',
+    backgroundColor: Color.white,
     alignItems: 'center',
     paddingVertical: verticalScale(15),
   },
   title: {
     fontSize: scale(14),
-    fontWeight: '700',
+    fontFamily: Font.PoppinsMedium,
     color: Color.txt,
     marginBottom: verticalScale(10),
   },
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   },
   btnTxt: {
     fontSize: scale(14),
-    fontWeight: '600',
+    fontFamily: Font.PoppinsMedium,
     color: Color.gray,
   },
 });

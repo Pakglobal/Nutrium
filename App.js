@@ -51,32 +51,32 @@
 //   };
 
 //   const requestUserPermissionAndroid = async () => {
-    // const authStatusAndroid = await PermissionsAndroid.request(
-    //   PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    // );
-    // console.log('authStatusAndroid', authStatusAndroid);
+// const authStatusAndroid = await PermissionsAndroid.request(
+//   PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+// );
+// console.log('authStatusAndroid', authStatusAndroid);
 
-    // if (authStatusAndroid === PermissionsAndroid.RESULTS.GRANTED) {
-    //   console.log('Permission granted');
-    //   fetchToken();
-    // } else if (authStatusAndroid === PermissionsAndroid.RESULTS.DENIED) {
-    //   console.log('Permission denied but can ask again');
-    // } else if (
-    //   authStatusAndroid === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
-    // ) {
-    //   console.log('Permission denied permanently (never ask again selected)');
-    //   Alert.alert(
-    //     'Notification Permission Required',
-    //     'Please enable notification permissions from settings.',
-    //     [
-    //       {text: 'Cancel', style: 'cancel'},
-    //       {
-    //         text: 'Open Settings',
-    //         onPress: () => Linking.openSettings(),
-    //       },
-    //     ],
-    //   );
-    // }
+// if (authStatusAndroid === PermissionsAndroid.RESULTS.GRANTED) {
+//   console.log('Permission granted');
+//   fetchToken();
+// } else if (authStatusAndroid === PermissionsAndroid.RESULTS.DENIED) {
+//   console.log('Permission denied but can ask again');
+// } else if (
+//   authStatusAndroid === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+// ) {
+//   console.log('Permission denied permanently (never ask again selected)');
+//   Alert.alert(
+//     'Notification Permission Required',
+//     'Please enable notification permissions from settings.',
+//     [
+//       {text: 'Cancel', style: 'cancel'},
+//       {
+//         text: 'Open Settings',
+//         onPress: () => Linking.openSettings(),
+//       },
+//     ],
+//   );
+// }
 //     fetchToken();
 //   };
 
@@ -297,21 +297,51 @@ const AppContent = () => {
     });
   };
 
+  // const onDisplayNotification = async remoteMessage => {
+  //   try {
+  //     const channelId = await notifee.createChannel({
+  //       id: 'default',
+  //       name: 'Default Channel',
+  //     });
+
+  //     await notifee.displayNotification({
+  //       title: remoteMessage.notification?.title || 'New Notification',
+  //       body: remoteMessage.notification?.body || 'You have a new notification',
+  //       android: {
+  //         channelId,
+  //         pressAction: {
+  //           id: 'default',
+  //         },
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error('Error displaying notification:', error);
+  //   }
+  // };
+
   const onDisplayNotification = async remoteMessage => {
     try {
+      if (!remoteMessage || !remoteMessage.notification) {
+        console.warn('Invalid or missing notification data:', remoteMessage);
+        return;
+      }
+
       const channelId = await notifee.createChannel({
         id: 'default',
         name: 'Default Channel',
       });
 
       await notifee.displayNotification({
-        title: remoteMessage.notification?.title || 'New Notification',
-        body: remoteMessage.notification?.body || 'You have a new notification',
+        title: remoteMessage.notification.title || 'New Notification',
+        body: remoteMessage.notification.body || 'You have a new notification',
         android: {
           channelId,
           pressAction: {
             id: 'default',
           },
+        },
+        ios: {
+          // Add iOS-specific configuration if needed
         },
       });
     } catch (error) {
@@ -320,6 +350,16 @@ const AppContent = () => {
   };
 
   useEffect(() => {
+    const initializeNotifee = async () => {
+      try {
+        await notifee.requestPermission();
+        console.log('Notifee initialized');
+      } catch (error) {
+        console.error('Error initializing Notifee:', error);
+      }
+    };
+    initializeNotifee();
+
     if (Platform.OS === 'android') {
       requestUserPermissionAndroid();
     } else if (Platform.OS === 'ios') {
@@ -327,12 +367,21 @@ const AppContent = () => {
     }
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('Foreground message received:', remoteMessage);
-      onDisplayNotification(remoteMessage);
+      if (remoteMessage) {
+        console.log('Foreground message received:', remoteMessage);
+        await onDisplayNotification(remoteMessage);
+      } else {
+        console.warn('Received empty foreground message');
+      }
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Background message received:', remoteMessage);
+      if (remoteMessage) {
+        console.log('Background message received:', remoteMessage);
+        await onDisplayNotification(remoteMessage);
+      } else {
+        console.warn('Received empty background message');
+      }
     });
 
     return () => {
@@ -361,8 +410,6 @@ const App = () => {
 };
 
 export default App;
-
-
 
 // import {Alert, PermissionsAndroid, StyleSheet} from 'react-native';
 // import React, { useEffect } from 'react';

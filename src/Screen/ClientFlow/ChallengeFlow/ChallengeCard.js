@@ -3,9 +3,9 @@ import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import moment from 'moment';
 import {Font} from '../../../assets/styles/Fonts';
 import {Color} from '../../../assets/styles/Colors';
-import {Scale} from 'lucide-react';
 import {shadowStyle} from '../../../assets/styles/Shadow';
 import CustomShadow from '../../../Components/CustomShadow';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 
 const ChallengeCard = ({challenge, onJoin, btnType}) => {
   const {name, description, startDate, endDate, participants = []} = challenge;
@@ -42,7 +42,7 @@ const ChallengeCard = ({challenge, onJoin, btnType}) => {
               />
             ))}
             <Text style={[styles.description, {marginLeft: 8}]}>
-              +{participants.length} joined
+              {participants.length} joined
             </Text>
           </View>
 
@@ -65,62 +65,55 @@ const ChallengeCard = ({challenge, onJoin, btnType}) => {
 
 const styles = StyleSheet.create({
   card: {
-    // borderWidth: 1,
-    // borderColor: '#4CAF50',
-    borderRadius: 12,
-    padding: 15,
-    margin: 10,
-    backgroundColor: '#fff',
-    shadowColor: '#ccc',
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    shadowOffset: {width: 0, height: 2},
-    elevation: 3,
+    borderRadius: moderateScale(11),
+    padding: scale(12),
+    marginHorizontal: scale(3),
+    marginVertical: verticalScale(6),
+    backgroundColor: Color.white,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E8F5E9',
+    width: scale(40),
+    height: scale(40),
+    borderRadius: moderateScale(10),
+    backgroundColor: Color.challengeBg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: scale(12),
   },
   icon: {
-    fontSize: 20,
+    fontSize: moderateScale(19),
   },
   title: {
     fontWeight: '600',
-    fontSize: 14,
-    // marginBottom: 1,
-    fontFamily: Font?.PoppinsSemiBold,
+    fontSize: moderateScale(14),
+    fontFamily: Font?.PoppinsMedium,
     color: Color?.primaryColor,
   },
   description: {
-    color: '#575252',
-    fontSize: 12,
+    color: '#7D7979',
+    fontSize: moderateScale(12),
     fontFamily: Font?.Poppins,
     fontWeight: '400',
   },
   daysBox: {
-    backgroundColor: '#E8F5E9',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    marginTop: -15,
+    backgroundColor: Color.challengeBg,
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(12),
+    borderRadius: moderateScale(20),
+    marginTop: verticalScale(-15),
   },
   daysText: {
     fontWeight: '600',
     color: '#2E7D32',
-    fontSize: 12,
+    fontSize: moderateScale(11),
     fontFamily: Font?.Poppins,
   },
   bottomRow: {
-    marginTop: 14,
+    marginTop: verticalScale(14),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -130,21 +123,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: scale(24),
+    height: scale(24),
+    borderRadius: moderateScale(12),
     borderWidth: 1,
     borderColor: '#fff',
   },
   joinButton: {
-    // paddingHorizontal: 5,
     borderBottomWidth: 1,
     borderBottomColor: Color.primaryColor,
   },
   joinButtonText: {
     color: Color?.primaryColor,
     fontWeight: '500',
-    fontSize: 14,
+    fontSize: moderateScale(13),
     fontFamily: Font?.PoppinsSemiBold,
   },
 });

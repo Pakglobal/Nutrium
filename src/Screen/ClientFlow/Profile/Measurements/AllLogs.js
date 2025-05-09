@@ -64,10 +64,7 @@ const AllLogs = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <Header
-        screenheader={true}
-        screenName={measurementType}
-      />
+      <Header screenheader={true} screenName={measurementType} />
 
       <View style={{marginHorizontal: scale(16)}}>
         <Text style={styles.lebal}>{'All logs'}</Text>

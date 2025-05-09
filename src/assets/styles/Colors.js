@@ -18,4 +18,5 @@ export const Color = {
   red: '#E04141',
   dateText: '#5C5959',
   lightText: '505253',
+  challengeBg: '#E8F5E9',
 };

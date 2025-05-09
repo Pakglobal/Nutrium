@@ -11,11 +11,10 @@ import {
 } from 'react-native';
 import {SwiperFlatList, Pagination} from 'react-native-swiper-flatlist';
 import ChallengeCardBanner from '../../../Components/ChallengeCardBanner';
-import {scale} from 'react-native-size-matters';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {Font} from '../../../assets/styles/Fonts';
 import ChallengeCard from './ChallengeCard';
 import {useNavigation} from '@react-navigation/native';
-import CustomLoader from '../../../Components/CustomLoader';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Color} from '../../../assets/styles/Colors';
 
@@ -42,6 +41,7 @@ const CustomPagination = ({paginationIndex, data}) => {
     </View>
   );
 };
+
 const AllChallenges = ({challenges, onJoin}) => {
   const swiperRef = useRef(null);
   const navigation = useNavigation();
@@ -64,15 +64,17 @@ const AllChallenges = ({challenges, onJoin}) => {
   }, [topChallenges]);
 
   const handleNavigateCardio = () => {
-    navigation.navigate('CardioDetailsScreen', {
+    navigation.navigate('CardioNutritionDetails', {
       challenges: cardioChallenges,
+      headerName: 'Cardio Challenges',
       onJoin,
     });
   };
 
   const handleNavigateNutrition = () => {
-    navigation.navigate('NutritionDetailsScreen', {
+    navigation.navigate('CardioNutritionDetails', {
       challenges: nutritionChallenges,
+      headerName: 'Nutrition Challenges',
       onJoin,
     });
   };
@@ -92,27 +94,29 @@ const AllChallenges = ({challenges, onJoin}) => {
         <View style={styles.containerText}>
           <Text style={styles.text}>All Challenges</Text>
         </View>
-        <SwiperFlatList
-          data={topChallenges}
-          renderItem={renderSwiperItem}
-          keyExtractor={item => item._id}
-          showPagination
-          PaginationComponent={props => (
-            <CustomPagination {...props} data={topChallenges} />
-          )}
-          snapToAlignment="center"
-          snapToInterval={CARD_WIDTH + SPACING}
-          decelerationRate="fast"
-          disableIntervalMomentum
-          showsHorizontalScrollIndicator={false}
-          ref={swiperRef}
-          initialScrollIndex={0}
-          getItemLayout={(data, index) => ({
-            length: CARD_WIDTH + SPACING,
-            offset: (CARD_WIDTH + SPACING) * index,
-            index,
-          })}
-        />
+        {topChallenges.length > 0 && (
+          <SwiperFlatList
+            data={topChallenges}
+            renderItem={renderSwiperItem}
+            keyExtractor={item => item._id}
+            showPagination
+            PaginationComponent={props => (
+              <CustomPagination {...props} data={topChallenges} />
+            )}
+            snapToAlignment="center"
+            snapToInterval={CARD_WIDTH + SPACING}
+            decelerationRate="fast"
+            disableIntervalMomentum
+            showsHorizontalScrollIndicator={false}
+            ref={swiperRef}
+            initialScrollIndex={0}
+            getItemLayout={(data, index) => ({
+              length: CARD_WIDTH + SPACING,
+              offset: (CARD_WIDTH + SPACING) * index,
+              index,
+            })}
+          />
+        )}
 
         <View style={styles.categoriesContainer}>
           <TouchableOpacity
@@ -147,12 +151,8 @@ const AllChallenges = ({challenges, onJoin}) => {
         </View>
 
         {remainingChallenges.length > 0 && (
-          <>
-            <View
-              style={[
-                styles.containerText,
-                {paddingVertical: 20, marginBottom: scale(-10)},
-              ]}>
+          <View>
+            <View style={[styles.containerText]}>
               <Text style={styles.text}>Popular Challenges</Text>
             </View>
             <FlatList
@@ -167,8 +167,9 @@ const AllChallenges = ({challenges, onJoin}) => {
                   btnType="Join"
                 />
               )}
+              style={{marginBottom: verticalScale(5)}}
             />
-          </>
+          </View>
         )}
       </ScrollView>
     </View>
@@ -180,23 +181,21 @@ export default AllChallenges;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 10,
-  },
-  scrollContent: {
-    paddingBottom: 20,
+    backgroundColor: Color.white,
   },
   containerText: {
-    backgroundColor: 'white',
-    padding: 12,
-    marginBottom: 8,
+    backgroundColor: Color.white,
+    paddingHorizontal: scale(5),
+    marginVertical: verticalScale(15),
   },
   text: {
-    fontSize: 18,
+    fontSize: moderateScale(17),
     color: Color?.textColor,
     fontFamily: Font?.PoppinsMedium,
+    marginBottom: verticalScale(-5),
   },
   swiperWrapper: {
-    height: CARD_HEIGHT + 40,
+    height: verticalScale(CARD_HEIGHT + 40),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -214,63 +213,61 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
-    height: 10,
+    marginVertical: verticalScale(10),
+    height: verticalScale(10),
   },
   dot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    marginHorizontal: 4,
-    backgroundColor: '#C4C4C4',
+    height: scale(8),
+    width: scale(8),
+    borderRadius: moderateScale(3),
+    marginHorizontal: scale(3),
   },
   activeDot: {
-    width: 20,
-    backgroundColor: '#21972B',
+    width: scale(20),
+    backgroundColor: Color.primaryColor,
   },
   inactiveDot: {
-    width: 8,
-    backgroundColor: '#C4C4C4',
+    width: scale(7),
+    backgroundColor: Color.lightgray,
   },
   categoriesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: scale(10),
-    marginTop: 16,
-    marginBottom: 16,
+    paddingHorizontal: scale(3),
+    marginTop: verticalScale(10),
   },
   categoryCard: {
     backgroundColor: '#AEF5B4',
-    borderRadius: 12,
-    paddingVertical: 20,
+    borderRadius: moderateScale(12),
+    paddingVertical: verticalScale(12),
     alignItems: 'center',
-    width: scale(148),
+    width: '48%',
   },
   iconWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: scale(40),
+    height: scale(40),
+    borderRadius: moderateScale(20),
     backgroundColor: '#CEF9D1',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
   },
   iconText: {
-    fontSize: 20,
+    fontSize: moderateScale(19),
   },
   categoryTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(15),
     fontWeight: '600',
-    color: '#1A3E1A',
+    color: '#424542',
     fontFamily: Font?.Poppins,
+    marginTop: verticalScale(3),
   },
   categoryCount: {
-    fontSize: 12,
-    color: '#1A3E1A',
-    marginTop: 4,
+    fontSize: moderateScale(11),
+    color: '#727472',
+    marginTop: verticalScale(1),
     fontFamily: Font?.Poppins,
   },
   flatListContent: {
-    paddingHorizontal: 10,
+    paddingHorizontal: scale(9),
   },
 });

@@ -11,6 +11,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
@@ -22,8 +24,10 @@ import CustomShadow from '../../../Components/CustomShadow';
 import {shadowStyle} from '../../../assets/styles/Shadow';
 
 const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+
   const [friends, setFriends] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,11 +36,13 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
   const [loading, setLoading] = useState(false);
 
   const LIMIT = 25;
+
   const fetchFriends = async (search = '', pageNo = 1) => {
     if (loading) return;
     setLoading(true);
     try {
       const res = await getAllUser(token, pageNo, LIMIT, search);
+      console.log('token-=-=-=', token);
       const newFriends = res?.data || [];
 
       if (pageNo === 1) {
@@ -47,7 +53,7 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
 
       setHasMore(newFriends.length === LIMIT);
     } catch (err) {
-      console.log('Error fetching friends:', err);
+      console.error('Error fetching friends:', err);
     } finally {
       setLoading(false);
     }
@@ -119,7 +125,9 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.modalContent}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={styles.modalContent}>
               <View style={styles.header}>
                 <View style={{flex: 1}}>
                   <Text style={styles.title}>Invite</Text>
@@ -128,18 +136,6 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
                   <Ionicons name="close" size={24} color={Color?.white} />
                 </TouchableOpacity>
               </View>
-              {/* <CustomShadow style={shadowStyle} >
-                                <View>
-                                    <Ionicons name='search' />
-                                    <TextInput
-                                        style={styles.searchInput}
-                                        placeholder="Search "
-                                        value={searchQuery}
-                                        onChangeText={setSearchQuery}
-                                        fontFamily={Font?.Poppins}
-                                    />
-                                </View>
-                            </CustomShadow> */}
               <CustomShadow
                 style={shadowStyle}
                 radius={1}
@@ -181,6 +177,7 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
 
               <TouchableOpacity
                 style={styles.inviteButton}
+                disabled={selectedFriends.length === 0}
                 onPress={() => {
                   onInvite(selectedFriends);
                 }}>
@@ -191,7 +188,7 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
                     : ''}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </KeyboardAvoidingView>
           </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
@@ -209,9 +206,8 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: '#fff',
     width: '90%',
-    height: '70%',
+    height: scale(500), // Fixed height for the modal
     borderRadius: scale(15),
-    // padding: 10,
     elevation: 5,
   },
   header: {
@@ -221,7 +217,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: scale(15),
     borderTopLeftRadius: scale(15),
     justifyContent: 'space-between',
-    flexDirection: 'row',
     paddingHorizontal: scale(15),
   },
   title: {
@@ -229,13 +224,22 @@ const styles = StyleSheet.create({
     color: Color?.white,
     fontFamily: Font?.PoppinsMedium,
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: scale(10),
+    paddingHorizontal: scale(10),
+    margin: scale(10),
+  },
+  searchIcon: {
+    marginRight: scale(8),
+  },
   searchInput: {
-    backgroundColor: Color?.gray,
-    borderRadius: 5,
-    marginBottom: 10,
-    width: '90%',
-    alignSelf: 'center',
-    padding: scale(5),
+    flex: 1,
+    height: scale(40),
+    fontSize: scale(14),
+    color: '#000',
   },
   friendItem: {
     flexDirection: 'row',
@@ -275,27 +279,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: scale(10),
-    paddingHorizontal: scale(10),
-    margin: scale(10),
-    // borderWidth: 1,
-    // borderColor: Color.primaryColor,
-  },
-
-  searchIcon: {
-    marginRight: scale(8),
-  },
-
-  searchInput: {
-    flex: 1,
-    height: scale(40),
-    fontSize: scale(14),
-    color: '#000',
   },
 });
 

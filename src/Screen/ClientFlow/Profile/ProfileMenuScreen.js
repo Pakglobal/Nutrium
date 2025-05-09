@@ -42,11 +42,6 @@ const ProfileMenuScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const getToken = useSelector(state => state?.user?.userInfo);
-  const token = getToken?.token;
-  const profileData = getToken?.user || getToken?.userData;
-  const id = getToken?.user?._id || getToken?.userData?._id;
-
   const demoClient = useSelector(state => state?.user?.guestToken?.demoClient);
   const guestData = useSelector(state => state.user?.guestUserData?.userData);
 

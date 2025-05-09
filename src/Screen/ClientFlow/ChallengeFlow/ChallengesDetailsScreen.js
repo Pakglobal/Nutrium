@@ -5,12 +5,11 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   SafeAreaView,
   ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {joinPublicChallenge} from '../../../Apis/ClientApis/ChallengesApi';
 import {useSelector} from 'react-redux';
@@ -20,14 +19,22 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomShadow from '../../../Components/CustomShadow';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {shadowStyle} from '../../../assets/styles/Shadow';
+import CustomAlertBox from '../../../Components/CustomAlertBox';
 
 const ChallengesDetailsScreen = ({route}) => {
   const navigation = useNavigation();
   const {challenge} = route.params;
-  const userInfo = useSelector(state => state?.user?.userInfo);
+
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
   const [loading, setLoading] = useState(false);
   const [isPublic, setIsPublic] = useState(true);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState('success');
+  const [alertMessage, setAlertMessage] = useState('');
 
   const formatDate = dateString => {
     const date = new Date(dateString);
@@ -39,30 +46,27 @@ const ChallengesDetailsScreen = ({route}) => {
 
   const formattedStartDate = formatDate(challenge?.startDate);
   const formattedEndDate = formatDate(challenge?.endDate);
+  console.log('challenge?._id', challenge?._id);
 
-  const handleJoinChllange = async () => {
+  const handleJoinChallenge = async () => {
     setLoading(true);
     try {
-      const response = await joinPublicChallenge(
-        userInfo?.token,
-        userInfo?.userData?._id,
-        challenge?._id,
-      );
+      const response = await joinPublicChallenge(token, id, challenge?._id);
       if (response?.message) {
-        Alert.alert('Success', response.message, [
-          {text: 'OK', onPress: () => navigation.goBack()},
-        ]);
+        setAlertType('success');
+        setAlertMessage(response.message);
+        setAlertVisible(true);
       }
     } catch (error) {
-      console.error('Join Challenge Error:', error);
-
       if (error?.response) {
-        const statusCode = error.response.status;
         const message = error.response.data?.message || 'Something went wrong';
-
-        Alert.alert(`Opps`, message);
+        setAlertType('error');
+        setAlertMessage(message);
+        setAlertVisible(true);
       } else {
-        Alert.alert('Error', 'Network error or server not responding');
+        setAlertType('error');
+        setAlertMessage('Network error or server not responding');
+        setAlertVisible(true);
       }
     } finally {
       setLoading(false);
@@ -77,6 +81,18 @@ const ChallengesDetailsScreen = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomAlertBox
+        visible={alertVisible}
+        type={alertType}
+        message={alertMessage}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => {
+          setAlertVisible(false);
+          if (alertType === 'success') {
+            navigation.goBack();
+          }
+        }}
+      />
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -103,41 +119,81 @@ const ChallengesDetailsScreen = ({route}) => {
           <Text style={styles.headerTitle}>Step Challenge</Text>
         </View>
       </View>
+
       <View style={styles.bottomContainer}>
         <ScrollView contentContainerStyle={styles.innerContainer}>
-          <View style={styles.row}>
-            <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
-              <View style={styles.card}>
-                <View style={{flexDirection: 'row'}}>
-                  <MaterialCommunityIcons
-                    name="calendar"
-                    size={20}
-                    color={Color.textColor}
-                    style={{alignSelf: 'center'}}
-                  />
-                  <Text style={styles.cardText}>Start Date</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginVertical: verticalScale(7),
+            }}>
+            <View style={{width: '48%'}}>
+              <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
+                <View
+                  style={{
+                    backgroundColor: Color.white,
+                    padding: scale(5),
+                    borderRadius: scale(6),
+                  }}>
+                  <View
+                    style={{
+                      backgroundColor: Color?.white,
+                      borderRadius: scale(5),
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginLeft: scale(5),
+                    }}>
+                    <MaterialCommunityIcons
+                      name="calendar"
+                      size={20}
+                      color={Color.textColor}
+                      style={{alignSelf: 'center', marginRight: scale(5)}}
+                    />
+                    <Text style={styles.boxText}>Start Date</Text>
+                  </View>
+                  <Text style={[styles.boxText, {marginLeft: scale(5)}]}>
+                    {formattedStartDate}
+                  </Text>
                 </View>
-                <Text style={styles.cardSubText}>{formattedStartDate}</Text>
-              </View>
-            </CustomShadow>
-            <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
-              <View style={styles.card}>
-                <View style={{flexDirection: 'row'}}>
-                  <MaterialCommunityIcons
-                    name="calendar"
-                    size={20}
-                    color={Color.textColor}
-                    style={{alignSelf: 'center'}}
-                  />
-                  <Text style={styles.cardText}>End Date</Text>
+              </CustomShadow>
+            </View>
+
+            <View style={{width: '48%'}}>
+              <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
+                <View
+                  style={{
+                    backgroundColor: Color.white,
+                    padding: scale(5),
+                    borderRadius: scale(6),
+                  }}>
+                  <View
+                    style={{
+                      backgroundColor: Color?.white,
+                      borderRadius: scale(5),
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginLeft: scale(5),
+                    }}>
+                    <MaterialCommunityIcons
+                      name="calendar"
+                      size={20}
+                      color={Color.textColor}
+                      style={{alignSelf: 'center', marginRight: scale(5)}}
+                    />
+                    <Text style={styles.boxText}>End Date</Text>
+                  </View>
+                  <Text style={[styles.boxText, {marginLeft: scale(5)}]}>
+                    {formattedEndDate}
+                  </Text>
                 </View>
-                <Text style={styles.cardSubText}>{formattedEndDate}</Text>
-              </View>
-            </CustomShadow>
+              </CustomShadow>
+            </View>
           </View>
 
           <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
-            <View style={styles.goalCard}>
+            <View style={styles.cardContainer}>
               <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
                 <View
                   style={{
@@ -152,17 +208,15 @@ const ChallengesDetailsScreen = ({route}) => {
                   />
                 </View>
               </CustomShadow>
-              <View>
-                <Text style={styles.goalTitle}>Goal</Text>
-                <Text style={styles.goalSubtitle}>
-                  {challenge?.targetValue}
-                </Text>
+              <View style={{marginLeft: scale(10)}}>
+                <Text style={styles.boxText}>Goal</Text>
+                <Text style={styles.boxText}>{challenge?.targetValue}</Text>
               </View>
             </View>
           </CustomShadow>
 
           <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
-            <View style={styles.goalCard}>
+            <View style={styles.cardContainer}>
               <CustomShadow radius={1} style={shadowStyle} color={Color?.gray}>
                 <View
                   style={{
@@ -177,53 +231,38 @@ const ChallengesDetailsScreen = ({route}) => {
                   />
                 </View>
               </CustomShadow>
-              <View>
-                <Text style={styles.goalTitle}>Reward</Text>
-                <Text style={styles.goalSubtitle}>{challenge?.coinReward}</Text>
+              <View style={{marginLeft: scale(10)}}>
+                <Text style={styles.boxText}>Reward</Text>
+                <Text style={styles.boxText}>{challenge?.coinReward}</Text>
               </View>
             </View>
           </CustomShadow>
-          <View style={styles.radioGroup}>
-            <Text style={styles.nameText}>Privacy :</Text>
-            <TouchableOpacity style={styles.radioContainer}>
-              <View
-                style={[
-                  styles.radioCircle,
-                  {borderColor: isPublic ? Color.primaryColor : Color.gray},
-                ]}>
-                {isPublic && (
-                  <View
-                    style={[
-                      styles.selectedRb,
-                      {backgroundColor: Color.primaryColor},
-                    ]}
-                  />
-                )}
-              </View>
-              <Text style={styles.nameText}>Public</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={styles.radioContainer}>
-              <View
-                style={[
-                  styles.radioCircle,
-                  {borderColor: !isPublic ? Color.primaryColor : Color.gray},
-                ]}>
-                {!isPublic && (
-                  <View
-                    style={[
-                      styles.selectedRb,
-                      {backgroundColor: Color.primaryColor},
-                    ]}
-                  />
-                )}
-              </View>
-              <Text style={styles.nameText}>Private</Text>
-            </TouchableOpacity>
+          <View style={styles.radioGroup}>
+            <Text style={styles.radioText}>Privacy :</Text>
+            <View style={styles.radioContainer}>
+              <MaterialCommunityIcons
+                name={isPublic ? 'radiobox-marked' : 'radiobox-blank'}
+                color={isPublic ? Color.primaryColor : Color.gray}
+                size={scale(20)}
+                style={{marginHorizontal: scale(5)}}
+              />
+              <Text style={styles.radioText}>Public</Text>
+            </View>
+
+            <View style={styles.radioContainer}>
+              <MaterialCommunityIcons
+                name={!isPublic ? 'radiobox-marked' : 'radiobox-blank'}
+                color={!isPublic ? Color.primaryColor : Color.gray}
+                size={scale(20)}
+                style={{marginHorizontal: scale(5)}}
+              />
+              <Text style={styles.radioText}>Private</Text>
+            </View>
           </View>
 
-          <View style={{marginTop: scale(20)}}>
-            <Text style={styles.progresText}>
+          <View>
+            <Text style={styles.boxText}>
               Joined: {challenge?.participants?.length || 0} /{' '}
               {challenge?.participationLimit || 0}
             </Text>
@@ -251,7 +290,7 @@ const ChallengesDetailsScreen = ({route}) => {
               />
             </View>
 
-            <Text style={styles.progresText}>
+            <Text style={styles.boxText}>
               Remaining:{' '}
               {Math.max(
                 (challenge?.participationLimit || 0) -
@@ -264,18 +303,22 @@ const ChallengesDetailsScreen = ({route}) => {
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={styles.cancelButton}
+              style={[styles.button, {borderWidth: 1, height: 41}]}
               onPress={() => navigation.goBack()}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.joinButton}
-              onPress={handleJoinChllange}
-              disabled={loading}>
+              style={[
+                styles.button,
+                {backgroundColor: Color.primaryColor, marginTop: scale(10)},
+              ]}
+              onPress={handleJoinChallenge}>
               {loading ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text style={styles.buttonText}>Join Challenge</Text>
+                <Text style={[styles.buttonText, {color: Color.white}]}>
+                  Join Challenge
+                </Text>
               )}
             </TouchableOpacity>
           </View>
@@ -297,19 +340,18 @@ const styles = StyleSheet.create({
     height: '30%',
   },
   backButton: {
-    height: scale(25),
-    width: scale(25),
+    padding: scale(5),
     margin: scale(10),
     justifyContent: 'center',
+    alignSelf: 'flex-start',
   },
   headerContent: {
     alignItems: 'center',
-    // marginTop: scale(5),
   },
   headerTitle: {
     color: Color.white,
-    fontSize: scale(20),
-    marginTop: scale(8),
+    fontSize: moderateScale(20),
+    marginTop: verticalScale(8),
     fontFamily: Font?.PoppinsMedium,
   },
   bottomContainer: {
@@ -317,122 +359,61 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopEndRadius: scale(40),
     borderTopStartRadius: scale(40),
-    marginTop: scale(-40),
+    marginTop: verticalScale(-40),
     overflow: 'hidden',
   },
   innerContainer: {
-    padding: scale(15),
-    marginTop: scale(15),
+    paddingHorizontal: scale(8),
+    marginTop: verticalScale(20),
     flex: 1,
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  card: {
-    backgroundColor: Color.white,
-    width: scale(150),
-    padding: scale(8),
-    borderRadius: scale(8),
-  },
-  cardText: {
-    fontSize: scale(12),
-    color: Color.dateText,
-    left: scale(5),
-    fontFamily: Font?.Poppins,
-  },
-  cardSubText: {
-    fontSize: scale(10),
-    color: Color.gray,
-    marginTop: scale(2),
-    fontFamily: Font?.Poppins,
-    fontSize: scale(12),
-  },
-  goalCard: {
+  cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Color.white,
-    padding: scale(10),
+    padding: scale(8),
     borderRadius: scale(8),
-    marginTop: scale(15),
+    marginVertical: verticalScale(7),
   },
-  goalTitle: {
-    fontSize: scale(14),
-    marginLeft: scale(10),
-    color: Color?.dateText,
-    fontFamily: Font?.Poppins,
-  },
-  goalSubtitle: {
-    fontSize: scale(12),
-    color: Color.grey,
-    marginLeft: scale(10),
+  boxText: {
+    fontSize: moderateScale(13),
     color: Color?.dateText,
     fontFamily: Font?.Poppins,
   },
   radioGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: scale(8),
-    marginTop: scale(15),
+    marginBottom: scale(10),
     paddingHorizontal: scale(4),
+    marginTop: verticalScale(10),
+    gap: scale(20),
   },
   radioContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  radioCircle: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#444',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  selectedRb: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Color?.primaryColor,
+  radioText: {
+    fontFamily: Font?.Poppins,
+    color: Color.textColor,
+    fontSize: moderateScale(14),
+    marginTop: verticalScale(2),
   },
   buttonContainer: {
     position: 'absolute',
     width: '100%',
     alignSelf: 'center',
-    bottom: scale(30),
+    bottom: verticalScale(20),
   },
-  cancelButton: {
-    borderWidth: 1,
+  button: {
     borderColor: Color.red,
-    padding: scale(8),
     borderRadius: scale(6),
     alignItems: 'center',
+    justifyContent: 'center',
+    height: scale(43),
   },
-  cancelText: {
+  buttonText: {
     color: Color.red,
-    fontSize: scale(14),
-    fontWeight: 'bold',
-  },
-  joinButton: {
-    backgroundColor: Color.primaryColor,
-    padding: scale(8),
-    borderRadius: scale(6),
-    alignItems: 'center',
-    marginTop: scale(10),
-  },
-  joinText: {
-    color: Color.white,
-    fontSize: scale(14),
-    fontWeight: 'bold',
-  },
-  nameText: {
-    fontFamily: Font?.Poppins,
-    color: Color?.textColor,
-    alignSelf: 'center',
-  },
-  progresText: {
-    color: Color?.dateText,
+    fontSize: moderateScale(14),
     fontFamily: Font?.Poppins,
   },
 });

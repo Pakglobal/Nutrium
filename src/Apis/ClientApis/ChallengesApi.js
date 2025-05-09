@@ -13,9 +13,9 @@ import {
   LEADERBOARD_DATA,
 } from '../AllAPI/API';
 
-export const getAllChallenge = async token => {
+export const getAllChallenge = async (token, id) => {
   try {
-    const url = GET_ALL_CHALLENGE;
+    const url = `${GET_ALL_CHALLENGE}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -23,9 +23,10 @@ export const getAllChallenge = async token => {
     });
     return response?.data;
   } catch (error) {
-    console.error('Error fetching challenge range', error);
+    console.error('Error fetching get all challenges', error);
   }
 };
+
 export const getAllChallengeJoinDatawithId = async (token, userId) => {
   try {
     const url = `${GET_CHALLENGE_DATA_WITHID}/${userId}`;
@@ -39,6 +40,7 @@ export const getAllChallengeJoinDatawithId = async (token, userId) => {
     throw error;
   }
 };
+
 export const getAllChallengePendingRequest = async (token, userId) => {
   try {
     const url = `${GET_CHALLENGE_PENDING_REQUEST}/${userId}`;
@@ -55,8 +57,8 @@ export const getAllChallengePendingRequest = async (token, userId) => {
 
 export const challengeAcceptAndRejectedApi = async (
   token,
-  challengeId,
   userId,
+  challengeId,
   action,
 ) => {
   try {
@@ -72,9 +74,10 @@ export const challengeAcceptAndRejectedApi = async (
   }
 };
 
-export const getChallengeLederBoardData = async (token, chllangeId) => {
+export const getChallengeLederBoardData = async (token, challengeId) => {
+  console.log('cha', challengeId);
   try {
-    const url = `${LEADERBOARD_DATA}/${chllangeId}`;
+    const url = `${LEADERBOARD_DATA}/${challengeId}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
@@ -85,23 +88,41 @@ export const getChallengeLederBoardData = async (token, chllangeId) => {
     throw error;
   }
 };
+
 export const joinPublicChallenge = async (token, userId, challengeId) => {
   try {
     const url = `${JOIN_PUBLIC_CHALLENGE}/${userId}/${challengeId}`;
-    const response = await axios.post(url, {
-      headers: {
-        Authorization: token,
+    const response = await axios.post(
+      url,
+      {},
+      {
+        headers: {
+          Authorization: token,
+        },
       },
-    });
+    );
     return response?.data;
   } catch (error) {
     throw error;
   }
 };
+
 export const createChallenge = async (token, userId, data) => {
   try {
     const url = `${CREATE_CHALLENGE}/${userId}`;
-    const response = await axios.post(url, data, {
+    const body = {
+      name: data?.name,
+      type: data?.type,
+      description: data?.description,
+      startDate: data?.startDate,
+      endDate: data?.endDate,
+      targetValue: data?.targetValue,
+      participationLimit: data?.participationLimit,
+      privacy: data?.privacy,
+      rewardRange: data?.rewardRange,
+      selectedClients: data?.selectedClients,
+    };
+    const response = await axios.post(url, body, {
       headers: {
         Authorization: token,
       },
@@ -111,6 +132,7 @@ export const createChallenge = async (token, userId, data) => {
     throw error;
   }
 };
+
 export const getChallengeType = async token => {
   try {
     const url = `${GET_CHALLENGE_TYPE}`;
@@ -121,7 +143,7 @@ export const getChallengeType = async token => {
     });
     return response?.data;
   } catch (error) {
-    console.error('Error fetching get appointment by client', error);
+    console.error('Error fetching challenge type', error);
   }
 };
 
@@ -140,6 +162,7 @@ export const getChallengeRange = async (token, id) => {
 };
 
 export const getAllUser = async (token, pageNo, limit, search) => {
+  console.log('token', token);
   try {
     const url = `${GET_ALL_USER}?page=${pageNo}&limit=${limit}&search=${search}`;
     const response = await axios.get(url, {
@@ -149,6 +172,6 @@ export const getAllUser = async (token, pageNo, limit, search) => {
     });
     return response?.data;
   } catch (error) {
-    console.error('Error fetching challenge range', error);
+    console.error('Error fetching get all user', error);
   }
 };

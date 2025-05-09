@@ -9,25 +9,24 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Color} from '../assets/styles/Colors';
-import {scale} from 'react-native-size-matters';
+import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import {Font} from '../assets/styles/Fonts';
 
 const {width} = Dimensions.get('window');
-const CARD_WIDTH = width * 0.9;
+const CARD_WIDTH = width * 0.95;
 
 const ChallengeCardBanner = memo(({challenge, btnType, onJoin}) => {
-  const formattedDate = new Date(challenge.endDate).toLocaleDateString(
-    'en-US',
-    {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    },
-  );
+  const {name, endDate, targetValue, type, participants = []} = challenge;
+
+  const formattedDate = new Date(endDate).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 
   return (
     <LinearGradient
-      colors={['#21972B', '#6BCB77']}
+      colors={[Color.primaryColor, Color.primaryLight]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       style={styles.card}>
@@ -36,24 +35,25 @@ const ChallengeCardBanner = memo(({challenge, btnType, onJoin}) => {
       </View>
 
       <Text style={styles.title} numberOfLines={1}>
-        {challenge.name}
+        {name}
       </Text>
       <Text style={styles.description} numberOfLines={1}>
-        Complete {challenge.targetValue} {challenge.type?.unitLabel || 'units'}{' '}
-        by {formattedDate}
+        Complete {targetValue} {type?.unitLabel || 'units'} by {formattedDate}
       </Text>
 
       <View style={styles.footer}>
-        <View style={styles.participants}>
-          {challenge.participants.slice(0, 3).map((participant, index) => (
+        <View style={styles.avatarGroup}>
+          {participants.slice(0, 3).map((p, index) => (
             <Image
-              key={participant.clientId._id || index.toString()}
-              source={{uri: participant.clientId.image}}
-              style={[styles.avatar, {marginLeft: index === 0 ? 0 : -10}]}
+              key={index}
+              source={{
+                uri: p.avatar || `https://i.pravatar.cc/150?img=${index + 1}`,
+              }}
+              style={[styles.avatar, {marginLeft: index !== 0 ? -10 : 0}]}
             />
           ))}
-          <Text style={styles.participantText}>
-            +{challenge.participants.length} participants
+          <Text style={[styles.description, {marginLeft: 8}]}>
+            {participants.length} joined
           </Text>
         </View>
 
@@ -74,42 +74,38 @@ export default ChallengeCardBanner;
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
-    padding: 12,
-    height: 150,
+    borderRadius: moderateScale(15),
+    padding: scale(15),
     width: CARD_WIDTH,
     justifyContent: 'space-between',
     alignSelf: 'center',
   },
   badge: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: scale(9),
+    paddingVertical: verticalScale(3),
+    borderRadius: moderateScale(11),
     alignSelf: 'flex-start',
+    marginBottom: verticalScale(12),
   },
   badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '400',
+    color: Color.white,
+    fontSize: moderateScale(11),
     fontFamily: Font?.Poppins,
   },
   title: {
     color: Color?.white,
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 8,
-    marginBottom: 4,
-    fontFamily: Font?.Poppins,
+    fontSize: moderateScale(16),
+    fontFamily: Font?.PoppinsSemiBold,
+    marginTop: verticalScale(4),
   },
   description: {
-    color: '#f0f0f0',
-    fontSize: 12,
+    color: Color.white,
+    fontSize: moderateScale(12),
     fontFamily: Font?.Poppins,
-    lineHeight: 16,
   },
   footer: {
-    marginTop: 8,
+    marginTop: verticalScale(13),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -118,30 +114,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  avatarGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: Color?.white,
+    width: scale(24),
+    height: scale(24),
+    borderRadius: moderateScale(12),
+    borderWidth: 1,
+    borderColor: Color.white,
   },
   participantText: {
     color: Color?.white,
-    marginLeft: 6,
-    fontSize: 12,
+    marginLeft: scale(5),
+    fontSize: moderateScale(11),
     fontFamily: Font?.Poppins,
   },
   joinButton: {
     borderColor: Color?.white,
     borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    borderRadius: moderateScale(7),
+    paddingVertical: verticalScale(3),
+    paddingHorizontal: scale(11),
   },
   joinText: {
-    color: '#fff',
-    fontSize: 12,
-    fontFamily: Font?.Poppins,
-    textTransform: 'uppercase',
+    color: Color.white,
+    fontSize: moderateScale(13),
+    fontFamily: Font?.PoppinsMedium,
   },
 });

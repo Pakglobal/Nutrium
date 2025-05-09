@@ -5,7 +5,8 @@
 #import <Firebase.h>
 #import <UserNotifications/UserNotifications.h>
 #import <GoogleSignIn/GoogleSignIn.h>
-#import "RNSplashScreen.h"
+#import <RNSplashScreen.h>
+#import <UserNotifications/UserNotifications.h>
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 @end
@@ -36,6 +37,19 @@
 
   [RNSplashScreen show];  // Show splash screen after window is ready
 
+  return YES;
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  // Request notification permissions
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge)
+                        completionHandler:^(BOOL granted, NSError * _Nullable error) {}];
+  return YES;
+}
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  // ... other code
+  [RNSplashScreen show];
   return YES;
 }
 

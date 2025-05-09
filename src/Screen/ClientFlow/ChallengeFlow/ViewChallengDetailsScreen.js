@@ -7,10 +7,11 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {Color} from '../../../assets/styles/Colors';
 import LeaderboardBackground from '../../../assets/Images/leaderBoardImg.svg';
-import {scale} from 'react-native-size-matters';
+import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 import CustomShadow from '../../../Components/CustomShadow';
 import {shadowStyle} from '../../../assets/styles/Shadow';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -18,24 +19,34 @@ import {Font} from '../../../assets/styles/Fonts';
 import {useNavigation} from '@react-navigation/native';
 import {getChallengeLederBoardData} from '../../../Apis/ClientApis/ChallengesApi';
 import {useSelector} from 'react-redux';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ViewChallengDetailsScreen = ({route}) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('Day');
   const [lederbordData, setLeaderbordData] = useState([]);
-  const userInfo = useSelector(state => state?.user?.userInfo);
+  const [isLoading, setIsLoading] = useState(false);
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
   const {challenge} = route.params;
+
+  useEffect(() => {
+    fetchLeaderbordData(activeTab);
+  }, [activeTab]);
 
   const fetchLeaderbordData = async timePeriod => {
     try {
+      setIsLoading(true);
       const period = timePeriod.toLowerCase();
       const response = await getChallengeLederBoardData(
-        userInfo?.token,
+        token,
         challenge?._id,
         period,
       );
       if (response?.leaderboard) {
-        setLeaderbordData(response?.leaderboard);
+        setLeaderbordData(response.leaderboard);
       } else {
         setLeaderbordData([]);
       }
@@ -45,12 +56,10 @@ const ViewChallengDetailsScreen = ({route}) => {
         error,
       );
       setLeaderbordData([]);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchLeaderbordData(activeTab);
-  }, [activeTab]);
 
   const sortedParticipants = [...lederbordData].sort(
     (a, b) => b?.progress - a?.progress,
@@ -58,33 +67,50 @@ const ViewChallengDetailsScreen = ({route}) => {
   const topThree = sortedParticipants.slice(0, 3);
   const remainingParticipants = sortedParticipants.slice(3);
 
+  const renderEmptyState = () => (
+    <View>
+      <Text style={styles.emptyText}>No more leaderboard data</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerBackground}>
         <LeaderboardBackground
           width="100%"
           height={scale(400)}
-          style={{top: -30}}
+          style={{top: verticalScale(-30)}}
           preserveAspectRatio="xMidYMid slice"
         />
 
         <View style={styles.headerContent}>
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '100%',
-              justifyContent: 'space-between',
-              paddingHorizontal: scale(10),
-            }}>
+          <View style={styles.headerRow}>
             <TouchableOpacity
-              style={{alignSelf: 'center', padding: scale(5)}}
+              style={styles.button}
               onPress={() => navigation.goBack()}>
-              <AntDesign name="arrowleft" size={20} color={Color.white} />
+              <AntDesign
+                name="arrowleft"
+                size={moderateScale(20)}
+                color={Color.white}
+              />
             </TouchableOpacity>
             <Text style={styles.title}>Leaderboard</Text>
-            <TouchableOpacity style={{alignSelf: 'center', padding: scale(5)}}>
-              <AntDesign name="sharealt" size={20} color={Color.white} />
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity style={styles.button}>
+                <AntDesign
+                  name="filter"
+                  size={moderateScale(20)}
+                  color={Color.white}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button}>
+                <AntDesign
+                  name="sharealt"
+                  size={moderateScale(20)}
+                  color={Color.white}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.tabsContainer}>
@@ -111,102 +137,100 @@ const ViewChallengDetailsScreen = ({route}) => {
             Burn 500 calories daily to climb{'\n'}the leaderboard.
           </Text>
 
-          <View style={styles.topUsers}>
+          {!isLoading && topThree.length > 0 && (
             <View
               style={[
-                topThree.length === 1
-                  ? {alignItems: 'center', marginTop: scale(30)}
-                  : topThree.length === 2
-                  ? {
-                      flexDirection: 'row',
-                      justifyContent: 'space-evenly',
-                      width: '100%',
-                    }
-                  : styles.topUsers,
+                styles.topUsers,
+                topThree.length === 1 && styles.topUsersSingle,
+                topThree.length === 2 && styles.topUsersDouble,
               ]}>
               {topThree.map((item, index) => (
                 <View
                   key={item?.clientId || index}
                   style={[
                     styles.userCircle,
-                    topThree.length === 1 && {marginTop: scale(-35)},
+                    topThree.length === 1 && {marginTop: verticalScale(-35)},
                     topThree.length === 2 && {marginTop: 0},
                     topThree.length === 3 &&
-                      (index === 1 ? {marginTop: -35} : {}),
+                      index === 1 && {marginTop: verticalScale(-35)},
                   ]}>
                   <Text style={styles.points}>{item?.progress}</Text>
-
                   <Image
                     style={[
                       styles.userImage,
                       topThree.length === 1 && {
                         width: scale(100),
                         height: scale(100),
+                        borderRadius: scale(50),
                       },
                       topThree.length === 2 && {
                         width: scale(80),
                         height: scale(80),
+                        borderRadius: scale(40),
                       },
                       topThree.length === 3 &&
-                        index === 1 && {width: scale(90), height: scale(90)},
+                        index === 1 && {
+                          width: scale(90),
+                          height: scale(90),
+                          borderRadius: scale(45),
+                        },
                     ]}
                     source={{uri: item?.image}}
                   />
-
                   <Text
                     style={[
                       styles.rank,
-                      topThree.length === 1 && {bottom: scale(-5)},
+                      topThree.length === 1 && {bottom: verticalScale(-5)},
                       topThree.length === 3 &&
-                        index === 1 && {bottom: scale(7)},
+                        index === 1 && {bottom: verticalScale(7)},
                     ]}>
                     {item?.rank}
                   </Text>
                 </View>
               ))}
             </View>
-          </View>
+          )}
         </View>
       </View>
 
       <View style={styles.bottomContainer}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={remainingParticipants}
-          keyExtractor={(item, index) =>
-            item?.clientId?.toString() || index.toString()
-          }
-          renderItem={({item, index}) => (
-            <CustomShadow
-              radius={3}
-              style={shadowStyle}
-              color={Color?.lightgray}>
-              <View style={styles?.userData}>
-                <View style={{flexDirection: 'row', width: '65%'}}>
-                  <Text style={styles.text}>
-                    {item?.rank}.{'  '}
-                  </Text>
-
-                  <Image style={styles?.avatar} source={{uri: item?.image}} />
-                  <Text style={styles.text}>{item?.fullName}</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    width: '32%',
-                    alignSelf: 'center',
-                  }}>
-                  <Text style={styles.pointText}>
-                    Points :{' '}
-                    <Text style={{color: Color?.primaryColor}}>
-                      {item?.progress}
+        {isLoading ? (
+          <View style={styles.overlayLoader}>
+            <View style={styles.loaderCard}>
+              <ActivityIndicator size="large" color={Color.primaryColor} />
+            </View>
+          </View>
+        ) : lederbordData.length < 3 ? (
+          renderEmptyState()
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={remainingParticipants}
+            keyExtractor={(item, index) =>
+              item?.clientId?.toString() || index.toString()
+            }
+            renderItem={({item, index}) => (
+              <CustomShadow
+                radius={3}
+                style={shadowStyle}
+                color={Color?.lightgray}>
+                <View style={styles.userData}>
+                  <View style={styles.userInfo}>
+                    <Text style={styles.text}>{item?.rank}. </Text>
+                    <Image style={styles.avatar} source={{uri: item?.image}} />
+                    <Text style={styles.text}>{item?.fullName}</Text>
+                  </View>
+                  <View style={styles.pointsContainer}>
+                    <Text style={styles.pointText}>
+                      Points:{' '}
+                      <Text style={styles.progressText}>{item?.progress}</Text>
                     </Text>
-                  </Text>
+                  </View>
                 </View>
-              </View>
-            </CustomShadow>
-          )}
-        />
+              </CustomShadow>
+            )}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -217,123 +241,178 @@ export default ViewChallengDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color?.white,
+    backgroundColor: Color.white,
   },
   headerBackground: {
     position: 'relative',
   },
   headerContent: {
     position: 'absolute',
-    top: 10,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
+  headerRow: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    padding: scale(8),
+    marginVertical: verticalScale(10),
+    alignItems: 'center',
+  },
   title: {
-    fontSize: scale(20),
-    color: Color?.white,
-    fontFamily: Font?.PoppinsMedium,
+    fontSize: moderateScale(20),
+    color: Color.white,
+    fontFamily: Font.PoppinsMedium,
   },
   tabsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: scale(8),
+    marginBottom: verticalScale(8),
     backgroundColor: '#6BCB77',
-    borderRadius: scale(4),
+    borderRadius: moderateScale(4),
   },
   tabButton: {
-    paddingVertical: scale(5),
-    paddingHorizontal: 20,
-    borderRadius: scale(4),
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(20),
+    borderRadius: moderateScale(4),
   },
   tabButtonActive: {
-    backgroundColor: Color?.white,
+    backgroundColor: Color.white,
   },
   tabText: {
-    color: Color?.white,
-    fontFamily: Font?.PoppinsMedium,
-    fontSize: scale(15),
+    color: Color.white,
+    fontFamily: Font.PoppinsMedium,
+    fontSize: moderateScale(15),
   },
   tabTextActive: {
-    color: Color?.primaryColor,
-  },
-  pointText: {
-    textAlign: 'center',
-    width: '100%',
-    fontFamily: Font?.PoppinsMedium,
-    color: Color?.textColor,
-    fontSize: scale(14),
+    color: Color.primaryColor,
   },
   subtitle: {
-    color: Color?.white,
-    fontSize: scale(14),
+    color: Color.white,
+    fontSize: moderateScale(14),
     textAlign: 'center',
-    marginVertical: 10,
-    fontFamily: Font?.Poppins,
+    marginVertical: verticalScale(10),
+    fontFamily: Font.Poppins,
   },
   topUsers: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginTop: scale(40),
+    marginTop: verticalScale(40),
     width: '80%',
+  },
+  topUsersSingle: {
+    alignItems: 'center',
+    marginTop: verticalScale(30),
+  },
+  topUsersDouble: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
   },
   userCircle: {
     alignItems: 'center',
   },
   userImage: {
-    width: scale(70),
-    height: scale(70),
-    borderRadius: scale(50),
-    marginBottom: 5,
-    borderColor: Color?.white,
+    marginBottom: verticalScale(5),
+    borderColor: Color.white,
     borderWidth: scale(3),
   },
   points: {
-    color: Color?.white,
-    fontFamily: Font?.PoppinsSemiBold,
+    color: Color.white,
+    fontFamily: Font.PoppinsSemiBold,
+    fontSize: moderateScale(16),
   },
   rank: {
-    color: Color?.primaryColor,
-    backgroundColor: Color?.white,
-    borderRadius: scale(50),
+    color: Color.primaryColor,
+    backgroundColor: Color.white,
+    borderRadius: scale(10),
     width: scale(20),
     height: scale(20),
     textAlign: 'center',
+    justifyContent: 'center',
     position: 'absolute',
-    bottom: scale(-3),
+    fontSize: moderateScale(12),
   },
   bottomContainer: {
     backgroundColor: 'rgba(107, 203, 119, 0.3)',
     flex: 1,
-    borderTopColor: Color?.primaryColor,
-    borderTopWidth: 5,
-    borderWidth: 0.1,
-    borderTopEndRadius: scale(20),
+    borderTopColor: Color.primaryColor,
+    borderTopWidth: scale(5),
+    borderTopRightRadius: scale(20),
     borderTopStartRadius: scale(20),
-    paddingTop: 10,
-    paddingHorizontal: 10,
+    paddingTop: verticalScale(10),
+    paddingHorizontal: scale(10),
+    borderWidth: 0.5,
   },
   userData: {
-    backgroundColor: Color?.white,
-    marginVertical: scale(5),
+    backgroundColor: Color.white,
+    marginVertical: verticalScale(5),
     flexDirection: 'row',
     width: '95%',
     alignSelf: 'center',
-    borderRadius: scale(5),
+    borderRadius: moderateScale(5),
     padding: scale(10),
     justifyContent: 'space-between',
   },
+  userInfo: {
+    flexDirection: 'row',
+    width: '65%',
+    alignItems: 'center',
+  },
   text: {
     alignSelf: 'center',
-    fontFamily: Font?.PoppinsMedium,
-    color: Color?.textColor,
-    fontSize: scale(15),
+    fontFamily: Font.PoppinsMedium,
+    color: Color.textColor,
+    fontSize: moderateScale(15),
   },
   avatar: {
-    width: scale(38),
-    height: scale(38),
-    borderRadius: scale(24),
+    width: scale(40),
+    height: scale(40),
+    borderRadius: scale(20),
     marginRight: scale(12),
     alignSelf: 'center',
+  },
+  pointsContainer: {
+    flexDirection: 'row',
+    width: '32%',
+    alignSelf: 'center',
+  },
+  pointText: {
+    textAlign: 'center',
+    width: '100%',
+    fontFamily: Font.PoppinsMedium,
+    color: Color.textColor,
+    fontSize: moderateScale(14),
+  },
+  progressText: {
+    color: Color.primaryColor,
+  },
+  emptyText: {
+    marginTop: verticalScale(20),
+    textAlign: 'center',
+    color: Color.gray,
+    fontSize: moderateScale(16),
+    fontFamily: Font.Poppins,
+  },
+  button: {
+    padding: scale(5),
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loaderText: {
+    marginTop: verticalScale(10),
+    fontFamily: Font.PoppinsMedium,
+    fontSize: moderateScale(16),
+    color: Color.textColor,
+  },
+  topLoaderContainer: {
+    height: verticalScale(120),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: verticalScale(20),
   },
 });

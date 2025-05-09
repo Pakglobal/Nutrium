@@ -1,20 +1,17 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, {useState, useCallback, useMemo} from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  Button,
-  Alert,
-  Switch,
   ScrollView,
   TouchableOpacity,
-  Modal,
   SafeAreaView,
-  Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import {debounce} from 'lodash';
 import InviteFriendsModal from './InviteFriendsModal';
 import {useSelector} from 'react-redux';
 import {
@@ -25,12 +22,15 @@ import {
 import CustomAlertBox from '../../../Components/CustomAlertBox';
 import {Color} from '../../../assets/styles/Colors';
 import {Font} from '../../../assets/styles/Fonts';
-import {scale, verticalScale} from 'react-native-size-matters';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import Header from '../../../Components/Header';
 import CustomeDropDown from '../../../Components/CustomeDropDown';
 import CustomShadow from '../../../Components/CustomShadow';
 import {shadowStyle} from '../../../assets/styles/Shadow';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import useAndroidBack from '../../../Navigation/useAndroidBack';
+
+const MIN_DAYS_DIFFERENCE = 2;
 
 const CreateChallenge = () => {
   const navigation = useNavigation();
@@ -38,166 +38,309 @@ const CreateChallenge = () => {
   const [challengeType, setChallengeType] = useState(null);
   const [challengeTypeId, setChallengeTypeId] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(
+    new Date(new Date().getTime() + MIN_DAYS_DIFFERENCE * 24 * 60 * 60 * 1000),
+  );
   const [description, setDescription] = useState('');
   const [targetGoal, setTargetGoal] = useState('');
   const [participantsLimit, setParticipantsLimit] = useState(100);
-  const [coinReward, setCoinReward] = useState();
-  const [isPublic, setIsPublic] = useState(false);
+  const [coinReward, setCoinReward] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [selectedDateField, setSelectedDateField] = useState('start');
   const [isInviteModalVisible, setInviteModalVisible] = useState(false);
   const [challengeTypeOptions, setChallengeTypeOptions] = useState([]);
-  const [challengeRange, setChallengeRangeOptions] = useState([]);
-  const [selectChallengeRange, setselectChallengeRange] = useState(null);
+  const [challengeRangeOptions, setChallengeRangeOptions] = useState([]);
+  const [selectedChallengeRange, setSelectedChallengeRange] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState([]);
+  const [selectedFriends, setSelectedFriends] = useState([]);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertType, setAlertType] = useState('success'); // 'success' or 'error'
+  const [alertType, setAlertType] = useState('success');
   const [alertMessage, setAlertMessage] = useState('');
 
-  const userInfo = useSelector(state => state?.user?.userInfo);
-  useEffect(() => {
-    FetchChallangeTypeData();
-  }, []);
+  const tokenId = useSelector(state => state?.user?.token);
+  const guestTokenId = useSelector(state => state?.user?.guestToken);
+  const token = tokenId?.token || guestTokenId?.token;
+  const id = tokenId?.id || guestTokenId?.id;
 
-  const FetchChallangeTypeData = async () => {
+  const fetchChallengeTypeData = useCallback(async () => {
+    if (!token) {
+      setAlertType('error');
+      setAlertMessage('User authentication token is missing.');
+      setAlertVisible(true);
+      return;
+    }
     try {
-      const response = await getChallengeType(userInfo?.token);
-      if (response?.success) {
-        setChallengeTypeOptions(response?.data);
+      const response = await getChallengeType(token);
+      if (response?.success && Array.isArray(response.data)) {
+        setChallengeTypeOptions(response.data);
       } else {
+        throw new Error('Invalid challenge type data');
       }
     } catch (error) {
-      console.error('Error fetching appointments:', error);
-      //   setLoading(false);
+      console.error('Error fetching challenge types:', error);
+      setAlertType('error');
+      setAlertMessage('Failed to fetch challenge types. Please try again.');
+      setAlertVisible(true);
     }
+  }, [token]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setChallengeName('');
+      setChallengeType(null);
+      setChallengeTypeId(null);
+      setStartDate(new Date());
+      setEndDate(
+        new Date(
+          new Date().getTime() + MIN_DAYS_DIFFERENCE * 24 * 60 * 60 * 1000,
+        ),
+      );
+      setDescription('');
+      setTargetGoal('');
+      setParticipantsLimit(100);
+      setCoinReward('');
+      setIsPublic(true);
+      setIsDatePickerOpen(false);
+      setSelectedDateField('start');
+      setInviteModalVisible(false);
+      setChallengeTypeOptions([]);
+      setChallengeRangeOptions([]);
+      setSelectedChallengeRange(null);
+      setLoading(false);
+      setSelectedFriends([]);
+      setAlertVisible(false);
+      setAlertType('success');
+      setAlertMessage('');
+
+      fetchChallengeTypeData();
+
+      return () => {};
+    }, [fetchChallengeTypeData]),
+  );
+
+  const isValidEndDate = (start, end) => {
+    if (
+      !(start instanceof Date) ||
+      !(end instanceof Date) ||
+      isNaN(start) ||
+      isNaN(end)
+    ) {
+      return false;
+    }
+    const diffTime = end.getTime() - start.getTime();
+    const diffDays = diffTime / (1000 * 3600 * 24);
+    return diffDays >= MIN_DAYS_DIFFERENCE;
   };
 
-  const isValidEndDate = (startDate, endDate) => {
-    const diffTime = endDate.getTime() - startDate.getTime();
-    const diffDays = diffTime / (1000 * 3600 * 24);
-    return diffDays >= 2;
+  const showAlert = (message, type = 'error') => {
+    setAlertType(type);
+    setAlertMessage(message);
+    setAlertVisible(true);
   };
 
   const validateForm = () => {
-    if (
-      !challengeName ||
-      !startDate ||
-      !endDate ||
-      !description ||
-      !targetGoal ||
-      !participantsLimit ||
-      !coinReward
-    ) {
-      // Instead of using Alert.alert, use your custom alert component
-      setAlertType('error');
-      setAlertMessage('All fields are required!');
-      setAlertVisible(true);
+    if (!challengeName.trim()) {
+      showAlert('Challenge name is required.');
+      return false;
+    }
+    if (!challengeTypeId) {
+      showAlert('Challenge type is required.');
+      return false;
+    }
+    if (!selectedChallengeRange?._id) {
+      showAlert('Challenge range is required.');
+      return false;
+    }
+    if (!startDate || isNaN(startDate.getTime())) {
+      showAlert('Valid start date is required.');
+      return false;
+    }
+    if (!endDate || isNaN(endDate.getTime())) {
+      showAlert('Valid end date is required.');
+      return false;
+    }
+    if (!isValidEndDate(startDate, endDate)) {
+      showAlert(
+        `End date must be at least ${MIN_DAYS_DIFFERENCE} days after the start date.`,
+      );
+      return false;
+    }
+    if (!description.trim()) {
+      showAlert('Description is required.');
+      return false;
+    }
+    const target = parseInt(targetGoal, 10);
+    if (!targetGoal || isNaN(target) || target <= 0) {
+      showAlert('Valid target goal is required.');
+      return false;
+    }
+    const limit = parseInt(participantsLimit, 10);
+    if (isNaN(limit) || limit <= 0) {
+      showAlert('Valid participant limit is required.');
+      return false;
+    }
+    const reward = parseInt(coinReward, 10);
+    if (!coinReward || isNaN(reward) || reward <= 0) {
+      showAlert('Valid coin reward is required.');
       return false;
     }
     return true;
   };
+
   const handleDateConfirm = date => {
     setIsDatePickerOpen(false);
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      showAlert('Invalid date selected.');
+      return;
+    }
     if (selectedDateField === 'start') {
       setStartDate(date);
+      if (endDate <= date) {
+        setEndDate(
+          new Date(date.getTime() + MIN_DAYS_DIFFERENCE * 24 * 60 * 60 * 1000),
+        );
+      }
     } else {
       if (isValidEndDate(startDate, date)) {
         setEndDate(date);
       } else {
-        Alert.alert(
-          'Error',
-          'End Date must be at least 2 days after the Start Date.',
+        showAlert(
+          `End date must be at least ${MIN_DAYS_DIFFERENCE} days after the start date.`,
         );
       }
     }
   };
 
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
-    setLoading(true); // Start loader
-
-    const challengeData = {
-      name: challengeName,
+  const challengeData = useMemo(
+    () => ({
+      name: challengeName.trim(),
       type: challengeTypeId,
-      description,
+      description: description.trim(),
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
-      targetValue: parseInt(targetGoal),
-      participationLimit: parseInt(participantsLimit),
-      privacy: isPublic ? 'private' : 'public',
-      rewardRange: selectChallengeRange?._id,
-      selectedClients: selectedFriend,
-    };
+      targetValue: parseInt(targetGoal, 10),
+      participationLimit: parseInt(participantsLimit, 10),
+      privacy: isPublic ? 'public' : 'private',
+      rewardRange: selectedChallengeRange?._id,
+      selectedClients: isPublic ? [] : selectedFriends,
+    }),
+    [
+      challengeName,
+      challengeTypeId,
+      description,
+      startDate,
+      endDate,
+      targetGoal,
+      participantsLimit,
+      isPublic,
+      selectedChallengeRange,
+      selectedFriends,
+    ],
+  );
+
+  // console.log('challengeData', challengeData)
+
+  const handleSubmit = async () => {
+    if (!token || !id) {
+      showAlert('User authentication is required to create a challenge.');
+      return;
+    }
+    if (!validateForm()) return;
+    setLoading(true);
 
     try {
-      const response = await createChallenge(
-        userInfo?.token,
-        userInfo?.userData?._id,
-        challengeData,
+      const response = await createChallenge(token, id, challengeData);
+      showAlert(
+        response?.message || 'Challenge created successfully.',
+        'success',
       );
-
-      if (response?.message) {
-        setAlertType('success');
-        setAlertMessage(response.message);
-        setAlertVisible(true);
-      } else {
-        // Handle case where response exists but has no message
-        setAlertType('success');
-        setAlertMessage('Challenge created successfully');
-        setAlertVisible(true);
-      }
+      setChallengeName('');
+      setChallengeType(null);
+      setChallengeTypeId(null);
+      setStartDate(new Date());
+      setEndDate(
+        new Date(
+          new Date().getTime() + MIN_DAYS_DIFFERENCE * 24 * 60 * 60 * 1000,
+        ),
+      );
+      setDescription('');
+      setTargetGoal('');
+      setParticipantsLimit(100);
+      setCoinReward('');
+      setIsPublic(true);
+      setSelectedChallengeRange(null);
+      setSelectedFriends([]);
     } catch (error) {
       console.error('Create Challenge Error:', error);
-
-      if (error?.response) {
-        setAlertType('error');
-        // Extract status code and message properly
-        const statusCode = error.response.status || '';
-        const message = error.response.data?.message || 'An error occurred';
-        setAlertMessage(message); // Simplified message for better UX
-        setAlertVisible(true);
-      } else {
-        setAlertType('error');
-        setAlertMessage('Something went wrong!');
-        setAlertVisible(true);
-      }
+      showAlert(
+        error.response?.data?.message ||
+          error.message ||
+          'An error occurred while creating the challenge.',
+      );
     } finally {
-      setLoading(false); // Stop loader regardless of success or failure
+      setLoading(false);
     }
   };
-  const handleSlectChalangeType = async item => {
-    if (!item || !item._id) {
-      console.warn('Invalid challenge type selected:', item);
+
+  const handleSelectChallengeType = async item => {
+    if (!item?._id || !item?.value) {
+      showAlert('Invalid challenge type selected.');
       return;
     }
 
-    setChallengeType(item?.value);
-    setChallengeTypeId(item?._id);
+    setChallengeType(item.value);
+    setChallengeTypeId(item._id);
+    setChallengeRangeOptions([]);
+    setSelectedChallengeRange(null);
+    setCoinReward('');
+
+    if (!token) {
+      showAlert('User authentication token is missing.');
+      return;
+    }
 
     try {
-      const response = await getChallengeRange(userInfo?.token, item._id);
-      if (response?.success) {
-        setChallengeRangeOptions(response?.data);
+      const response = await getChallengeRange(token, item._id);
+      if (response?.success && Array.isArray(response.data)) {
+        setChallengeRangeOptions(response.data);
+      } else {
+        throw new Error('Invalid challenge range data');
       }
     } catch (error) {
       console.error('Error fetching challenge range:', error);
+      showAlert('Failed to fetch challenge range. Please try again.');
     }
   };
 
-  const handleSlectChalangeRangeType = value => {
-    setCoinReward(value?.coin);
-    setselectChallengeRange(value);
+  const handleSelectChallengeRangeType = value => {
+    if (!value?._id || !value?.coin) {
+      showAlert('Invalid challenge range selected.');
+      return;
+    }
+    setCoinReward(String(value.coin));
+    setSelectedChallengeRange(value);
   };
 
   return (
-    <SafeAreaView style={styles?.mainContainer}>
-      <Header
-        screenheader={true}
-        screenName={'Create challenge'}
+    <SafeAreaView style={styles.mainContainer}>
+      <CustomAlertBox
+        visible={alertVisible}
+        type={alertType}
+        message={alertMessage}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => {
+          setAlertVisible(false);
+          if (alertType === 'success' && navigation.canGoBack()) {
+            navigation.goBack();
+          }
+        }}
       />
-      <ScrollView style={styles.container}>
+      <Header screenheader={true} screenName={'Create Challenge'} />
+      <ScrollView
+        style={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
         <Text style={styles.header}>Create Challenge</Text>
 
         <Text style={styles.nameText}>Challenge Name</Text>
@@ -205,37 +348,45 @@ const CreateChallenge = () => {
           <TextInput
             style={styles.input}
             placeholder="Enter challenge name"
-            placeholderTextColor={Color?.gray}
+            placeholderTextColor={Color.black}
             value={challengeName}
             onChangeText={setChallengeName}
+            accessibilityLabel="Challenge name input"
+            returnKeyType="next"
           />
         </CustomShadow>
 
-        <Text style={styles?.nameText}>Challenge Type</Text>
+        <Text style={styles.nameText}>Challenge Type</Text>
         <CustomeDropDown
           items={challengeTypeOptions}
           selectedItem={challengeType || 'Select Challenge'}
-          onSelect={e => handleSlectChalangeType(e)}
+          onSelect={handleSelectChallengeType}
           textStyle={!challengeType ? {color: Color.textColor} : {}}
           shadowRadius={1}
+          accessibilityLabel="Challenge type dropdown"
         />
-        <Text style={styles?.nameText}>Challenge Range</Text>
 
+        <Text style={styles.nameText}>Challenge Range</Text>
         <CustomeDropDown
-          items={challengeRange}
-          selectedItem={selectChallengeRange?.value || 'Select Range'}
-          onSelect={e => handleSlectChalangeRangeType(e)}
+          items={challengeRangeOptions}
+          selectedItem={selectedChallengeRange?.value || 'Select Range'}
+          onSelect={handleSelectChallengeRangeType}
           textStyle={
-            !selectChallengeRange?.value ? {color: Color.textColor} : {}
+            !selectedChallengeRange?.value ? {color: Color.textColor} : {}
           }
           shadowRadius={1}
+          accessibilityLabel="Challenge range dropdown"
         />
-        <Text style={styles?.nameText}>Coin Reward</Text>
+
+        <Text style={styles.nameText}>Coin Reward</Text>
         <CustomShadow radius={1} style={shadowStyle}>
-          <View style={[styles?.input, {justifyContent: 'center'}]}>
-            <Text style={{color: Color?.black}}>{coinReward}</Text>
+          <View style={[styles.input, {justifyContent: 'center'}]}>
+            <Text style={{color: Color.black, fontFamily: Font.Poppins}}>
+              {coinReward || 'N/A'}
+            </Text>
           </View>
         </CustomShadow>
+
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '48%'}}>
             <Text style={styles.nameText}>Select Start Date</Text>
@@ -253,14 +404,18 @@ const CreateChallenge = () => {
                 onPress={() => {
                   setSelectedDateField('start');
                   setIsDatePickerOpen(true);
-                }}>
-                <Text style={{color: Color.black, fontFamily: Font?.Poppins}}>
-                  {startDate ? startDate.toLocaleDateString() : 'Start Date'}
+                }}
+                accessibilityLabel="Select start date"
+                accessibilityRole="button">
+                <Text style={{color: Color.black, fontFamily: Font.Poppins}}>
+                  {startDate && !isNaN(startDate.getTime())
+                    ? startDate.toLocaleDateString()
+                    : 'Start Date'}
                 </Text>
                 <MaterialCommunityIcons
                   name="calendar-month"
-                  color={Color?.primaryColor}
-                  size={20}
+                  color={Color.primaryColor}
+                  size={scale(20)}
                 />
               </TouchableOpacity>
             </CustomShadow>
@@ -281,136 +436,165 @@ const CreateChallenge = () => {
                 onPress={() => {
                   setSelectedDateField('end');
                   setIsDatePickerOpen(true);
-                }}>
-                <Text style={{color: Color.black, fontFamily: Font?.Poppins}}>
-                  {endDate ? endDate.toLocaleDateString() : 'End Date'}
+                }}
+                accessibilityLabel="Select end date"
+                accessibilityRole="button">
+                <Text style={{color: Color.black, fontFamily: Font.Poppins}}>
+                  {endDate && !isNaN(endDate.getTime())
+                    ? endDate.toLocaleDateString()
+                    : 'End Date'}
                 </Text>
                 <MaterialCommunityIcons
                   name="calendar-month"
-                  color={Color?.primaryColor}
-                  size={20}
+                  color={Color.primaryColor}
+                  size={scale(20)}
                 />
               </TouchableOpacity>
             </CustomShadow>
           </View>
         </View>
-        <View></View>
 
         <DatePicker
           modal
           mode="date"
           open={isDatePickerOpen}
           date={selectedDateField === 'start' ? startDate : endDate}
+          minimumDate={new Date()}
           onConfirm={handleDateConfirm}
           onCancel={() => setIsDatePickerOpen(false)}
+          accessibilityLabel="Date picker"
         />
 
-        <Text style={styles?.nameText}>Challenge Description</Text>
+        <Text style={styles.nameText}>Challenge Description</Text>
         <CustomShadow style={shadowStyle} radius={1}>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {height: verticalScale(60), textAlignVertical: 'top'},
+            ]}
             placeholder="Enter description"
-            placeholderTextColor={Color?.gray}
+            placeholderTextColor={Color.black}
             value={description}
             onChangeText={setDescription}
             multiline
+            accessibilityLabel="Challenge description input"
+            returnKeyType="done"
           />
         </CustomShadow>
 
-        <Text style={styles?.nameText}>Target Goal ({challengeType})</Text>
+        <Text style={styles.nameText}>
+          Target Goal ({challengeType || 'N/A'})
+        </Text>
         <CustomShadow style={shadowStyle} radius={1}>
           <TextInput
             style={styles.input}
-            placeholder={`Enter target goal for ${challengeType}`}
+            placeholder={`Enter target goal for ${
+              challengeType || 'challenge'
+            }`}
             keyboardType="numeric"
-            placeholderTextColor={Color?.gray}
+            placeholderTextColor={Color.black}
             value={targetGoal}
             onChangeText={setTargetGoal}
+            accessibilityLabel="Target goal input"
+            returnKeyType="next"
           />
         </CustomShadow>
 
-        <Text style={styles?.nameText}>Participants Limit</Text>
+        <Text style={styles.nameText}>Participants Limit</Text>
         <CustomShadow style={shadowStyle} radius={1}>
           <TextInput
             style={styles.input}
             placeholder="Enter participant limit"
             keyboardType="numeric"
             value={participantsLimit.toString()}
-            onChangeText={val => setParticipantsLimit(parseInt(val) || 0)}
+            onChangeText={text => setParticipantsLimit(parseInt(text) || 0)}
+            accessibilityLabel="Participants limit input"
+            returnKeyType="done"
           />
         </CustomShadow>
-        {/* <View style={styles.switchContainer}>
-                    <Text style={styles.nameText} >Public</Text>
-                    <Switch value={isPublic} onValueChange={setIsPublic} />
-                    <Text style={styles.nameText} >Private</Text>
-                    </View> */}
+
         <View style={styles.radioGroup}>
-          <Text style={styles?.nameText}>Privacy</Text>
+          <Text style={styles.radioText}>Privacy</Text>
           <TouchableOpacity
             style={styles.radioContainer}
-            onPress={() => setIsPublic(true)}>
-            <View
-              style={[
-                styles.radioCircle,
-                {borderColor: isPublic ? Color?.primaryColor : Color?.gray},
-              ]}>
-              {isPublic && (
-                <View
-                  style={[
-                    styles.selectedRb,
-                    {backgroundColor: Color?.primaryColor},
-                  ]}
-                />
-              )}
-            </View>
-            <Text style={styles.nameText}>Public</Text>
+            onPress={() => setIsPublic(true)}
+            accessibilityLabel="Public challenge option"
+            accessibilityRole="radio"
+            accessibilityState={{checked: isPublic}}>
+            <MaterialCommunityIcons
+              name={isPublic ? 'radiobox-marked' : 'radiobox-blank'}
+              color={isPublic ? Color.primaryColor : Color.gray}
+              size={scale(20)}
+              style={{marginHorizontal: scale(5)}}
+            />
+            <Text style={styles.radioText}>Public</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.radioContainer}
-            onPress={() => setIsPublic(false)}>
-            <View
-              style={[
-                styles.radioCircle,
-                {borderColor: !isPublic ? Color?.primaryColor : Color?.gray},
-              ]}>
-              {!isPublic && (
-                <View
-                  style={[
-                    styles.selectedRb,
-                    {backgroundColor: Color?.primaryColor},
-                  ]}
-                />
-              )}
-            </View>
-            <Text style={styles.nameText}>Private</Text>
+            onPress={() => setIsPublic(false)}
+            accessibilityLabel="Private challenge option"
+            accessibilityRole="radio"
+            accessibilityState={{checked: !isPublic}}>
+            <MaterialCommunityIcons
+              name={!isPublic ? 'radiobox-marked' : 'radiobox-blank'}
+              color={!isPublic ? Color.primaryColor : Color.gray}
+              size={scale(20)}
+              style={{marginHorizontal: scale(5)}}
+            />
+            <Text style={styles.radioText}>Private</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Invite Friends Button (Only for Private Challenges) */}
-        {!isPublic && (
+        {/* {!isPublic && (
           <TouchableOpacity
             style={[
-              styles.inviteButton,
+              styles.button,
               {
-                backgroundColor:
-                  selectedFriend?.length > 0
-                    ? Color?.primaryColor
-                    : Color?.white,
+                backgroundColor: Color.white,
+                borderWidth: scale(1),
+                borderColor: Color.primaryColor,
               },
             ]}
-            onPress={() => setInviteModalVisible(true)}>
+            onPress={() => setInviteModalVisible(true)}
+            accessibilityLabel="Invite friends button"
+            accessibilityRole="button">
             <Text
               style={[
-                styles.inviteButtonText,
+                styles.buttonText,
                 {
-                  color:
-                    selectedFriend?.length > 0
-                      ? Color?.white
-                      : Color?.primaryColor,
+                  color: Color.primaryColor,
                 },
               ]}>
               Invite{' '}
+              {selectedFriends?.length > 0 ? `(${selectedFriends.length})` : ''}
+            </Text>
+          </TouchableOpacity>
+        )} */}
+
+        {!isPublic && (
+          <TouchableOpacity
+            style={[
+              styles.button,
+              {
+                marginBottom: verticalScale(10),
+                backgroundColor: Color.white,
+                borderWidth: scale(1),
+                borderColor: Color.primaryColor,
+              },
+            ]}
+            onPress={() => setInviteModalVisible(true)}
+            accessibilityLabel="Invite friends button"
+            accessibilityRole="button">
+            <Text
+              style={[
+                styles.buttonText,
+                {
+                  color: Color.primaryColor,
+                },
+              ]}>
+              Invite{' '}
+              {selectedFriends?.length > 0 ? `(${selectedFriends.length})` : ''}
             </Text>
           </TouchableOpacity>
         )}
@@ -418,44 +602,24 @@ const CreateChallenge = () => {
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={loading}
-          style={{
-            backgroundColor: Color?.primaryColor,
-            padding: scale(10),
-            borderRadius: scale(8),
-            width: '100%',
-            marginBottom: scale(10),
-          }}>
-          <Text
-            style={{
-              color: Color?.white,
-              alignSelf: 'center',
-              fontFamily: Font?.Poppins,
-              fontWeight: '600',
-            }}>
-            {loading ? 'Creating...' : 'Create Challenge'}
-          </Text>
+          style={styles.button}
+          accessibilityLabel="Create challenge button"
+          accessibilityRole="button"
+          accessibilityState={{disabled: loading}}>
+          {loading ? (
+            <ActivityIndicator size="small" color={Color.white} />
+          ) : (
+            <Text style={styles.buttonText}>Create Challenge</Text>
+          )}
         </TouchableOpacity>
 
-        {/* Invite Friends Bottom Sheet Modal */}
         <InviteFriendsModal
           onClose={() => setInviteModalVisible(false)}
           isInviteModalVisible={isInviteModalVisible}
           setInviteModalVisible={setInviteModalVisible}
-          onInvite={selectedFriends => {
-            setSelectedFriend(selectedFriends);
+          onInvite={friends => {
+            setSelectedFriends(friends || []);
             setInviteModalVisible(false);
-          }}
-        />
-        <CustomAlertBox
-          visible={alertVisible}
-          type={alertType}
-          message={alertMessage}
-          closeAlert={() => setAlertVisible(false)}
-          onClose={() => {
-            setAlertVisible(false);
-            if (alertType === 'success') {
-              navigation.goBack();
-            }
           }}
         />
       </ScrollView>
@@ -465,149 +629,71 @@ const CreateChallenge = () => {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: Color?.white,
+    backgroundColor: Color.white,
     flex: 1,
   },
   container: {
-    paddingHorizontal: scale(14),
-  },
-  dropdown: {
-    borderRadius: scale(4),
-    borderWidth: 1,
-    borderColor: Color.borderColor,
-    margin: scale(2),
-    backgroundColor: Color.white,
-    zIndex: 10,
-    marginBottom: verticalScale(10),
-  },
-  titleText: {
-    fontWeight: '500',
-    letterSpacing: 1,
-    fontFamily: Font.PoppinsMedium,
-    color: Color.textColor,
-  },
-  dropdownItem: {
-    paddingVertical: scale(8),
-    paddingHorizontal: scale(12),
-  },
-  inputContainer: {
-    borderRadius: 8,
-    paddingHorizontal: scale(10),
-    borderColor: Color.primaryColor,
-    height: verticalScale(38),
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Color.white,
-    marginVertical: verticalScale(6),
+    paddingHorizontal: scale(8),
   },
   header: {
-    fontSize: 20,
+    fontSize: moderateScale(20),
     fontWeight: '500',
     textAlign: 'center',
-    marginTop: scale(18),
-    color: Color?.textColor,
-    fontFamily: Font?.PoppinsMedium,
+    marginTop: verticalScale(18),
+    color: Color.textColor,
+    fontFamily: Font.PoppinsMedium,
   },
   input: {
-    height: scale(38),
-    backgroundColor: Color?.white,
+    height: verticalScale(36),
+    backgroundColor: Color.white,
     paddingHorizontal: scale(10),
-    fontSize: scale(14),
-    fontFamily: Font?.Poppins,
-    color: Color?.gray,
+    paddingVertical: verticalScale(5),
+    fontSize: moderateScale(14),
+    fontFamily: Font.Poppins,
+    color: Color.black,
     width: '98%',
     alignSelf: 'center',
     borderRadius: scale(6),
-    color: Color?.black,
-    paddingVertical: scale(5),
   },
-  switchContainer: {
-    flexDirection: 'row',
+  button: {
+    backgroundColor: Color.primaryColor,
+    marginBottom: verticalScale(20),
+    borderColor: Color.red,
+    borderRadius: scale(6),
     alignItems: 'center',
-    marginBottom: 25,
+    justifyContent: 'center',
+    height: scale(43),
   },
-  inviteButton: {
-    backgroundColor: Color?.white,
-    padding: scale(10),
-    borderRadius: scale(5),
-    alignItems: 'center',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: Color?.primaryColor,
-  },
-  inviteButtonText: {
-    color: Color?.primaryColor,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  progressText: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  progressBarContainer: {
-    width: '100%',
-    height: 10,
-    backgroundColor: '#ccc',
-    borderRadius: 5,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  buttonText: {
+    color: Color.white,
+    fontSize: moderateScale(16),
+    fontFamily: Font.PoppinsSemiBold,
   },
   nameText: {
-    fontFamily: Font?.Poppins,
-    color: Color?.textColor,
+    fontFamily: Font.Poppins,
+    color: Color.textColor,
     paddingHorizontal: scale(4),
-    paddingVertical: scale(5),
-    marginTop: scale(9),
+    paddingVertical: verticalScale(5),
+    marginTop: verticalScale(9),
+    fontSize: moderateScale(14),
   },
   radioGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
-    marginBottom: scale(10),
+    marginBottom: verticalScale(30),
     paddingHorizontal: scale(4),
+    marginTop: verticalScale(10),
+    gap: scale(20),
   },
   radioContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  radioCircle: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#444',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  selectedRb: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Color?.primaryColor,
+  radioText: {
+    fontFamily: Font.Poppins,
+    color: Color.textColor,
+    fontSize: moderateScale(14),
+    marginTop: verticalScale(2),
   },
 });
-
 export default CreateChallenge;

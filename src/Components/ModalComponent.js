@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: Color.white,
     borderRadius: scale(5),
     width: scale(100),
-    shadowColor: '#000',
+    shadowColor: Color.black,
     shadowOffset: {
       width: 0,
       height: 2,

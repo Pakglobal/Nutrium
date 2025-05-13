@@ -70,8 +70,8 @@ const PhysicalActivityScreen = () => {
   const fetchPhysicalActivityData = useCallback(async () => {
     if (!token || !id) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await GetPhysicalActivityDetails(token, id);
       if (response?.success === true) {
         setPhysicalActivity(response?.data);

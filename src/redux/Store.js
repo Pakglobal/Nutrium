@@ -13,7 +13,7 @@ const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   whitleList: ['user', 'stepTracker'],
-  timeout: 0,
+  // timeout: 0,
 };
 
 const rootReducer = combineReducers({

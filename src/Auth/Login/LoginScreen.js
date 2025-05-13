@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import {
+  Dimensions,
+  Keyboard,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -7,33 +9,30 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NutriumLogo from '../../assets/Images/logoGreen.svg';
-
 import {Color} from '../../assets/styles/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
-
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {loginData, setToken} from '../../redux/user';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
-import IconStyle from '../../assets/styles/Icon';
 import Google from '../../assets/Icon/google.svg';
 import {Font} from '../../assets/styles/Fonts';
 import CustomShadow from '../../Components/CustomShadow';
-import useKeyboardHandler from '../../Components/useKeyboardHandler';
 import CustomLoader from '../../Components/CustomLoader';
 import CustomAlertBox from '../../Components/CustomAlertBox';
+
+const height = Dimensions.get('screen').height;
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
-  useKeyboardHandler();
 
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
@@ -43,10 +42,8 @@ const LoginScreen = () => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [passwordAlertVisible, setPasswordAlertVisible] = useState(false);
   const [loginAlert, setLoginAlert] = useState([]);
-  const [forgotPassword, setForgotPassword] = useState([]);
-  const [alertType, setAlertType] = useState('success');
+  const [alertType, setAlertType] = useState('');
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -127,12 +124,18 @@ const LoginScreen = () => {
     try {
       setLoading(true);
       const response = await Login(body);
+
       setLoginAlert(response?.message);
       setAlertType('success');
       setAlertVisible(true);
-      console.log('response?.message', response);
-      if (response?.message == 'User not found.' || 'Invalid Credentials') {
+
+      if (
+        response?.message === 'User not found.' ||
+        response?.message === 'Invalid Credentials'
+      ) {
+        setLoginAlert(response?.message);
         setAlertType('error');
+        setAlertVisible(true);
       }
 
       const storeTokenId = {
@@ -199,6 +202,9 @@ const LoginScreen = () => {
       }
       setLoading(false);
     } catch (error) {
+      setLoginAlert('Google Sign-In failed. Please try again.');
+      setAlertType('error');
+      setAlertVisible(true);
       setLoading(false);
     }
   };
@@ -218,11 +224,8 @@ const LoginScreen = () => {
     };
     try {
       const response = await ForgotPasswordApi(body);
-      setForgotPassword(response);
-      setPasswordAlertVisible(true);
-      console.log('ressss', response);
     } catch (error) {
-      console.log('-----', error);
+      console.error('error', error);
     }
   };
 
@@ -239,7 +242,12 @@ const LoginScreen = () => {
       />
 
       <TouchableOpacity
-        onPress={() => navigation.goBack()}
+        onPress={() => {
+          Keyboard.dismiss();
+          setTimeout(() => {
+            navigation.goBack();
+          }, 200);
+        }}
         style={{
           justifyContent: 'center',
           padding: scale(8),
@@ -248,124 +256,131 @@ const LoginScreen = () => {
           position: 'absolute',
           zIndex: 1,
         }}>
-        <AntDesign
-          name="arrowleft"
-          size={IconStyle.headerIconSize}
-          color={Color.primaryColor}
-        />
+        <AntDesign name="arrowleft" size={26} color={Color.primaryColor} />
       </TouchableOpacity>
 
       <View style={styles.mainContainer}>
         <ScrollView
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}>
-          <LoginHeader
-            width={'100%'}
-            style={{alignSelf: 'center', marginTop: verticalScale(50)}}
-          />
-          <NutriumLogo
-            width={'100%'}
-            height={scale(30)}
-            style={{alignSelf: 'center', marginVertical: verticalScale(20)}}
-          />
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.contentContainer}>
+            <LoginHeader
+              width={'100%'}
+              style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+            />
 
-          <View style={{paddingHorizontal: scale(16)}}>
-            <CustomShadow color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
-              <View
+            <View style={{paddingHorizontal: scale(16)}}>
+              <NutriumLogo
+                width={'100%'}
+                height={scale(30)}
                 style={{
-                  height: verticalScale(38),
-                  justifyContent: 'center',
-                  paddingHorizontal: scale(5),
-                  backgroundColor: Color.white,
-                  borderRadius: scale(6),
-                }}>
-                <TextInput
-                  value={email}
-                  placeholder="Email"
-                  onChangeText={validateEmail}
-                  fontFamily={Font?.Poppins}
-                  placeholderTextColor={Color.textColor}
-                  style={styles.titleText}
-                  multiline={false}
-                />
-              </View>
-            </CustomShadow>
-
-            <CustomShadow
-              color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  backgroundColor: Color.white,
-                  marginVertical: verticalScale(13),
-                  borderRadius: scale(6),
-                }}>
+                  alignSelf: 'center',
+                  marginVertical: verticalScale(25),
+                }}
+              />
+              <CustomShadow
+                color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
                 <View
                   style={{
-                    height: verticalScale(38),
+                    height: verticalScale(37),
                     justifyContent: 'center',
-                    width: '87%',
                     paddingHorizontal: scale(5),
+                    backgroundColor: Color.white,
+                    borderRadius: scale(6),
                   }}>
                   <TextInput
-                    value={password}
-                    placeholder="Password"
-                    onChangeText={validatePassword}
+                    value={email}
+                    placeholder="Email"
+                    onChangeText={val => {
+                      setEmail(val);
+                      validateEmail(val);
+                    }}
                     fontFamily={Font?.Poppins}
                     placeholderTextColor={Color.textColor}
                     style={styles.titleText}
                     multiline={false}
-                    secureTextEntry={!passwordVisible}
                   />
                 </View>
-                <TouchableOpacity
-                  onPress={handlePassword}
+              </CustomShadow>
+
+              <CustomShadow
+                color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
+                <View
                   style={{
-                    paddingHorizontal: scale(10),
-                    paddingVertical: scale(5),
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: Color.white,
+                    marginVertical: verticalScale(13),
+                    borderRadius: scale(6),
                   }}>
-                  <Ionicons
-                    name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
-                    color={Color?.primaryColor}
-                    size={24}
-                  />
-                </TouchableOpacity>
-              </View>
-            </CustomShadow>
-
-            <TouchableOpacity onPress={() => handleForgetPassword()}>
-              <Text style={styles.forgotText}>Forgot Password ?</Text>
-            </TouchableOpacity>
-
-            <View style={styles.termsContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  {backgroundColor: isAgree ? Color.primaryColor : Color.white},
-                ]}
-                onPress={() => setIsAgree(!isAgree)}>
-                {isAgree && (
-                  <View style={styles.checkedBox}>
-                    <AntDesign name="check" color={Color.white} size={16} />
+                  <View
+                    style={{
+                      height: verticalScale(38),
+                      justifyContent: 'center',
+                      width: '87%',
+                      paddingHorizontal: scale(5),
+                    }}>
+                    <TextInput
+                      value={password}
+                      placeholder="Password"
+                      onChangeText={val => {
+                        setPassword(val);
+                        validatePassword(val);
+                      }}
+                      fontFamily={Font?.Poppins}
+                      placeholderTextColor={Color.textColor}
+                      style={styles.titleText}
+                      multiline={false}
+                      secureTextEntry={!passwordVisible}
+                    />
                   </View>
-                )}
+                  <TouchableOpacity
+                    onPress={handlePassword}
+                    style={{
+                      paddingHorizontal: scale(10),
+                      paddingVertical: scale(5),
+                    }}>
+                    <Ionicons
+                      name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+                      color={Color?.primaryColor}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </CustomShadow>
+
+              <TouchableOpacity onPress={() => handleForgetPassword()}>
+                <Text style={styles.forgotText}>Forgot Password ?</Text>
               </TouchableOpacity>
-              <Text style={styles.termsText}>
-                I agree to the terms and conditions
-              </Text>
+
+              <View style={styles.termsContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    {
+                      backgroundColor: isAgree
+                        ? Color.primaryColor
+                        : Color.white,
+                    },
+                  ]}
+                  onPress={() => setIsAgree(!isAgree)}>
+                  {isAgree && (
+                    <View style={styles.checkedBox}>
+                      <AntDesign name="check" color={Color.white} size={16} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <Text style={styles.termsText}>
+                  I agree to the terms and conditions
+                </Text>
+              </View>
+
+              <View style={{height: verticalScale(100)}} />
             </View>
           </View>
-
-          <View
-            style={{
-              justifyContent: 'center',
-              bottom: verticalScale(25),
-              position: 'absolute',
-              width: '100%',
-              paddingHorizontal: scale(16),
-            }}>
+          <View style={styles.fixedButtonContainer}>
             <TouchableOpacity
               onPress={handleLogin}
               style={[styles.button, {backgroundColor: Color.primaryColor}]}>
@@ -413,12 +428,13 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
+  },
+  contentContainer: {
+    flexGrow: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: '35%',
+    paddingBottom: '5%',
   },
   forgotText: {
     color: Color?.textColor,
@@ -470,6 +486,17 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     fontSize: 14,
     color: Color.textColor,
+  },
+  fixedButtonContainer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: scale(16),
+    paddingBottom: verticalScale(15),
+    paddingTop: verticalScale(10),
+    backgroundColor: Color.white,
   },
 });
 

@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
   day: {
     fontSize: scale(13),
     fontWeight: '500',
-    color: '#000',
+    color: Color.black,
   },
   wrapper: {
     backgroundColor: 'rgba(0,0,0,0.5)',

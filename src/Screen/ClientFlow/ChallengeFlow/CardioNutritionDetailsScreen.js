@@ -3,7 +3,7 @@ import React from 'react';
 import ChallengeCard from './ChallengeCard';
 import {Color} from '../../../assets/styles/Colors';
 import Header from '../../../Components/Header';
-import {scale} from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 
 const CardioNutritionDetailsScreen = ({route}) => {
   const cardioNutrition = route.params.challenges;
@@ -20,8 +20,9 @@ const CardioNutritionDetailsScreen = ({route}) => {
           item?._id?.toString() || index.toString()
         }
         renderItem={({item}) => (
-          <ChallengeCard challenge={item} onJoin={onJoin} />
+          <ChallengeCard challenge={item} onJoin={onJoin} btnType={'Join'} />
         )}
+        contentContainerStyle={{paddingVertical: verticalScale(6)}}
         style={{paddingHorizontal: scale(8)}}
       />
     </View>

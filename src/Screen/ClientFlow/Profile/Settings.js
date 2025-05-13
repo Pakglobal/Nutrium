@@ -177,10 +177,6 @@ const SettingsScreen = () => {
     }
   };
 
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <Header screenheader={true} />
@@ -428,7 +424,7 @@ const SettingsScreen = () => {
               }}>
               <View
                 style={{
-                  backgroundColor: '#fff',
+                  backgroundColor: Color.white,
                   padding: 20,
                   borderRadius: 10,
                   width: '80%',

@@ -43,14 +43,7 @@ const LoginChoiceScreen = () => {
         </Text>
       </View>
 
-      <View
-        style={{
-          justifyContent: 'center',
-          bottom: verticalScale(25),
-          position: 'absolute',
-          width: '100%',
-          paddingHorizontal: scale(16),
-        }}>
+      <View style={styles.fixedButtonContainer}>
         <TouchableOpacity
           onPress={() => navigation.navigate('loginScreen')}
           style={[styles.button, {backgroundColor: Color.primaryColor}]}>
@@ -68,9 +61,15 @@ const LoginChoiceScreen = () => {
               backgroundColor: Color.white,
               borderWidth: 2,
               marginTop: verticalScale(8),
+              flexDirection: 'row',
+              alignItems: 'center',
             },
           ]}>
-          <Text style={[styles.buttonText, {color: Color.primaryColor}]}>
+          <Text
+            style={[
+              styles.buttonText,
+              {color: Color.primaryColor, marginHorizontal: scale(8)},
+            ]}>
             Continue As Guest
           </Text>
         </TouchableOpacity>
@@ -90,6 +89,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: scale(22),
   },
+  button: {
+    borderColor: Color.primaryColor,
+    borderRadius: scale(8),
+    height: verticalScale(35),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   buttonText: {
     fontSize: scale(14),
     fontFamily: Font.PoppinsMedium,
@@ -97,11 +103,15 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: verticalScale(2),
   },
-  button: {
-    borderColor: Color.primaryColor,
-    borderRadius: scale(8),
-    height: verticalScale(35),
-    alignItems: 'center',
-    justifyContent: 'center',
+  fixedButtonContainer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: scale(16),
+    paddingBottom: verticalScale(15),
+    paddingTop: verticalScale(10),
+    backgroundColor: Color.white,
   },
 });

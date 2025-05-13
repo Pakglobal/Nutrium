@@ -91,8 +91,9 @@ const AllChallenges = ({challenges, onJoin}) => {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.containerText}>
-          <Text style={styles.text}>All Challenges</Text>
+        <View
+          style={[styles.containerText, {marginVertical: verticalScale(10)}]}>
+          <Text style={[styles.text]}>All Challenges</Text>
         </View>
         {topChallenges.length > 0 && (
           <SwiperFlatList

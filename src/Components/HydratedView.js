@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     height: verticalScale(65),
     width: '30%',
     backgroundColor: '#f3f6fe',
-    shadowColor: '#000',
+    shadowColor: Color.black,
     shadowOffset: {
       width: 0,
       height: 1,

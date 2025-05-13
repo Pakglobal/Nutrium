@@ -5,7 +5,6 @@ import {useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
 import {Font} from '../assets/styles/Fonts';
-import {IconPadding} from '../assets/styles/Icon';
 
 const CalenderHeader = ({
   onPressLeft,
@@ -18,7 +17,12 @@ const CalenderHeader = ({
     <View style={styles.headerContainer}>
       <View style={{marginHorizontal: scale(9)}}>
         <View style={styles.calenderView}>
-          <TouchableOpacity style={IconPadding} onPress={onPressLeft}>
+          <TouchableOpacity
+            style={{
+              paddingVertical: verticalScale(5),
+              paddingHorizontal: scale(7),
+            }}
+            onPress={onPressLeft}>
             <AntDesign
               name="left"
               color={Color.primaryColor}
@@ -27,7 +31,10 @@ const CalenderHeader = ({
           </TouchableOpacity>
           <Text style={styles.dateTxt}>{txtFunction}</Text>
           <TouchableOpacity
-            style={IconPadding}
+            style={{
+              paddingVertical: verticalScale(5),
+              paddingHorizontal: scale(7),
+            }}
             onPress={onPressRight}
             disabled={disabled}>
             <AntDesign

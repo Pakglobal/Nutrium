@@ -23,7 +23,9 @@ const SPACING = (width - CARD_WIDTH) / 2;
 const JoinChallenges = ({challenges, onJoin}) => {
   const privateChallenges = challenges.filter(c => c.privacy === 'private');
   const publicChallenges = challenges.filter(c => c.privacy !== 'private');
-  const topChallenges = privateChallenges.slice(0, 4);
+  const topChallenges = privateChallenges
+    .sort((a, b) => a.updatedAt - b.updatedAt)
+    .slice(0, 4);
   const swiperRef = useRef(null);
   const navigation = useNavigation();
 
@@ -55,18 +57,16 @@ const JoinChallenges = ({challenges, onJoin}) => {
     [onJoin],
   );
 
-  console.log('topChallenges.length', topChallenges.length);
-
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.containerText}>
           <Text style={styles.text}>Join Challenges</Text>
-          {topChallenges.length > 4 ? (
+          {privateChallenges.length > 4 ? (
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate('AllPrivateChallenge', {
-                  challenges: challenges,
+                  challenges: privateChallenges,
                   onJoin: onJoin,
                 })
               }>

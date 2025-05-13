@@ -19,7 +19,6 @@ import {Font} from '../../../assets/styles/Fonts';
 import {useNavigation} from '@react-navigation/native';
 import {getChallengeLederBoardData} from '../../../Apis/ClientApis/ChallengesApi';
 import {useSelector} from 'react-redux';
-import LinearGradient from 'react-native-linear-gradient';
 
 const ViewChallengDetailsScreen = ({route}) => {
   const navigation = useNavigation();
@@ -29,7 +28,7 @@ const ViewChallengDetailsScreen = ({route}) => {
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
-  const id = tokenId?.id || guestTokenId?.id;
+
   const {challenge} = route.params;
 
   useEffect(() => {
@@ -45,8 +44,14 @@ const ViewChallengDetailsScreen = ({route}) => {
         challenge?._id,
         period,
       );
-      if (response?.leaderboard) {
-        setLeaderbordData(response.leaderboard);
+      console.log('API Response:', response);
+      if (response?.leaderboard && Array.isArray(response.leaderboard)) {
+        setLeaderbordData(
+          response.leaderboard.map(item => ({
+            ...item,
+            image: item?.image,
+          })),
+        );
       } else {
         setLeaderbordData([]);
       }
@@ -61,9 +66,9 @@ const ViewChallengDetailsScreen = ({route}) => {
     }
   };
 
-  const sortedParticipants = [...lederbordData].sort(
-    (a, b) => b?.progress - a?.progress,
-  );
+  const sortedParticipants = [...lederbordData]
+    .filter(item => item?.progress !== undefined)
+    .sort((a, b) => (b?.progress || 0) - (a?.progress || 0));
   const topThree = sortedParticipants.slice(0, 3);
   const remainingParticipants = sortedParticipants.slice(3);
 
@@ -175,14 +180,19 @@ const ViewChallengDetailsScreen = ({route}) => {
                           borderRadius: scale(45),
                         },
                     ]}
-                    source={{uri: item?.image}}
+                    source={{
+                      uri:
+                        item?.image ||
+                        `https://i.pravatar.cc/150?img=${index + 1}`,
+                    }}
                   />
                   <Text
                     style={[
                       styles.rank,
-                      topThree.length === 1 && {bottom: verticalScale(-5)},
                       topThree.length === 3 &&
-                        index === 1 && {bottom: verticalScale(7)},
+                        index === 1 && {
+                          bottom: verticalScale(15),
+                        },
                     ]}>
                     {item?.rank}
                   </Text>
@@ -200,7 +210,7 @@ const ViewChallengDetailsScreen = ({route}) => {
               <ActivityIndicator size="large" color={Color.primaryColor} />
             </View>
           </View>
-        ) : lederbordData.length < 3 ? (
+        ) : lederbordData?.length <= 3 ? (
           renderEmptyState()
         ) : (
           <FlatList
@@ -317,6 +327,9 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(5),
     borderColor: Color.white,
     borderWidth: scale(3),
+    width: scale(70),
+    height: scale(70),
+    borderRadius: scale(35),
   },
   points: {
     color: Color.white,
@@ -329,10 +342,12 @@ const styles = StyleSheet.create({
     borderRadius: scale(10),
     width: scale(20),
     height: scale(20),
-    textAlign: 'center',
+    alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute',
+    textAlign: 'center',
     fontSize: moderateScale(12),
+    position: 'absolute',
+    bottom: 0,
   },
   bottomContainer: {
     backgroundColor: 'rgba(107, 203, 119, 0.3)',
@@ -372,6 +387,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(20),
     marginRight: scale(12),
     alignSelf: 'center',
+    backgroundColor: Color.lightgray,
   },
   pointsContainer: {
     flexDirection: 'row',

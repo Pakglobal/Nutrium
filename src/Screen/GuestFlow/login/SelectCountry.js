@@ -20,8 +20,6 @@ import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {Font} from '../../../assets/styles/Fonts';
-import {Progress} from '../../../assets/styles/Progress';
-import useKeyboardHandler from '../../../Components/useKeyboardHandler';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
 import CustomeDropDown from '../../../Components/CustomeDropDown';
@@ -43,7 +41,6 @@ const SelectCountry = ({route}) => {
   const selectGender = route?.params;
   const countryData = {country, number, dateOfBirth, ...selectGender};
 
-  useKeyboardHandler();
   useAndroidBack();
 
   const countryCodes = {
@@ -77,6 +74,7 @@ const SelectCountry = ({route}) => {
       setHasNumberError(true);
     }
   };
+
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
@@ -89,6 +87,7 @@ const SelectCountry = ({route}) => {
     const formattedDate = `${day}/${month}/${year}`;
     setDateOfBirth(formattedDate);
   };
+
   const handleNavigation = () => {
     Keyboard.dismiss();
 
@@ -146,18 +145,18 @@ const SelectCountry = ({route}) => {
         closeAlert={() => setAlertVisible(false)}
         onClose={() => setAlertVisible(false)}
       />
-      <GuestFlowHeader progress={Progress.selectCountry} />
+      <GuestFlowHeader currentStep={'selectCountry'} />
       <LeftIcon onGoBack={() => navigation.goBack()} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: height > 800 ? '47.5%' : '37%'}}
+        contentContainerStyle={{flexGrow: 1, paddingBottom: '35%'}}
         keyboardShouldPersistTaps="handled">
         <LoginHeader
           style={{alignSelf: 'center', marginTop: verticalScale(50)}}
         />
 
-        <View style={{marginHorizontal: scale(16)}}>
+        <View style={{marginHorizontal: scale(16), flex: 1}}>
           <CustomeDropDown
             items={countries}
             inputStyle={{width: '100%', marginVertical: scale(6)}}
@@ -218,7 +217,6 @@ const SelectCountry = ({route}) => {
             />
           )}
         </View>
-
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleNavigation}>
             <FontAwesome6 name="arrow-right" size={22} color={Color.white} />

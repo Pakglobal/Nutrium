@@ -72,7 +72,7 @@ export default ProfileMenuScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Color.white,
   },
   scrollView: {
     // flex: 1,

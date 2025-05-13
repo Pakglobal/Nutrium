@@ -18,10 +18,14 @@ const MealsLikeInHome = () => {
         <View style={shadowStyle}>
           <View style={{padding: scale(10)}}>
             <Text style={styles.title}>What were your meals like?</Text>
-            <View style={styles.cardContainer}>
-              <View style={{width: '100%'}}>
-                <Food width={'100%'} />
-              </View>
+
+            <View>
+              <Image
+                source={require('../assets/Images/food.png')}
+                style={{height: scale(170), width: '100%'}}
+                resizeMode="contain"
+              />
+
               <Text style={styles.discription}>
                 Log more meals and get the {'\n'}bigger picture of your days.
               </Text>
@@ -53,6 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(10),
     overflow: 'hidden',
     position: 'relative',
+    backgroundColor: 'red',
   },
   foodImage: {
     width: '100%',

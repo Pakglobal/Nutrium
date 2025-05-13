@@ -46,7 +46,6 @@ const ChallengesDetailsScreen = ({route}) => {
 
   const formattedStartDate = formatDate(challenge?.startDate);
   const formattedEndDate = formatDate(challenge?.endDate);
-  console.log('challenge?._id', challenge?._id);
 
   const handleJoinChallenge = async () => {
     setLoading(true);
@@ -364,7 +363,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingHorizontal: scale(8),
-    marginTop: verticalScale(20),
+    marginTop: verticalScale(25),
     flex: 1,
   },
   cardContainer: {

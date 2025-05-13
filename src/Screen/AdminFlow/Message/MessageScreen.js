@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(8),
   },
   messageCard: {
-    backgroundColor: '#fff',
+    backgroundColor: Color.white,
     marginBottom: scale(10),
     borderRadius: scale(5),
   },

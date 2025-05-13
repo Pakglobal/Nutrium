@@ -167,6 +167,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: scale(10),
     fontSize: scale(14),
-    color: '#000',
+    color: Color.black,
   },
 });

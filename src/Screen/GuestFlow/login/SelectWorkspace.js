@@ -58,7 +58,7 @@ const SelectWorkspace = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GuestFlowHeader progress={'60%'} />
+      {/* <GuestFlowHeader /> */}
 
       <LeftIcon onGoBack={() => navigation.goBack()} />
       <View style={{paddingHorizontal: scale(16)}}>

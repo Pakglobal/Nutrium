@@ -12,7 +12,6 @@ import ChallangeSwiper from './ChallangeSwiper';
 import Header from '../../../Components/Header';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../assets/styles/Colors';
-import {IconPadding} from '../../../assets/styles/Icon';
 import {Font} from '../../../assets/styles/Fonts';
 
 const ChallengesScreen = () => {
@@ -65,7 +64,8 @@ const styles = StyleSheet.create({
   categoryCard: {
     backgroundColor: Color.white,
     borderRadius: moderateScale(6),
-    marginVertical: verticalScale(10),
+    marginBottom: verticalScale(5),
+    marginTop: verticalScale(10),
     paddingVertical: verticalScale(8),
     paddingHorizontal: scale(8),
     alignItems: 'center',

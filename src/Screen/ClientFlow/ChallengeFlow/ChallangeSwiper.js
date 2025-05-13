@@ -27,9 +27,7 @@ const ChallengeSwiper = ({onTabChange}) => {
   const [allChallengeData, setAllChallengeData] = useState([]);
   const [allChallengeJoinData, setAllChallengeJoinData] = useState([]);
   const [requests, setRequests] = useState([]);
-  const [loadingAll, setLoadingAll] = useState(false);
-  const [loadingJoin, setLoadingJoin] = useState(false);
-  const [loadingInvitations, setLoadingInvitations] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
@@ -37,7 +35,7 @@ const ChallengeSwiper = ({onTabChange}) => {
   const id = tokenId?.id || guestTokenId?.id;
 
   const fetchChallangeDetails = useCallback(async () => {
-    setLoadingAll(true);
+    setLoading(true);
     try {
       const response = await getAllChallenge(token, id);
       setAllChallengeData(response?.challenges || response?.challenge || []);
@@ -45,12 +43,12 @@ const ChallengeSwiper = ({onTabChange}) => {
       console.error('Error fetching challenges:', error);
       setAllChallengeData([]);
     } finally {
-      setLoadingAll(false);
+      setLoading(false);
     }
   }, []);
 
   const fetchChallangeJoinData = useCallback(async () => {
-    setLoadingJoin(true);
+    setLoading(true);
     try {
       const response = await getAllChallengeJoinDatawithId(token, id);
       setAllChallengeJoinData(
@@ -62,12 +60,12 @@ const ChallengeSwiper = ({onTabChange}) => {
       console.error('Error fetching joined challenges:', error);
       setAllChallengeJoinData([]);
     } finally {
-      setLoadingJoin(false);
+      setLoading(false);
     }
   }, []);
 
   const getJoiningRequest = useCallback(async () => {
-    setLoadingInvitations(true);
+    setLoading(true);
     try {
       const response = await getAllChallengePendingRequest(token, id);
       if (response?.success) {
@@ -77,7 +75,7 @@ const ChallengeSwiper = ({onTabChange}) => {
       console.error('Error fetching pending requests:', error);
       setRequests([]);
     } finally {
-      setLoadingInvitations(false);
+      setLoading(false);
     }
   }, []);
 
@@ -91,23 +89,6 @@ const ChallengeSwiper = ({onTabChange}) => {
     }
   }, [index, fetchChallangeDetails, fetchChallangeJoinData, getJoiningRequest]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (index === 0) {
-        fetchChallangeDetails();
-      } else if (index === 1) {
-        fetchChallangeJoinData();
-      } else if (index === 2) {
-        getJoiningRequest();
-      }
-    }, [
-      index,
-      fetchChallangeDetails,
-      fetchChallangeJoinData,
-      getJoiningRequest,
-    ]),
-  );
-
   const routes = [
     {key: 'all', title: 'All Challenges'},
     {key: 'join', title: 'Joined Challenges'},
@@ -116,7 +97,7 @@ const ChallengeSwiper = ({onTabChange}) => {
 
   const renderScene = SceneMap({
     all: () =>
-      loadingAll ? (
+      loading ? (
         <ActivityIndicator
           size="large"
           color={Color.primaryColor}
@@ -126,7 +107,7 @@ const ChallengeSwiper = ({onTabChange}) => {
         <AllChallenges challenges={allChallengeData} onJoin={handleJoin} />
       ),
     join: () =>
-      loadingJoin ? (
+      loading ? (
         <ActivityIndicator
           size="large"
           color={Color.primaryColor}
@@ -139,7 +120,7 @@ const ChallengeSwiper = ({onTabChange}) => {
         />
       ),
     invitation: () =>
-      loadingInvitations ? (
+      loading ? (
         <ActivityIndicator
           size="large"
           color={Color.primaryColor}
@@ -165,42 +146,39 @@ const ChallengeSwiper = ({onTabChange}) => {
   }, [index, onTabChange]);
 
   const renderTabBar = props => (
-    <View>
-      <View
-        style={{
-          flexDirection: 'row',
-          backgroundColor: Color.challengeBg,
-          borderRadius: moderateScale(12),
-          overflow: 'hidden',
-          justifyContent: 'space-around',
-          padding: scale(6),
-        }}>
-        {props.navigationState.routes.map((route, i) => {
-          const isSelected = index === i;
-          return (
-            <TouchableOpacity
-              key={route.key}
-              onPress={() => setIndex(i)}
+    <View
+      style={{
+        flexDirection: 'row',
+        backgroundColor: Color.challengeBg,
+        borderRadius: moderateScale(12),
+        overflow: 'hidden',
+        justifyContent: 'space-around',
+        padding: scale(6),
+        marginVertical: verticalScale(5),
+      }}>
+      {props.navigationState.routes.map((route, i) => {
+        const isSelected = index === i;
+        return (
+          <TouchableOpacity
+            key={route.key}
+            onPress={() => setIndex(i)}
+            style={{
+              padding: scale(8),
+              borderRadius: scale(6),
+              backgroundColor: isSelected ? Color.primaryColor : 'transparent',
+            }}>
+            <Text
               style={{
-                padding: scale(8),
-                borderRadius: scale(6),
-                backgroundColor: isSelected
-                  ? Color.primaryColor
-                  : 'transparent',
+                color: isSelected ? Color.white : Color.primaryColor,
+                fontWeight: '500',
+                fontSize: moderateScale(13),
+                fontFamily: Font.Poppins,
               }}>
-              <Text
-                style={{
-                  color: isSelected ? Color.white : Color.primaryColor,
-                  fontWeight: '500',
-                  fontSize: moderateScale(13),
-                  fontFamily: Font.Poppins,
-                }}>
-                {route.title}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+              {route.title}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 

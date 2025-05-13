@@ -28,7 +28,6 @@ import CustomeDropDown from '../../../Components/CustomeDropDown';
 import CustomShadow from '../../../Components/CustomShadow';
 import {shadowStyle} from '../../../assets/styles/Shadow';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import useAndroidBack from '../../../Navigation/useAndroidBack';
 
 const MIN_DAYS_DIFFERENCE = 2;
 
@@ -140,51 +139,74 @@ const CreateChallenge = () => {
   };
 
   const validateForm = () => {
+    const isAllEmpty =
+      !challengeName.trim() &&
+      !challengeTypeId &&
+      !selectedChallengeRange?._id &&
+      !description.trim() &&
+      (!targetGoal || parseInt(targetGoal, 10) <= 0) &&
+      (!coinReward || parseInt(coinReward, 10) <= 0);
+
+    if (isAllEmpty) {
+      showAlert('All fields are required.');
+      return false;
+    }
+
     if (!challengeName.trim()) {
       showAlert('Challenge name is required.');
       return false;
     }
+
     if (!challengeTypeId) {
       showAlert('Challenge type is required.');
       return false;
     }
+
     if (!selectedChallengeRange?._id) {
       showAlert('Challenge range is required.');
       return false;
     }
+
     if (!startDate || isNaN(startDate.getTime())) {
       showAlert('Valid start date is required.');
       return false;
     }
+
     if (!endDate || isNaN(endDate.getTime())) {
       showAlert('Valid end date is required.');
       return false;
     }
+
     if (!isValidEndDate(startDate, endDate)) {
       showAlert(
         `End date must be at least ${MIN_DAYS_DIFFERENCE} days after the start date.`,
       );
       return false;
     }
+
     if (!description.trim()) {
       showAlert('Description is required.');
       return false;
     }
+
     const target = parseInt(targetGoal, 10);
     if (!targetGoal || isNaN(target) || target <= 0) {
       showAlert('Valid target goal is required.');
       return false;
     }
+
     const limit = parseInt(participantsLimit, 10);
-    if (isNaN(limit) || limit <= 0) {
+    if (!participantsLimit || isNaN(limit) || limit <= 0) {
       showAlert('Valid participant limit is required.');
       return false;
     }
+
     const reward = parseInt(coinReward, 10);
     if (!coinReward || isNaN(reward) || reward <= 0) {
       showAlert('Valid coin reward is required.');
       return false;
     }
+
     return true;
   };
 
@@ -238,8 +260,6 @@ const CreateChallenge = () => {
       selectedFriends,
     ],
   );
-
-  // console.log('challengeData', challengeData)
 
   const handleSubmit = async () => {
     if (!token || !id) {
@@ -507,7 +527,7 @@ const CreateChallenge = () => {
             placeholder="Enter participant limit"
             keyboardType="numeric"
             value={participantsLimit.toString()}
-            onChangeText={text => setParticipantsLimit(parseInt(text) || 0)}
+            onChangeText={text => setParticipantsLimit(parseInt(text) || 1)}
             accessibilityLabel="Participants limit input"
             returnKeyType="done"
           />
@@ -545,32 +565,6 @@ const CreateChallenge = () => {
             <Text style={styles.radioText}>Private</Text>
           </TouchableOpacity>
         </View>
-
-        {/* {!isPublic && (
-          <TouchableOpacity
-            style={[
-              styles.button,
-              {
-                backgroundColor: Color.white,
-                borderWidth: scale(1),
-                borderColor: Color.primaryColor,
-              },
-            ]}
-            onPress={() => setInviteModalVisible(true)}
-            accessibilityLabel="Invite friends button"
-            accessibilityRole="button">
-            <Text
-              style={[
-                styles.buttonText,
-                {
-                  color: Color.primaryColor,
-                },
-              ]}>
-              Invite{' '}
-              {selectedFriends?.length > 0 ? `(${selectedFriends.length})` : ''}
-            </Text>
-          </TouchableOpacity>
-        )} */}
 
         {!isPublic && (
           <TouchableOpacity
@@ -657,7 +651,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: Color.primaryColor,
-    marginBottom: verticalScale(20),
+    marginBottom: verticalScale(15),
     borderColor: Color.red,
     borderRadius: scale(6),
     alignItems: 'center',

@@ -75,7 +75,6 @@ export const challengeAcceptAndRejectedApi = async (
 };
 
 export const getChallengeLederBoardData = async (token, challengeId) => {
-  console.log('cha', challengeId);
   try {
     const url = `${LEADERBOARD_DATA}/${challengeId}`;
     const response = await axios.get(url, {
@@ -162,7 +161,6 @@ export const getChallengeRange = async (token, id) => {
 };
 
 export const getAllUser = async (token, pageNo, limit, search) => {
-  console.log('token', token);
   try {
     const url = `${GET_ALL_USER}?page=${pageNo}&limit=${limit}&search=${search}`;
     const response = await axios.get(url, {
@@ -172,6 +170,6 @@ export const getAllUser = async (token, pageNo, limit, search) => {
     });
     return response?.data;
   } catch (error) {
-    console.error('Error fetching get all user', error);
+    throw error;
   }
 };

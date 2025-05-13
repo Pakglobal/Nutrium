@@ -18,10 +18,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
 import {getAllUser} from '../../../Apis/ClientApis/ChallengesApi';
 import {Color} from '../../../assets/styles/Colors';
-import {scale} from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import {Font} from '../../../assets/styles/Fonts';
 import CustomShadow from '../../../Components/CustomShadow';
 import {shadowStyle} from '../../../assets/styles/Shadow';
+import CustomAlertBox from '../../../Components/CustomAlertBox';
 
 const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
   const tokenId = useSelector(state => state?.user?.token);
@@ -34,15 +35,18 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('error');
+  const [hasError, setHasError] = useState(false);
 
   const LIMIT = 25;
 
   const fetchFriends = async (search = '', pageNo = 1) => {
-    if (loading) return;
+    if (loading || hasError) return;
     setLoading(true);
     try {
       const res = await getAllUser(token, pageNo, LIMIT, search);
-      console.log('token-=-=-=', token);
       const newFriends = res?.data || [];
 
       if (pageNo === 1) {
@@ -50,32 +54,38 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
       } else {
         setFriends(prev => [...prev, ...newFriends]);
       }
-
       setHasMore(newFriends.length === LIMIT);
-    } catch (err) {
-      console.error('Error fetching friends:', err);
+    } catch (error) {
+      setHasError(true);
+      setFriends([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    if (isInviteModalVisible) {
+      setPage(1);
+      setHasError(false);
+      fetchFriends('', 1);
+    }
+  }, [isInviteModalVisible]);
+
+  useEffect(() => {
+    if (hasError) {
+      setFriends([]);
+      return;
+    }
+
     const delayDebounce = setTimeout(() => {
       setPage(1);
       fetchFriends(searchQuery, 1);
     }, 400);
     return () => clearTimeout(delayDebounce);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    if (isInviteModalVisible) {
-      setPage(1);
-      fetchFriends('', 1);
-    }
-  }, [isInviteModalVisible]);
+  }, [searchQuery, hasError]);
 
   const loadMore = () => {
-    if (hasMore && !loading) {
+    if (hasMore && !loading && !hasError) {
       const nextPage = page + 1;
       setPage(nextPage);
       fetchFriends(searchQuery, nextPage);
@@ -90,12 +100,14 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
     );
   };
 
-  const renderItem = ({item}) => (
+  const renderItem = ({item, index}) => (
     <TouchableOpacity
       style={styles.friendItem}
       onPress={() => toggleSelection(item._id)}>
       <Image
-        source={{uri: item.image || 'https://via.placeholder.com/100'}}
+        source={{
+          uri: item.image || `https://i.pravatar.cc/150?img=${index + 1}`,
+        }}
         style={styles.avatar}
       />
       <View style={styles.friendInfo}>
@@ -117,82 +129,107 @@ const InviteFriendsModal = ({isInviteModalVisible, onClose, onInvite}) => {
   );
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={isInviteModalVisible}
-      onRequestClose={onClose}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalContainer}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.modalContent}>
-              <View style={styles.header}>
-                <View style={{flex: 1}}>
-                  <Text style={styles.title}>Invite</Text>
+    <View>
+      <CustomAlertBox
+        visible={alertVisible}
+        type={alertType}
+        message={alertMessage}
+        closeAlert={() => setAlertVisible(false)}
+        onClose={() => setAlertVisible(false)}
+      />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isInviteModalVisible}
+        onRequestClose={onClose}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.modalContent}>
+                <View style={styles.header}>
+                  <View style={{flex: 1}}>
+                    <Text style={styles.title}>Invite</Text>
+                  </View>
+                  <TouchableOpacity onPress={onClose}>
+                    <Ionicons name="close" size={24} color={Color?.white} />
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={onClose}>
-                  <Ionicons name="close" size={24} color={Color?.white} />
-                </TouchableOpacity>
-              </View>
-              <CustomShadow
-                style={shadowStyle}
-                radius={1}
-                color={Color?.blackShadow}>
-                <View style={styles.searchContainer}>
-                  <Ionicons
-                    name="search"
-                    size={20}
-                    color={Color.primaryColor}
-                    style={styles.searchIcon}
-                  />
-                  <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    placeholderTextColor="gray"
-                  />
-                </View>
-              </CustomShadow>
-
-              <FlatList
-                data={friends}
-                keyExtractor={item => item._id}
-                renderItem={renderItem}
-                contentContainerStyle={{flexGrow: 1}}
-                showsVerticalScrollIndicator={false}
-                onEndReached={loadMore}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={
-                  loading ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={Color?.primaryColor}
+                <CustomShadow
+                  style={shadowStyle}
+                  radius={1}
+                  color={Color?.blackShadow}>
+                  <View style={styles.searchContainer}>
+                    <Ionicons
+                      name="search"
+                      size={20}
+                      color={Color.primaryColor}
+                      style={styles.searchIcon}
                     />
-                  ) : null
-                }
-              />
+                    <TextInput
+                      style={styles.searchInput}
+                      placeholder="Search"
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
+                      placeholderTextColor="gray"
+                    />
+                  </View>
+                </CustomShadow>
 
-              <TouchableOpacity
-                style={styles.inviteButton}
-                disabled={selectedFriends.length === 0}
-                onPress={() => {
-                  onInvite(selectedFriends);
-                }}>
-                <Text style={styles.inviteButtonText}>
-                  Invite{' '}
-                  {selectedFriends.length > 0
-                    ? `(${selectedFriends.length})`
-                    : ''}
-                </Text>
-              </TouchableOpacity>
-            </KeyboardAvoidingView>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
-    </Modal>
+                <FlatList
+                  data={friends}
+                  keyExtractor={item => item._id}
+                  renderItem={renderItem}
+                  contentContainerStyle={{flexGrow: 1}}
+                  showsVerticalScrollIndicator={false}
+                  onEndReached={loadMore}
+                  onEndReachedThreshold={0.5}
+                  ListEmptyComponent={
+                    !loading ? (
+                      <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyText}>No friends found</Text>
+                      </View>
+                    ) : null
+                  }
+                  ListFooterComponent={
+                    loading ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={Color?.primaryColor}
+                      />
+                    ) : null
+                  }
+                />
+
+                <TouchableOpacity
+                  style={styles.inviteButton}
+                  onPress={() => {
+                    if (hasError || selectedFriends.length === 0) {
+                      setAlertMessage(
+                        'Please select at least one friend to invite.',
+                      );
+                      setAlertType('error');
+                      setAlertVisible(true);
+
+                      return;
+                    }
+                    onInvite(selectedFriends);
+                  }}
+                  disabled={hasError}>
+                  <Text style={styles.inviteButtonText}>
+                    Invite{' '}
+                    {selectedFriends.length > 0
+                      ? `(${selectedFriends.length})`
+                      : ''}
+                  </Text>
+                </TouchableOpacity>
+              </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </View>
   );
 };
 
@@ -204,15 +241,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: Color.white,
     width: '90%',
-    height: scale(500), // Fixed height for the modal
+    height: scale(500),
     borderRadius: scale(15),
     elevation: 5,
   },
   header: {
     flexDirection: 'row',
-    paddingVertical: 10,
+    paddingVertical: verticalScale(10),
     backgroundColor: Color?.primaryColor,
     borderTopRightRadius: scale(15),
     borderTopLeftRadius: scale(15),
@@ -227,7 +264,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Color.white,
     borderRadius: scale(10),
     paddingHorizontal: scale(10),
     margin: scale(10),
@@ -239,7 +276,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: scale(40),
     fontSize: scale(14),
-    color: '#000',
+    color: Color.black,
   },
   friendItem: {
     flexDirection: 'row',
@@ -279,6 +316,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: scale(20),
+  },
+  emptyText: {
+    fontSize: scale(16),
+    color: Color?.gray,
+    fontFamily: Font?.Poppins,
+    textAlign: 'center',
   },
 });
 

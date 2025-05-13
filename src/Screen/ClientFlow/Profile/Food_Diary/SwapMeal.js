@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: Color.white,
     padding: 20,
     borderRadius: 10,
     width: '80%',
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#000',
+    color: Color.black,
   },
   optionButton: {
     padding: 10,
@@ -187,6 +187,6 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: '#000',
+    color: Color.black,
   },
 });

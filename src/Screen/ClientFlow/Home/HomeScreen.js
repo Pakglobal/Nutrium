@@ -14,7 +14,7 @@ import Header from '../../../Components/Header';
 import AppointmentCard from '../../../Components/AppointmentCard';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
@@ -45,11 +45,8 @@ const HomeScreen = () => {
 
   const GetUserApiData = async () => {
     try {
-      console.log('token', token);
       const response = await GetUserApi(token);
-      if (response) {
-        dispatch(profileData(response?.data));
-      }
+      dispatch(profileData(response?.data));
     } catch (error) {
       console.error('Error fetching user data', error);
     }
@@ -108,6 +105,10 @@ const HomeScreen = () => {
       .catch(() => {
         setRefreshing(false);
       });
+  }, []);
+
+  useEffect(() => {
+    tokenId && GetUserApiData();
   }, []);
 
   const handleGoToChallenge = () => {

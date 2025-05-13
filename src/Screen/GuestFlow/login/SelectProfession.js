@@ -10,16 +10,18 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
-import IconStyle, {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
+import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
 import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectProfession.svg';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {Font} from '../../../assets/styles/Fonts';
-import {Progress} from '../../../assets/styles/Progress';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import CustomShadow from '../../../Components/CustomShadow';
+import {shadowStyle} from '../../../assets/styles/Shadow';
 
 const SelectProfession = ({route}) => {
   const navigation = useNavigation();
@@ -116,7 +118,7 @@ const SelectProfession = ({route}) => {
         closeAlert={() => setAlertVisible(false)}
         onClose={() => setAlertVisible(false)}
       />
-      <GuestFlowHeader progress={Progress.selectProfession} />
+      <GuestFlowHeader currentStep={'selectProfession'} />
 
       <LeftIcon onGoBack={() => navigation.goBack()} />
 
@@ -124,49 +126,57 @@ const SelectProfession = ({route}) => {
 
       <View style={styles.formContainer}>
         <Text style={styles.titleText}>What is your profession</Text>
-        <View style={styles.optionsGrid}>
-          {professions.map(item => (
-            <TouchableOpacity
-              key={item?.id}
-              style={[
-                styles.optionButton,
-                profession === item?.id && styles.selectedButton,
-              ]}
-              onPress={() => setProfession(item?.id)}>
-              <Text
+        <CustomShadow>
+          <View style={styles.optionsGrid}>
+            {professions.map(item => (
+              <TouchableOpacity
+                key={item?.id}
                 style={[
-                  styles.optionText,
-                  profession === item?.id && styles.selectedText,
-                ]}>
-                {item?.icon(item.id)} {item?.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+                  styles.optionButton,
+                  profession === item?.id && styles.selectedButton,
+                ]}
+                onPress={() => setProfession(item?.id)}>
+                <Text
+                  style={[
+                    styles.optionText,
+                    profession === item?.id && styles.selectedText,
+                  ]}>
+                  {item?.icon(item.id)} {item?.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </CustomShadow>
 
         <Text style={styles.titleText}>What is your Goal</Text>
-        <View style={styles.optionsGrid}>
-          {goals.map(item => (
-            <TouchableOpacity
-              key={item?.id}
-              style={[
-                styles.optionButton,
-                goal === item?.id && styles.selectedButton,
-              ]}
-              onPress={() => setGoal(item?.id)}>
-              <Text
+        <CustomShadow>
+          <View style={styles.optionsGrid}>
+            {goals.map(item => (
+              <TouchableOpacity
+                key={item.id}
                 style={[
-                  styles.optionText,
-                  goal === item?.id && styles.selectedText,
-                ]}>
-                {item?.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+                  styles.optionButton,
+                  goal === item.id && styles.selectedButton,
+                ]}
+                onPress={() => setGoal(item.id)}>
+                <Text
+                  style={[
+                    styles.optionText,
+                    goal === item.id && styles.selectedText,
+                  ]}>
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </CustomShadow>
       </View>
 
-      <RightIcon onPress={handleNavigation} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleNavigation}>
+          <FontAwesome6 name="arrow-right" size={22} color={Color.white} />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -196,15 +206,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   optionButton: {
-    width: '48%',
-    borderWidth: 1,
-    borderColor: Color.primaryColor,
+    width: '47.5%',
     borderRadius: scale(6),
     padding: scale(4),
-    marginBottom: verticalScale(10),
+    marginBottom: verticalScale(12),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Color.white,
   },
   selectedButton: {
     backgroundColor: Color.primaryColor,
@@ -228,5 +237,22 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     fontFamily: Font.Poppins,
     marginTop: scale(4),
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    margin: scale(12),
+    padding: scale(4),
+    position: 'absolute',
+    bottom: scale(0),
+    right: scale(0),
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Color.primaryColor,
+    borderRadius: scale(25),
+    height: scale(32),
+    width: scale(32),
   },
 });

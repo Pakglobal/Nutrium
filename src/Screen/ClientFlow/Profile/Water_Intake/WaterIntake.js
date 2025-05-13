@@ -2,15 +2,14 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
   TouchableOpacity,
   FlatList,
   Modal,
   ScrollView,
   SafeAreaView,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {
   DeleteWaterIntake,
   GetWaterIntakeDetails,
@@ -33,378 +32,321 @@ import CustomLoader from '../../../../Components/CustomLoader';
 const WaterIntake = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const scrollRef = React.createRef();
 
   const [dateLabels, setDateLabels] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIntake, setSelectedIntake] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const [waterIntake, setWaterIntake] = useState([]);
+  const [waterIntake, setWaterIntake] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [dataFetched, setDataFetched] = useState(false);
   const [limit, setLimit] = useState('');
-
   const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
+
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
 
-  const handleDate = selectedDate => {
-    try {
-      if (!selectedDate || !selectedDate.fullDate) {
+  // Utility to filter and sort water intake records
+  const filterAndSortRecords = useCallback((records, date) => {
+    if (!records || !date) return [];
+
+    const formattedDate = date.toISOString().split('T')[0];
+    return records
+      .filter(record => {
+        if (!record?.date) return false;
+        try {
+          return (
+            new Date(record.date).toISOString().split('T')[0] === formattedDate
+          );
+        } catch (error) {
+          console.error('Error processing record date:', error);
+          return false;
+        }
+      })
+      .map(record => ({
+        ...record,
+        waterIntakeAmount: [...(record.waterIntakeAmount || [])].sort(
+          (a, b) => {
+            if (!a.time || !b.time) return 0;
+            const timeA = a.time.split(':').map(Number);
+            const timeB = b.time.split(':').map(Number);
+            if (timeA[0] !== timeB[0]) return timeB[0] - timeA[0];
+            return timeB[1] - timeA[1];
+          },
+        ),
+      }));
+  }, []);
+
+  // Handle date selection
+  const handleDate = useCallback(
+    date => {
+      if (!date?.fullDate) {
         console.warn('Invalid date selected');
         return;
       }
-      const formattedDate = selectedDate.fullDate.toISOString().split('T')[0];
-      let matchingRecords =
-        waterIntake?.waterIntakeData?.waterIntakeRecords?.filter(record => {
-          if (!record || !record.date) return false;
-
-          try {
-            const recordFormattedDate = new Date(record.date)
-              .toISOString()
-              .split('T')[0];
-            return recordFormattedDate === formattedDate;
-          } catch (error) {
-            console.error('Error processing record date:', error);
-            return false;
-          }
-        }) || [];
-
-      matchingRecords = matchingRecords.map(record => {
-        try {
-          const sortedIntake = [...(record.waterIntakeAmount || [])].sort(
-            (a, b) => {
-              if (!a.time || !b.time) return 0;
-
-              const timeA = a.time ? a.time.split(':').map(Number) : [0, 0];
-              const timeB = b.time ? b.time.split(':').map(Number) : [0, 0];
-
-              if (timeA[0] !== timeB[0]) return timeB[0] - timeA[0];
-              return timeB[1] - timeA[1];
-            },
-          );
-
-          return {
-            ...record,
-            waterIntakeAmount: sortedIntake,
-          };
-        } catch (error) {
-          console.error('Error sorting intake data:', error);
-          return record;
-        }
-      });
-
+      const formattedDate = date.fullDate.toISOString().split('T')[0];
       setSelectedDate(formattedDate);
-      setSelectedIntake(matchingRecords);
-    } catch (error) {
-      console.error('Error in handleDate:', error);
-    }
-  };
-
-  const getLast10Days = () => {
-    try {
-      const dates = [];
-      for (let i = 10; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        dates.push({
-          fullDate: date,
-          day: date.getDate(),
-          month: date.toLocaleString('default', {month: 'short'}),
-        });
+      if (waterIntake?.waterIntakeData?.waterIntakeRecords) {
+        setSelectedIntake(
+          filterAndSortRecords(
+            waterIntake.waterIntakeData.waterIntakeRecords,
+            date.fullDate,
+          ),
+        );
       }
-      return dates;
-    } catch (error) {
-      console.error('Error in getLast10Days:', error);
-      return [];
-    }
-  };
+    },
+    [waterIntake, filterAndSortRecords],
+  );
 
-  const getWaterIntakeData = async () => {
+  // Generate last 10 days
+  const getLast10Days = useCallback(() => {
+    const dates = [];
+    for (let i = 10; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      dates.push({
+        fullDate: date,
+        day: date.getDate(),
+        month: date.toLocaleString('default', {month: 'short'}),
+      });
+    }
+    return dates;
+  }, []);
+
+  // Calculate daily intake
+  const calculateDailyIntake = useCallback((date, records) => {
+    if (!records || !date) return 0;
+    const formattedDate = date.toISOString().split('T')[0];
+    const dayRecord = records.find(record =>
+      record?.date?.startsWith(formattedDate),
+    );
+    return (
+      dayRecord?.waterIntakeAmount?.reduce(
+        (total, entry) => total + (parseInt(entry?.amount) || 0),
+        0,
+      ) || 0
+    );
+  }, []);
+
+  // Format chart data
+  const chartData = useMemo(
+    () =>
+      dateLabels.map(dateObj => {
+        if (!dateObj?.fullDate) return {value: 0, frontColor: '#75BFFF'};
+        const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
+        const dailyIntake = calculateDailyIntake(
+          dateObj.fullDate,
+          waterIntake?.waterIntakeData?.waterIntakeRecords,
+        );
+        return {
+          value: dailyIntake,
+          frontColor: selectedDate === formattedDate ? '#1976D2' : '#75BFFF',
+          date: formattedDate,
+        };
+      }),
+    [dateLabels, waterIntake, selectedDate, calculateDailyIntake],
+  );
+
+  // Fetch water intake data
+  const getWaterIntakeData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await GetWaterIntakeDetails(token, id);
-
-      if (response?.success === true) {
+      if (response?.success) {
         setWaterIntake(response);
-      }
-
-      if (selectedDate) {
-        let matchingRecords =
-          response?.waterIntakeData?.waterIntakeRecords?.filter(record => {
-            if (!record || !record.date) return false;
-
-            try {
-              const recordFormattedDate = new Date(record.date)
-                .toISOString()
-                .split('T')[0];
-              return recordFormattedDate === selectedDate;
-            } catch (error) {
-              console.error(
-                'Error processing record date in getWaterIntakeData:',
-                error,
-              );
-              return false;
-            }
-          }) || [];
-
-        matchingRecords = matchingRecords.map(record => {
-          try {
-            const sortedIntake = [...(record.waterIntakeAmount || [])].sort(
-              (a, b) => {
-                if (!a.time || !b.time) return 0;
-
-                const timeA = a.time ? a.time.split(':').map(Number) : [0, 0];
-                const timeB = b.time ? b.time.split(':').map(Number) : [0, 0];
-
-                if (timeA[0] !== timeB[0]) return timeB[0] - timeA[0];
-                return timeB[1] - timeA[1];
-              },
-            );
-
-            return {
-              ...record,
-              waterIntakeAmount: sortedIntake,
-            };
-          } catch (error) {
-            console.error(
-              'Error sorting intake data in getWaterIntakeData:',
-              error,
-            );
-            return record;
-          }
-        });
-
-        setSelectedIntake(matchingRecords);
-      }
-      setDataFetched(true);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error in getWaterIntakeData:', error);
-      setDataFetched(true);
-      setLoading(false);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      setLoading(true);
-      setDataFetched(false);
-      getWaterIntakeData();
-    }, [token, id]),
-  );
-
-  useEffect(() => {
-    if (dataFetched && selectedDate) {
-      handleDate({fullDate: new Date(selectedDate)});
-    }
-    getWaterLimit();
-  }, [selectedDate, dataFetched]);
-  const getWaterLimit = async () => {
-    const data = await GetWaterintakeLimitData(token, id);
-    setLimit(data?.waterIntakeLimit?.waterIntakeLimit);
-  };
-
-  // const dailyGoal =
-  //   waterIntake?.waterIntakeData?.waterIntakeRecords?.[0]?.DailyGoal || 2000;
-
-  const dailyGoal = limit;
-
-  const calculateDailyIntake = (date, records) => {
-    if (!records || !date) return 0;
-
-    try {
-      const dayRecord = records.find(record => {
-        if (!record?.date) return false;
-        return record.date.startsWith(date);
-      });
-
-      if (!dayRecord?.waterIntakeAmount) return 0;
-
-      return dayRecord.waterIntakeAmount.reduce((total, entry) => {
-        const amount = parseInt(entry?.amount) || 0;
-        return total + amount;
-      }, 0);
-    } catch (error) {
-      console.error('Error in calculateDailyIntake:', error);
-      return 0;
-    }
-  };
-
-  const formatChartData = useCallback(() => {
-    try {
-      if (!waterIntake?.waterIntakeData?.waterIntakeRecords) return [];
-
-      return dateLabels.map(dateObj => {
-        if (!dateObj?.fullDate) return {value: 0, frontColor: '#2196F3'};
-
-        const formattedDate = dateObj.fullDate.toISOString().split('T')[0];
-        const dailyIntake = calculateDailyIntake(
-          formattedDate,
-          waterIntake.waterIntakeData.waterIntakeRecords,
-        );
-
-        const isSelected = selectedDate === formattedDate;
-
-        return {
-          value: dailyIntake,
-          frontColor: isSelected ? '#1976D2' : '#75BFFF',
-          date: formattedDate,
-        };
-      });
-    } catch (error) {
-      console.error('Error in formatChartData:', error);
-      return [];
-    }
-  }, [waterIntake, dateLabels, selectedDate]);
-
-  useEffect(() => {
-    try {
-      const dates = getLast10Days();
-      setDateLabels(dates);
-
-      if (dates.length > 0) {
-        const today = dates[dates.length - 1];
-        handleDate(today);
-      }
-    } catch (error) {
-      console.error('Error in initial date setup:', error);
-    }
-  }, []);
-
-  const handleEdit = async () => {
-    if (selectedEntry) {
-      try {
-        setLoading(true);
-        const entryDate = new Date(selectedEntry?.date);
-        navigation.navigate('waterIntakeLog', {
-          intake: {
-            waterIntakeId: selectedEntry?.waterIntakeId,
-            waterRecordId: selectedEntry?.waterRecordId,
-            waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-            date: entryDate,
-            amount: selectedEntry?.amount,
-            time: selectedEntry?.time,
-            token: token,
-          },
-          isEditing: true,
-        });
-        setModalVisible(false);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error in handleEdit:', error);
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleDelete = () => {
-    setModalVisible(false);
-    setLoading(true);
-    setTimeout(() => {
-      (async function () {
-        const payload = {
-          waterIntakeId: selectedEntry?.waterIntakeId,
-          waterRecordId: selectedEntry?.waterRecordId,
-          waterIntakeAmountId: selectedEntry?.waterIntakeAmountId,
-          token: token,
-        };
-
-        try {
-          const response = await DeleteWaterIntake(payload);
-          if (
-            response?.message === 'Water intake data deleted successfully.' ||
-            response?.success === true
-          ) {
-            await getWaterIntakeData();
-          } else {
-            showToast(response?.message || 'Failed to delete entry');
-            await getWaterIntakeData();
-          }
-        } catch (error) {
-          showToast('An error occurred while deleting');
-          await getWaterIntakeData();
-        } finally {
-          setLoading(false);
+        if (selectedDate) {
+          setSelectedIntake(
+            filterAndSortRecords(
+              response.waterIntakeData.waterIntakeRecords,
+              new Date(selectedDate),
+            ),
+          );
         }
-      })();
-    }, 0);
-  };
+      }
+    } catch (error) {
+      console.error('Error fetching water intake:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [token, id, selectedDate, filterAndSortRecords]);
 
-  const scrollRef = React.createRef();
+  // Fetch water limit
+  const getWaterLimit = useCallback(async () => {
+    try {
+      const response = await GetWaterintakeLimitData(token, id);
+      setLimit(response?.waterIntakeLimit?.waterIntakeLimit || '');
+    } catch (error) {
+      console.error('Error fetching water limit:', error);
+    }
+  }, [token, id]);
 
+  // Initial setup
+  useEffect(() => {
+    const dates = getLast10Days();
+    setDateLabels(dates);
+    if (dates.length > 0) {
+      handleDate(dates[dates.length - 1]);
+    }
+  }, [getLast10Days, handleDate]);
+
+  // Fetch data on mount or token/id change
+  useEffect(() => {
+    getWaterIntakeData();
+    getWaterLimit();
+  }, [token, id, getWaterIntakeData, getWaterLimit]);
+
+  // Scroll to end on mount
   useEffect(() => {
     setTimeout(() => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollToEnd({animated: true});
-      }
+      scrollRef.current?.scrollToEnd({animated: true});
     }, 100);
   }, []);
 
-  const selectedDateIntake = selectedDate
-    ? calculateDailyIntake(
-        selectedDate,
-        waterIntake?.waterIntakeData?.waterIntakeRecords,
-      )
-    : 0;
+  // Dispatch selected date intake
+  const selectedDateIntake = useMemo(
+    () =>
+      selectedDate
+        ? calculateDailyIntake(
+            new Date(selectedDate),
+            waterIntake?.waterIntakeData?.waterIntakeRecords,
+          )
+        : 0,
+    [selectedDate, waterIntake, calculateDailyIntake],
+  );
 
-  // useEffect(() => {
-  //   if (selectedDateIntake) {
-  dispatch(getWaterIntake(selectedDateIntake));
-  //   }
-  // }, [selectedDateIntake, dispatch]);
+  useEffect(() => {
+    dispatch(getWaterIntake(selectedDateIntake));
+  }, [dispatch, selectedDateIntake]);
 
-  const plusData = {
-    clientId: id,
-    token: token,
-    date: selectedDate,
-    press: 'plus',
-  };
+  // Handle delete
+  const handleDelete = useCallback(async () => {
+    setModalVisible(false);
+    if (!selectedEntry) return;
 
-  const formatTime = timeString => {
-    if (!timeString) return '';
+    const payload = {
+      waterIntakeId: selectedEntry.waterIntakeId,
+      waterRecordId: selectedEntry.waterRecordId,
+      waterIntakeAmountId: selectedEntry.waterIntakeAmountId,
+      token,
+    };
 
     try {
-      return moment(timeString, 'HH:mm').format('h:mm A');
+      const response = await DeleteWaterIntake(payload);
+      if (
+        response?.success ||
+        response?.message === 'Water intake data deleted successfully.'
+      ) {
+        // Update waterIntake state locally
+        setWaterIntake(prev => {
+          if (!prev?.waterIntakeData?.waterIntakeRecords) return prev;
+
+          const updatedRecords = prev.waterIntakeData.waterIntakeRecords
+            .map(record => {
+              if (record._id === selectedEntry.waterRecordId) {
+                return {
+                  ...record,
+                  waterIntakeAmount: record.waterIntakeAmount.filter(
+                    intake => intake._id !== selectedEntry.waterIntakeAmountId,
+                  ),
+                };
+              }
+              return record;
+            })
+            .filter(record => record.waterIntakeAmount.length > 0); // Remove records with no intake
+
+          return {
+            ...prev,
+            waterIntakeData: {
+              ...prev.waterIntakeData,
+              waterIntakeRecords: updatedRecords,
+            },
+          };
+        });
+
+        // Update selectedIntake state locally
+        setSelectedIntake(prev =>
+          prev
+            .map(record => {
+              if (record._id === selectedEntry.waterRecordId) {
+                return {
+                  ...record,
+                  waterIntakeAmount: record.waterIntakeAmount.filter(
+                    intake => intake._id !== selectedEntry.waterIntakeAmountId,
+                  ),
+                };
+              }
+              return record;
+            })
+            .filter(record => record.waterIntakeAmount.length > 0),
+        );
+      } else {
+        console.warn(response?.message || 'Failed to delete entry');
+      }
     } catch (error) {
-      console.error('Error formatting time:', error);
-      return timeString;
+      console.error('Error deleting entry:', error);
     }
-  };
+  }, [selectedEntry, token]);
 
-  const handleDotMenuPress = (event, entry) => {
-    const pageX = event.nativeEvent.pageX;
-    const pageY = event.nativeEvent.pageY;
-    setMenuPosition({x: pageX, y: pageY});
-    setSelectedEntry({
-      waterIntakeId: waterIntake?.waterIntakeData?._id,
-      waterRecordId: entry.recordId,
-      waterIntakeAmountId: entry.intakeId,
-      date: entry.date,
-      amount: entry.amount,
-      time: entry.time,
-    });
-    setModalVisible(true);
-  };
+  // Handle edit
+  const handleEdit = useCallback(() => {
+    if (selectedEntry) {
+      navigation.navigate('waterIntakeLog', {
+        intake: {
+          waterIntakeId: selectedEntry.waterIntakeId,
+          waterRecordId: selectedEntry.waterRecordId,
+          waterIntakeAmountId: selectedEntry.waterIntakeAmountId,
+          date: new Date(selectedEntry.date),
+          amount: selectedEntry.amount,
+          time: selectedEntry.time,
+          token,
+        },
+        isEditing: true,
+      });
+      setModalVisible(false);
+    }
+  }, [selectedEntry, token, navigation]);
 
+  // Format time
+  const formatTime = useCallback(timeString => {
+    if (!timeString) return '';
+    return moment(timeString, 'HH:mm').format('h:mm A');
+  }, []);
+
+  // Handle dot menu press
+  const handleDotMenuPress = useCallback(
+    (event, entry) => {
+      setMenuPosition({x: event.nativeEvent.pageX, y: event.nativeEvent.pageY});
+      setSelectedEntry({
+        waterIntakeId: waterIntake?.waterIntakeData?._id,
+        waterRecordId: entry.recordId,
+        waterIntakeAmountId: entry.intakeId,
+        date: entry.date,
+        amount: entry.amount,
+        time: entry.time,
+      });
+      setModalVisible(true);
+    },
+    [waterIntake],
+  );
+
+  const dailyGoal = limit ? limit * 1000 : 0;
   const hasData =
-    selectedIntake &&
-    selectedIntake.length > 0 &&
+    selectedIntake?.length > 0 &&
     selectedIntake[0]?.waterIntakeAmount?.length > 0;
+  const plusData = {clientId: id, token, date: selectedDate, press: 'plus'};
 
   return (
     <SafeAreaView style={styles.container}>
       <Header
-        onPress={() => navigation.goBack(selectedDate)}
-        screenheader={true}
-        screenName={'Water intake'}
-        handlePlus={() =>
-          navigation.navigate('waterIntakeLog', {plusData: plusData})
-        }
-        plus={true}
-        rightHeaderButton={true}
+        onPress={() => navigation.goBack()}
+        screenheader
+        screenName="Water intake"
+        handlePlus={() => navigation.navigate('waterIntakeLog', {plusData})}
+        plus
+        rightHeaderButton
       />
 
       <View style={{height: verticalScale(220)}}>
@@ -417,17 +359,16 @@ const WaterIntake = () => {
           <View style={styles.chartWithDates}>
             {dateLabels.map((date, index) => {
               if (!date?.fullDate) return null;
-
               const formattedDate = date.fullDate.toISOString().split('T')[0];
               const isSelected = selectedDate === formattedDate;
 
               return (
                 <TouchableOpacity
-                  key={index}
+                  key={`${date.day}-${date.month}`}
                   style={styles.singleDateChart}
                   onPress={() => handleDate(date)}>
                   <BarChart
-                    data={[{value: formatChartData()[index]?.value || 0}]}
+                    data={[{value: chartData[index]?.value || 0}]}
                     width={50}
                     height={150}
                     barWidth={35}
@@ -440,16 +381,16 @@ const WaterIntake = () => {
                     hideYAxisText
                     maxValue={Math.max(
                       dailyGoal,
-                      ...formatChartData().map(item => item.value || 0),
+                      ...chartData.map(item => item.value || 0),
                     )}
                     frontColor={
-                      isSelected ? Color?.primaryColor : Color.primaryLight
+                      isSelected ? Color.primaryColor : Color.primaryLight
                     }
                   />
                   <View style={styles.dateBox}>
                     <Text style={styles.dateText}>{date.day}</Text>
                     <Text style={styles.monthText}>
-                      {date.month?.toUpperCase()}
+                      {date.month.toUpperCase()}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -486,54 +427,47 @@ const WaterIntake = () => {
             <FlatList
               data={selectedIntake}
               renderItem={({item: record, index: recordIndex}) => (
-                <View>
-                  <FlatList
-                    data={record?.waterIntakeAmount}
-                    renderItem={({item: intake, index: intakeIndex}) => (
-                      <View style={styles.entryItem}>
-                        <View style={styles.entryLeft}>
-                          <Ionicons
-                            name="water"
-                            size={24}
-                            color={Color?.primaryColor}
-                          />
-                          <Text style={styles.entryAmount}>
-                            {intake?.amount}
-                          </Text>
-                        </View>
-
-                        <View style={styles.entryRight}>
-                          <Text style={styles.entryTime}>
-                            {formatTime(intake?.time)}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={event => {
-                              handleDotMenuPress(event, {
-                                recordId: record?._id,
-                                intakeId: intake?._id,
-                                date: record?.date,
-                                amount: intake?.amount,
-                                time: intake?.time,
-                              });
-                            }}>
-                            <Icon
-                              name="dots-vertical"
-                              size={24}
-                              color={Color.primaryColor}
-                            />
-                          </TouchableOpacity>
-                        </View>
+                <FlatList
+                  data={record?.waterIntakeAmount}
+                  renderItem={({item: intake, index: intakeIndex}) => (
+                    <View style={styles.entryItem}>
+                      <View style={styles.entryLeft}>
+                        <Ionicons
+                          name="water"
+                          size={24}
+                          color={Color.primaryColor}
+                        />
+                        <Text style={styles.entryAmount}>{intake?.amount}</Text>
                       </View>
-                    )}
-                    keyExtractor={(item, index) =>
-                      `intake-${recordIndex}-${index}-${item?._id || index}`
-                    }
-                  />
-                </View>
+                      <View style={styles.entryRight}>
+                        <Text style={styles.entryTime}>
+                          {formatTime(intake?.time)}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={event =>
+                            handleDotMenuPress(event, {
+                              recordId: record?._id,
+                              intakeId: intake?._id,
+                              date: record?.date,
+                              amount: intake?.amount,
+                              time: intake?.time,
+                            })
+                          }>
+                          <Icon
+                            name="dots-vertical"
+                            size={24}
+                            color={Color.primaryColor}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                  keyExtractor={item =>
+                    `intake-${item?._id || `${recordIndex}-${intakeIndex}`}`
+                  }
+                />
               )}
-              keyExtractor={(item, index) =>
-                `record-${index}-${item?._id || index}`
-              }
+              keyExtractor={item => `record-${item?._id || recordIndex}`}
             />
           </View>
         ) : (
@@ -548,11 +482,7 @@ const WaterIntake = () => {
       <ModalComponent
         visible={modalVisible}
         handleEdit={handleEdit}
-        modalstyle={{
-          position: 'absolute',
-          right: 20,
-          top: menuPosition.y - 80,
-        }}
+        modalstyle={{position: 'absolute', right: 20, top: menuPosition.y - 80}}
         handleDelete={handleDelete}
         setModalVisible={() => setModalVisible(false)}
       />
@@ -565,7 +495,7 @@ export default WaterIntake;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Color.white,
   },
   scrollContainer: {
     height: verticalScale(0),
@@ -583,7 +513,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: scale(12),
     fontWeight: 'bold',
-    color: '#000',
+    color: Color.black,
   },
   monthText: {
     fontSize: scale(10),
@@ -611,12 +541,12 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: scale(16),
-    color: Color?.textColor,
+    color: Color.textColor,
     textAlign: 'center',
     fontFamily: Font.Poppins,
   },
   mlContainer: {
-    backgroundColor: Color?.white,
+    backgroundColor: Color.white,
     borderRadius: scale(10),
     padding: scale(10),
   },
@@ -641,7 +571,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: Color.textColor,
     fontWeight: '500',
-    fontFamily: Font?.Poppins,
+    fontFamily: Font.Poppins,
     marginTop: verticalScale(2),
   },
   entryRight: {
@@ -652,7 +582,7 @@ const styles = StyleSheet.create({
   entryTime: {
     color: '#767878',
     fontSize: scale(14),
-    fontFamily: Font?.Poppins,
+    fontFamily: Font.Poppins,
     marginTop: verticalScale(2),
   },
   noDataContainer: {
@@ -663,6 +593,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Color.textColor,
     fontSize: scale(13),
-    fontFamily: Font?.PoppinsMedium,
+    fontFamily: Font.PoppinsMedium,
   },
 });

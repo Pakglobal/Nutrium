@@ -9,21 +9,17 @@ import React, {useState} from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
-import IconStyle, {
-  IconPadding,
-  LeftIcon,
-  RightIcon,
-} from '../../../assets/styles/Icon';
+import {LeftIcon, RightIcon} from '../../../assets/styles/Icon';
 import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../../assets/Images/SelectGender.svg';
 import GuestFlowHeader from '../../../Components/GuestFlowHeader';
 import {useDispatch} from 'react-redux';
 import {Font} from '../../../assets/styles/Fonts';
-import {Progress} from '../../../assets/styles/Progress';
 import {shadowStyle, ShadowValues} from '../../../assets/styles/Shadow';
 import useAndroidBack from '../../../Navigation/useAndroidBack';
 import CustomShadow from '../../../Components/CustomShadow';
 import CustomAlertBox from '../../../Components/CustomAlertBox';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const SelectGender = () => {
   const navigation = useNavigation();
@@ -57,7 +53,7 @@ const SelectGender = () => {
         closeAlert={() => setAlertVisible(false)}
         onClose={() => setAlertVisible(false)}
       />
-      <GuestFlowHeader progress={Progress.selectGender} />
+      <GuestFlowHeader currentStep={'selectGender'} />
 
       <LeftIcon onGoBack={() => navigation.goBack()} />
 
@@ -116,7 +112,7 @@ const SelectGender = () => {
                           ? Color.primaryColor
                           : Color.white
                       }
-                      size={IconStyle.headerIconSize}
+                      size={26}
                     />
                   </View>
                   <Text
@@ -158,7 +154,7 @@ const SelectGender = () => {
                           ? Color.primaryColor
                           : Color.white
                       }
-                      size={IconStyle.headerIconSize}
+                      size={26}
                     />
                   </View>
                   <Text
@@ -176,7 +172,11 @@ const SelectGender = () => {
         </View>
       </View>
 
-      <RightIcon onPress={handleNavigation} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleNavigation}>
+          <FontAwesome6 name="arrow-right" size={22} color={Color.white} />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -221,5 +221,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: scale(10),
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    margin: scale(12),
+    padding: scale(4),
+    position: 'absolute',
+    bottom: scale(0),
+    right: scale(0),
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Color.primaryColor,
+    borderRadius: scale(25),
+    height: scale(32),
+    width: scale(32),
   },
 });

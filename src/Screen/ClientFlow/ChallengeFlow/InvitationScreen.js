@@ -25,7 +25,6 @@ const InvitationScreen = ({challenges, setRequests}) => {
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
 
-  const [loading, setLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertType, setAlertType] = useState('success');
   const [alertMessage, setAlertMessage] = useState('');
@@ -33,20 +32,19 @@ const InvitationScreen = ({challenges, setRequests}) => {
 
   const handleAccept = async challengeId => {
     try {
-      setLoading(true);
       const response = await challengeAcceptAndRejectedApi(
         token,
         id,
         challengeId,
-        {
-          action: 'accepted',
-        },
+        {action: 'accepted'},
       );
+
       if (response?.success) {
+        setAlertVisible(true);
         setAlertType('success');
         setAlertMessage(response.message);
-        setAlertVisible(true);
         setSelectedChallengeId(challengeId);
+        setRequests(prev => prev.filter(item => item._id !== challengeId));
       }
     } catch (error) {
       const message =
@@ -54,27 +52,24 @@ const InvitationScreen = ({challenges, setRequests}) => {
       setAlertType('error');
       setAlertMessage(message);
       setAlertVisible(true);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleReject = async challengeId => {
     try {
-      setLoading(true);
       const response = await challengeAcceptAndRejectedApi(
         token,
         id,
         challengeId,
-        {
-          action: 'rejected',
-        },
+        {action: 'rejected'},
       );
+
       if (response?.success) {
-        setAlertType('error');
-        setAlertMessage(response.message);
         setAlertVisible(true);
+        setAlertType('success');
+        setAlertMessage(response.message);
         setSelectedChallengeId(challengeId);
+        setRequests(prev => prev.filter(item => item._id !== challengeId));
       }
     } catch (error) {
       const message =
@@ -82,8 +77,7 @@ const InvitationScreen = ({challenges, setRequests}) => {
       setAlertType('error');
       setAlertMessage(message);
       setAlertVisible(true);
-    } finally {
-      setLoading(false);
+      console.log(message);
     }
   };
 
@@ -136,10 +130,8 @@ const InvitationScreen = ({challenges, setRequests}) => {
         rightThreshold={screenWidth * 0.3}>
         <View style={styles.card}>
           <View style={styles.row}>
-            <View style={{width: '55%'}}>
-              <Text style={styles.title} numberOfLines={2}>
-                {item?.name}
-              </Text>
+            <View>
+              <Text style={styles.title}>{item?.name}</Text>
               <Text style={styles.detail}>
                 From: {item?.createdBy?.fullName || 'Unknown'}
               </Text>
@@ -150,18 +142,12 @@ const InvitationScreen = ({challenges, setRequests}) => {
             <View style={styles.buttonRow}>
               <TouchableOpacity
                 style={[styles.button, {backgroundColor: Color.primaryColor}]}
-                onPress={() => handleAccept(item?._id)}
-                accessibilityRole="button"
-                accessibilityLabel="Accept challenge"
-                disabled={loading}>
+                onPress={() => handleAccept(item?._id)}>
                 <Text style={styles.btnText}>Accept</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, {backgroundColor: Color.red}]}
-                onPress={() => handleReject(item?._id)}
-                accessibilityRole="button"
-                accessibilityLabel="Reject challenge"
-                disabled={loading}>
+                onPress={() => handleReject(item?._id)}>
                 <Text style={styles.btnText}>Reject</Text>
               </TouchableOpacity>
             </View>
@@ -188,16 +174,14 @@ const InvitationScreen = ({challenges, setRequests}) => {
           }}
         />
         <FlatList
-          style={{marginVertical: verticalScale(10)}}
           data={challenges}
           keyExtractor={item => item._id}
           renderItem={renderRequest}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No requests available</Text>
           }
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
-          windowSize={11}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingVertical: verticalScale(6)}}
         />
       </View>
     </GestureHandlerRootView>
@@ -213,7 +197,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: moderateScale(16),
-    color: Color.textColor,
+    color: Color.black,
     fontFamily: Font.PoppinsMedium,
   },
   detail: {
@@ -224,13 +208,12 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    width: '30%',
   },
   button: {
-    paddingHorizontal: scale(10),
+    paddingHorizontal: scale(16),
     borderRadius: moderateScale(8),
     marginLeft: scale(8),
-    height: verticalScale(28),
+    height: verticalScale(35),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -263,7 +246,7 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: moderateScale(11),
-    padding: scale(8),
+    padding: scale(12),
     marginHorizontal: scale(3),
     marginVertical: verticalScale(6),
     backgroundColor: Color.white,

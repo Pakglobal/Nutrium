@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Image,
   Text,
@@ -22,7 +22,7 @@ import {
   setGuestToken,
   setToken,
 } from '../redux/user';
-import {setImage, updateUserInfo} from '../redux/client';
+import {setImage} from '../redux/client';
 import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
 import {
   GetPhysicalActivities,
@@ -34,7 +34,6 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../Apis/ClientApis/RecommendationApi';
-import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
 import {Font} from '../assets/styles/Fonts';
 import CustomLoader from '../Components/CustomLoader';
 
@@ -43,6 +42,7 @@ const ClientDrawerContent = props => {
   const dispatch = useDispatch();
 
   const [asyncLoading, setAsyncLoading] = useState(false);
+  const [activeScreen, setActiveScreen] = useState('');
 
   const userInfo = useSelector(state => state.user?.userInfo);
   const guestInfo = useSelector(state => state.user?.guestUserData);
@@ -77,13 +77,24 @@ const ClientDrawerContent = props => {
     userImgSource = {uri: userImage};
   } else {
     userImgSource =
-      userInfo?.gender === 'Female'
+      user?.gender === 'Female'
         ? require('../assets/Images/woman.png')
         : require('../assets/Images/man.png');
   }
 
+  const handleNavigation = (screenName, params = {}) => {
+    setActiveScreen(screenName);
+
+    setTimeout(() => {
+      navigation.navigate(screenName, params);
+      setTimeout(() => {
+        props.navigation.closeDrawer();
+        setActiveScreen('');
+      }, 300);
+    }, 100);
+  };
+
   const handleSignOut = async () => {
-    props.navigation.closeDrawer();
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
       {
         text: 'Cancel',
@@ -93,19 +104,17 @@ const ClientDrawerContent = props => {
         text: 'Sign Out',
         style: 'destructive',
         onPress: async () => {
-          let success = false;
-
           try {
             if (guestInfo) {
               dispatch(setGuestToken());
               dispatch(guestLoginData());
-              success = true;
             } else {
               dispatch(loginData());
               dispatch(setImage(''));
               dispatch(setToken());
-              success = true;
             }
+
+            props.navigation.closeDrawer();
           } catch (error) {
             console.error('Sign out error:', error);
             Alert.alert('Error', 'Something went wrong. Please try again.', [
@@ -118,22 +127,56 @@ const ClientDrawerContent = props => {
   };
 
   const handleSyncInfo = async () => {
+    if (!token || !id) {
+      Alert.alert('Error', 'Missing user information. Please log in again.');
+      return;
+    }
+
     setAsyncLoading(true);
     try {
-      await GetMeasurementData(token, id),
-        await GetPhysicalActivityDetails(token, id);
+      await GetMeasurementData(token, id);
+      await GetPhysicalActivityDetails(token, id);
       await GetPhysicalActivities();
       await GetQuickAccess(token, id);
       await GetRecommendationApiData(token, id);
       await GetFoodAvoidApiData(token, id);
       await GetGoalsApiData(token, id);
-      setAsyncLoading(false);
     } catch (error) {
       console.error('Sync Error:', error);
+      Alert.alert('Sync Error', 'Failed to sync data. Please try again later.');
+    } finally {
       setAsyncLoading(false);
     }
+  };
 
-    setAsyncLoading(false);
+  const getMenuItemStyle = screenName => {
+    return activeScreen === screenName
+      ? [styles.drawerItem, styles.activeDrawerItem]
+      : styles.drawerItem;
+  };
+
+  const getTextStyle = screenName => {
+    return activeScreen === screenName
+      ? [styles.drawerItemText, styles.activeDrawerItemText]
+      : styles.drawerItemText;
+  };
+
+  const getIconColor = screenName => {
+    return activeScreen === screenName ? Color.primaryColor : Color.textColor;
+  };
+
+  const IconSizeStyle = scale(22);
+
+  const IconBg = {
+    height: scale(25),
+    width: scale(25),
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const IconPadding = {
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(7),
   };
 
   return (
@@ -153,19 +196,12 @@ const ClientDrawerContent = props => {
       <View style={styles.drawerHeader}>
         <TouchableOpacity
           style={{flexDirection: 'row', alignItems: 'center'}}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('mainProfile', {data: user});
-          }}>
+          onPress={() => handleNavigation('mainProfile', {data: user})}>
           <Image source={userImgSource} style={styles.avatar} />
           <Text style={styles.drawerItemText}>{userName}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('settings');
-          }}>
+        <TouchableOpacity onPress={() => handleNavigation('settings')}>
           <Ionicons
             style={IconPadding}
             name="settings-sharp"
@@ -177,115 +213,101 @@ const ClientDrawerContent = props => {
 
       <View style={{marginTop: verticalScale(8)}}>
         <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('foodDiary');
-          }}>
+          style={getMenuItemStyle('foodDiary')}
+          onPress={() => handleNavigation('foodDiary')}>
           <View style={IconBg}>
             <Octicons
               name="note"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
+              size={IconSizeStyle}
+              color={getIconColor('foodDiary')}
             />
           </View>
-          <Text style={styles.drawerItemText}>Food diary</Text>
+          <Text style={getTextStyle('foodDiary')}>Food diary</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('waterIntake');
-          }}>
+          style={getMenuItemStyle('waterIntake')}
+          onPress={() => handleNavigation('waterIntake')}>
           <View style={IconBg}>
             <Ionicons
               name="water-sharp"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
+              size={IconSizeStyle}
+              color={getIconColor('waterIntake')}
             />
           </View>
-          <Text style={styles.drawerItemText}>Water intake</Text>
+          <Text style={getTextStyle('waterIntake')}>Water intake</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('physicalActivity');
-          }}>
+          style={getMenuItemStyle('physicalActivity')}
+          onPress={() => handleNavigation('physicalActivity')}>
           <View style={IconBg}>
             <FontAwesome5
               name="running"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
+              size={IconSizeStyle}
+              color={getIconColor('physicalActivity')}
             />
           </View>
-          <Text style={styles.drawerItemText}>Physical activity</Text>
+          <Text style={getTextStyle('physicalActivity')}>
+            Physical activity
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('measurements');
-          }}>
+          style={getMenuItemStyle('measurements')}
+          onPress={() => handleNavigation('measurements')}>
           <View style={IconBg}>
             <MaterialCommunityIcons
               name="calendar-text"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
+              size={IconSizeStyle}
+              color={getIconColor('measurements')}
             />
           </View>
-          <Text style={styles.drawerItemText}>Measurements</Text>
+          <Text style={getTextStyle('measurements')}>Measurements</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('shoppingLists');
-          }}>
+          style={getMenuItemStyle('shoppingLists')}
+          onPress={() => handleNavigation('shoppingLists')}>
           <View style={IconBg}>
             <MaterialIcons
               name="shopping-cart"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
+              size={IconSizeStyle}
+              color={getIconColor('shoppingLists')}
             />
           </View>
-          <Text style={styles.drawerItemText}>Shopping lists</Text>
+          <Text style={getTextStyle('shoppingLists')}>Shopping lists</Text>
         </TouchableOpacity>
       </View>
+      {userInfo ? (
+        <View>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Practitioner</Text>
+          </View>
 
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Practitioner</Text>
-      </View>
+          <TouchableOpacity
+            style={getMenuItemStyle('practitioner')}
+            onPress={() =>
+              handleNavigation('practitioner', {data: profileInfo})
+            }>
+            <Image source={profileImage} style={styles.avatar} />
+            <Text style={getTextStyle('practitioner')}>{profileName}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => {
-          props.navigation.closeDrawer();
-          navigation.navigate('practitioner', {data: profileInfo});
-        }}>
-        <Image source={profileImage} style={styles.avatar} />
-        <Text style={styles.drawerItemText}>{profileName}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => {
-          props.navigation.closeDrawer();
-          navigation.navigate('messages', {data: user});
-        }}>
-        <View style={IconBg}>
-          <MaterialCommunityIcons
-            name="email"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+          <TouchableOpacity
+            style={getMenuItemStyle('messages')}
+            onPress={() => handleNavigation('messages', {data: user})}>
+            <View style={IconBg}>
+              <MaterialCommunityIcons
+                name="email"
+                size={IconSizeStyle}
+                color={getIconColor('messages')}
+              />
+            </View>
+            <Text style={getTextStyle('messages')}>Messages</Text>
+          </TouchableOpacity>
         </View>
-        <Text style={styles.drawerItemText}>Messages</Text>
-      </TouchableOpacity>
+      ) : null}
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Other</Text>
@@ -293,11 +315,7 @@ const ClientDrawerContent = props => {
 
       <TouchableOpacity style={styles.drawerItem} onPress={handleSyncInfo}>
         <View style={IconBg}>
-          <Octicons
-            name="sync"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+          <Octicons name="sync" size={IconSizeStyle} color={Color.textColor} />
         </View>
         <Text style={styles.drawerItemText}>Sync all info</Text>
         {asyncLoading && (
@@ -311,8 +329,8 @@ const ClientDrawerContent = props => {
         <View style={IconBg}>
           <MaterialIcons
             name="logout"
-            color={IconStyle.drawerIconColor}
-            size={IconStyle.drawerIconSize}
+            color={Color.textColor}
+            size={IconSizeStyle}
           />
         </View>
         <Text style={styles.drawerItemText}>Sign out</Text>
@@ -354,12 +372,18 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(8),
     paddingHorizontal: scale(10),
   },
+  activeDrawerItem: {
+    backgroundColor: Color.primaryLight,
+    borderRadius: scale(8),
+  },
   drawerItemText: {
-    marginLeft: 15,
-    fontSize: scale(14),
+    marginLeft: scale(15),
+    fontSize: scale(13),
     color: Color.textColor,
-    fontWeight: '500',
     fontFamily: Font.PoppinsMedium,
+  },
+  activeDrawerItemText: {
+    color: Color.primaryColor,
   },
   sectionHeader: {
     paddingTop: verticalScale(14),
@@ -367,9 +391,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: scale(18),
-    fontWeight: '500',
     color: Color.textColor,
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
 });
 

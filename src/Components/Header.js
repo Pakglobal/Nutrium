@@ -15,7 +15,6 @@ import Logo from '../assets/Images/logoWhite.svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import IconStyle, {IconPadding} from '../assets/styles/Icon';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import CustomShadow from './CustomShadow';
@@ -34,6 +33,11 @@ const Header = ({
   loading,
 }) => {
   const navigation = useNavigation();
+  const IconPadding = {
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(7),
+  };
+
   return (
     <SafeAreaView style={{backgroundColor: Color.white, zIndex: 1}}>
       <CustomShadow radius={4} color={Color.gray}>
@@ -111,11 +115,7 @@ const Header = ({
                     navigation.goBack();
                   }}
                   style={IconPadding}>
-                  <AntDesign
-                    name="arrowleft"
-                    size={IconStyle.drawerIconSize}
-                    color={Color.white}
-                  />
+                  <AntDesign name="arrowleft" size={22} color={Color.white} />
                 </TouchableOpacity>
                 <Text style={styles.screenName}>{screenName}</Text>
               </View>
@@ -126,7 +126,7 @@ const Header = ({
                     style={{padding: scale(8)}}>
                     <AntDesign
                       name="pluscircle"
-                      size={IconStyle.headerIconSize}
+                      size={26}
                       color={Color.white}
                     />
                   </TouchableOpacity>

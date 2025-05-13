@@ -3,16 +3,13 @@ import {BASE_URL} from '../Base_Url/Baseurl';
 import {GET_PROFILE_IMAGE, GET_USER, UPDATE_PROFILE_IMAGE} from '../AllAPI/API';
 
 export const GetUserApi = async token => {
-  console.log('token----', token);
   try {
     const url = `${GET_USER}`;
-    console.log('url', url);
     const response = await axios.get(url, {
       headers: {
         Authorization: token,
       },
     });
-    console.log('response', response);
     return response?.data;
   } catch (error) {
     console.error('Error fetching get user', error);

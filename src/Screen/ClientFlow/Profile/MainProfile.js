@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-
 import {
   View,
   Text,
@@ -118,28 +117,21 @@ const MainProfile = ({route}) => {
           </TouchableOpacity>
 
           <View style={styles.imgIconView}>
-            {loading ? (
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: verticalScale(80),
-                  width: verticalScale(80),
-                }}>
-                <CustomLoader size={'small'} />
-              </View>
-            ) : (
+            <View style={styles.imageContainer}>
               <TouchableOpacity onPress={() => setFullscreenImageVisible(true)}>
                 <Image source={imgSource} style={styles.img} />
               </TouchableOpacity>
-            )}
+              {loading && (
+                <View style={styles.loaderContainer}>
+                  <CustomLoader size={'small'} />
+                </View>
+              )}
+            </View>
 
             <TouchableOpacity
-              style={styles.icnWhiteView}
+              style={styles.cameraContainer}
               onPress={() => setModalVisible(true)}>
-              <View style={styles.icnPrimaryView}>
-                <Entypo name="camera" size={15} color={Color.black} />
-              </View>
+              <Entypo name="camera" size={18} color={Color.white} />
             </TouchableOpacity>
 
             <Text style={styles.profileName}>{data?.fullName}</Text>
@@ -201,6 +193,7 @@ const MainProfile = ({route}) => {
           </View>
         ))}
       </View>
+
       <Modal
         visible={fullscreenImageVisible}
         transparent={true}
@@ -230,65 +223,52 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(50),
     marginLeft: scale(15),
   },
+  imageContainer: {
+    position: 'relative',
+    height: verticalScale(80),
+    width: verticalScale(80),
+  },
   img: {
     height: verticalScale(80),
     width: verticalScale(80),
     borderRadius: scale(100),
   },
-  icnWhiteView: {
-    height: verticalScale(35),
-    width: verticalScale(35),
+  loaderContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: scale(100),
+  },
+  cameraContainer: {
+    height: verticalScale(28),
+    width: verticalScale(28),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.white,
+    backgroundColor: Color.primaryColor,
     borderRadius: scale(55),
-    marginTop: verticalScale(50),
-    marginStart: scale(-35),
+    position: 'absolute',
+    bottom: 0,
+    left: '20%',
   },
-  icnPrimaryView: {
-    height: verticalScale(25),
-    width: verticalScale(25),
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.secondary,
-    borderRadius: scale(50),
-  },
+  // icnPrimaryView: {
+  //   height: verticalScale(22),
+  //   width: verticalScale(22),
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   backgroundColor: Color.primaryColor,
+  //   borderRadius: scale(50),
+  // },
   profileName: {
     fontSize: scale(18),
     fontWeight: '700',
     color: Color.txt,
     marginLeft: scale(20),
     marginTop: verticalScale(20),
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(100,100,100,0.5)',
-  },
-  whiteContainer: {
-    width: '65%',
-    backgroundColor: Color.white,
-    alignItems: 'center',
-    borderRadius: scale(10),
-    paddingVertical: verticalScale(15),
-  },
-  title: {
-    fontSize: scale(14),
-    fontWeight: '700',
-    color: Color.txt,
-    marginBottom: verticalScale(10),
-  },
-  border: {
-    borderBottomColor: Color.borderColor,
-    borderBottomWidth: 1,
-    width: '100%',
-    marginBottom: verticalScale(10),
-  },
-  btnTxt: {
-    fontSize: scale(14),
-    fontWeight: '600',
-    color: Color.gray,
   },
   fullscreenImageContainer: {
     flex: 1,

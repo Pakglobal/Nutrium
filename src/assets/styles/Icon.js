@@ -1,29 +1,7 @@
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from './Colors';
-import {Keyboard, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import {useNavigation} from '@react-navigation/native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useEffect, useState} from 'react';
-
-const IconStyle = {
-  drawerIconSize: scale(22),
-  drawerIconColor: Color.textColor,
-  headerIconSize: scale(26),
-};
-export default IconStyle;
-
-export const IconPadding = {
-  paddingVertical: verticalScale(5),
-  paddingHorizontal: scale(7),
-};
-
-export const IconBg = {
-  height: scale(25),
-  width: scale(25),
-  alignItems: 'center',
-  justifyContent: 'center',
-};
 
 export const LeftIcon = ({onGoBack}) => {
   return (

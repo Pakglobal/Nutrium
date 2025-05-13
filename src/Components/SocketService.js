@@ -101,6 +101,7 @@ export const onUnreadMessages = callback => {
 
   return true;
 };
+
 export const sendMessage = async (
   senderId,
   receiverId,

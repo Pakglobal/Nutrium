@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: Color.headerBG,
     borderRadius: 5,
-    shadowColor: '#000',
+    shadowColor: Color.black,
     shadowOffset: {
       width: 0,
       height: 1,

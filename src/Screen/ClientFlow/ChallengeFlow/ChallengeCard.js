@@ -41,7 +41,11 @@ const ChallengeCard = ({challenge, onJoin, btnType}) => {
                 style={[styles.avatar, {marginLeft: index !== 0 ? -10 : 0}]}
               />
             ))}
-            <Text style={[styles.description, {marginLeft: 8}]}>
+            <Text
+              style={[
+                styles.description,
+                {marginLeft: participants.length === 0 ? 0 : 8},
+              ]}>
               {participants.length} joined
             </Text>
           </View>
@@ -127,7 +131,7 @@ const styles = StyleSheet.create({
     height: scale(24),
     borderRadius: moderateScale(12),
     borderWidth: 1,
-    borderColor: '#fff',
+    borderColor: Color.white,
   },
   joinButton: {
     borderBottomWidth: 1,

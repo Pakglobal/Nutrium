@@ -52,7 +52,12 @@ const ChallengeCardBanner = memo(({challenge, btnType, onJoin}) => {
               style={[styles.avatar, {marginLeft: index !== 0 ? -10 : 0}]}
             />
           ))}
-          <Text style={[styles.description, {marginLeft: 8}]}>
+
+          <Text
+            style={[
+              styles.description,
+              {marginLeft: participants.length === 0 ? 0 : 8},
+            ]}>
             {participants.length} joined
           </Text>
         </View>

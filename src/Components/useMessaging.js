@@ -1,4 +1,875 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+// import React, { useEffect, useState, useRef } from 'react';
+// import {
+//   View,
+//   Text,
+//   FlatList,
+//   TextInput,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Image,
+//   Modal,
+//   Animated,
+//   PanResponder,
+//   SafeAreaView,
+//   ImageBackground,
+//   ActivityIndicator,
+//   AppState,
+// } from 'react-native';
+// import DocumentPicker from 'react-native-document-picker';
+// import {
+//   connectSocket,
+//   joinRoom,
+//   getChatHistory,
+//   sendMessage,
+//   markMessagesAsSeen,
+//   leaveRoom,
+// } from '../Components/SocketService';
+// import { useNavigation } from '@react-navigation/native';
+// import AntDesign from 'react-native-vector-icons/AntDesign';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import Feather from 'react-native-vector-icons/Feather';
+// import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
+// import moment from 'moment';
+// import uuid from 'react-native-uuid';
+// import { Color } from '../assets/styles/Colors';
+// import { BASE_URL } from '../Apis/Base_Url/Baseurl';
+// import { useSelector } from 'react-redux';
+
+
+
+// const MessageComponent = ({
+//   userId,
+//   otherUserId,
+//   showHeader = true,
+//   containerStyle,
+// }) => {
+//   const navigation = useNavigation();
+//   const [messages, setMessages] = useState([]);
+//   const [text, setText] = useState('');
+//   const [selectedFile, setSelectedFile] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [fileUploading, setFileUploading] = useState(false);
+//   const [imageViewerVisible, setImageViewerVisible] = useState(false);
+//   const [selectedImage, setSelectedImage] = useState(null);
+//   const [uploadingFiles, setUploadingFiles] = useState({});
+//   const [appState, setAppState] = useState(AppState.currentState);
+//   const profileInfo = useSelector(state => state?.user?.profileInfo);
+//   const profileName = profileInfo?.fullName || 'User';
+
+//   const scale = useRef(new Animated.Value(1)).current;
+//   const lastScale = useRef(1);
+//   const offsetX = useRef(new Animated.Value(0)).current;
+//   const offsetY = useRef(new Animated.Value(0)).current;
+//   const lastX = useRef(0);
+//   const lastY = useRef(0);
+
+//   const panResponder = useRef(
+//     PanResponder.create({
+//       onStartShouldSetPanResponder: () => true,
+//       onMoveShouldSetPanResponder: () => true,
+//       onPanResponderGrant: () => {
+//         lastX.current = offsetX._value;
+//         lastY.current = offsetY._value;
+//       },
+//       onPanResponderMove: (event, gestureState) => {
+//         if (event.nativeEvent.changedTouches.length === 2) {
+//           const touch1 = event.nativeEvent.changedTouches[0];
+//           const touch2 = event.nativeEvent.changedTouches[1];
+//           const distance = Math.sqrt(
+//             Math.pow(touch2.pageX - touch1.pageX, 2) +
+//             Math.pow(touch2.pageY - touch1.pageY, 2),
+//           );
+//           const newScale = Math.max(1, Math.min(5, distance / 100));
+//           scale.setValue(newScale);
+//         } else if (lastScale.current > 1) {
+//           offsetX.setValue(lastX.current + gestureState.dx);
+//           offsetY.setValue(lastY.current + gestureState.dy);
+//         }
+//       },
+//       onPanResponderRelease: () => {
+//         lastScale.current = scale._value;
+//         if (scale._value <= 1) {
+//           Animated.parallel([
+//             Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+//             Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+//             Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
+//           ]).start();
+//           lastScale.current = 1;
+//           lastX.current = 0;
+//           lastY.current = 0;
+//         }
+//       },
+//     }),
+//   ).current;
+
+//   const fetchChatHistory = () => {
+//     setLoading(true);
+//     getChatHistory(userId, otherUserId, history => {
+//       if (!history) {
+//         setMessages([]);
+//         setLoading(false);
+//         return;
+//       }
+//       const updatedHistory = history.reverse().map(msg => ({
+//         ...msg,
+//         seen: msg.seen || false,
+//         tempId: msg.tempId || null,
+//       }));
+//       setMessages(prevMessages => {
+//         const mergedMessages = [...updatedHistory];
+//         prevMessages.forEach(msg => {
+//           const existingMsg = mergedMessages.find(
+//             m => m._id === msg._id || (m.tempId && m.tempId === msg.tempId),
+//           );
+//           if (existingMsg) {
+//             existingMsg.seen = msg.seen;
+//           } else {
+//             mergedMessages.push(msg);
+//           }
+//         });
+//         return mergedMessages.sort(
+//           (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
+//         );
+//       });
+//       setLoading(false);
+//       markUnseenMessages();
+//     });
+//   };
+
+//   // Mark unseen messages as seen when the app is active
+//   const markUnseenMessages = () => {
+//     if (appState !== 'active') return;
+//     const unseenMessages = messages.filter(
+//       msg =>
+//         !msg?.seen &&
+//         msg.senderId !== userId &&
+//         msg.receiverId === userId &&
+//         msg._id,
+//     );
+//     if (unseenMessages.length > 0) {
+//       const messageIds = unseenMessages.map(msg => msg._id).filter(Boolean);
+//       markMessagesAsSeen(messageIds, otherUserId, userId);
+//     }
+//   };
+
+//   // Handle incoming messages via socket
+//   const messageHandler = newMessage => {
+//     if (
+//       !newMessage?._id ||
+//       !newMessage?.senderId ||
+//       !newMessage?.receiverId
+//     ) {
+//       console.error('Invalid message received:', newMessage);
+//       return;
+//     }
+//     setMessages(prevMessages => {
+//       const safeNewMessage = {
+//         ...newMessage,
+//         tempId: newMessage.tempId || null,
+//         seen: newMessage.seen || false,
+//       };
+//       const messageExists = prevMessages.some(
+//         msg =>
+//           (msg._id && msg._id === safeNewMessage._id) ||
+//           (msg.tempId &&
+//             safeNewMessage.tempId &&
+//             msg.tempId === safeNewMessage.tempId),
+//       );
+//       if (messageExists) {
+//         return prevMessages.map(msg =>
+//           (msg._id && msg._id === safeNewMessage._id) ||
+//             (msg.tempId &&
+//               safeNewMessage.tempId &&
+//               msg.tempId === safeNewMessage.tempId)
+//             ? { ...safeNewMessage, tempId: msg.tempId || safeNewMessage.tempId, seen: msg.seen }
+//             : msg,
+//         );
+//       }
+//       return [safeNewMessage, ...prevMessages];
+//     });
+//     if (
+//       newMessage?.senderId !== userId &&
+//       newMessage?.receiverId === userId &&
+//       !newMessage?.seen &&
+//       appState === 'active'
+//     ) {
+//       markMessagesAsSeen([newMessage._id], otherUserId, userId);
+//     }
+//   };
+
+//   // Handle messages marked as seen
+//   const messagesSeenHandler = data => {
+//     if (
+//       data?.messageIds &&
+//       data?.senderId === userId &&
+//       data?.receiverId === otherUserId
+//     ) {
+//       setMessages(prevMessages =>
+//         prevMessages.map(msg =>
+//           data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
+//         ),
+//       );
+//     }
+//   };
+
+//   // Socket setup and app state handling
+//   useEffect(() => {
+//     const socket = connectSocket();
+//     setLoading(true);
+//     if (socket.connected) {
+//       joinRoom(userId, otherUserId);
+//       fetchChatHistory();
+//     } else {
+//       socket.on('connect', () => {
+//         joinRoom(userId, otherUserId);
+//         fetchChatHistory();
+//       });
+//     }
+//     socket.on('receiveMessage', messageHandler);
+//     socket.on('messagesSeen', messagesSeenHandler);
+
+//     const handleAppStateChange = nextAppState => {
+//       setAppState(nextAppState);
+//       if (nextAppState === 'active') {
+//         if (socket.connected) {
+//           joinRoom(userId, otherUserId);
+//           fetchChatHistory();
+//           markUnseenMessages();
+//         } else {
+//           socket.on('connect', () => {
+//             joinRoom(userId, otherUserId);
+//             fetchChatHistory();
+//             markUnseenMessages();
+//           });
+//         }
+//       } else if (nextAppState === 'background') {
+//         leaveRoom(userId, otherUserId);
+//       }
+//     };
+
+//     const subscription = AppState.addEventListener('change', handleAppStateChange);
+//     return () => {
+//       socket.off('receiveMessage', messageHandler);
+//       socket.off('messagesSeen', messagesSeenHandler);
+//       socket.off('connect');
+//       leaveRoom(userId, otherUserId);
+//       subscription.remove();
+//     };
+//   }, [userId, otherUserId]);
+
+//   // Debug selectedFile state changes
+//   useEffect(() => {
+//     console.log('selectedFile updated:', selectedFile);
+//   }, [selectedFile]);
+
+//   // Format timestamp for messages
+//   const formatTime = isoString => moment(isoString).format('h:mm A');
+
+//   // Handle sending messages or picking files
+//   const handleSendMessage = async (isFilePicker = false) => {
+//     if (isFilePicker) {
+//       try {
+//         setFileUploading(true);
+//         const result = await DocumentPicker.pick({
+//           type: [DocumentPicker.types.allFiles],
+//         });
+
+//         if (!result[0]?.uri) {
+//           setFileUploading(false);
+//           return;
+//         }
+
+//         setSelectedFile({
+//           uri: result[0].uri,
+//           name: result[0].name,
+//           type: result[0].type,
+//         });
+//       } catch (err) {
+//         if (DocumentPicker.isCancel(err)) {
+//           console.warn('User cancelled file picker');
+//         } else {
+//           console.error('Error picking file:', err);
+//         }
+//       } finally {
+//         setFileUploading(false);
+//       }
+//       return;
+//     }
+
+//     if (!text?.trim() && !selectedFile) return;
+
+//     const tempId = uuid.v4();
+//     const now = new Date().toISOString();
+//     let fileUrl = null;
+
+//     try {
+//       if (selectedFile) {
+//         setFileUploading(true);
+//         setUploadingFiles(prev => ({ ...prev, [tempId]: true }));
+
+//         // Add temporary message with the file
+//         setMessages(prevMessages => [
+//           {
+//             _id: tempId,
+//             tempId,
+//             senderId: userId,
+//             receiverId: otherUserId,
+//             file: selectedFile.uri,
+//             message: text?.trim() || '',
+//             createdAt: now,
+//             isTemp: true,
+//             seen: false,
+//           },
+//           ...prevMessages,
+//         ]);
+
+//         // Upload the file
+//         const uploadedFile = await uploadFileAndGetUrl(selectedFile);
+//         fileUrl = uploadedFile.url;
+
+//         // Update the message with the uploaded file URL
+//         setMessages(prevMessages =>
+//           prevMessages.map(msg =>
+//             msg._id === tempId
+//               ? {
+//                 ...msg,
+//                 file: fileUrl,
+//                 message: text?.trim() || '',
+//                 isTemp: false,
+//               }
+//               : msg,
+//           ),
+//         );
+//       } else {
+//         // Add a text-only message
+//         const tempMessage = {
+//           _id: tempId,
+//           tempId,
+//           senderId: userId,
+//           receiverId: otherUserId,
+//           message: text?.trim(),
+//           file: null,
+//           createdAt: now,
+//           seen: false,
+//         };
+//         setMessages(prevMessages => [tempMessage, ...prevMessages]);
+//       }
+
+//       // Send the message via socket
+//       await sendMessage(
+//         userId,
+//         otherUserId,
+//         text?.trim() || '',
+//         fileUrl || null,
+//         tempId,
+//       );
+//     } catch (err) {
+//       console.error('Error in handleSendMessage:', err);
+//       // Optionally, remove the failed message or mark it as failed
+//       setMessages(prevMessages =>
+//         prevMessages.filter(msg => msg._id !== tempId),
+//       );
+//     } finally {
+//       // Clear the input and selected file
+//       setText('');
+//       setSelectedFile(() => null); // Use functional update to ensure state clears
+//       setFileUploading(false);
+//       setUploadingFiles(prev => {
+//         const newState = { ...prev };
+//         delete newState[tempId];
+//         return newState;
+//       });
+//     }
+//   };
+
+//   // Remove the selected file from the preview
+//   const removeSelectedFile = () => {
+//     setSelectedFile(null);
+//   };
+
+//   // Upload file to the server and get the URL
+//   const uploadFileAndGetUrl = async file => {
+//     const formData = new FormData();
+//     formData.append('file', {
+//       uri: file?.uri,
+//       name: file?.name,
+//       type: file?.type,
+//     });
+//     const response = await fetch(`${BASE_URL}/upload`, {
+//       method: 'POST',
+//       body: formData,
+//       headers: { 'Content-Type': 'multipart/form-data' },
+//     });
+//     if (!response.ok) {
+//       console.error('Upload failed with status:', response.status);
+//       throw new Error('Upload failed');
+//     }
+//     const json = await response.json();
+//     console.log('Upload response:', json);
+//     return json;
+//   };
+
+//   // Group messages by date for display
+//   const groupMessagesByDate = messages => {
+//     const groups = {};
+//     messages?.forEach(message => {
+//       const date = moment(message?.createdAt)?.format('YYYY-MM-DD');
+//       if (!groups[date]) {
+//         groups[date] = [];
+//       }
+//       groups[date]?.push(message);
+//     });
+//     return groups;
+//   };
+
+//   // Create data for FlatList with date separators
+//   const createFlatListData = messages => {
+//     if (!messages?.length) return [];
+//     const groupedMessages = groupMessagesByDate(messages);
+//     const flatListData = [];
+//     Object.keys(groupedMessages)
+//       .sort((a, b) => new Date(b) - new Date(a))
+//       .forEach(date => {
+//         const messagesForDate = groupedMessages[date].sort(
+//           (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
+//         );
+//         messagesForDate.forEach(message => {
+//           flatListData.push({ ...message, type: 'message' });
+//         });
+//         flatListData.push({ id: `date-${date}`, type: 'date', date });
+//       });
+//     return flatListData;
+//   };
+
+//   // Format date for separators (e.g., "Today", "Yesterday")
+//   const formatDateForSeparator = dateString => {
+//     const messageDate = moment(dateString);
+//     const today = moment().startOf('day');
+//     const yesterday = moment().subtract(1, 'day').startOf('day');
+//     if (messageDate?.isSame(today, 'day')) return 'Today';
+//     if (messageDate?.isSame(yesterday, 'day')) return 'Yesterday';
+//     if (messageDate?.isAfter(today.clone().subtract(7, 'days')))
+//       return messageDate?.format('dddd');
+//     return messageDate?.format('MMM D');
+//   };
+
+//   // Sort messages and prepare FlatList data
+//   const sortedMessages = [...messages].sort(
+//     (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
+//   );
+//   const flatListData = createFlatListData(sortedMessages);
+
+//   // Open the image viewer modal
+//   const openImageViewer = fileUrl => {
+//     setSelectedImage(fileUrl);
+//     setImageViewerVisible(true);
+//     scale.setValue(1);
+//     offsetX.setValue(0);
+//     offsetY.setValue(0);
+//     lastScale.current = 1;
+//     lastX.current = 0;
+//     lastY.current = 0;
+//   };
+
+//   // Close the image viewer modal
+//   const closeImageViewer = () => {
+//     setImageViewerVisible(false);
+//     setSelectedImage(null);
+//   };
+
+//   // Reset image zoom in the viewer
+//   const resetImageZoom = () => {
+//     Animated.parallel([
+//       Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+//       Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+//       Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
+//     ]).start();
+//     lastScale.current = 1;
+//     lastX.current = 0;
+//     lastY.current = 0;
+//   };
+
+//   // Render a single message
+//   const renderMessage = ({ item }) => {
+//     const isSender = item?.senderId === userId;
+//     const fileUrl = item?.file || item?.fileUrl;
+//     const time = formatTime(item?.createdAt || item?.timestamp);
+//     const isUploading = item.isTemp || uploadingFiles[item._id];
+//     const isSeen = item?.seen;
+//     const isTemp = item._id?.startsWith('temp-');
+
+//     return (
+//       <View
+//         style={[
+//           styles.messageContainer,
+//           isSender ? styles.sent : styles.received,
+//         ]}>
+//         <View style={styles.messageWrapper}>
+//           {fileUrl && (
+//             <View style={styles.imageContainer}>
+//               {isUploading ? (
+//                 <ActivityIndicator color={Color.primaryColor} />
+//               ) : (
+//                 <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
+//                   <Image source={{ uri: fileUrl }} style={styles.image} />
+//                 </TouchableOpacity>
+//               )}
+//             </View>
+//           )}
+//           {item?.message && (
+//             <View style={styles.textContainer}>
+//               <Text style={styles.messageText}>{item?.message}</Text>
+//             </View>
+//           )}
+//           <View style={styles.messageContent}>
+//             <Text style={styles.timestampText}>{time}</Text>
+//             {isSender && (
+//               <View style={styles.messageFooter}>
+//                 {isTemp ? (
+//                   <Ionicons
+//                     name="time-outline"
+//                     size={16}
+//                     color={Color.gray}
+//                     style={styles.readStatus}
+//                   />
+//                 ) : (
+//                   <Ionicons
+//                     name={isSeen ? 'checkmark-done' : 'checkmark'}
+//                     size={16}
+//                     color={isSeen ? Color.primaryColor : Color.gray}
+//                     style={styles.readStatus}
+//                   />
+//                 )}
+//               </View>
+//             )}
+//           </View>
+//         </View>
+//       </View>
+//     );
+//   };
+
+//   // Render FlatList items (messages or date separators)
+//   const renderItem = ({ item }) => {
+//     if (item.type === 'date') {
+//       return (
+//         <View style={styles.dateSeparator}>
+//           <Text style={styles.dateSeparatorText}>
+//             {formatDateForSeparator(item?.date)}
+//           </Text>
+//         </View>
+//       );
+//     }
+//     return renderMessage({ item });
+//   };
+
+//   // Render the chat header
+//   const renderHeader = () => {
+//     if (!showHeader) return null;
+//     return (
+//       <View style={styles.headerContainer}>
+//         <View style={styles.headerLeft}>
+//           <TouchableOpacity onPress={() => navigation.goBack()}>
+//             <AntDesign name="arrowleft" color={Color.black} size={18} />
+//           </TouchableOpacity>
+//           <Text style={styles.backTxt}>{profileName}</Text>
+//         </View>
+//         <TouchableOpacity style={{ marginHorizontal: 16 }}>
+//           <Feather name="info" color={Color.primaryColor} size={22} />
+//         </TouchableOpacity>
+//       </View>
+//     );
+//   };
+
+//   return (
+//     <SafeAreaView style={[styles.container, containerStyle]}>
+//       {renderHeader()}
+//       <ImageBackground
+//         style={{ flex: 1 }}
+//         source={require('../assets/Images/chatBackground.jpg')}>
+//         {loading ? (
+//           <ActivityIndicator
+//             color={Color.primaryColor}
+//             size="large"
+//             style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}
+//           />
+//         ) : (
+//           <FlatList
+//             data={flatListData}
+//             keyExtractor={item =>
+//               item?.type === 'date'
+//                 ? item?.id
+//                 : item?._id?.toString() || `msg-${item?.tempId}`
+//             }
+//             renderItem={renderItem}
+//             inverted
+//           />
+//         )}
+//         <View style={styles.inputContainer}>
+//           {selectedFile && (
+//             <View style={styles.filePreviewContainer}>
+//               <Text style={styles.filePreviewText}>{selectedFile.name}</Text>
+//               <TouchableOpacity onPress={removeSelectedFile}>
+//                 <Ionicons name="close" size={20} color={Color.gray} />
+//               </TouchableOpacity>
+//             </View>
+//           )}
+//           <View style={styles.inputWrapper}>
+//             <TouchableOpacity
+//               style={styles.attachButton}
+//               onPress={() => handleSendMessage(true)}
+//               disabled={fileUploading}>
+//               <Ionicons
+//                 name="attach"
+//                 size={24}
+//                 color={fileUploading ? Color.lightgray : Color.gray}
+//               />
+//             </TouchableOpacity>
+//             <TextInput
+//               style={styles.input}
+//               value={text}
+//               onChangeText={setText}
+//               placeholder="Type a message..."
+//               multiline
+//               placeholderTextColor={Color.black}
+//             />
+//             <TouchableOpacity
+//               style={styles.sendButton}
+//               onPress={() => handleSendMessage(false)}
+//               disabled={(!text.trim() && !selectedFile) || fileUploading}>
+//               <Ionicons
+//                 name="send"
+//                 size={20}
+//                 color={
+//                   text.trim() || (selectedFile && !fileUploading)
+//                     ? Color.primaryColor
+//                     : Color.gray
+//                 }
+//               />
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </ImageBackground>
+//       <Modal
+//         visible={imageViewerVisible}
+//         transparent={true}
+//         animationType="fade"
+//         onRequestClose={closeImageViewer}>
+//         <View style={styles.modalContainer}>
+//           <View style={styles.modalHeader}>
+//             <TouchableOpacity
+//               style={styles.closeButton}
+//               onPress={closeImageViewer}>
+//               <AntDesign name="close" size={24} color="#fff" />
+//             </TouchableOpacity>
+//           </View>
+//           <TouchableOpacity
+//             activeOpacity={1}
+//             style={styles.imageViewerContainer}
+//             onPress={closeImageViewer}
+//             onLongPress={resetImageZoom}
+//             delayLongPress={200}>
+//             <Animated.View
+//               {...panResponder.panHandlers}
+//               style={[
+//                 styles.imageViewerWrapper,
+//                 {
+//                   transform: [
+//                     { scale: scale },
+//                     { translateX: offsetX },
+//                     { translateY: offsetY },
+//                   ],
+//                 },
+//               ]}>
+//               <TouchableOpacity
+//                 activeOpacity={1}
+//                 onPress={e => e.stopPropagation()}
+//                 onLongPress={e => {
+//                   e.stopPropagation();
+//                   resetImageZoom();
+//                 }}
+//                 delayLongPress={200}>
+//                 <Animated.Image
+//                   source={{ uri: selectedImage }}
+//                   style={styles.fullScreenImage}
+//                   resizeMode="contain"
+//                 />
+//               </TouchableOpacity>
+//             </Animated.View>
+//           </TouchableOpacity>
+//         </View>
+//       </Modal>
+//     </SafeAreaView>
+//   );
+// };
+
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: Color.white,
+//   },
+//   headerContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'space-between',
+//     padding: 16,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#e0e0e0',
+//   },
+//   headerLeft: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//   },
+//   backTxt: {
+//     fontSize: 18,
+//     color: Color.black,
+//     marginLeft: 16,
+//   },
+//   inputContainer: {
+//     padding: 10,
+//     backgroundColor: Color.white,
+//   },
+//   filePreviewContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#f0f0f0',
+//     padding: 8,
+//     borderRadius: 8,
+//     marginBottom: 8,
+//     justifyContent: 'space-between',
+//   },
+//   filePreviewText: {
+//     color: Color.black,
+//     fontSize: 14,
+//   },
+//   inputWrapper: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#fff',
+//     borderRadius: 20,
+//     paddingHorizontal: 10,
+//     paddingVertical: 5,
+//     borderWidth: 1,
+//     borderColor: '#e0e0e0',
+//   },
+//   input: {
+//     flex: 1,
+//     fontSize: 16,
+//     color: Color.black,
+//     paddingVertical: 8,
+//     paddingHorizontal: 10,
+//   },
+//   attachButton: {
+//     padding: 8,
+//   },
+//   sendButton: {
+//     padding: 8,
+//   },
+//   messageContainer: {
+//     marginVertical: 4,
+//     marginHorizontal: 10,
+//     maxWidth: '80%',
+//   },
+//   sent: {
+//     alignSelf: 'flex-end',
+//     borderRadius: 12,
+//     padding: 8,
+//     backgroundColor: Color?.lightGreen,
+//   },
+//   received: {
+//     alignSelf: 'flex-start',
+//     borderRadius: 12,
+//     padding: 8,
+//     backgroundColor: Color?.white,
+//   },
+//   messageWrapper: {
+
+
+
+//   },
+//   textContainer: {
+//     paddingVertical: 4,
+//   },
+//   messageText: {
+//     fontSize: 16,
+//     color: Color.black,
+//   },
+//   imageContainer: {
+//     marginBottom: 4,
+//   },
+//   image: {
+//     width: 200,
+//     height: 200,
+//     borderRadius: 8,
+//   },
+//   messageContent: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'flex-end',
+//     marginTop: 4,
+//   },
+//   timestampText: {
+//     fontSize: 12,
+//     color: Color.gray,
+//     marginRight: 4,
+//   },
+//   messageFooter: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//   },
+//   readStatus: {
+//     marginLeft: 4,
+//   },
+//   dateSeparator: {
+//     alignItems: 'center',
+//     marginVertical: 10,
+//   },
+//   dateSeparatorText: {
+//     fontSize: 14,
+//     color: Color.gray,
+//     backgroundColor: '#f0f0f0',
+//     paddingHorizontal: 12,
+//     paddingVertical: 4,
+//     borderRadius: 12,
+//   },
+//   modalContainer: {
+//     flex: 1,
+//     backgroundColor: 'rgba(0, 0, 0, 0.9)',
+//   },
+//   modalHeader: {
+//     position: 'absolute',
+//     top: 40,
+//     left: 0,
+//     right: 0,
+//     zIndex: 10,
+//     flexDirection: 'row',
+//     justifyContent: 'flex-end',
+//     padding: 16,
+//   },
+//   closeButton: {
+//     padding: 8,
+//   },
+//   imageViewerContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   imageViewerWrapper: {
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   fullScreenImage: {
+//     width: 300,
+//     height: 300,
+//   },
+// });
+
+// export default MessageComponent;
+
+
+
+
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -13,44 +884,37 @@ import {
   SafeAreaView,
   ImageBackground,
   ActivityIndicator,
+  AppState,
 } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {
   connectSocket,
   joinRoom,
   getChatHistory,
-  onReceiveMessage,
   sendMessage,
-  onMessagesSeen,
+  markMessagesAsSeen,
+  leaveRoom,
 } from '../Components/SocketService';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-import {Color} from '../assets/styles/Colors';
-import {BASE_URL} from '../Apis/Base_Url/Baseurl';
-import {useSelector} from 'react-redux';
+import { Color } from '../assets/styles/Colors';
+import { BASE_URL } from '../Apis/Base_Url/Baseurl';
+import { useSelector } from 'react-redux';
+
 
 const MessageComponent = ({
   userId,
   otherUserId,
-  userName,
-  image,
   showHeader = true,
   containerStyle,
-  gender,
+  image
 }) => {
   const navigation = useNavigation();
-
-  const userImage = image
-    ? { uri: image }
-    : gender === 'Female'
-      ? require('../assets/Images/woman.png')
-      : require('../assets/Images/man.png');
-
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -59,8 +923,10 @@ const MessageComponent = ({
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploadingFiles, setUploadingFiles] = useState({});
+  const [appState, setAppState] = useState(AppState.currentState);
   const profileInfo = useSelector(state => state?.user?.profileInfo);
-  const profileName = profileInfo?.fullName;
+  console.log('profileInfo', profileInfo)
+  const profileName = profileInfo?.fullName || 'User';
 
   const scale = useRef(new Animated.Value(1)).current;
   const lastScale = useRef(1);
@@ -69,15 +935,11 @@ const MessageComponent = ({
   const lastX = useRef(0);
   const lastY = useRef(0);
 
-  const messageQueue = useRef([]);
-  const isProcessingQueue = useRef(false);
-  const uploadQueue = useRef([]);
-  const isUploading = useRef(false);
-
-  const sortedMessages = [...messages]?.sort(
-    (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
-  );
-
+  const userImage = image
+    ? { uri: image }
+    : gender === 'Female'
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -90,12 +952,10 @@ const MessageComponent = ({
         if (event.nativeEvent.changedTouches.length === 2) {
           const touch1 = event.nativeEvent.changedTouches[0];
           const touch2 = event.nativeEvent.changedTouches[1];
-
           const distance = Math.sqrt(
             Math.pow(touch2.pageX - touch1.pageX, 2) +
             Math.pow(touch2.pageY - touch1.pageY, 2),
           );
-
           const newScale = Math.max(1, Math.min(5, distance / 100));
           scale.setValue(newScale);
         } else if (lastScale.current > 1) {
@@ -105,21 +965,11 @@ const MessageComponent = ({
       },
       onPanResponderRelease: () => {
         lastScale.current = scale._value;
-
         if (scale._value <= 1) {
           Animated.parallel([
-            Animated.spring(scale, {
-              toValue: 1,
-              useNativeDriver: true,
-            }),
-            Animated.spring(offsetX, {
-              toValue: 0,
-              useNativeDriver: true,
-            }),
-            Animated.spring(offsetY, {
-              toValue: 0,
-              useNativeDriver: true,
-            }),
+            Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+            Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+            Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
           ]).start();
           lastScale.current = 1;
           lastX.current = 0;
@@ -129,198 +979,176 @@ const MessageComponent = ({
     }),
   ).current;
 
-  const processMessageQueue = useCallback(() => {
-    if (isProcessingQueue.current || messageQueue.current.length === 0) return;
-
-    isProcessingQueue.current = true;
-    const nextMessage = messageQueue.current.shift();
-
-    setMessages(prevMessages => {
-      const messageExists = prevMessages.some(
-        msg =>
-          (msg._id && msg._id === nextMessage._id) ||
-          (msg.tempId &&
-            nextMessage.tempId &&
-            msg.tempId === nextMessage.tempId),
-      );
-
-      if (messageExists) {
-        return prevMessages.map(msg =>
-          (msg._id && msg._id === nextMessage._id) ||
-          (msg.tempId &&
-            nextMessage.tempId &&
-            msg.tempId === nextMessage.tempId)
-            ? {...nextMessage, tempId: msg.tempId || nextMessage.tempId}
-            : msg,
-        );
-      }
-
-      return [nextMessage, ...prevMessages];
-    });
-
-    isProcessingQueue.current = false;
-    processMessageQueue();
-  }, []);
-
-  const enqueueMessage = useCallback(
-    newMessage => {
-      messageQueue.current.push(newMessage);
-      processMessageQueue();
-    },
-    [processMessageQueue],
-  );
-
-  const processUploadQueue = useCallback(async () => {
-    if (isUploading.current || uploadQueue.current.length === 0) return;
-
-    isUploading.current = true;
-    const {file, tempId, resolve, reject} = uploadQueue.current.shift();
-
-    try {
-      const uploadedFile = await uploadFileAndGetUrl(file);
-      resolve(uploadedFile);
-    } catch (err) {
-      reject(err);
-    } finally {
-      isUploading.current = false;
-      processUploadQueue();
-    }
-  }, []);
-
-  const enqueueUpload = useCallback(
-    (file, tempId) => {
-      return new Promise((resolve, reject) => {
-        uploadQueue.current.push({file, tempId, resolve, reject});
-        processUploadQueue();
-      });
-    },
-    [processUploadQueue],
-  );
-
-  useEffect(() => {
-    const socket = connectSocket();
-    if (socket) {
-      setLoading(true);
-    }
-    joinRoom(userId, otherUserId);
-
+  const fetchChatHistory = () => {
+    setLoading(true);
     getChatHistory(userId, otherUserId, history => {
-      const updatedHistory = history?.reverse().map(msg => ({
+      if (!history) {
+        setMessages([]);
+        setLoading(false);
+        return;
+      }
+      const updatedHistory = history.reverse().map(msg => ({
         ...msg,
         seen: msg.seen || false,
         tempId: msg.tempId || null,
       }));
-      setMessages(updatedHistory);
+      setMessages(prevMessages => {
+        const mergedMessages = [...updatedHistory];
+        prevMessages.forEach(msg => {
+          const existingMsg = mergedMessages.find(
+            m => m._id === msg._id || (m.tempId && m.tempId === msg.tempId),
+          );
+          if (existingMsg) {
+            existingMsg.seen = msg.seen;
+          } else {
+            mergedMessages.push(msg);
+          }
+        });
+        return mergedMessages.sort(
+          (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
+        );
+      });
       setLoading(false);
-
-      const unseenMessagesFromOther = updatedHistory?.filter(
-        msg =>
-          !msg?.seen && msg.senderId !== userId && msg.receiverId === userId,
-      );
-
-      if (unseenMessagesFromOther?.length > 0) {
-        const messageIds = unseenMessagesFromOther
-          .map(msg => msg?._id)
-          .filter(Boolean);
-        socket.emit('messageSeen', { userId, otherUserId, messageIds });
-      }
+      markUnseenMessages();
     });
+  };
 
-    const messageHandler = newMessage => {
-      if (
-        !newMessage?._id ||
-        !newMessage?.senderId ||
-        !newMessage?.receiverId
-      ) {
-        console.error('Invalid message received:', newMessage);
-        return;
-      }
+  // Mark unseen messages as seen when the app is active
+  const markUnseenMessages = () => {
+    if (appState !== 'active') return;
+    const unseenMessages = messages.filter(
+      msg =>
+        !msg?.seen &&
+        msg.senderId !== userId &&
+        msg.receiverId === userId &&
+        msg._id,
+    );
+    if (unseenMessages.length > 0) {
+      const messageIds = unseenMessages.map(msg => msg._id).filter(Boolean);
+      markMessagesAsSeen(messageIds, otherUserId, userId);
+    }
+  };
 
+  // Handle incoming messages via socket
+  const messageHandler = newMessage => {
+    if (
+      !newMessage?._id ||
+      !newMessage?.senderId ||
+      !newMessage?.receiverId
+    ) {
+      console.error('Invalid message received:', newMessage);
+      return;
+    }
+    setMessages(prevMessages => {
       const safeNewMessage = {
         ...newMessage,
         tempId: newMessage.tempId || null,
         seen: newMessage.seen || false,
-        createdAt: newMessage.createdAt || new Date().toISOString(),
       };
-
-      console.log(`Received message: ${JSON.stringify(safeNewMessage)}`);
-      enqueueMessage(safeNewMessage);
-
-      if (
-        newMessage?.senderId !== userId &&
-        newMessage?.receiverId === userId &&
-        !newMessage?.seen
-      ) {
-        markMessagesAsSeen([newMessage._id]);
-      }
-    };
-
-    onReceiveMessage(messageHandler);
-
-    const messagesSeenHandler = data => {
-      if (
-        data?.messageIds &&
-        data?.senderId === userId &&
-        data?.receiverId === otherUserId
-      ) {
-        setMessages(prevMessages =>
-          prevMessages.map(msg =>
-            data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
-          ),
+      const messageExists = prevMessages.some(
+        msg =>
+          (msg._id && msg._id === safeNewMessage._id) ||
+          (msg.tempId &&
+            safeNewMessage.tempId &&
+            msg.tempId === safeNewMessage.tempId),
+      );
+      if (messageExists) {
+        return prevMessages.map(msg =>
+          (msg._id && msg._id === safeNewMessage._id) ||
+            (msg.tempId &&
+              safeNewMessage.tempId &&
+              msg.tempId === safeNewMessage.tempId)
+            ? { ...safeNewMessage, tempId: msg.tempId || safeNewMessage.tempId, seen: msg.seen }
+            : msg,
         );
       }
-    };
+      return [safeNewMessage, ...prevMessages];
+    });
+    if (
+      newMessage?.senderId !== userId &&
+      newMessage?.receiverId === userId &&
+      !newMessage?.seen &&
+      appState === 'active'
+    ) {
+      markMessagesAsSeen([newMessage._id], otherUserId, userId);
+    }
+  };
 
-    onMessagesSeen(messagesSeenHandler);
+  // Handle messages marked as seen
+  const messagesSeenHandler = data => {
+    if (
+      data?.messageIds &&
+      data?.senderId === userId &&
+      data?.receiverId === otherUserId
+    ) {
+      setMessages(prevMessages =>
+        prevMessages.map(msg =>
+          data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
+        ),
+      );
+    }
+  };
 
-    const markMessagesAsSeen = (specificIds = null) => {
-      const unseenMessages = specificIds
-        ? messages.filter(
-          msg =>
-            specificIds.includes(msg._id) &&
-            !msg?.seen &&
-            msg.receiverId === userId,
-        )
-        : messages.filter(
-            msg =>
-              !msg?.seen &&
-              msg.senderId !== userId &&
-              msg.receiverId === userId,
-          );
-      if (unseenMessages.length > 0) {
-        const messageIds = unseenMessages.map(msg => msg?._id).filter(Boolean);
-        if (messageIds.length > 0) {
-          socket.emit('messageSeen', {userId, otherUserId, messageIds});
+  // Socket setup and app state handling
+  useEffect(() => {
+    const socket = connectSocket();
+    setLoading(true);
+    if (socket.connected) {
+      joinRoom(userId, otherUserId);
+      fetchChatHistory();
+    } else {
+      socket.on('connect', () => {
+        joinRoom(userId, otherUserId);
+        fetchChatHistory();
+      });
+    }
+    socket.on('receiveMessage', messageHandler);
+    socket.on('messagesSeen', messagesSeenHandler);
+
+    const handleAppStateChange = nextAppState => {
+      setAppState(nextAppState);
+      if (nextAppState === 'active') {
+        if (socket.connected) {
+          joinRoom(userId, otherUserId);
+          fetchChatHistory();
+          markUnseenMessages();
+        } else {
+          socket.on('connect', () => {
+            joinRoom(userId, otherUserId);
+            fetchChatHistory();
+            markUnseenMessages();
+          });
         }
+      } else if (nextAppState === 'background') {
+        leaveRoom(userId, otherUserId);
       }
     };
 
-    markMessagesAsSeen();
-
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
     return () => {
       socket.off('receiveMessage', messageHandler);
       socket.off('messagesSeen', messagesSeenHandler);
-      socket.disconnect();
+      socket.off('connect');
+      leaveRoom(userId, otherUserId);
+      subscription.remove();
     };
-  }, [userId, otherUserId, enqueueMessage]);
+  }, [userId, otherUserId]);
 
-  const formatTime = isoString => {
-    return moment(isoString).format('h.mm A');
-  };
+  // Debug selectedFile state changes
+  useEffect(() => {
+    console.log('selectedFile updated:', selectedFile);
+  }, [selectedFile]);
 
-  const handleSendMessage = async (isFile = false) => {
-    if (!isFile && !text?.trim() && !selectedFile) return;
+  // Format timestamp for messages
+  const formatTime = isoString => moment(isoString).format('h:mm A');
 
-    let tempId = null;
-    try {
-      let fileUrl = null;
-      tempId = uuid.v4();
-      const now = new Date().toISOString();
-
-      if (isFile) {
+  // Handle sending messages or picking files
+  const handleSendMessage = async (isFilePicker = false) => {
+    if (isFilePicker) {
+      try {
         setFileUploading(true);
         const result = await DocumentPicker.pick({
-          type: [DocumentPicker.types.images],
+          type: [DocumentPicker.types.allFiles],
         });
 
         if (!result[0]?.uri) {
@@ -328,115 +1156,137 @@ const MessageComponent = ({
           return;
         }
 
-        setUploadingFiles(prev => ({...prev, [tempId]: true}));
-        enqueueMessage({
-          _id: tempId,
-          tempId,
-          senderId: userId,
-          receiverId: otherUserId,
-          file: result[0].uri,
-          createdAt: now,
-          isTemp: true,
-          seen: false,
+        setSelectedFile({
+          uri: result[0].uri,
+          name: result[0].name,
+          type: result[0].type,
         });
+      } catch (err) {
+        if (DocumentPicker.isCancel(err)) {
+          console.warn('User cancelled file picker');
+        } else {
+          console.error('Error picking file:', err);
+        }
+      } finally {
+        setFileUploading(false);
+      }
+      return;
+    }
 
-        try {
-          const uploadedFile = await enqueueUpload(result[0], tempId);
-          fileUrl = uploadedFile.url;
-        } catch (err) {
-          enqueueMessage({
+    if (!text?.trim() && !selectedFile) return;
+
+    const tempId = uuid.v4();
+    const now = new Date().toISOString();
+    let fileUrl = null;
+
+    try {
+      if (selectedFile) {
+        setFileUploading(true);
+        setUploadingFiles(prev => ({ ...prev, [tempId]: true }));
+
+        // Add temporary message with the file
+        setMessages(prevMessages => [
+          {
             _id: tempId,
             tempId,
             senderId: userId,
             receiverId: otherUserId,
-            message: 'Failed to upload file',
-            file: '',
+            file: selectedFile.uri,
+            message: text?.trim() || '',
             createdAt: now,
-            isTemp: false,
+            isTemp: true,
             seen: false,
-          });
-          throw err;
-        }
-      }
+          },
+          ...prevMessages,
+        ]);
 
-      const tempMessage = {
-        _id: tempId,
-        tempId,
-        senderId: userId,
-        receiverId: otherUserId,
-        message: isFile ? '' : text,
-        file: fileUrl || selectedFile?.url || '',
-        createdAt: now,
-        seen: false,
-        isTemp: !!fileUrl,
-      };
+        // Upload the file
+        const uploadedFile = await uploadFileAndGetUrl(selectedFile);
+        fileUrl = uploadedFile.url;
 
-      console.log(`Sending message: ${JSON.stringify(tempMessage)}`);
-
-      if (!isFile) {
-        enqueueMessage(tempMessage);
+        // Update the message with the uploaded file URL
+        setMessages(prevMessages =>
+          prevMessages.map(msg =>
+            msg._id === tempId
+              ? {
+                ...msg,
+                file: fileUrl,
+                message: text?.trim() || '',
+                isTemp: false,
+              }
+              : msg,
+          ),
+        );
       } else {
-        enqueueMessage({
-          ...tempMessage,
-          isTemp: false,
-        });
+        // Add a text-only message
+        const tempMessage = {
+          _id: tempId,
+          tempId,
+          senderId: userId,
+          receiverId: otherUserId,
+          message: text?.trim(),
+          file: null,
+          createdAt: now,
+          seen: false,
+        };
+        setMessages(prevMessages => [tempMessage, ...prevMessages]);
       }
 
-      sendMessage(
+      // Send the message via socket
+      await sendMessage(
         userId,
         otherUserId,
-        tempMessage.message,
-        tempMessage.file,
+        text?.trim() || '',
+        fileUrl || null,
         tempId,
       );
-
-      if (!isFile) {
-        setText('');
-        setSelectedFile(null);
-      }
     } catch (err) {
-      if (isFile && DocumentPicker.isCancel(err)) {
-        console.warn('User cancelled file picker');
-      } else {
-        console.error('Error in handleSendMessage:', err);
-      }
+      console.error('Error in handleSendMessage:', err);
+      // Optionally, remove the failed message or mark it as failed
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => msg._id !== tempId),
+      );
     } finally {
-      if (isFile && tempId) {
-        setFileUploading(false);
-        setUploadingFiles(prev => {
-          const newState = {...prev};
-          delete newState[tempId];
-          return newState;
-        });
-      }
+      // Clear the input and selected file
+      setText('');
+      setSelectedFile(() => null); // Use functional update to ensure state clears
+      setFileUploading(false);
+      setUploadingFiles(prev => {
+        const newState = { ...prev };
+        delete newState[tempId];
+        return newState;
+      });
     }
   };
 
-  const closeImageViewer = () => {
-    setImageViewerVisible(false);
-    setSelectedImage(null);
+  // Remove the selected file from the preview
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
   };
 
-  const resetImageZoom = () => {
-    Animated.parallel([
-      Animated.spring(scale, {
-        toValue: 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(offsetX, {
-        toValue: 0,
-        useNativeDriver: true,
-      }),
-      Animated.spring(offsetY, {
-        toValue: 0,
-        useNativeDriver: true,
-      }),
-    ]).start();
-    lastScale.current = 1;
-    lastX.current = 0;
-    lastY.current = 0;
+  // Upload file to the server and get the URL
+  const uploadFileAndGetUrl = async file => {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: file?.uri,
+      name: file?.name,
+      type: file?.type,
+    });
+    const response = await fetch(`${BASE_URL}/upload`, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    if (!response.ok) {
+      console.error('Upload failed with status:', response.status);
+      throw new Error('Upload failed');
+    }
+    const json = await response.json();
+    console.log('Upload response:', json);
+    return json;
   };
 
+  // Group messages by date for display
   const groupMessagesByDate = messages => {
     const groups = {};
     messages?.forEach(message => {
@@ -449,155 +1299,44 @@ const MessageComponent = ({
     return groups;
   };
 
+  // Create data for FlatList with date separators
   const createFlatListData = messages => {
     if (!messages?.length) return [];
-
     const groupedMessages = groupMessagesByDate(messages);
     const flatListData = [];
-
     Object.keys(groupedMessages)
       .sort((a, b) => new Date(b) - new Date(a))
       .forEach(date => {
         const messagesForDate = groupedMessages[date].sort(
           (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
         );
-
         messagesForDate.forEach(message => {
-          flatListData.push({
-            ...message,
-            type: 'message',
-          });
+          flatListData.push({ ...message, type: 'message' });
         });
-
-        flatListData.push({
-          id: `date-${date}`,
-          type: 'date',
-          date,
-        });
+        flatListData.push({ id: `date-${date}`, type: 'date', date });
       });
-
     return flatListData;
   };
 
+  // Format date for separators (e.g., "Today", "Yesterday")
   const formatDateForSeparator = dateString => {
     const messageDate = moment(dateString);
     const today = moment().startOf('day');
     const yesterday = moment().subtract(1, 'day').startOf('day');
-
-    if (messageDate?.isSame(today, 'day')) {
-      return 'Today';
-    } else if (messageDate?.isSame(yesterday, 'day')) {
-      return 'Yesterday';
-    } else if (messageDate?.isAfter(today.clone().subtract(7, 'days'))) {
+    if (messageDate?.isSame(today, 'day')) return 'Today';
+    if (messageDate?.isSame(yesterday, 'day')) return 'Yesterday';
+    if (messageDate?.isAfter(today.clone().subtract(7, 'days')))
       return messageDate?.format('dddd');
-    } else {
-      return messageDate?.format('MMM D');
-    }
+    return messageDate?.format('MMM D');
   };
 
+  // Sort messages and prepare FlatList data
+  const sortedMessages = [...messages].sort(
+    (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
+  );
   const flatListData = createFlatListData(sortedMessages);
 
-  const keyExtractor = useCallback(
-    item =>
-      item?.type === 'date'
-        ? item?.id
-        : item?._id?.toString() || `msg-${item?.tempId}-${item?.createdAt}`,
-    [],
-  );
-
-  const renderItem = useCallback(
-    ({item}) => {
-      if (item.type === 'date') {
-        return (
-          <View style={styles.dateSeparator}>
-            <Text style={styles.dateSeparatorText}>
-              {formatDateForSeparator(item?.date)}
-            </Text>
-          </View>
-        );
-      } else {
-        return renderMessage({item});
-      }
-    },
-    [formatDateForSeparator],
-  );
-
-  const renderMessage = useCallback(
-    ({item}) => {
-      const isSender = item?.senderId === userId;
-      const fileUrl = item?.file || item?.fileUrl;
-      const time = formatTime(item?.createdAt || item?.timestamp);
-      const isUploading = item.isTemp || uploadingFiles[item._id];
-      const isSeen = item?.seen;
-      const isTemp = item._id?.startsWith('temp-');
-
-      console.log(
-        `Rendering message: ${item._id}, isUploading: ${isUploading}`,
-      );
-
-      return (
-        <View
-          style={[
-            styles.messageContainer,
-            isSender ? styles.sent : styles.received,
-          ]}>
-          {fileUrl && (
-            <View style={styles.imageContainer}>
-              {isUploading ? (
-                <ActivityIndicator />
-              ) : (
-                <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                  <Image source={{uri: fileUrl}} style={styles.image} />
-                  <View style={styles.messageContent}>
-                    <Text style={styles.timestampText}>{time}</Text>
-                    <View style={styles.messageFooter}>
-                      {isSender && (
-                        <Ionicons
-                          name={isSeen ? 'checkmark-done' : 'checkmark'}
-                          size={16}
-                          color={isSeen ? Color.primaryColor : Color.gray}
-                          style={styles.readStatus}
-                        />
-                      )}
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-
-          {item?.message && (
-            <View>
-              <Text style={styles.messageText}>{item?.message}</Text>
-              <View style={styles.messageContent}>
-                <Text style={styles.timestampText}>{time}</Text>
-                <View style={styles.messageFooter}>
-                  {isSender && !isTemp && (
-                    <Ionicons
-                      name={isSeen ? 'checkmark-done' : 'checkmark'}
-                      size={16}
-                      color={isSeen ? Color.primaryColor : Color.gray}
-                      style={styles.readStatus}
-                    />
-                  )}
-                  {isSender && isTemp && (
-                    <Ionicons
-                      name="time-outline"
-                      size={16}
-                      color={Color.gray}
-                      style={styles.readStatus}
-                    />
-                  )}
-                </View>
-              </View>
-            </View>
-          )}
-        </View>
-      );
-    },
-    [userId, uploadingFiles, openImageViewer],
-  );
-
+  // Open the image viewer modal
   const openImageViewer = fileUrl => {
     setSelectedImage(fileUrl);
     setImageViewerVisible(true);
@@ -609,70 +1348,111 @@ const MessageComponent = ({
     lastY.current = 0;
   };
 
-  const uploadFileAndGetUrl = async file => {
-    const formData = new FormData();
-    formData.append('file', {
-      uri: file?.uri,
-      name: file?.name,
-      type: file?.type,
-    });
-
-    const response = await fetch(`${BASE_URL}upload`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Upload failed');
-    }
-
-    return await response.json();
+  // Close the image viewer modal
+  const closeImageViewer = () => {
+    setImageViewerVisible(false);
+    setSelectedImage(null);
   };
 
-  const getItemLayout = (data, index) => ({
-    length: verticalScale(50),
-    offset: verticalScale(50) * index,
-    index,
-  });
+  // Reset image zoom in the viewer
+  const resetImageZoom = () => {
+    Animated.parallel([
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+      Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+      Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
+    ]).start();
+    lastScale.current = 1;
+    lastX.current = 0;
+    lastY.current = 0;
+  };
 
-  const renderHeader = () => {
-    if (!showHeader) return null;
+  // Render a single message
+  const renderMessage = ({ item }) => {
+    const isSender = item?.senderId === userId;
+    const fileUrl = item?.file || item?.fileUrl;
+    const time = formatTime(item?.createdAt || item?.timestamp);
+    const isUploading = item.isTemp || uploadingFiles[item._id];
+    const isSeen = item?.seen;
+    const isTemp = item._id?.startsWith('temp-');
 
     return (
       <View
-        style={{
-          paddingVertical: verticalScale(12),
-          backgroundColor: Color.common,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginHorizontal: scaleSize(16),
-          }}>
+        style={[
+          styles.messageContainer,
+          isSender ? styles.sent : styles.received,
+        ]}>
+        <View style={styles.messageWrapper}>
+          {fileUrl && (
+            <View style={styles.imageContainer}>
+              {isUploading ? (
+                <ActivityIndicator color={Color.primaryColor} />
+              ) : (
+                <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
+                  <Image source={{ uri: fileUrl }} style={styles.image} />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+          {item?.message && (
+            <View style={styles.textContainer}>
+              <Text style={styles.messageText}>{item?.message}</Text>
+            </View>
+          )}
+          <View style={styles.messageContent}>
+            <Text style={styles.timestampText}>{time}</Text>
+            {isSender && (
+              <View style={styles.messageFooter}>
+                {isTemp ? (
+                  <Ionicons
+                    name="time-outline"
+                    size={16}
+                    color={Color.gray}
+                    style={styles.readStatus}
+                  />
+                ) : (
+                  <Ionicons
+                    name={isSeen ? 'checkmark-done' : 'checkmark'}
+                    size={16}
+                    color={isSeen ? Color.primaryColor : Color.gray}
+                    style={styles.readStatus}
+                  />
+                )}
+              </View>
+            )}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  // Render FlatList items (messages or date separators)
+  const renderItem = ({ item }) => {
+    if (item.type === 'date') {
+      return (
+        <View style={styles.dateSeparator}>
+          <Text style={styles.dateSeparatorText}>
+            {formatDateForSeparator(item?.date)}
+          </Text>
+        </View>
+      );
+    }
+    return renderMessage({ item });
+  };
+
+  // Render the chat header
+  const renderHeader = () => {
+    if (!showHeader) return null;
+    return (
+      <View style={styles.headerContainer}>
+        <View style={styles.headerLeft}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AntDesign
-              name="arrowleft"
-              color={Color.black}
-              size={verticalScale(18)}
-            />
+            <AntDesign name="arrowleft" color={Color.black} size={18} />
           </TouchableOpacity>
           <Image style={styles.profileImage} source={userImage} />
           <Text style={styles.backTxt}>{profileName}</Text>
         </View>
-
-        <TouchableOpacity style={{ marginHorizontal: scaleSize(16) }}>
-          <Feather
-            name="info"
-            color={Color.primaryColor}
-            size={verticalScale(22)}
-          />
+        <TouchableOpacity style={{ marginHorizontal: 16 }}>
+          <Feather name="info" color={Color.primaryColor} size={22} />
         </TouchableOpacity>
       </View>
     );
@@ -681,64 +1461,72 @@ const MessageComponent = ({
   return (
     <SafeAreaView style={[styles.container, containerStyle]}>
       {renderHeader()}
-
       <ImageBackground
         style={{ flex: 1 }}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
           <ActivityIndicator
-            color={Color?.primaryColor}
-            size={'large'}
-            style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
+            color={Color.primaryColor}
+            size="large"
+            style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}
           />
         ) : (
           <FlatList
             data={flatListData}
-            keyExtractor={keyExtractor}
+            keyExtractor={item =>
+              item?.type === 'date'
+                ? item?.id
+                : item?._id?.toString() || `msg-${item?.tempId}`
+            }
             renderItem={renderItem}
             inverted
-            initialNumToRender={10}
-            windowSize={5}
-            getItemLayout={getItemLayout}
           />
         )}
-
         <View style={styles.inputContainer}>
-          <TouchableOpacity
-            style={styles.attachButton}
-            onPress={() => handleSendMessage(true)}
-            disabled={fileUploading}>
-            <Ionicons
-              name="attach"
-              size={24}
-              color={fileUploading ? Color.lightgray : Color.gray}
+          {selectedFile && (
+            <View style={styles.filePreviewContainer}>
+              <Text style={styles.filePreviewText}>{selectedFile.name}</Text>
+              <TouchableOpacity onPress={removeSelectedFile}>
+                <Ionicons name="close" size={20} color={Color.gray} />
+              </TouchableOpacity>
+            </View>
+          )}
+          <View style={styles.inputWrapper}>
+            <TouchableOpacity
+              style={styles.attachButton}
+              onPress={() => handleSendMessage(true)}
+              disabled={fileUploading}>
+              <Ionicons
+                name="attach"
+                size={24}
+                color={fileUploading ? Color.lightgray : Color.gray}
+              />
+            </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              value={text}
+              onChangeText={setText}
+              placeholder="Type a message..."
+              multiline
+              placeholderTextColor={Color.black}
             />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.input}
-            value={text}
-            onChangeText={setText}
-            placeholder="Type a message..."
-            multiline
-            placeholderTextColor={Color.black}
-          />
-          <TouchableOpacity
-            style={styles.sendButton}
-            onPress={() => handleSendMessage(false)}
-            disabled={(!text.trim() && !selectedFile) || fileUploading}>
-            <Ionicons
-              name="send"
-              size={20}
-              color={
-                text.trim() || (selectedFile && !fileUploading)
-                  ? Color.primaryColor
-                  : Color.gray
-              }
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.sendButton}
+              onPress={() => handleSendMessage(false)}
+              disabled={(!text.trim() && !selectedFile) || fileUploading}>
+              <Ionicons
+                name="send"
+                size={20}
+                color={
+                  text.trim() || (selectedFile && !fileUploading)
+                    ? Color.primaryColor
+                    : Color.gray
+                }
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </ImageBackground>
-
       <Modal
         visible={imageViewerVisible}
         transparent={true}
@@ -752,7 +1540,6 @@ const MessageComponent = ({
               <AntDesign name="close" size={24} color="#fff" />
             </TouchableOpacity>
           </View>
-
           <TouchableOpacity
             activeOpacity={1}
             style={styles.imageViewerContainer}
@@ -773,9 +1560,7 @@ const MessageComponent = ({
               ]}>
               <TouchableOpacity
                 activeOpacity={1}
-                onPress={e => {
-                  e.stopPropagation();
-                }}
+                onPress={e => e.stopPropagation()}
                 onLongPress={e => {
                   e.stopPropagation();
                   resetImageZoom();
@@ -797,150 +1582,151 @@ const MessageComponent = ({
 
 
 
-
-
-export default MessageComponent;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-  },
-  loadingImageContainer: {
-    width: scaleSize(200),
-    height: scaleSize(200),
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: scaleSize(8),
-    overflow: 'hidden',
-  },
-  messageContainer: {
-    paddingVertical: verticalScale(5),
-    paddingHorizontal: scaleSize(5),
-    marginVertical: scaleSize(2),
-    marginHorizontal: scaleSize(10),
-    borderRadius: scaleSize(8),
-    maxWidth: '75%',
-  },
-  sent: {
-    backgroundColor: Color.lightGreen,
-    alignSelf: 'flex-end',
-    borderBottomRightRadius: 0,
-  },
-  received: {
     backgroundColor: Color.white,
-    alignSelf: 'flex-start',
-    borderBottomLeftRadius: 0,
   },
-  imageContainer: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: scaleSize(8),
-    padding: scaleSize(5),
-  },
-  image: {
-    width: scaleSize(200),
-    height: scaleSize(200),
-    borderRadius: scaleSize(8),
-  },
-  fileContainer: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    padding: scaleSize(5),
-    borderRadius: scaleSize(6),
-    marginVertical: verticalScale(5),
-  },
-  fileText: {
-    color: Color.black,
-    fontWeight: '500',
-  },
-  messageContent: {
+  headerContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  messageText: {
-    color: Color.black,
-    fontSize: scaleSize(14),
-    paddingVertical: verticalScale(5),
-    paddingHorizontal: scaleSize(5),
-    marginRight: 10,
-  },
-  timestampText: {
-    color: Color.gray,
-    fontSize: scaleSize(10),
-    alignSelf: 'flex-end',
-  },
-  previewContainer: {
-    padding: verticalScale(10),
-    backgroundColor: '#e6e6e6',
-    alignItems: 'center',
-  },
-  uploadingContainer: {
+  headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: verticalScale(5),
   },
-  uploadingText: {
+  backTxt: {
+    fontSize: 18,
     color: Color.black,
-    fontWeight: '500',
-    marginHorizontal: scaleSize(5),
-  },
-  cancelButton: {
-    backgroundColor: '#ffeeee',
-    paddingHorizontal: scaleSize(15),
-    paddingVertical: verticalScale(6),
-    borderRadius: scaleSize(20),
-  },
-  cancelText: {
-    color: 'red',
+    marginLeft: 16,
   },
   inputContainer: {
+    padding: 10,
+    backgroundColor: Color.white,
+  },
+  filePreviewContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Color?.white,
-    borderRadius: scaleSize(25),
-    paddingHorizontal: scaleSize(10),
-    marginHorizontal: scaleSize(10),
-    marginBottom: verticalScale(8),
-    marginTop: verticalScale(3),
+    backgroundColor: '#f0f0f0',
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 8,
+    justifyContent: 'space-between',
   },
-  attachButton: {
-    padding: scaleSize(5),
+  filePreviewText: {
+    color: Color.black,
+    fontSize: 14,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   input: {
     flex: 1,
-    fontSize: scaleSize(14),
+    fontSize: 16,
     color: Color.black,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  attachButton: {
+    padding: 8,
   },
   sendButton: {
-    padding: scaleSize(5),
+    padding: 8,
   },
-  backTxt: {
-    fontSize: scaleSize(14),
+  messageContainer: {
+    marginVertical: 4,
+    marginHorizontal: 10,
+    maxWidth: '80%',
+  },
+  sent: {
+    alignSelf: 'flex-end',
+    borderRadius: 12,
+    padding: 8,
+    backgroundColor: Color?.lightGreen,
+  },
+  received: {
+    alignSelf: 'flex-start',
+    borderRadius: 12,
+    padding: 8,
+    backgroundColor: Color?.white,
+  },
+  messageWrapper: {
+
+
+
+  },
+  textContainer: {
+    paddingVertical: 4,
+  },
+  messageText: {
+    fontSize: 16,
     color: Color.black,
-    marginLeft: scaleSize(5),
   },
-  lightGray: {
-    color: '#D3D3D3',
+  imageContainer: {
+    marginBottom: 4,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+  },
+  messageContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 4,
+  },
+  timestampText: {
+    fontSize: 12,
+    color: Color.gray,
+    marginRight: 4,
+  },
+  messageFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  readStatus: {
+    marginLeft: 4,
+  },
+  dateSeparator: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  dateSeparatorText: {
+    fontSize: 14,
+    color: Color.gray,
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    justifyContent: 'center',
   },
   modalHeader: {
     position: 'absolute',
-    top: 0,
+    top: 40,
     left: 0,
     right: 0,
-    height: 60,
+    zIndex: 10,
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    alignItems: 'center',
-    zIndex: 10,
-    paddingHorizontal: 15,
+    padding: 16,
   },
   closeButton: {
-    padding: 10,
+    padding: 8,
   },
   imageViewerContainer: {
     flex: 1,
@@ -952,34 +1738,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fullScreenImage: {
-    width: scaleSize(300),
-    height: verticalScale(300),
-  },
-  zoomInstructions: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 10,
-    alignItems: 'center',
-  },
-  zoomInstructionsText: {
-    color: 'white',
-    marginVertical: 2,
-  },
-  dateSeparator: {
-    alignItems: 'center',
-    marginVertical: verticalScale(5),
-    paddingVertical: verticalScale(5),
-  },
-  dateSeparatorText: {
-    color: '#000',
-    backgroundColor: Color.common,
-    fontSize: scaleSize(13),
-    paddingHorizontal: scaleSize(15),
-    paddingVertical: verticalScale(8),
-    borderRadius: scaleSize(10),
+    width: 300,
+    height: 300,
   },
   profileImage: {
     width: scaleSize(35),
@@ -989,3 +1749,5 @@ const styles = StyleSheet.create({
     marginHorizontal: scaleSize(7),
   },
 });
+
+export default MessageComponent;

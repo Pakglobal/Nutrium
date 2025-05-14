@@ -1,9 +1,9 @@
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import MessageComponent from '../../../Components/useMessaging';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
-const MessageClient = ({route}) => {
+const MessageClient = ({ route }) => {
   const navigation = useNavigation();
   const clientData = route?.params?.response;
 
@@ -14,6 +14,9 @@ const MessageClient = ({route}) => {
   const userImage = clientData[0]?.image;
   const userGender = clientData[0]?.gender;
 
+  console.log('admin===================', "userId", userId, otherUserId, userName);
+
+
   return (
     <MessageComponent
       userId={userId}
@@ -22,7 +25,7 @@ const MessageClient = ({route}) => {
       image={userImage}
       showHeader={true}
       onBackPress={() => navigation.goBack()}
-      containerStyle={{backgroundColor: '#f9f9f9'}}
+      containerStyle={{ backgroundColor: '#f9f9f9' }}
     />
   );
 };

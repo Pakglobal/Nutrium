@@ -30,7 +30,7 @@ export const getAllChallengeJoinDatawithId = async (token, userId) => {
 };
 export const getAllChallengePendingRequest = async (token, userId) => {
   try {
-    const url = `${GET_CHALLENGE_PENDING_REQUEST}${userId}`;
+    const url = `${GET_CHALLENGE_PENDING_REQUEST}/${userId}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: token,

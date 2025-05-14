@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   Text,
@@ -7,11 +7,11 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Logo from '../assets/Images/logoGreen.svg';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -22,8 +22,8 @@ import {
   setGuestToken,
   setToken,
 } from '../redux/user';
-import {setImage, updateUserInfo} from '../redux/client';
-import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
+import { setImage, updateUserInfo } from '../redux/client';
+import { GetMeasurementData } from '../Apis/ClientApis/MeasurementApi';
 import {
   GetPhysicalActivities,
   GetPhysicalActivityDetails,
@@ -34,12 +34,12 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../Apis/ClientApis/RecommendationApi';
-import IconStyle, {IconBg, IconPadding} from '../assets/styles/Icon';
-import {Font} from '../assets/styles/Fonts';
+import IconStyle, { IconBg, IconPadding } from '../assets/styles/Icon';
+import { Font } from '../assets/styles/Fonts';
 import CustomLoader from '../Components/CustomLoader';
 
 const ClientDrawerContent = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const dispatch = useDispatch();
 
   const [asyncLoading, setAsyncLoading] = useState(false);
@@ -63,18 +63,18 @@ const ClientDrawerContent = props => {
   const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?.fullName;
   const profileImage = profileInfo?.image
-    ? {uri: profileInfo?.image}
+    ? { uri: profileInfo?.image }
     : profileInfo?.gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
 
   const updateProfileImage = useSelector(state => state?.client?.imageInfo);
 
   let userImgSource;
   if (updateProfileImage && typeof updateProfileImage === 'string') {
-    userImgSource = {uri: updateProfileImage};
+    userImgSource = { uri: updateProfileImage };
   } else if (userImage && typeof userImage === 'string') {
-    userImgSource = {uri: userImage};
+    userImgSource = { uri: userImage };
   } else {
     userImgSource =
       userInfo?.gender === 'Female'
@@ -107,25 +107,11 @@ const ClientDrawerContent = props => {
               success = true;
             }
 
-            if (success) {
-              props.navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'AuthStack',
-                    params: {screen: 'loginChoice'},
-                  },
-                ],
-              });
-            } else {
-              Alert.alert('Error', 'Failed to sign out. Please try again.', [
-                {text: 'OK'},
-              ]);
-            }
+
           } catch (error) {
             console.error('Sign out error:', error);
             Alert.alert('Error', 'Something went wrong. Please try again.', [
-              {text: 'OK'},
+              { text: 'OK' },
             ]);
           }
         },
@@ -168,10 +154,10 @@ const ClientDrawerContent = props => {
 
       <View style={styles.drawerHeader}>
         <TouchableOpacity
-          style={{flexDirection: 'row', alignItems: 'center'}}
+          style={{ flexDirection: 'row', alignItems: 'center' }}
           onPress={() => {
             props.navigation.closeDrawer();
-            navigation.navigate('mainProfile', {data: user});
+            navigation.navigate('mainProfile', { data: user });
           }}>
           <Image source={userImgSource} style={styles.avatar} />
           <Text style={styles.drawerItemText}>{userName}</Text>
@@ -191,7 +177,7 @@ const ClientDrawerContent = props => {
         </TouchableOpacity>
       </View>
 
-      <View style={{marginTop: verticalScale(8)}}>
+      <View style={{ marginTop: verticalScale(8) }}>
         <TouchableOpacity
           style={styles.drawerItem}
           onPress={() => {
@@ -281,7 +267,7 @@ const ClientDrawerContent = props => {
         style={styles.drawerItem}
         onPress={() => {
           props.navigation.closeDrawer();
-          navigation.navigate('practitioner', {data: profileInfo});
+          navigation.navigate('practitioner', { data: profileInfo });
         }}>
         <Image source={profileImage} style={styles.avatar} />
         <Text style={styles.drawerItemText}>{profileName}</Text>
@@ -291,7 +277,7 @@ const ClientDrawerContent = props => {
         style={styles.drawerItem}
         onPress={() => {
           props.navigation.closeDrawer();
-          navigation.navigate('messages', {data: user});
+          navigation.navigate('messages', { data: user });
         }}>
         <View style={IconBg}>
           <MaterialCommunityIcons
@@ -317,7 +303,7 @@ const ClientDrawerContent = props => {
         </View>
         <Text style={styles.drawerItemText}>Sync all info</Text>
         {asyncLoading && (
-          <View style={{position: 'absolute', right: 0}}>
+          <View style={{ position: 'absolute', right: 0 }}>
             <CustomLoader size={'small'} />
           </View>
         )}

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Pressable,
@@ -8,13 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import {Color} from '../../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { Color } from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {SearchFoodApi} from '../../../../Apis/ClientApis/FoodDiaryApi';
-import {useSelector} from 'react-redux';
+import { SearchFoodApi } from '../../../../Apis/ClientApis/FoodDiaryApi';
+import { useSelector } from 'react-redux';
+import Header from '../../../../Components/Header';
+import { Font } from '../../../../assets/styles/Fonts';
 
 const FoodSearch = () => {
   const navigation = useNavigation();
@@ -50,18 +52,24 @@ const FoodSearch = () => {
   };
 
   const handleSearchPress = name => {
-    navigation.navigate('swapMeal', {data: name});
+    navigation.navigate('swapMeal', { data: name });
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
-      <BackHeader
+    <View style={{ flex: 1, backgroundColor: Color.white }}>
+      {/* <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName="Food search"
         backText="Swap a food"
         showRightButton={false}
+      /> */}
+      <Header
+        screenheader={true}
+        rightHeaderButton={false}
+        screenName={'Swap a food'}
       />
-      <View style={{marginHorizontal: scale(16)}}>
+      <View style={{ paddingHorizontal: scale(16) }}>
+        <Text style={styles.headerTxt} >Food search</Text>
         <View style={styles.searchContainer}>
           <TextInput
             placeholder="Search foods..."
@@ -71,7 +79,7 @@ const FoodSearch = () => {
             style={styles.inputView}
           />
           <Pressable
-            style={{marginEnd: scale(10)}}
+            style={{ marginEnd: scale(10) }}
             onPress={() => handleSearch('')}>
             <AntDesign
               name="closecircle"
@@ -87,16 +95,16 @@ const FoodSearch = () => {
             keyExtractor={(item, index) =>
               item?.id?.toString() || `food-item-${index}`
             }
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.foodItem}
                 onPress={() => handleSearchPress(item?.name)}>
-                <Text style={{color: Color.black}}>{item?.name}</Text>
+                <Text style={{ color: Color.black }}>{item?.name}</Text>
               </TouchableOpacity>
             )}
             ListEmptyComponent={() => (
-              <View style={{padding: scale(20), alignItems: 'center'}}>
-                <Text style={{color: Color.black}}>
+              <View style={{ padding: scale(20), alignItems: 'center' }}>
+                <Text style={{ color: Color.black }}>
                   {searchFood.trim()
                     ? 'No matching food found'
                     : 'No activities available'}
@@ -118,7 +126,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: scale(20),
     backgroundColor: Color.headerBG,
-    marginTop: verticalScale(20),
+    marginTop: verticalScale(5),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -129,10 +137,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Color.txt,
     width: '85%',
+    fontFamily: Font?.Poppins,
+    paddingVertical: verticalScale(5),
+
   },
   foodItem: {
-    paddingVertical: verticalScale(10),
+    paddingVertical: verticalScale(8),
     borderRadius: scale(10),
     paddingHorizontal: scale(10),
   },
+  headerTxt: {
+    color: Color?.textColor,
+    fontFamily: Font?.Poppins,
+    marginVertical:scale(10),
+    fontSize:scale(15)
+  }
 });

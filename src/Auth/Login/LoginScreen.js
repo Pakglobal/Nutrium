@@ -226,7 +226,6 @@ const LoginScreen = () => {
       setPasswordAlertVisible(true);
       console.log('ressss', response);
     } catch (error) {
-      console.log('-----', error);
     }
   };
 
@@ -239,9 +238,6 @@ const LoginScreen = () => {
         closeAlert={() => setAlertVisible(false)}
         onClose={() => {
           setAlertVisible(false);
-          // if (alertType === 'success') {
-          //   navigation.goBack();
-          // }
         }}
       />
 

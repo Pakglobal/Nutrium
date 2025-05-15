@@ -69,11 +69,6 @@ const BottomNavigation = () => {
                     : null,
                 ]}>
                 {route.name === 'deo' ? (
-                  // <Image
-                  //   source={require('../assets/Icon/1221.png')}
-                  //   style={{padding: 35}}
-                  //   resizeMode="contain"
-                  // />
                   <CustomShadow radius={3} style={shadowStyle} color={Color?.gray} >
                     <View style={{ backgroundColor: Color?.white, borderRadius: scale(50), height: scale(45), width: scale(45), justifyContent: "center" }} >
                       <MaterialIcons
@@ -138,10 +133,6 @@ const styles = StyleSheet.create({
   plusBtn: {
     position: 'absolute',
     bottom: verticalScale(38),
-    // alignSelf: 'center',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // backgroundColor: 'red'
 
   },
   customButton: {

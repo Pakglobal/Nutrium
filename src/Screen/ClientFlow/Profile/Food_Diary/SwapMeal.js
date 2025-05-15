@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,15 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import {Color} from '../../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { Color } from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
+import Header from '../../../../Components/Header';
+import { Font } from '../../../../assets/styles/Fonts';
 
-const SwapMeal = ({route}) => {
+const SwapMeal = ({ route }) => {
   const foodName = route?.params?.data;
 
   const dispatch = useDispatch();
@@ -36,8 +38,8 @@ const SwapMeal = ({route}) => {
   };
 
   const sizeOption = [
-    {id: 0, title: 'Grams'},
-    {id: 1, title: 'Portion'},
+    { id: 0, title: 'Grams' },
+    { id: 1, title: 'Portion' },
   ];
 
   const selectSize = size => {
@@ -62,15 +64,22 @@ const SwapMeal = ({route}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
-      <BackHeader
+    <View style={{ flex: 1, backgroundColor: Color.white }}>
+      {/* <BackHeader
         onPressBack={() => navigation.goBack()}
         titleName="Swap a food"
         backText="Log your meal"
         onSave={true}
         onPress={() => handleSave()}
+      /> */}
+      <Header
+        screenheader={true}
+        screenName={'Log your meal'}
+        // screenName={'Swap a food'}
+        plus={false}
+        handleSave={() => handleSave()}
       />
-      <View style={{marginHorizontal: scale(16)}}>
+      <View style={{ marginHorizontal: scale(16) }}>
         <Text style={styles.title}>Add food</Text>
 
         {foodName ? (
@@ -146,14 +155,16 @@ export default SwapMeal;
 const styles = StyleSheet.create({
   title: {
     fontSize: scale(14),
-    fontWeight: '600',
-    color: Color.gray,
+    color: Color.textColor,
     marginTop: verticalScale(20),
+    fontFamily: Font?.PoppinsMedium
   },
   optionTxt: {
     fontSize: scale(14),
     color: Color.txt,
     marginVertical: verticalScale(15),
+    fontFamily: Font?.Poppins
+
   },
   borderview: {
     borderBottomColor: Color.borderColor,
@@ -166,6 +177,8 @@ const styles = StyleSheet.create({
     fontSize: scale(13),
     fontWeight: '500',
     color: Color.black,
+    fontFamily: Font?.Poppins
+
   },
   border: {
     borderBottomColor: Color.borderColor,

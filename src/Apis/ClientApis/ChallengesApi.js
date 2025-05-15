@@ -117,7 +117,6 @@ export const getChallengeType = async token => {
 };
 
 export const getChallengeRange = async (token, id) => {
-  console.log('ididid', id);
   try {
     const url = `${GET_CHALLENGE_RANGE}/${id}`;
     const response = await axios.get(url, {

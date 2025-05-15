@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   userInfo: {},
@@ -8,6 +8,7 @@ const initialState = {
   guestToken: {},
   guestUserData: {},
   isCompleted: false,
+  chat: []
 };
 
 const userSlice = createSlice({
@@ -35,6 +36,9 @@ const userSlice = createSlice({
     completeOnboarding(state) {
       state.isCompleted = true;
     },
+    chatList(state,action) {
+      state.chat = action.payload;
+    },
   },
 });
 
@@ -47,6 +51,7 @@ export const {
   guestLoginData,
   completeOnboarding,
   resetOnboarding,
+  chatList
 } = userSlice.actions;
 
 export default userSlice.reducer;

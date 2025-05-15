@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,23 +7,26 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CalenderHeader from '../../../../Components/CalenderHeader';
-import {Color} from '../../../../assets/styles/Colors';
+import { Color } from '../../../../assets/styles/Colors';
 import BackHeader from '../../../../Components/BackHeader';
-import {FetchFoodDiary} from '../../../../Apis/ClientApis/FoodDiaryApi';
-import {useDispatch, useSelector} from 'react-redux';
-import {addData} from '../../../../redux/client';
+import { FetchFoodDiary } from '../../../../Apis/ClientApis/FoodDiaryApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { addData } from '../../../../redux/client';
 import Header from '../../../../Components/Header';
 import CustomLoader from '../../../../Components/CustomLoader';
+import CustomShadow from '../../../../Components/CustomShadow';
+import { Font } from '../../../../assets/styles/Fonts';
 
 const FoodDiary = () => {
   const navigation = useNavigation();
@@ -86,50 +89,52 @@ const FoodDiary = () => {
     navigation.navigate('logMeal');
   };
 
-  const renderDiaryDataItem = ({item: diary}) => {
+  const renderDiaryDataItem = ({ item: diary }) => {
     return (
-      <Pressable
-        onPress={() =>
-          handleFoodData(
-            diary?.mealType,
-            diary?.time,
-            diary?._id,
-            diary?.meal[0]?.foodId,
-            diary?.meal[0]?.foodIndex,
-            diary?.meal[0]?.displayName,
-          )
-        }>
-        <View style={styles.cardContainer}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={styles.cardContent}>
-              <Ionicons
-                name="swap-horizontal"
-                color={Color.white}
-                size={scale(16)}
-              />
-            </View>
-
-            <View style={{marginHorizontal: scale(11)}}>
-              <Text style={styles.title}>{diary?.mealType}</Text>
-              <View style={styles.icon}>
-                <AntDesign
-                  name="clockcircleo"
-                  color={Color.black}
-                  size={scale(14)}
+      <CustomShadow>
+        <Pressable
+          onPress={() =>
+            handleFoodData(
+              diary?.mealType,
+              diary?.time,
+              diary?._id,
+              diary?.meal[0]?.foodId,
+              diary?.meal[0]?.foodIndex,
+              diary?.meal[0]?.displayName,
+            )
+          }>
+          <View style={styles.cardContainer}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={styles.cardContent}>
+                <Ionicons
+                  name="swap-horizontal"
+                  color={Color.primaryColor}
+                  size={scale(16)}
                 />
-                <Text style={styles.time}>{diary?.time}</Text>
+              </View>
+
+              <View style={{ marginHorizontal: scale(11) }}>
+                <Text style={styles.title}>{diary?.mealType}</Text>
+                <View style={styles.icon}>
+                  <AntDesign
+                    name="clockcircleo"
+                    color={Color.black}
+                    size={scale(14)}
+                  />
+                  <Text style={styles.time}>{diary?.time}</Text>
+                </View>
               </View>
             </View>
+            <TouchableOpacity>
+              <AntDesign name="right" color={Color.black} size={scale(16)} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <AntDesign name="right" color={Color.black} size={scale(16)} />
-          </TouchableOpacity>
-        </View>
-      </Pressable>
+        </Pressable>
+      </CustomShadow>
     );
   };
 
-  const renderDiaryItem = ({item}) => (
+  const renderDiaryItem = ({ item }) => (
     <FlatList
       data={item?.mealSchedule || []}
       keyExtractor={(_, i) => `meal-schedule-${i}`}
@@ -149,7 +154,7 @@ const FoodDiary = () => {
         txtFunction={getDateString()}
       />
       {loading ? (
-        <CustomLoader />
+        <ActivityIndicator style={{ alignSelf: "center", justifyContent: "center" }} color={Color?.primaryColor} size={'large'} />
       ) : diaryData && diaryData?.length > 0 ? (
         <FlatList
           data={diaryData}
@@ -173,11 +178,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.white,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   listContainer: {
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(5),
@@ -189,19 +189,20 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: Color.gray,
+    fontFamily:Font?.Poppins
   },
   cardContainer: {
-    paddingVertical: verticalScale(12),
-    backgroundColor: Color.common,
+    paddingVertical: verticalScale(8),
+    backgroundColor: Color.white,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scale(20),
-    borderRadius: scale(20),
+    borderRadius: scale(10),
     marginVertical: verticalScale(5),
   },
   cardContent: {
-    backgroundColor: Color.gray,
+    backgroundColor: Color.lightGreen,
     alignItems: 'center',
     justifyContent: 'center',
     height: scale(28),
@@ -219,12 +220,13 @@ const styles = StyleSheet.create({
   title: {
     color: Color.black,
     fontSize: scale(14),
-    fontWeight: '500',
+    fontFamily: Font?.Poppins,
   },
   time: {
     marginLeft: scale(5),
     color: Color.black,
     fontSize: scale(11),
+    fontFamily: Font?.Poppins
   },
 });
 

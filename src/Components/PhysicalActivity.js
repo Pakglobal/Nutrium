@@ -272,7 +272,6 @@ const PhysicalActivity = ({ style, header, subHeader, bottomButton }) => {
   const navigation = useNavigation();
   const { steps, calories, workouts, isTracking, currentDay } = useStepTracking();
 
-  console.log('PhysicalActivity render:', { steps, currentDay, isTracking });
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const todayIndex = currentDay;

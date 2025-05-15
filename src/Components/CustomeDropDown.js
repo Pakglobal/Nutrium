@@ -86,14 +86,11 @@ const styles = StyleSheet.create({
     inputContainer: {
         borderRadius: 8,
         paddingHorizontal: scale(10),
-        // borderColor: Color.primaryColor,
-        // borderWidth: 1,
         height: verticalScale(38),
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: Color.white,
-        // marginVertical: verticalScale(6),
         width: '98%',
         alignSelf: 'center'
     },
@@ -109,16 +106,12 @@ const styles = StyleSheet.create({
         borderColor: Color.borderColor,
         backgroundColor: Color.white,
         marginTop: verticalScale(4),
-        // elevation: 2,
-        // zIndex: 10,
         marginTop: scale(5),
         width: '98%',
         alignSelf: "center"
     },
     dropdownItem: {
         padding: scale(10),
-        // borderBottomWidth: 1,
-        // borderBottomColor: Color.borderColor,
     },
 });
  

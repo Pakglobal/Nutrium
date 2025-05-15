@@ -98,7 +98,6 @@ const HydratedStay = ({ route }) => {
       setSevenTeenL(prev => prev + amount);
     }
 
-    // Update local intake
     setLocalIntake(prev => prev + mlAmount);
 
     const currentDate = new Date();
@@ -119,16 +118,13 @@ const HydratedStay = ({ route }) => {
       time,
     };
 
-    // Send the update to the server and refresh data
     setTimeout(() => {
       SetWaterIntakeDetails(payload)
         .then(() => {
-          // Refresh all water data after adding water
           return GetWaterIntakeDetails(token, id);
         })
         .then(updatedData => {
           setWaterIntake(updatedData);
-          // Always update data after adding water
           getData();
         })
         .catch(error => {
@@ -154,7 +150,6 @@ const HydratedStay = ({ route }) => {
 
       setGetWaterIntake(todayRecord || {});
 
-      // Calculate total from server data
       const total = todayRecord?.waterIntakeAmount
         ? todayRecord.waterIntakeAmount.reduce((sum, item) => {
           const ml = parseFloat(item.amount.replace('ml', '')) || 0;
@@ -164,7 +159,6 @@ const HydratedStay = ({ route }) => {
 
       setLocalIntake(total);
 
-      // Update Redux store with the latest value
       dispatch(getWaterIntake(total));
 
       return data;

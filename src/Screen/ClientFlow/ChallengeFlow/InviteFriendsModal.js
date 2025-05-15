@@ -283,8 +283,6 @@ const styles = StyleSheet.create({
     borderRadius: scale(10),
     paddingHorizontal: scale(10),
     margin: scale(10),
-    // borderWidth: 1,
-    // borderColor: Color.primaryColor,
   },
 
   searchIcon: {

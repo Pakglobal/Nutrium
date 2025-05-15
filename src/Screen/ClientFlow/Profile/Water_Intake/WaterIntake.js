@@ -352,11 +352,7 @@ const WaterIntake = () => {
       )
     : 0;
 
-  // useEffect(() => {
-  //   if (selectedDateIntake) {
   dispatch(getWaterIntake(selectedDateIntake));
-  //   }
-  // }, [selectedDateIntake, dispatch]);
 
   const plusData = {
     clientId: id,

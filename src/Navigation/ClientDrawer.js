@@ -17,6 +17,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
+  chatList,
   guestLoginData,
   loginData,
   setGuestToken,
@@ -104,6 +105,7 @@ const ClientDrawerContent = props => {
               dispatch(loginData());
               dispatch(setImage(''));
               dispatch(setToken());
+              // dispatch(chatList([]));
               success = true;
             }
 

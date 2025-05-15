@@ -63,7 +63,6 @@ const HelpForRegistration = () => {
         </Text>
         <Button
           onPress={() => navigation.navigate('loginScreen')}
-          // disabled={!selectedOption ? true : false}
           backgroundColor={'rgba(0,145,234,0.1)'}
           txtColor={'rgba(0,145,234,1)'}
           iconColor={'rgba(0,145,234,1)'}

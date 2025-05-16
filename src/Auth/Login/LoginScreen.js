@@ -75,13 +75,6 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-     if (!email && !password) {
-      setLoginAlert('Both field are required');
-      setAlertType('warning');
-      setAlertVisible(true);
-      return;
-    }
-
     if (!email) {
       setLoginAlert('Email is required');
       setAlertType('warning');
@@ -130,7 +123,7 @@ const LoginScreen = () => {
       setLoading(true);
       const response = await Login(body);
 
-      if (!response?.status === 200 || response?.message) {
+      if (response?.message) {
         setLoginAlert(response?.message);
         setAlertType('error');
         setAlertVisible(true);

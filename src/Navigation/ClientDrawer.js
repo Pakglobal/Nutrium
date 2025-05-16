@@ -24,6 +24,7 @@ import {
 } from '../redux/user';
 import {setImage} from '../redux/client';
 import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
+
 import {
   GetPhysicalActivities,
   GetPhysicalActivityDetails,
@@ -111,6 +112,14 @@ const ClientDrawerContent = props => {
     },
   ];
 
+  console.log('user', profileInfo);
+
+  const AdminInfo = {
+    image: profileInfo?.image,
+    name: profileInfo?.fullName,
+    otherUserId: profileInfo?._id,
+  };
+
   const practitionerMenuItems = profileInfo
     ? [
         {
@@ -123,7 +132,7 @@ const ClientDrawerContent = props => {
           screenName: 'messages',
           label: 'Messages',
           icon: <MaterialCommunityIcons name="email" size={scale(22)} />,
-          params: {data: user},
+          params: {data: AdminInfo},
         },
       ]
     : [];
@@ -160,7 +169,6 @@ const ClientDrawerContent = props => {
     // First close the drawer
     props.navigation.closeDrawer();
 
-    // Add a slight delay before showing the alert to ensure drawer is closed
     setTimeout(() => {
       Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
         {
@@ -297,7 +305,6 @@ const ClientDrawerContent = props => {
           />
         </TouchableOpacity>
       </View>
-
       <View style={{marginTop: verticalScale(8)}}>
         {mainMenuItems.map(renderMenuItem)}
       </View>

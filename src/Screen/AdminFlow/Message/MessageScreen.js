@@ -63,7 +63,13 @@ const MessageScreen = () => {
   const handleClientNavigate = async item => {
     try {
       const response = await GetClientData(token, item?._id);
-      navigation.navigate('Messages', {response});
+      const clientData = {
+        image: response[0]?.image,
+        name: response[0]?.fullName,
+        otherUserId: response[0]?._id,
+        userId: response[0]?.userId,
+      };
+      navigation.navigate('Messages', {clientData});
     } catch (error) {
       console.error('Error navigating to client messages:', error);
     }

@@ -13,6 +13,8 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 import {Color} from '../../../../assets/styles/Colors';
 import {useDispatch} from 'react-redux';
+import Header from '../../../../Components/Header';
+import {Font} from '../../../../assets/styles/Fonts';
 
 const SwapMeal = ({route}) => {
   const foodName = route?.params?.data;
@@ -62,6 +64,13 @@ const SwapMeal = ({route}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
+      <Header
+        screenheader={true}
+        screenName={'Log your meal'}
+        // screenName={'Swap a food'}
+        plus={false}
+        handleSave={() => handleSave()}
+      />
       <View style={{marginHorizontal: scale(16)}}>
         <Text style={styles.title}>Add food</Text>
 
@@ -138,14 +147,15 @@ export default SwapMeal;
 const styles = StyleSheet.create({
   title: {
     fontSize: scale(14),
-    fontWeight: '600',
-    color: Color.gray,
+    color: Color.textColor,
     marginTop: verticalScale(20),
+    fontFamily: Font?.PoppinsMedium,
   },
   optionTxt: {
     fontSize: scale(14),
     color: Color.txt,
     marginVertical: verticalScale(15),
+    fontFamily: Font?.Poppins,
   },
   borderview: {
     borderBottomColor: Color.borderColor,
@@ -158,6 +168,7 @@ const styles = StyleSheet.create({
     fontSize: scale(13),
     fontWeight: '500',
     color: Color.black,
+    fontFamily: Font?.Poppins,
   },
   border: {
     borderBottomColor: Color.borderColor,
@@ -170,7 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    backgroundColor: Color.white,
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
     width: '80%',
@@ -179,7 +190,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: Color.black,
+    color: '#000',
   },
   optionButton: {
     padding: 10,
@@ -187,6 +198,6 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: Color.black,
+    color: '#000',
   },
 });

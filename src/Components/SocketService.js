@@ -49,11 +49,9 @@ export const joinRoom = (userId, otherUserId) => {
   } else {
     console.error('Cannot join room: Socket not connected');
     const newSocket = connectSocket();
-    if (newSocket.connected) {
-      joinRoom(userId, otherUserId);
-    } else {
-      newSocket.on('connect', () => joinRoom(userId, otherUserId));
-    }
+    newSocket.on('connect', () => {
+      socket.emit('join', {userId, otherUserId});
+    });
   }
 };
 
@@ -142,7 +140,6 @@ export const getChatHistory = (userId, otherUserId, callback) => {
   }
 
   socket.off('chatHistory');
-
   socket.on('chatHistory', history => {
     callback(history);
   });
@@ -157,7 +154,6 @@ export const onReceiveMessage = callback => {
   }
 
   socket.off('receiveMessage');
-
   socket.on('receiveMessage', message => {
     callback(message);
   });

@@ -3,11 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
-  Pressable,
   FlatList,
   RefreshControl,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {scale, verticalScale} from 'react-native-size-matters';
@@ -16,8 +15,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {GetMeasurementData} from '../../../../Apis/ClientApis/MeasurementApi';
 import {measurementData} from '../../../../redux/client';
 import Header from '../../../../Components/Header';
-import CustomLoader from '../../../../Components/CustomLoader';
 import {Font} from '../../../../assets/styles/Fonts';
+import CustomShadow from '../../../../Components/CustomShadow';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Measurements = () => {
   const navigation = useNavigation();
@@ -60,8 +61,6 @@ const Measurements = () => {
         });
         dispatch(measurementData(measurementList));
         setMeasurement(formattedData);
-      } else {
-        setLoading(false);
       }
       setLoading(false);
     } catch (error) {
@@ -124,10 +123,30 @@ const Measurements = () => {
       !measurementData?.entries ||
       measurementData?.entries.length === 0
     ) {
-      return '-';
+      return '—';
     }
 
     return measurementData.currentValue + ' ' + (getUnitForType(type) || '');
+  };
+
+  const getSubtext = type => {
+    const measurementData = measurement[type];
+    if (
+      !measurementData ||
+      !measurementData?.entries ||
+      measurementData?.entries.length === 0
+    ) {
+      return 'Not measured yet';
+    }
+
+    // Check if the latest measurement date is today
+    const latestDate = measurementData.currentDate;
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const measurementDate = new Date(latestDate).toISOString().split('T')[0];
+
+    return measurementDate === today
+      ? 'Updated Today'
+      : `Updated ${measurementDate}`;
   };
 
   const getUnitForType = type => {
@@ -222,7 +241,7 @@ const Measurements = () => {
     getAllMeasurements().finally(() => setRefreshing(false));
   }, [getAllMeasurements]);
 
-  const renderMenuItem = item => {
+  const renderMenuItem = ({item}) => {
     if (item?.type === 'header') {
       return (
         <View key={item?.id}>
@@ -232,23 +251,42 @@ const Measurements = () => {
     }
 
     return (
-      <Pressable
-        key={item?.id}
-        style={styles.cardcontainer}
-        onPress={() => navigateToDetail(item?.key)}
-        accessibilityLabel={`${item?.label} measurement`}
-        accessibilityRole="button">
-        <Text style={styles.cardTxt}>{item?.label}</Text>
-        <Text style={styles.cardTxt}>{getLatestValue(item?.key)}</Text>
-      </Pressable>
+      <CustomShadow key={item?.id} color={Color?.gray} radius={2}>
+        <Pressable
+          style={styles.cardcontainer}
+          onPress={() => navigateToDetail(item?.key)}
+          accessibilityLabel={`${item?.label} measurement`}
+          accessibilityRole="button">
+          <View style={styles.iconContainer}>
+            <Feather
+              name="activity"
+              size={20}
+              color={Color.primaryColor || '#4CAF50'}
+            />
+          </View>
+
+          <View style={styles.details}>
+            <Text style={styles.label}>{item?.label}</Text>
+            <Text style={styles.subtext}>{getSubtext(item?.key)}</Text>
+          </View>
+
+          <View style={styles.valueContainer}>
+            <Text style={styles.value}>{getLatestValue(item?.key)}</Text>
+            <AntDesign name="edit" size={20} color={Color?.textColor} />
+          </View>
+        </Pressable>
+      </CustomShadow>
     );
   };
 
   return (
     <View style={styles.container}>
       <Header screenheader={true} screenName={'Measurements'} />
+
       {loading ? (
-        <ActivityIndicator color={Color?.primaryColor} size={'large'} />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator color={Color?.primaryColor} size={'large'} />
+        </View>
       ) : (
         <View style={styles.contentContainer}>
           <FlatList
@@ -256,7 +294,8 @@ const Measurements = () => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             data={menuItems}
-            renderItem={({item}) => renderMenuItem(item)}
+            renderItem={renderMenuItem}
+            keyExtractor={item => item.id}
           />
         </View>
       )}
@@ -272,34 +311,66 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   contentContainer: {
-    marginHorizontal: scale(16),
+    marginHorizontal: scale(10),
     flex: 1,
-  },
-  title: {
-    fontSize: scale(14),
-    color: Color.textColor,
-    fontWeight: '700',
-    marginTop: verticalScale(25),
-    fontFamily: Font?.Poppins,
-  },
-  cardcontainer: {
-    paddingVertical: verticalScale(10),
-    flexDirection: 'row',
-    borderBottomColor: '#DDD',
-    borderBottomWidth: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTxt: {
-    color: Color?.lightGrayText,
-    fontSize: scale(13),
-    marginHorizontal: scale(8),
-    fontFamily: Font?.Poppins,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: verticalScale(50),
+    // marginTop: verticalScale(50),
+  },
+  title: {
+    fontSize: scale(14),
+    color: Color.textColor,
+    fontFamily: Font?.PoppinsMedium,
+    marginVertical: scale(8),
+    marginLeft: scale(10),
+  },
+  cardcontainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Color?.white,
+    marginVertical: scale(5),
+    width: '98%',
+    alignSelf: 'center',
+    borderRadius: scale(8),
+    padding: scale(5),
+  },
+  iconContainer: {
+    width: scale(40),
+    height: scale(40),
+    borderRadius: scale(50),
+    backgroundColor: Color?.lightGreen,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: scale(10),
+  },
+  details: {
+    flex: 1,
+    // flexDirection: 'column',
+  },
+  label: {
+    color: Color?.textColor,
+    fontSize: scale(14),
+    fontFamily: Font?.PoppinsMedium,
+  },
+  subtext: {
+    color: Color?.textColor,
+    fontSize: scale(12),
+    fontFamily: Font?.Poppins,
+    opacity: 0.6,
+  },
+  valueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    width: '25%',
+  },
+  value: {
+    color: Color?.textColor,
+    fontSize: scale(14),
+    fontFamily: Font?.PoppinsMedium,
+    marginRight: scale(8),
   },
 });

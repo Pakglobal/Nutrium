@@ -5,14 +5,13 @@ import {useNavigation} from '@react-navigation/native';
 
 const MessageClient = ({route}) => {
   const navigation = useNavigation();
-  const clientData = route?.params?.response;
+  const clientData = route?.params?.clientData;
+  const userId = clientData?.userId;
+  const otherUserId = clientData?.otherUserId;
+  const userName = clientData?.name;
+  const userImage = clientData?.image;
 
-  const userId = clientData[0]?.userId;
-  const otherUserId = clientData[0]?._id;
-
-  const userName = clientData[0]?.fullName;
-  const userImage = clientData[0]?.image;
-  const userGender = clientData[0]?.gender;
+  console.log('clientData', otherUserId);
 
   return (
     <MessageComponent

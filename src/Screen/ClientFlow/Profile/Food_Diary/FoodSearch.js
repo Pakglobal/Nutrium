@@ -14,6 +14,8 @@ import {Color} from '../../../../assets/styles/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {SearchFoodApi} from '../../../../Apis/ClientApis/FoodDiaryApi';
 import {useSelector} from 'react-redux';
+import Header from '../../../../Components/Header';
+import {Font} from '../../../../assets/styles/Fonts';
 
 const FoodSearch = () => {
   const navigation = useNavigation();
@@ -54,7 +56,13 @@ const FoodSearch = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
-      <View style={{marginHorizontal: scale(16)}}>
+      <Header
+        screenheader={true}
+        rightHeaderButton={false}
+        screenName={'Swap a food'}
+      />
+      <View style={{paddingHorizontal: scale(16)}}>
+        <Text style={styles.headerTxt}>Food search</Text>
         <View style={styles.searchContainer}>
           <TextInput
             placeholder="Search foods..."
@@ -111,7 +119,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: scale(20),
     backgroundColor: Color.headerBG,
-    marginTop: verticalScale(20),
+    marginTop: verticalScale(5),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -122,10 +130,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Color.txt,
     width: '85%',
+    fontFamily: Font?.Poppins,
+    paddingVertical: verticalScale(5),
   },
   foodItem: {
-    paddingVertical: verticalScale(10),
+    paddingVertical: verticalScale(8),
     borderRadius: scale(10),
     paddingHorizontal: scale(10),
+  },
+  headerTxt: {
+    color: Color?.textColor,
+    fontFamily: Font?.Poppins,
+    marginVertical: scale(10),
+    fontSize: scale(15),
   },
 });

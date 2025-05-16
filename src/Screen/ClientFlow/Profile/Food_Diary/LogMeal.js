@@ -24,6 +24,9 @@ import {
   DeleteMealInFoodDiary,
   DeleteSpecificMealInFoodDiary,
 } from '../../../../Apis/ClientApis/FoodDiaryApi';
+import Header from '../../../../Components/Header';
+import {Font} from '../../../../assets/styles/Fonts';
+import CustomShadow from '../../../../Components/CustomShadow';
 
 const LogMeal = () => {
   const dispatch = useDispatch();
@@ -201,91 +204,102 @@ const LogMeal = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: Color.white}}>
+      <Header
+        screenheader={true}
+        screenName={'Add Meal'}
+        plus={false}
+        handleSave={() => handleSave()}
+      />
       <ScrollView
         style={{marginHorizontal: scale(16)}}
         showsVerticalScrollIndicator={false}>
-        <View style={styles.cardContainer}>
-          <View style={styles.cardContent}>
-            <View style={{}}>
-              <Text style={styles.title}>{mealType}</Text>
-              <View style={styles.icon}>
-                <AntDesign
-                  name="clockcircleo"
-                  color={Color.black}
-                  size={scale(16)}
-                />
-                <Text style={styles.time}>{mealTime}</Text>
+        <Text style={styles.headerTxt}>Log Your Meal</Text>
+
+        <CustomShadow>
+          <View style={styles.cardContainer}>
+            <View style={styles.cardContent}>
+              <View style={{}}>
+                <Text style={styles.title}>{mealType}</Text>
+                <View style={styles.icon}>
+                  <AntDesign
+                    name="clockcircleo"
+                    color={Color.black}
+                    size={scale(16)}
+                  />
+                  <Text style={styles.time}>{mealTime}</Text>
+                </View>
+              </View>
+              <View style={styles.row}>
+                <TouchableOpacity onPress={() => setShowAction(true)}>
+                  <MaterialCommunityIcons
+                    name="dots-horizontal-circle"
+                    size={verticalScale(28)}
+                    color={Color.primaryColor}
+                    style={{marginHorizontal: scale(4)}}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('swapMeal', {
+                      time: mealTime,
+                      type: mealType,
+                    })
+                  }>
+                  <MaterialCommunityIcons
+                    name="plus-circle"
+                    size={verticalScale(28)}
+                    color={Color.primaryColor}
+                    style={{marginHorizontal: scale(4)}}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={styles.row}>
-              <TouchableOpacity onPress={() => setShowAction(true)}>
-                <MaterialCommunityIcons
-                  name="dots-horizontal-circle"
-                  size={verticalScale(28)}
-                  color={Color.secondary}
-                  style={{marginHorizontal: scale(4)}}
-                />
-              </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('swapMeal', {
-                    time: mealTime,
-                    type: mealType,
-                  })
-                }>
-                <MaterialCommunityIcons
-                  name="plus-circle"
-                  size={verticalScale(28)}
-                  color={Color.secondary}
-                  style={{marginHorizontal: scale(4)}}
-                />
-              </TouchableOpacity>
-            </View>
+            {mealName ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingVertical: verticalScale(5),
+                  paddingHorizontal: scale(16),
+                }}>
+                <Text style={{color: Color.black, fontFamily: Font?.Poppins}}>
+                  {mealName}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => handleNavigateSwapFood(mealName)}
+                  style={{
+                    backgroundColor: Color.primaryColor,
+                    padding: scale(5),
+                    borderRadius: scale(20),
+                  }}>
+                  <Ionicons
+                    name="swap-horizontal"
+                    color={Color.white}
+                    size={scale(14)}
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View
+                style={{
+                  paddingVertical: verticalScale(10),
+                  paddingHorizontal: scale(16),
+                }}>
+                <Text
+                  style={{
+                    fontSize: scale(13),
+                    color: Color.black,
+                    textAlign: 'center',
+                  }}>
+                  You did not eat any foods in this meal
+                </Text>
+              </View>
+            )}
           </View>
-
-          {mealName ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingVertical: verticalScale(5),
-                paddingHorizontal: scale(16),
-              }}>
-              <Text style={{color: Color.black}}>{mealName}</Text>
-              <TouchableOpacity
-                onPress={() => handleNavigateSwapFood(mealName)}
-                style={{
-                  backgroundColor: Color.secondary,
-                  padding: scale(5),
-                  borderRadius: scale(20),
-                }}>
-                <Ionicons
-                  name="swap-horizontal"
-                  color={Color.white}
-                  size={scale(14)}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View
-              style={{
-                paddingVertical: verticalScale(10),
-                paddingHorizontal: scale(16),
-              }}>
-              <Text
-                style={{
-                  fontSize: scale(13),
-                  color: Color.black,
-                  textAlign: 'center',
-                }}>
-                You did not eat any foods in this meal
-              </Text>
-            </View>
-          )}
-        </View>
-
+        </CustomShadow>
         <View
           style={{
             borderRadius: scale(10),
@@ -294,7 +308,9 @@ const LogMeal = () => {
           <View style={styles.cardContent}>
             <View style={{}}>
               <Text style={styles.title}>Photo</Text>
-              <Text style={{color: Color.gray}}>Add a photo of your meal</Text>
+              <Text style={{color: Color.gray, fontFamily: Font?.Poppins}}>
+                Add a photo of your meal
+              </Text>
             </View>
 
             <TouchableOpacity
@@ -303,7 +319,7 @@ const LogMeal = () => {
               <MaterialCommunityIcons
                 name="plus-circle"
                 size={verticalScale(28)}
-                color={Color.secondary}
+                color={Color.primaryColor}
               />
             </TouchableOpacity>
           </View>
@@ -315,25 +331,36 @@ const LogMeal = () => {
               <Image
                 source={{uri: filePath.assets[0].uri}}
                 style={styles.img}
+                resizeMode="stretch"
               />
             ) : null}
           </View>
         </View>
-
-        <View
-          style={[styles.commentContainer, {marginBottom: verticalScale(10)}]}>
-          <Text style={styles.title}>Comments</Text>
-          <View style={styles.commentContent}>
-            <TextInput
-              placeholder="Anything you'd like to add about your meal?"
-              placeholderTextColor={'#AAA'}
-              multiline={true}
-              style={{fontSize: scale(12), color: '#AAA'}}
-              value={comments}
-              onChangeText={e => setComments(e)}
-            />
+        <CustomShadow>
+          <View
+            style={[
+              styles.commentContainer,
+              {marginBottom: verticalScale(10)},
+            ]}>
+            <Text style={styles.title}>Comments</Text>
+            <CustomShadow color={Color?.gray}>
+              <View style={styles.commentContent}>
+                <TextInput
+                  placeholder="Anything you'd like to add about your meal?"
+                  placeholderTextColor={Color?.gray}
+                  multiline={true}
+                  style={{
+                    fontSize: scale(12),
+                    color: Color?.textColor,
+                    fontFamily: Font?.Poppins,
+                  }}
+                  value={comments}
+                  onChangeText={e => setComments(e)}
+                />
+              </View>
+            </CustomShadow>
           </View>
-        </View>
+        </CustomShadow>
       </ScrollView>
 
       <Modal
@@ -413,27 +440,27 @@ export default LogMeal;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    borderRadius: scale(10),
-    borderTopLeftRadius: scale(20),
-    borderTopRightRadius: scale(20),
+    borderRadius: scale(8),
     borderColor: '#EEE',
     borderWidth: 1,
-    marginTop: verticalScale(15),
+    backgroundColor: Color?.white,
+    width: '98%',
+    alignSelf: 'center',
   },
   cardContent: {
-    backgroundColor: Color.common,
+    backgroundColor: Color.white,
     paddingVertical: verticalScale(12),
     paddingHorizontal: scale(15),
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: scale(8),
     justifyContent: 'space-between',
-    borderTopLeftRadius: scale(10),
-    borderTopRightRadius: scale(10),
   },
   time: {
     marginLeft: scale(8),
     color: Color.black,
     fontSize: scale(12),
+    fontFamily: Font?.Poppins,
   },
   icon: {
     flexDirection: 'row',
@@ -448,80 +475,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   commentContainer: {
-    borderRadius: scale(10),
-    backgroundColor: Color.common,
-    paddingVertical: verticalScale(15),
-    paddingHorizontal: scale(15),
+    borderRadius: scale(8),
+    backgroundColor: Color.white,
+    padding: scale(10),
     marginTop: verticalScale(15),
+    width: '98%',
+    alignSelf: 'center',
   },
   commentContent: {
     backgroundColor: Color.white,
     paddingHorizontal: scale(20),
     paddingVertical: verticalScale(40),
-    borderRadius: scale(10),
-    marginVertical: verticalScale(12),
+    borderRadius: scale(8),
   },
 
-  txtIcnView: {
-    flexDirection: 'column',
-    marginStart: scale(15),
-    width: '68%',
-  },
-  typeIcon: {
-    fontSize: scale(16),
-    fontWeight: '600',
-    color: Color.txt,
-  },
-  timeTxt: {
-    fontSize: scale(13),
-    fontWeight: '600',
-    color: Color.gray,
-  },
-  discriptinView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '35%',
-  },
-  discriptinTxt: {
-    fontSize: scale(12),
-    fontWeight: '500',
-    color: Color.txt,
-  },
-  secondCardContainer: {
-    paddingVertical: verticalScale(20),
-    width: '100%',
-    backgroundColor: Color.headerBG,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: verticalScale(20),
-  },
-  titleTxtView: {
-    flexDirection: 'column',
-    marginStart: scale(15),
-    width: '80%',
-  },
   img: {
     height: verticalScale(140),
     width: '100%',
   },
-  thirdCardMainContainer: {
-    height: verticalScale(180),
-    width: '100%',
-    backgroundColor: Color.headerBG,
-    borderRadius: 10,
-    marginTop: verticalScale(20),
-  },
   title: {
     fontSize: scale(15),
     color: Color.black,
-  },
-  inputView: {
-    height: '60%',
-    width: '90%',
-    backgroundColor: Color.white,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignSelf: 'center',
+    fontFamily: Font?.Poppins,
   },
   modalContainer: {
     flex: 1,
@@ -538,10 +513,12 @@ const styles = StyleSheet.create({
   modalTxt: {
     fontSize: scale(16),
     color: Color.gray,
+    fontFamily: Font?.Poppins,
   },
   modalOption: {
     fontSize: scale(13),
-    color: Color.txt,
+    color: Color.textColor,
+    fontFamily: Font?.Poppins,
   },
   container: {
     flex: 1,
@@ -572,5 +549,11 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     fontWeight: '600',
     color: Color.gray,
+  },
+  headerTxt: {
+    fontFamily: Font?.PoppinsSemiBold,
+    color: Color?.textColor,
+    fontSize: scale(15),
+    marginVertical: scale(10),
   },
 });

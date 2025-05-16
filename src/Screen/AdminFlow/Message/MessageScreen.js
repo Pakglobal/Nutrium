@@ -22,6 +22,7 @@ import {
 import {clientInfoData} from '../../../redux/admin';
 import {connectSocket} from '../../../Components/SocketService';
 import CustomLoader from '../../../Components/CustomLoader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const MessageScreen = () => {
   const navigation = useNavigation();
@@ -145,9 +146,9 @@ const styles = StyleSheet.create({
     backgroundColor: Color.primaryColor,
   },
   clientName: {
-    fontWeight: '500',
     fontSize: 16,
     color: Color.black,
+    fontFamily:Font?.PoppinsMedium
   },
   noDataText: {
     textAlign: 'center',

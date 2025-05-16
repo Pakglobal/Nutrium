@@ -2,7 +2,6 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   userInfo: {},
-  profileInfo: {},
   fcmToken: {},
   token: {},
   guestToken: {},

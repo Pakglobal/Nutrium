@@ -10,19 +10,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Color} from '../../../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Color } from '../../../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GetAllClientData,
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
-import {clientInfoData} from '../../../redux/admin';
+import { clientInfoData } from '../../../redux/admin';
 import CustomLoader from '../../../Components/CustomLoader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const ClientScreen = () => {
   const [search, setSearch] = useState('');
@@ -71,7 +72,7 @@ const ClientScreen = () => {
   const handleClientNavigate = async item => {
     try {
       const response = await GetClientData(token, item?._id);
-      navigation.navigate('ClientProfile', {response});
+      navigation.navigate('ClientProfile', { response });
     } catch (error) {
       console.error('Error navigating to client profile:', error);
     }
@@ -91,14 +92,19 @@ const ClientScreen = () => {
             value={search}
             onChangeText={setSearch}
             placeholder="Search clients"
-            style={{marginLeft: scale(10), color: Color.black}}
+            style={{
+              marginLeft: scale(10),
+              color: Color.black,
+              fontFamily: Font?.Poppins,
+              width: '90%'
+            }}
             placeholderTextColor={Color.black}
           />
         </View>
       </View>
 
       {loading ? (
-        <CustomLoader style={{marginTop: verticalScale(10)}} />
+        <CustomLoader style={{ marginTop: verticalScale(10) }} />
       ) : (
         <View
           style={{
@@ -118,7 +124,7 @@ const ClientScreen = () => {
                   <View style={styles.messageCardContainer}>
                     {item?.image ? (
                       <Image
-                        source={{uri: item?.image}}
+                        source={{ uri: item?.image }}
                         style={styles.avatar}
                       />
                     ) : (
@@ -190,15 +196,17 @@ const styles = StyleSheet.create({
     backgroundColor: Color.primaryColor,
   },
   clientName: {
-    fontWeight: '500',
     fontSize: 16,
     color: Color.black,
+    fontFamily: Font?.Poppins
   },
   noDataText: {
     textAlign: 'center',
     marginTop: scale(30),
     fontSize: scale(14),
     color: Color.gray,
+    fontFamily: Font?.Poppins
+
   },
   locationIcon: {
     backgroundColor: Color.lightGreen,
@@ -210,5 +218,6 @@ const styles = StyleSheet.create({
   },
   type: {
     color: Color.gray,
+    fontFamily: Font?.Poppins
   },
 });

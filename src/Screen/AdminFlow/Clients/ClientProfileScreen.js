@@ -1,21 +1,23 @@
 import {
   Animated,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import MessageComponent from '../../../Components/useMessaging';
-import {useNavigation} from '@react-navigation/native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {Color} from '../../../assets/styles/Colors';
-import {scale as scaleSize, verticalScale} from 'react-native-size-matters';
+import { Color } from '../../../assets/styles/Colors';
+import { scale as scaleSize, verticalScale } from 'react-native-size-matters';
+import { Font } from '../../../assets/styles/Fonts';
 
-const ClientProfileScreen = ({route}) => {
+const ClientProfileScreen = ({ route }) => {
   const clientData = route?.params?.response[0];
   const userName = clientData?.fullName;
   const userImage = clientData?.image;
@@ -28,10 +30,10 @@ const ClientProfileScreen = ({route}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    {icon: 'fast-food', label: 'Meal plan', color: '#10B981'},
-    {icon: 'calendar', label: 'Appointment', color: '#4B5563'},
-    {icon: 'people', label: 'Follow-up', color: '#374151'},
-    {icon: 'help-circle', label: 'Question', color: '#EF4444'},
+    { icon: 'fast-food', label: 'Meal plan', color: '#10B981' },
+    { icon: 'calendar', label: 'Appointment', color: '#4B5563' },
+    { icon: 'people', label: 'Follow-up', color: '#374151' },
+    { icon: 'help-circle', label: 'Question', color: '#EF4444' },
   ];
 
   const [animValues] = useState(menuItems.map(() => new Animated.Value(0)));
@@ -67,12 +69,12 @@ const ClientProfileScreen = ({route}) => {
   };
 
   const options = [
-    {id: 0, label: 'INFORMATION'},
-    {id: 1, label: 'MESSAGES'},
+    { id: 0, label: 'INFORMATION' },
+    { id: 1, label: 'MESSAGES' },
   ];
 
   const information = [
-    {id: 0, icon: 'female', label: 'Gender', value: clientData?.gender || '--'},
+    { id: 0, icon: 'female', label: 'Gender', value: clientData?.gender || '--' },
     {
       id: 1,
       icon: 'calendar',
@@ -85,7 +87,7 @@ const ClientProfileScreen = ({route}) => {
       label: 'Country of Residence',
       value: clientData?.country || '--',
     },
-    {id: 3, icon: 'mail', label: 'E-mail', value: clientData?.email || '--'},
+    { id: 3, icon: 'mail', label: 'E-mail', value: clientData?.email || '--' },
     {
       id: 4,
       icon: 'call',
@@ -104,7 +106,7 @@ const ClientProfileScreen = ({route}) => {
       label: 'Workplace',
       value: clientData?.workplace || '--',
     },
-    {id: 7, icon: 'pin', label: 'Zip Code', value: clientData?.zipcode || '--'},
+    { id: 7, icon: 'pin', label: 'Zip Code', value: clientData?.zipcode || '--' },
   ];
 
   const handleSelctedOption = id => {
@@ -131,7 +133,7 @@ const ClientProfileScreen = ({route}) => {
             marginTop: verticalScale(15),
           }}>
           {clientData?.image ? (
-            <Image source={{uri: clientData?.image}} style={styles.avatar} />
+            <Image source={{ uri: clientData?.image }} style={styles.avatar} />
           ) : (
             <Image
               source={
@@ -142,13 +144,13 @@ const ClientProfileScreen = ({route}) => {
               style={styles.avatar}
             />
           )}
-          <View style={{marginLeft: scaleSize(5)}}>
-            <Text style={{color: Color.white, fontSize: scaleSize(14)}}>
+          <View style={{ marginLeft: scaleSize(5) }}>
+            <Text style={{ color: Color.white, fontSize: scaleSize(14), fontFamily: Font?.Poppins }}>
               {userName}
             </Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Entypo name="location" color={Color.white} size={16} />
-              <Text style={{marginLeft: scaleSize(5), color: Color.white}}>
+              <Text style={{ marginLeft: scaleSize(5), color: Color.white, fontFamily: Font?.Poppins }}>
                 {userWorkspace}
               </Text>
             </View>
@@ -178,23 +180,27 @@ const ClientProfileScreen = ({route}) => {
       </View>
 
       {selected === 0 && (
-        <View>
-          <View style={styles.bothContainer}>
-            {information.map(item => (
-              <View style={styles.infoContainer} key={item?.id}>
-                <View style={styles.infoView}>
-                  <Ionicons
-                    name={item?.icon}
-                    size={scaleSize(20)}
-                    color={Color.primaryColor}
-                  />
+        <ScrollView>
+          <View>
+            <View style={styles.bothContainer}>
+              {information.map(item => (
+                <View style={styles.infoContainer} key={item?.id}>
+                  <View style={styles.infoView}>
+                    <Ionicons
+                      name={item?.icon}
+                      size={scaleSize(20)}
+                      color={Color.primaryColor}
+                    />
+                  </View>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.label}>{item?.label}</Text>
+                    <Text style={styles.value}>{item?.value}</Text>
+                  </View>
                 </View>
-                <View style={styles.textContainer}>
-                  <Text style={styles.label}>{item?.label}</Text>
-                  <Text style={styles.value}>{item?.value}</Text>
-                </View>
-              </View>
-            ))}
+              ))}
+            </View>
+
+
           </View>
           <View
             style={{
@@ -223,7 +229,7 @@ const ClientProfileScreen = ({route}) => {
                 <Text style={styles.fabText}>{item.label}</Text>
 
                 <TouchableOpacity
-                  style={[styles.fabButton, {backgroundColor: item.color}]}>
+                  style={[styles.fabButton, { backgroundColor: item.color }]}>
                   <Ionicons name={item.icon} size={18} color="#fff" />
                 </TouchableOpacity>
               </Animated.View>
@@ -234,14 +240,13 @@ const ClientProfileScreen = ({route}) => {
               style={[
                 styles.bottomButton,
                 {
-                  transform: [{rotate: isOpen ? '45deg' : '0deg'}],
-                  backgroundColor: isOpen ? '#FB923C' : '#FB923C',
+                  transform: [{ rotate: isOpen ? '45deg' : '0deg' }],
                 },
               ]}>
               <Ionicons name={'add-outline'} size={22} color="#FFF" />
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       )}
 
       {selected === 1 && (
@@ -252,7 +257,7 @@ const ClientProfileScreen = ({route}) => {
           image={userImage}
           showHeader={false}
           onBackPress={() => navigation.goBack()}
-          containerStyle={{backgroundColor: '#f9f9f9'}}
+          containerStyle={{ backgroundColor: '#f9f9f9' }}
         />
       )}
     </SafeAreaView>
@@ -277,9 +282,9 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: scaleSize(16),
-    fontWeight: '600',
     color: Color.white,
     marginLeft: scaleSize(10),
+    fontFamily: Font?.PoppinsMedium
   },
   optionText: {
     paddingVertical: verticalScale(10),
@@ -314,11 +319,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: scaleSize(13),
     color: Color.black,
+    fontFamily: Font?.Poppins
   },
   value: {
     fontSize: scaleSize(14),
-    fontWeight: '600',
     color: Color.black,
+    fontFamily: Font?.Poppins
+
   },
   textContainer: {
     marginLeft: scaleSize(10),
@@ -330,7 +337,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: Color.black,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
@@ -342,8 +349,8 @@ const styles = StyleSheet.create({
     color: Color.white,
     borderRadius: scaleSize(4),
     marginRight: scaleSize(8),
-    fontWeight: '500',
     textAlign: 'left',
+    fontFamily:Font?.Poppins
   },
   bottomButton: {
     width: scaleSize(40),
@@ -352,10 +359,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: Color.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+    backgroundColor: Color?.primaryColor,
+    // position:'absolute'
   },
   avatar: {
     width: scaleSize(40),

@@ -270,10 +270,10 @@ const Measurements = () => {
             <Text style={styles.subtext}>{getSubtext(item?.key)}</Text>
           </View>
 
-          <View style={styles.valueContainer}>
-            <Text style={styles.value}>{getLatestValue(item?.key)}</Text>
+          <Text style={styles.value}>{getLatestValue(item?.key)}</Text>
+          {/* <View style={styles.valueContainer}>
             <AntDesign name="edit" size={20} color={Color?.textColor} />
-          </View>
+          </View> */}
         </Pressable>
       </CustomShadow>
     );

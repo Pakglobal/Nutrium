@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,14 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import {Color} from '../../../../assets/styles/Colors';
-import {useDispatch} from 'react-redux';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { Color } from '../../../../assets/styles/Colors';
+import { useDispatch } from 'react-redux';
 import Header from '../../../../Components/Header';
-import {Font} from '../../../../assets/styles/Fonts';
+import { Font } from '../../../../assets/styles/Fonts';
 
-const SwapMeal = ({route}) => {
+const SwapMeal = ({ route }) => {
   const foodName = route?.params?.data;
 
   const dispatch = useDispatch();
@@ -37,8 +37,8 @@ const SwapMeal = ({route}) => {
   };
 
   const sizeOption = [
-    {id: 0, title: 'Grams'},
-    {id: 1, title: 'Portion'},
+    { id: 0, title: 'Grams' },
+    { id: 1, title: 'Portion' },
   ];
 
   const selectSize = size => {
@@ -63,7 +63,7 @@ const SwapMeal = ({route}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <View style={{ flex: 1, backgroundColor: Color.white }}>
       <Header
         screenheader={true}
         screenName={'Log your meal'}
@@ -71,7 +71,7 @@ const SwapMeal = ({route}) => {
         plus={false}
         handleSave={() => handleSave()}
       />
-      <View style={{marginHorizontal: scale(16)}}>
+      <View style={{ marginHorizontal: scale(16) }}>
         <Text style={styles.title}>Add food</Text>
 
         {foodName ? (
@@ -95,7 +95,7 @@ const SwapMeal = ({route}) => {
                 value={quantity}
                 maxLength={6}
                 style={styles.fieldTxt}
-                placeholder="qua"
+                placeholder="quantity  "
                 placeholderTextColor={Color.black}
                 keyboardType="numeric"
               />
@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Color.black,
     fontFamily: Font?.Poppins,
+    // width:'50%'
   },
   border: {
     borderBottomColor: Color.borderColor,

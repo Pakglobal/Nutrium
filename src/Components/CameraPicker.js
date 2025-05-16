@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Modal,
@@ -9,12 +9,12 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {verticalScale, scale} from 'react-native-size-matters';
-import {Color} from '../assets/styles/Colors';
-import {Font} from '../assets/styles/Fonts';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { verticalScale, scale } from 'react-native-size-matters';
+import { Color } from '../assets/styles/Colors';
+import { Font } from '../assets/styles/Fonts';
 
-const CameraPicker = ({visible, onClose, onImageSelect}) => {
+const CameraPicker = ({ visible, onClose, onImageSelect }) => {
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -94,17 +94,19 @@ const CameraPicker = ({visible, onClose, onImageSelect}) => {
       onRequestClose={onClose}>
       <Pressable onPress={onClose} style={styles.container}>
         <View style={styles.whiteContainer}>
+
           <Text style={styles.title}>Add profile photo</Text>
+
           <View style={styles.border} />
-          <TouchableOpacity onPress={captureImage}>
-            <Text style={styles.btnTxt}>Take Photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={chooseFile}>
-            <Text style={[styles.btnTxt, {marginTop: verticalScale(15)}]}>
-              Choose Photo
-            </Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity onPress={captureImage}>
+              <Text style={styles.btnTxt}>Take Photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={chooseFile}>
+              <Text style={[styles.btnTxt, { marginTop: verticalScale(15) }]}>
+                Choose Photo
+              </Text>
+            </TouchableOpacity>
+          </View>
       </Pressable>
     </Modal>
   );
@@ -124,6 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     alignItems: 'center',
     paddingVertical: verticalScale(15),
+    borderRadius: scale(8)
   },
   title: {
     fontSize: scale(14),

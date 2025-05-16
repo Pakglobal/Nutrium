@@ -1,26 +1,45 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Color} from '../assets/styles/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {loginData} from '../redux/user';
+import { Color } from '../assets/styles/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginData } from '../redux/user';
 import CustomLoader from '../Components/CustomLoader';
+import { Font } from '../assets/styles/Fonts';
+import { GetUserApi } from '../Apis/ClientApis/ProfileApi';
 
-const SideBar = ({onSelectScreen}) => {
+const SideBar = ({ onSelectScreen }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const [asyncLoading, setAsyncLoading] = useState(false);
+  const [getUserInfo, setGetUserInfo] = useState(false);
 
-  const getUserInfo = useSelector(state => state?.user?.profileInfo);
+
+  const token = useSelector(state => state.user?.userInfo?.token);
+  const GetUserApiData = async () => {
+    try {
+      const response = await GetUserApi(token);
+      console.log('response', response)
+      setGetUserInfo(response?.data);
+    } catch (error) {
+      console.error('Error fetching user data', error);
+    }
+  };
+
+  useEffect(() => {
+    GetUserApiData()
+  }, [])
+
+  console.log('getUserInfo', getUserInfo)
   const imageUrl = getUserInfo?.image
-    ? {uri: getUserInfo?.image}
+    ? { uri: getUserInfo?.image }
     : getUserInfo?.gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
 
   const handleLogOut = async () => {
     dispatch(loginData());
@@ -44,8 +63,8 @@ const SideBar = ({onSelectScreen}) => {
   };
 
   const listArrayItem = [
-    {icon: 'mail-outline', label: 'MESSAGES', name: 'Messages'},
-    {icon: 'people-outline', label: 'CLIENTS', name: 'Clients'},
+    { icon: 'mail-outline', label: 'MESSAGES', name: 'Messages' },
+    { icon: 'people-outline', label: 'CLIENTS', name: 'Clients' },
     {
       icon: 'calendar-outline',
       label: 'APPOINTMENTS',
@@ -54,26 +73,26 @@ const SideBar = ({onSelectScreen}) => {
   ];
 
   const bottomListItems = [
-    {icon: 'settings-outline', name: 'Settings', action: handleSettingNavigate},
-    {icon: 'people-outline', name: 'Sync all info', action: handelRefresh},
-    {icon: 'log-out-outline', name: 'Sign out', action: handleLogOut},
+    { icon: 'settings-outline', name: 'Settings', action: handleSettingNavigate },
+    { icon: 'people-outline', name: 'Sync all info', action: handelRefresh },
+    { icon: 'log-out-outline', name: 'Sign out', action: handleLogOut },
   ];
 
-  const renderItem = ({item}) => (
+  const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
         if (item?.action) {
           item?.action();
         } else {
           onSelectScreen(item?.label);
-          navigation.navigate(item?.label, {label: item?.label});
+          navigation.navigate(item?.label, { label: item?.label });
         }
       }}
       style={styles.item}>
-      <Ionicons name={item?.icon} color={Color.gray} size={scale(22)} />
+      <Ionicons name={item?.icon} color={Color.black} size={scale(22)} />
       <Text style={styles.title}>{item?.name}</Text>
       {item?.name === 'Sync all info' && asyncLoading && (
-        <View style={{alignItems: 'flex-end', flex: 1}}>
+        <View style={{ alignItems: 'flex-end', flex: 1 }}>
           <CustomLoader />
         </View>
       )}
@@ -81,13 +100,13 @@ const SideBar = ({onSelectScreen}) => {
   );
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Color.primaryColor,
           paddingVertical: verticalScale(20),
         }}>
-        <View style={{marginHorizontal: scale(8)}}>
+        <View style={{ marginHorizontal: scale(8) }}>
           <Image
             source={imageUrl}
             style={{
@@ -103,24 +122,26 @@ const SideBar = ({onSelectScreen}) => {
         </View>
       </View>
 
-      <View style={{marginVertical: verticalScale(8)}}>
+      <View style={{ marginVertical: verticalScale(8) }}>
         <Text
           style={{
             marginHorizontal: scale(8),
             marginVertical: verticalScale(8),
             color: Color.black,
+            fontFamily: Font?.Poppins
           }}>
           Recent
         </Text>
         <FlatList data={listArrayItem} renderItem={renderItem} />
       </View>
 
-      <View style={{marginVertical: verticalScale(8)}}>
+      <View style={{ marginVertical: verticalScale(8) }}>
         <Text
           style={{
             marginHorizontal: scale(8),
             marginVertical: verticalScale(8),
             color: Color.black,
+            fontFamily: Font?.Poppins
           }}>
           Settings and support
         </Text>
@@ -143,11 +164,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: scale(14),
     marginLeft: scale(20),
-    fontWeight: '600',
-    color: Color.gray,
+    color: Color.textColor,
+    fontFamily: Font?.Poppins
   },
   text: {
     color: Color.white,
     fontSize: scale(14),
+    fontFamily: Font?.PoppinsMedium
   },
 });

@@ -174,7 +174,6 @@ const MainProfile = ({route}) => {
               <Text
                 style={{
                   color: Color.gray,
-                  fontWeight: '600',
                   fontSize: scale(12),
                   fontFamily: Font?.Poppins,
                 }}>
@@ -183,7 +182,6 @@ const MainProfile = ({route}) => {
               <Text
                 style={{
                   fontSize: scale(13),
-                  fontWeight: '700',
                   color: Color.black,
                   fontFamily: Font?.Poppins,
                 }}>
@@ -265,10 +263,11 @@ const styles = StyleSheet.create({
   // },
   profileName: {
     fontSize: scale(18),
-    fontWeight: '700',
     color: Color.txt,
     marginLeft: scale(20),
     marginTop: verticalScale(20),
+    fontFamily: Font?.PoppinsMedium
+
   },
   fullscreenImageContainer: {
     flex: 1,

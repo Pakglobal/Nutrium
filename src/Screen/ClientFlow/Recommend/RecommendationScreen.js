@@ -1,313 +1,225 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useCallback} from 'react';
 import {
-  FlatList,
-  StyleSheet,
+  SafeAreaView,
   Text,
   View,
-  SafeAreaView,
-  Pressable,
   RefreshControl,
+  FlatList,
+  Pressable,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
+import {Color} from '../../../assets/styles/Colors';
+import {Font} from '../../../assets/styles/Fonts';
 import {scale, verticalScale} from 'react-native-size-matters';
 import Header from '../../../Components/Header';
-import {Color} from '../../../assets/styles/Colors';
 import {
   GetFoodAvoidApiData,
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../../../Apis/ClientApis/RecommendationApi';
-import {useSelector} from 'react-redux';
-import moment from 'moment';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import {ScrollView} from 'react-native-virtualized-view';
 import CustomLoader from '../../../Components/CustomLoader';
+import CustomShadow from '../../../Components/CustomShadow';
+
+const {height} = Dimensions.get('window');
 
 const RecommendationScreen = () => {
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
+
   const bottomSheetRef = useRef(null);
 
-  const [recommendations, setRecommendations] = useState([]);
-  const [foodsAvoid, setFoodsAvoid] = useState([]);
+  const [sections, setSections] = useState([]);
   const [goals, setGoals] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const cardOpacity = useSharedValue(0);
+  const cardTranslateY = useSharedValue(50);
+
+  const animatedCardStyle = useAnimatedStyle(() => ({
+    opacity: cardOpacity.value,
+    transform: [{translateY: cardTranslateY.value}],
+  }));
+
+  useEffect(() => {
+    cardOpacity.value = withTiming(1, {duration: 800});
+    cardTranslateY.value = withSpring(0, {damping: 15, stiffness: 100});
+  }, []);
 
   const handleOpenBottomSheet = () => {
     bottomSheetRef.current?.open();
   };
 
-  const FetchRecommendationData = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await GetRecommendationApiData(token, id);
-      if (
-        response?.success === true ||
-        response?.message === 'Data retrieved successfully'
-      ) {
-        setRecommendations(response?.data);
-        setLoading(false);
-      }
+      const [resFood, resReco, resGoals] = await Promise.all([
+        GetFoodAvoidApiData(token, id),
+        GetRecommendationApiData(token, id),
+        GetGoalsApiData(token, id),
+      ]);
+
+      const foodData = resFood?.data?.foodAvoids || [];
+      const recommendationData = resReco?.data?.recommendation || '';
+      const goalsData = resGoals?.allGoals?.[0]?.goals || [];
+
+      setGoals(goalsData);
+
+      const sectionList = [
+        {
+          id: '1',
+          title: 'Foods to Avoid',
+          subTitle: 'Avoid these foods to improve your health',
+          type: 'food',
+          data: foodData,
+        },
+        {
+          id: '2',
+          title: 'Recommendations',
+          subTitle: 'Personalized advice from your professional',
+          type: 'recommendation',
+          data: recommendationData,
+        },
+        {
+          id: '3',
+          title: 'Your Goals',
+          subTitle: 'Goals set with your professional',
+          type: 'goal',
+          data: goalsData,
+        },
+      ];
+
+      setSections(sectionList);
     } catch (error) {
-      console.error('Error fetching recommendation data', error);
+      console.log(error);
+    } finally {
       setLoading(false);
     }
   };
-
-  const FetchFoodAvoidData = async () => {
-    setLoading(true);
-    try {
-      const response = await GetFoodAvoidApiData(token, id);
-      if (
-        response?.success === true ||
-        response?.message === 'Data retrieved successfully'
-      ) {
-        setFoodsAvoid(response?.data);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Error fetching food avoid data', error);
-      setLoading(false);
-    }
-  };
-
-  const FetchGoalsData = async () => {
-    setLoading(true);
-    try {
-      const response = await GetGoalsApiData(token, id);
-      if (
-        response?.success === true ||
-        response?.message === 'Goals retrieved successfully'
-      ) {
-        setGoals(response?.allGoals);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Error fetching goals data', error);
-      setLoading(false);
-    }
-  };
-
-  const renderEntryItem = ({item: entry, index}) => (
-    <View
-      key={index}
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-      <Text
-        style={{
-          fontSize: scale(14),
-          color: Color.black,
-        }}>
-        {entry?.value} {entry?.unit}
-      </Text>
-
-      <Text
-        style={{
-          fontSize: scale(14),
-          color: Color.black,
-          backgroundColor: Color.white,
-          paddingHorizontal: scale(5),
-          borderRadius: scale(4),
-        }}>
-        {moment(entry?.deadline, 'DD-MM-YYYY').format('MMM D')}
-      </Text>
-    </View>
-  );
-
-  const renderMeasurementItem = ({item: measurement, index}) => (
-    <View
-      key={index}
-      style={{
-        paddingVertical: verticalScale(5),
-      }}>
-      <Text
-        style={{
-          fontSize: scale(14),
-          fontWeight: '500',
-          color: Color.black,
-          marginBottom: verticalScale(4),
-        }}>
-        {measurement?.measurementtype || 'Unknown'}
-      </Text>
-
-      {measurement?.entries?.length > 0 ? (
-        <FlatList
-          data={measurement.entries}
-          keyExtractor={(entry, i) => i.toString()}
-          renderItem={renderEntryItem}
-          showsVerticalScrollIndicator={false}
-        />
-      ) : (
-        <Text style={{fontSize: scale(14), color: Color.gray}}>
-          No entries available
-        </Text>
-      )}
-    </View>
-  );
-
-  const renderGoalItem = ({item, index}) => (
-    <View
-      key={index}
-      style={{
-        borderBottomWidth: 1,
-        borderBottomColor: '#DDD',
-      }}>
-      <FlatList
-        data={item?.measurements || []}
-        keyExtractor={(measurement, i) => i.toString()}
-        renderItem={renderMeasurementItem}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
-  );
 
   useEffect(() => {
-    FetchRecommendationData();
-    FetchFoodAvoidData();
-    FetchGoalsData();
+    fetchData();
   }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    Promise.all([
-      FetchFoodAvoidData(),
-      FetchRecommendationData(),
-      FetchGoalsData(),
-    ])
-      .then(() => {
-        setRefreshing(false);
-      })
-      .catch(() => {
-        setRefreshing(false);
-      });
+    fetchData().finally(() => setRefreshing(false));
   }, []);
 
-  return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
-      <Header logoHeader={true} />
-
-      <View>
-        {loading ? (
-          <CustomLoader />
-        ) : (
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }>
-            <View style={styles.container}>
-              <Text style={styles.title}>Foods to avoid</Text>
-              <Text style={styles.subTitle}>
-                Avoid these foods in your diet to improve your health
+  const renderGoalItem = (goal, index) => (
+    <View key={index} style={styles.goalContainer}>
+      {goal?.measurements?.map((measurement, idx) => (
+        <View key={idx} style={styles.measurementContainer}>
+          <Text style={styles.measurementTitle}>
+            {measurement?.measurementtype}
+          </Text>
+          {measurement?.entries?.map((entry, eIdx) => (
+            <View key={eIdx} style={styles.entryContainer}>
+              <Text style={styles.entryText}>
+                {entry?.value} {entry?.unit}
               </Text>
-              <View>
-                {foodsAvoid && foodsAvoid?.foodAvoids?.length > 0 ? (
-                  foodsAvoid.foodAvoids.map((item, index) => (
-                    <Text key={index} style={{color: Color.black}}>
-                      {item}
+              <View style={styles.deadlineBadge}>
+                <Text style={styles.deadlineText}>
+                  {moment(entry?.deadline, 'DD-MM-YYYY').format('MMM D')}
+                </Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
+  );
+
+  const renderItem = ({item}) => {
+    return (
+      <View>
+        <CustomShadow>
+          <Pressable
+            onPress={item.type === 'goal' ? handleOpenBottomSheet : undefined}>
+            <Animated.View style={[styles.card, animatedCardStyle]}>
+              <View style={styles.cardGradient}>
+                <Text style={styles.sectionTitle}>{item.title}</Text>
+                <Text style={styles.sectionSubtitle}>{item.subTitle}</Text>
+
+                {item.type === 'food' && item.data.length > 0 ? (
+                  item.data.map((food, idx) => (
+                    <Text key={idx} style={styles.listItemText}>
+                      • {food}
                     </Text>
                   ))
+                ) : item.type === 'recommendation' && item.data ? (
+                  <Text style={styles.listItemText}>{item.data}</Text>
+                ) : item.type === 'goal' && item.data.length > 0 ? (
+                  item.data.map((goal, idx) => renderGoalItem(goal, idx))
                 ) : (
-                  <View style={{marginVertical: verticalScale(10)}}>
-                    <Text style={{color: Color.gray}}>
-                      There are no records of food to avoid
-                    </Text>
-                  </View>
+                  <Text style={styles.noDataText}>No data available</Text>
                 )}
               </View>
-            </View>
-
-            <View style={styles.container}>
-              <Text style={styles.title}>Other recommendations</Text>
-              <Text style={styles.subTitle}>
-                See more recommendations from your professional
-              </Text>
-              <View>
-                {recommendations && recommendations?.recommendation ? (
-                  <Text style={{color: Color.black}}>
-                    {recommendations.recommendation}
-                  </Text>
-                ) : (
-                  <View style={{marginVertical: verticalScale(10)}}>
-                    <Text style={{color: Color.gray}}>
-                      There are no records of recommendation
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View>
-
-            <Pressable
-              style={styles.container}
-              onPress={() => handleOpenBottomSheet()}>
-              <Text style={styles.title}>Next goals</Text>
-              <Text style={styles.subTitle}>
-                Goals agreed with your professional
-              </Text>
-              <View>
-                {goals && goals?.length > 0 ? (
-                  <FlatList
-                    showsVerticalScrollIndicator={false}
-                    data={goals[0]?.goals}
-                    keyExtractor={(item, index) =>
-                      item?._id || index.toString()
-                    }
-                    renderItem={renderGoalItem}
-                    contentContainerStyle={{
-                      paddingHorizontal: scale(10),
-                      paddingVertical: verticalScale(5),
-                    }}
-                  />
-                ) : (
-                  <View style={{marginVertical: verticalScale(10)}}>
-                    <Text style={{color: Color.gray}}>
-                      There are no records of goals
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </Pressable>
-          </ScrollView>
-        )}
+            </Animated.View>
+          </Pressable>
+        </CustomShadow>
       </View>
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <Header logoHeader={true} />
+      {loading ? (
+        <CustomLoader style={{marginTop: verticalScale(25)}} />
+      ) : (
+        <FlatList
+          data={sections}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            marginTop: verticalScale(10),
+            paddingBottom: verticalScale(100),
+          }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      )}
 
       <RBSheet
         ref={bottomSheetRef}
         closeOnPressMask={true}
         closeOnPressBack={true}
-        height={380}
+        height={450}
         customStyles={{
-          wrapper: styles.wrapper,
+          wrapper: styles.sheetWrapper,
           draggableIcon: styles.draggableIcon,
+          container: styles.sheetContainer,
         }}>
-        <View style={styles.bottomContainer}>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>All goals</Text>
+        <View style={styles.sheetContent}>
+          <View style={styles.bottomHeaderContainer}>
+            <Text style={styles.headerText}>All Goals</Text>
             <Text style={styles.headerText}>
               Goals agreed with your professional
             </Text>
           </View>
-          <View style={{marginHorizontal: scale(16), flex: 1}}>
-            {goals && goals?.length > 0 ? (
-              <FlatList
-                data={goals[0]?.goals}
-                keyExtractor={(item, index) => item?._id || index.toString()}
-                renderItem={renderGoalItem}
-                showsVerticalScrollIndicator={false}
-              />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {goals.length > 0 ? (
+              goals.map((goal, idx) => renderGoalItem(goal, idx))
             ) : (
-              <View style={{marginVertical: verticalScale(10)}}>
-                <Text style={{color: Color.gray, textAlign: 'center'}}>
-                  There are no records of goals
-                </Text>
-              </View>
+              <Text style={styles.noDataText}>No goals available</Text>
             )}
-          </View>
+          </ScrollView>
         </View>
       </RBSheet>
     </SafeAreaView>
@@ -317,46 +229,132 @@ const RecommendationScreen = () => {
 export default RecommendationScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Color.common,
-    marginTop: verticalScale(10),
-    marginHorizontal: scale(16),
-    paddingHorizontal: scale(15),
-    paddingVertical: verticalScale(8),
+  safeArea: {
+    flex: 1,
+    backgroundColor: Color.white,
+  },
+  gradientBackground: {
+    flex: 1,
+  },
+  card: {
+    paddingHorizontal: scale(8),
+    marginVertical: verticalScale(5),
     borderRadius: scale(20),
   },
-  title: {
-    fontSize: scale(15),
-    color: Color.black,
-    fontWeight: '500',
-    marginVertical: verticalScale(5),
+  cardGradient: {
+    borderRadius: scale(8),
+    padding: scale(15),
+    backgroundColor: Color.white,
   },
-  subTitle: {
+  sectionTitle: {
+    fontSize: scale(18),
+    color: Color.primaryColor,
+    fontFamily: Font.PoppinsMedium,
+  },
+  sectionSubtitle: {
     fontSize: scale(13),
-    color: Color.black,
+    fontFamily: Font.Poppins,
+    marginBottom: verticalScale(10),
+    color: Color.txt,
   },
-  data: {
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: verticalScale(2),
+  },
+  listItemText: {
+    fontSize: scale(14),
+    color: Color.textColor,
+    fontFamily: Font.Poppins,
+  },
+  noDataText: {
+    fontSize: scale(14),
+    color: Color.textColor,
+    textAlign: 'center',
+    fontFamily: Font.Poppins,
     marginVertical: verticalScale(10),
-    color: Color.black,
   },
-  wrapper: {
+  entryContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: verticalScale(5),
+  },
+  entryText: {
+    fontSize: scale(14),
+    color: '#374151',
+    fontFamily: Font.Poppins,
+  },
+  deadlineBadge: {
+    backgroundColor: '#E5E7EB',
+    borderRadius: scale(8),
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(4),
+  },
+  deadlineText: {
+    fontSize: scale(12),
+    color: '#374151',
+    fontFamily: Font.PoppinsMedium,
+  },
+  measurementContainer: {
+    paddingVertical: verticalScale(10),
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  measurementTitle: {
+    fontSize: scale(16),
+    fontFamily: Font.PoppinsMedium,
+    color: '#1F2937',
+    marginBottom: verticalScale(5),
+  },
+  goalContainer: {
+    paddingVertical: verticalScale(5),
+  },
+  flatListContent: {
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(5),
+  },
+  sheetWrapper: {
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   draggableIcon: {
-    backgroundColor: 'transparent',
+    backgroundColor: '#D1D5DB',
+    width: scale(40),
+    height: verticalScale(4),
   },
-  bottomContainer: {
-    backgroundColor: Color.common,
+  sheetContainer: {
+    borderTopLeftRadius: scale(20),
+    borderTopRightRadius: scale(20),
+  },
+  sheetContent: {
     flex: 1,
   },
-  headerContainer: {
+  sheetTitle: {
+    fontSize: scale(20),
+    fontFamily: Font.PoppinsMedium,
+    color: '#1F2937',
+    textAlign: 'center',
+  },
+  sheetSubtitle: {
+    fontSize: scale(14),
+    color: '#6B7280',
+    textAlign: 'center',
+    marginBottom: verticalScale(10),
+    fontFamily: Font.Poppins,
+  },
+  sheetListContainer: {
+    flex: 1,
+  },
+  bottomHeaderContainer: {
     backgroundColor: Color.primaryColor,
-    paddingVertical: verticalScale(15),
-    justifyContent: 'center',
+    paddingVertical: verticalScale(8),
+    paddingHorizontal: scale(16),
+    borderTopLeftRadius: scale(20),
+    borderTopRightRadius: scale(20),
   },
   headerText: {
     color: Color.white,
-    marginHorizontal: scale(16),
-    fontWeight: '500',
+    fontSize: scale(16),
+    fontFamily: Font.PoppinsMedium,
   },
 });

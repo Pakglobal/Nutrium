@@ -14,7 +14,10 @@ const ChallengeCard = ({challenge, onJoin, btnType}) => {
 
   return (
     <CustomShadow>
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => onJoin(challenge)}
+        activeOpacity={0.9}>
         <View style={styles.row}>
           <View style={styles.iconCircle}>
             <Text style={styles.icon}>🔥</Text>
@@ -62,7 +65,7 @@ const ChallengeCard = ({challenge, onJoin, btnType}) => {
             )}
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     </CustomShadow>
   );
 };

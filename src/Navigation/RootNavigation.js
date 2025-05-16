@@ -5,7 +5,6 @@ import LoginScreen from '../Auth/Login/LoginScreen';
 import BottomNavigation from './BottomNavigation';
 import MainProfile from '../Screen/ClientFlow/Profile/MainProfile';
 import Settings from '../Screen/ClientFlow/Profile/Settings';
-import PhysicalActivityy from '../Screen/ClientFlow/Profile/Physical_Activity/PhysicalActivityy';
 import WorkOutDetails from '../Screen/ClientFlow/Profile/Physical_Activity/WorkOutDetails';
 import FoodDiary from '../Screen/ClientFlow/Profile/Food_Diary/FoodDiary';
 import AddMeal from '../Screen/ClientFlow/Profile/Food_Diary/AddMeal';
@@ -50,6 +49,7 @@ import JoinRequestScreen from '../Screen/ClientFlow/ChallengeFlow/JoinRequestScr
 import ForgotPasswordScreen from '../Auth/Login/ForgotPasswordScreen';
 import CardioNutritionDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/CardioNutritionDetailsScreen';
 import AllPrivateChallengeScreen from '../Screen/ClientFlow/ChallengeFlow/AllPrivateChallengeScreen';
+import PhysicalActivityScreen from '../Screen/ClientFlow/Profile/Physical_Activity/PhysicalActivityy';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -165,7 +165,7 @@ const UserFlowStack = () => (
     <Stack.Screen name="logMeal" component={LogMeal} />
     <Stack.Screen name="swapMeal" component={SwapMeal} />
     <Stack.Screen name="foodSearch" component={FoodSearch} />
-    <Stack.Screen name="physicalActivity" component={PhysicalActivityy} />
+    <Stack.Screen name="physicalActivity" component={PhysicalActivityScreen} />
     <Stack.Screen name="logPhysicalActivity" component={LogPhysicalActivity} />
     <Stack.Screen name="workOutDetails" component={WorkOutDetails} />
     <Stack.Screen name="waterIntake" component={WaterIntake} />

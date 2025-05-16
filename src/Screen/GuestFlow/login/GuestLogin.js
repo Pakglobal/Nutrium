@@ -162,8 +162,9 @@ const GuestLogin = ({route}) => {
         isDemoClient: true,
       };
 
+      console.log('body', body);
       const response = await HandleGuestLOGIN(body);
-
+      console.log('response?.data', response?.data);
       const storeTokenId = {
         token: response?.data?.token,
         id: response?.data?.userData?._id,
@@ -178,9 +179,9 @@ const GuestLogin = ({route}) => {
       } else if (response?.data?.message === 'Signin successful') {
         setLoading(false);
         showAlert('User already exists', 'error');
-      } else {
+      } else if (response?.data === undefined) {
         setLoading(false);
-        showAlert(response?.message || 'Something went wrong', 'error');
+        showAlert('Email already exists', 'error');
       }
     } catch (err) {
       setLoading(false);

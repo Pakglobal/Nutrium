@@ -15,35 +15,29 @@ const CalenderHeader = ({
 }) => {
   return (
     <View style={styles.headerContainer}>
-      <View style={{marginHorizontal: scale(9)}}>
-        <View style={styles.calenderView}>
-          <TouchableOpacity
-            style={{
-              paddingVertical: verticalScale(5),
-              paddingHorizontal: scale(7),
-            }}
-            onPress={onPressLeft}>
-            <AntDesign
-              name="left"
-              color={Color.primaryColor}
-              size={verticalScale(16)}
-            />
-          </TouchableOpacity>
-          <Text style={styles.dateTxt}>{txtFunction}</Text>
-          <TouchableOpacity
-            style={{
-              paddingVertical: verticalScale(5),
-              paddingHorizontal: scale(7),
-            }}
-            onPress={onPressRight}
-            disabled={disabled}>
-            <AntDesign
-              name="right"
-              color={rightColor}
-              size={verticalScale(16)}
-            />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.calenderView}>
+        <TouchableOpacity
+          style={{
+            paddingVertical: verticalScale(5),
+            paddingHorizontal: scale(7),
+          }}
+          onPress={onPressLeft}>
+          <AntDesign
+            name="left"
+            color={Color.primaryColor}
+            size={verticalScale(16)}
+          />
+        </TouchableOpacity>
+        <Text style={styles.dateTxt}>{txtFunction}</Text>
+        <TouchableOpacity
+          style={{
+            paddingVertical: verticalScale(5),
+            paddingHorizontal: scale(7),
+          }}
+          onPress={onPressRight}
+          disabled={disabled}>
+          <AntDesign name="right" color={rightColor} size={verticalScale(16)} />
+        </TouchableOpacity>
       </View>
     </View>
   );

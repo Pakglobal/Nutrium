@@ -10,36 +10,43 @@ const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
     switch (type) {
       case 'success':
         return {
+          iconName: 'checkcircleo',
+          title: 'Success!',
           borderColor: 'rgba(107, 203, 119, 0.2)',
           backgroundColor: 'rgba(107, 203, 119, 0.5)',
           iconColor: Color.primaryColor,
-          textColor: Color?.black,
-          buttonBorder: Color?.primaryColor,
-          buttonText: Color?.primaryColor,
-          iconName: 'check',
-          title: 'Success!',
+          textColor: Color.black,
+          buttonColor: 'rgba(107, 203, 119, 1)',
+        };
+      case 'error':
+        return {
+          iconName: 'close',
+          title: 'Error!',
+          borderColor: 'rgba(224, 65, 65, 0.3)',
+          backgroundColor: 'rgba(224, 65, 65, 0.8)',
+          iconColor: Color.white,
+          textColor: Color.black,
+          buttonColor: 'rgba(224, 65, 65, 1)',
         };
       case 'warning':
         return {
           iconName: 'warning',
           title: 'Warning!',
-          borderColor: '#F246462B',
-          backgroundColor: 'rgba(242, 70, 70, 1)',
-          iconColor: '#F24646',
-          textColor: Color?.textColor,
-          buttonBorder: '#F24646',
-          buttonText: '#F24646',
+          borderColor: 'rgba(224, 65, 65, 0.3)',
+          backgroundColor: 'rgba(224, 65, 65, 0.8)',
+          iconColor: Color.white,
+          textColor: Color.black,
+          buttonColor: 'rgba(224, 65, 65, 1)',
         };
       default:
         return {
-          borderColor: '#F246462B',
-          backgroundColor: '#F2464650',
-          iconColor: '#F24646',
-          textColor: Color?.textColor,
-          buttonBorder: '#F24646',
-          buttonText: '#F24646',
-          iconName: 'close',
-          title: 'Error!',
+          iconName: 'infocirlceo',
+          title: 'Information',
+          borderColor: 'rgba(0, 123, 255, 0.2)',
+          backgroundColor: 'rgba(0, 123, 255, 0.5)',
+          iconColor: Color.white,
+          textColor: Color.black,
+          buttonColor: 'rgba(0, 123, 255, 1)',
         };
     }
   };
@@ -53,7 +60,7 @@ const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
           <TouchableOpacity
             onPress={closeAlert}
             style={{alignSelf: 'flex-end'}}>
-            <AntDesign name="close" size={25} color={Color?.black} />
+            <AntDesign name="close" size={scale(25)} color={Color.black} />
           </TouchableOpacity>
 
           <View
@@ -66,7 +73,7 @@ const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
             ]}>
             <AntDesign
               name={colors.iconName}
-              size={25}
+              size={scale(25)}
               color={colors.iconColor}
             />
           </View>
@@ -78,9 +85,9 @@ const CustomAlertBox = ({visible, type, message, onClose, closeAlert}) => {
           <Text style={styles.message}>{message}</Text>
 
           <TouchableOpacity
-            style={[styles.button, {borderColor: colors.buttonBorder}]}
+            style={[styles.button, {borderColor: colors.buttonColor}]}
             onPress={onClose}>
-            <Text style={[styles.buttonText, {color: colors.buttonText}]}>
+            <Text style={[styles.buttonText, {color: colors.buttonColor}]}>
               OK
             </Text>
           </TouchableOpacity>
@@ -107,7 +114,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     width: scale(50),
-    height: verticalScale(50),
+    height: scale(50),
     borderRadius: scale(25),
     justifyContent: 'center',
     alignItems: 'center',
@@ -118,14 +125,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: moderateScale(20),
     marginBottom: verticalScale(5),
-    fontFamily: Font?.PoppinsSemiBold,
+    fontFamily: Font.PoppinsSemiBold,
   },
   message: {
     fontSize: moderateScale(16),
     textAlign: 'center',
     marginBottom: verticalScale(20),
-    color: Color?.gray,
-    fontFamily: Font?.Poppins,
+    color: Color.gray,
+    fontFamily: Font.Poppins,
   },
   button: {
     width: '90%',
@@ -137,7 +144,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: moderateScale(16),
-    fontFamily: Font?.PoppinsSemiBold,
+    fontFamily: Font.PoppinsSemiBold,
   },
 });
 

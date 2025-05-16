@@ -17,9 +17,6 @@ const userSlice = createSlice({
     loginData: (state, action) => {
       state.userInfo = action.payload;
     },
-    profileData: (state, action) => {
-      state.profileInfo = action.payload;
-    },
     setFcmToken: (state, action) => {
       state.fcmToken = action.payload;
     },
@@ -40,7 +37,6 @@ const userSlice = createSlice({
 
 export const {
   loginData,
-  profileData,
   setFcmToken,
   setToken,
   setGuestToken,

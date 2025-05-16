@@ -28,6 +28,8 @@ const WaterIntakeLog = ({route}) => {
   const navigation = useNavigation();
   const routeData = route?.params?.intake;
   const plusData = route?.params?.plusData;
+  const onAddComplete = route?.params?.onAddComplete; // Get the onAddComplete callback
+  const onEditComplete = route?.params?.onEditComplete; // Get the onEditComplete callback
   const plus = plusData?.press === 'plus';
   const clientId = plusData?.clientId;
 
@@ -132,6 +134,7 @@ const WaterIntakeLog = ({route}) => {
         response?.message === 'Water intake record updated successfully.' ||
         response?.success === true
       ) {
+        onEditComplete?.();
         navigation.goBack();
       } else {
         console.log(response?.message);
@@ -161,6 +164,7 @@ const WaterIntakeLog = ({route}) => {
         response?.message === 'Water intake recorded successfully.' ||
         response?.success === true
       ) {
+        onAddComplete?.(); // Trigger data refresh
         navigation.goBack();
       } else {
         console.log(response?.message);
@@ -374,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.white,
   },
   scrollView: {
-    paddingHorizontal: scale(16),
+    paddingHorizontal: scale(8),
   },
   label: {
     fontSize: scale(14),

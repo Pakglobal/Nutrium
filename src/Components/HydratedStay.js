@@ -25,26 +25,26 @@ import Glass from '../assets/Images/glass.svg';
 import {Font} from '../assets/styles/Fonts';
 import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {addWaterData, getWaterIntake} from '../redux/client';
+import {getWaterIntake} from '../redux/client';
 import CustomShadow from './CustomShadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
 const HydratedStay = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
   const [sevenL, setSevenL] = useState(0);
-  const [seventeenL, setSevenTeenL] = useState(0);
+  const [seventeenL, setSeventeenL] = useState(0);
   const [waterIntake, setWaterIntake] = useState([]);
-  const [getwaterIntake, setGetWaterIntake] = useState([]);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [limit, setLimit] = useState('');
-  const [loading, setLoading] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
+
   const waterData = useSelector(state => state?.client?.waterData);
   const intake = useSelector(state => state?.client?.waterIntake);
   const [localIntake, setLocalIntake] = useState(intake || 0);
@@ -56,22 +56,21 @@ const HydratedStay = ({route}) => {
 
   const totalGoal = waterIntake?.waterIntakeData?.waterIntakeLimit || 2;
 
-  const resetLocalWaterData = async () => {
+  const resetLocalWaterData = useCallback(async () => {
     await AsyncStorage.multiSet([
       [getStorageKey('sevenL'), '0'],
       [getStorageKey('seventeenL'), '0'],
       [getStorageKey('lastHydrationDate'), new Date().toDateString()],
     ]);
     setSevenL(0);
-    setSevenTeenL(0);
+    setSeventeenL(0);
     setCurrentProgress(0);
     widthAnimation.setValue(0);
-  };
+  }, [getStorageKey, widthAnimation]);
 
-  const fetchWaterIntake = async () => {
+  const fetchWaterIntake = useCallback(async () => {
     if (!token || !id) return;
     try {
-      setLoading(true);
       const response = await GetWaterIntakeDetails(token, id);
       setWaterIntake(response);
       return response;
@@ -79,14 +78,12 @@ const HydratedStay = ({route}) => {
       console.error('Error fetching water intake:', error);
       return null;
     } finally {
-      setLoading(false);
       setHasLoaded(true);
     }
-  };
+  }, [token, id]);
 
-  const handleAddWater = amount => {
+  const handleAddWater = async amount => {
     const mlAmount = amount * 1000;
-
     const currentIntake = intake || 0;
     const newIntake = currentIntake + mlAmount;
 
@@ -95,10 +92,9 @@ const HydratedStay = ({route}) => {
     if (amount === 0.2) {
       setSevenL(prev => prev + amount);
     } else if (amount === 0.3) {
-      setSevenTeenL(prev => prev + amount);
+      setSeventeenL(prev => prev + amount);
     }
 
-    // Update local intake
     setLocalIntake(prev => prev + mlAmount);
 
     const currentDate = new Date();
@@ -119,73 +115,55 @@ const HydratedStay = ({route}) => {
       time,
     };
 
-    // Send the update to the server and refresh data
-    setTimeout(() => {
-      SetWaterIntakeDetails(payload)
-        .then(() => {
-          // Refresh all water data after adding water
-          return GetWaterIntakeDetails(token, id);
-        })
-        .then(updatedData => {
-          setWaterIntake(updatedData);
-          // Always update data after adding water
-          getData();
-        })
-        .catch(error => {
-          console.error('Water update error:', error);
-        });
-    }, 0);
+    try {
+      await SetWaterIntakeDetails(payload); // ⏳ Wait to complete
+      const updatedData = await GetWaterIntakeDetails(token, id); // ✅ Fresh data
+      setWaterIntake(updatedData);
+      await getData(); // ensure UI and redux state are synced
+    } catch (error) {
+      console.error('Water update error:', error);
+    }
   };
 
-  const getWaterLimit = async () => {
+  const getWaterLimit = useCallback(async () => {
     const data = await GetWaterintakeLimitData(token, id);
     setLimit(data?.waterIntakeLimit?.waterIntakeLimit);
-  };
+  }, [token, id]);
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     try {
       const data = await GetWaterIntakeDetails(token, id);
       const allRecords = data?.waterIntakeData?.waterIntakeRecords || [];
       const today = new Date().toISOString().split('T')[0];
-      const todayRecord = allRecords.find(record => {
-        return record?.date?.split('T')[0] === today;
-      });
 
-      setGetWaterIntake(todayRecord || {});
+      const todayRecord = allRecords.find(
+        record => record?.date?.split('T')[0] === today,
+      );
 
-      // Calculate total from server data
-      const total = todayRecord?.waterIntakeAmount
-        ? todayRecord.waterIntakeAmount.reduce((sum, item) => {
-            const ml = parseFloat(item.amount.replace('ml', '')) || 0;
-            return sum + ml;
-          }, 0)
-        : 0;
+      const total =
+        todayRecord?.waterIntakeAmount?.reduce((sum, item) => {
+          const ml = parseFloat(item.amount.replace('ml', '')) || 0;
+          return sum + ml;
+        }, 0) || 0;
 
       setLocalIntake(total);
-
-      // Update Redux store with the latest value
       dispatch(getWaterIntake(total));
-
       return data;
     } catch (error) {
       console.error('Error fetching water data:', error);
       return null;
     }
-  };
+  }, [token, id, dispatch]);
 
   useFocusEffect(
     useCallback(() => {
-      if (token && id) {
-        getData();
-      }
-    }, [token, id]),
+      if (token && id) getData();
+    }, [token, id, getData]),
   );
 
   useEffect(() => {
     if (token && id) {
-      fetchWaterIntake().then(() => {
-        getData();
-      });
+      fetchWaterIntake().then(getData);
 
       if (id && prevUserIdRef.current && prevUserIdRef.current !== id) {
         resetLocalWaterData();
@@ -193,7 +171,14 @@ const HydratedStay = ({route}) => {
       prevUserIdRef.current = id;
     }
     getWaterLimit();
-  }, [token, id]);
+  }, [
+    token,
+    id,
+    fetchWaterIntake,
+    getData,
+    getWaterLimit,
+    resetLocalWaterData,
+  ]);
 
   useEffect(() => {
     if (intake === 0) {
@@ -224,7 +209,7 @@ const HydratedStay = ({route}) => {
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
-  }, [localIntake, totalGoal, hasLoaded]);
+  }, [localIntake, totalGoal, hasLoaded, widthAnimation]);
 
   const plusData = {
     clientId: waterIntake?.waterIntakeData?.clientId,
@@ -249,7 +234,6 @@ const HydratedStay = ({route}) => {
               <View>
                 <View style={styles.showIntake}>
                   <Text style={styles.intakeTxt}>Current intake</Text>
-
                   <Text style={styles.intakeTxt}>
                     {localIntake >= 1000
                       ? `${(localIntake / 1000).toFixed(1)} L`
@@ -321,6 +305,7 @@ const HydratedStay = ({route}) => {
                 ))}
               </View>
             </View>
+
             <CustomHomeButtonNavigation
               text={'See All Water Logs'}
               onPress={() => navigation.navigate('waterIntake')}

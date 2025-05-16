@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: scale(12),
     textAlign: 'center',
     paddingHorizontal: scale(16),
-    fontFamily: Font.PoppinsRegular,
+    fontFamily: Font.Poppins,
   },
   formContainer: {
     paddingHorizontal: scale(16),

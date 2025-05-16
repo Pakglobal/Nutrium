@@ -1,7 +1,6 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -9,15 +8,220 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FetchMealPlanApi} from '../../../Apis/ClientApis/MealApi';
-import Header from '../../../Components/Header';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  Layout,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../assets/styles/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useSelector} from 'react-redux';
 import Cook from '../../../assets/Images/cooking.svg';
 import CustomLoader from '../../../Components/CustomLoader';
+import {FetchMealPlanApi} from '../../../Apis/ClientApis/MealApi';
+import Header from '../../../Components/Header';
+import {Color} from '../../../assets/styles/Colors';
+import CustomShadow from '../../../Components/CustomShadow';
+import {Font} from '../../../assets/styles/Fonts';
+import {shadowStyle} from '../../../assets/styles/Shadow';
+
+const MealItem = ({
+  item,
+  index,
+  openItemId,
+  toggleItem,
+  handleOpenBottomSheet,
+}) => {
+  const hasMealItems =
+    (item.meal && item.meal.length > 0) ||
+    (item.Appetizer && item.Appetizer.length > 0) ||
+    (item.Beverage && item.Beverage.length > 0) ||
+    (item.Dessert && item.Dessert.length > 0) ||
+    (item.Dish && item.Dish.length > 0);
+
+  const translateX = useSharedValue(-50);
+  const scaleValue = useSharedValue(0.9);
+  const detailsOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    translateX.value = withSpring(0, {damping: 15, stiffness: 100});
+    scaleValue.value = withSpring(1, {damping: 15, stiffness: 100});
+  }, []);
+
+  useEffect(() => {
+    detailsOpacity.value = withTiming(openItemId === index ? 1 : 0, {
+      duration: 300,
+    });
+  }, [openItemId]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{translateX: translateX.value}, {scale: scaleValue.value}],
+  }));
+
+  const detailsAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: detailsOpacity.value,
+    transform: [
+      {translateY: withTiming(openItemId === index ? 0 : -10, {duration: 300})},
+    ],
+  }));
+
+  const handlePressIn = () => {
+    scaleValue.value = withSpring(0.97, {stiffness: 200});
+  };
+
+  const handlePressOut = () => {
+    scaleValue.value = withSpring(1, {stiffness: 200});
+  };
+
+  return (
+    <Animated.View
+      entering={FadeIn.duration(300).delay(index * 100)}
+      exiting={FadeOut.duration(300)}
+      layout={Layout.springify()}
+      style={[styles.card, animatedStyle]}>
+      <CustomShadow>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onPress={() => toggleItem(index)}>
+          <View style={styles.cardHeader}>
+            <View>
+              <Text style={styles.mealType}>{item?.mealType || 'Meal'}</Text>
+              <CustomShadow color={Color.gray}>
+                <View style={styles.timeContainer}>
+                  <AntDesign
+                    name="clockcircleo"
+                    color={Color.textColor}
+                    size={scale(16)}
+                  />
+                  <Text style={styles.timeText}>
+                    {item?.time?.trim() || 'No time'}
+                  </Text>
+                </View>
+              </CustomShadow>
+            </View>
+            <AntDesign
+              name={openItemId === index ? 'up' : 'down'}
+              size={verticalScale(14)}
+              color={Color.primaryColor}
+            />
+          </View>
+        </TouchableOpacity>
+      </CustomShadow>
+
+      {openItemId === index && (
+        <Animated.View style={[styles.detailsContainer, detailsAnimatedStyle]}>
+          {!hasMealItems ? (
+            <Text style={styles.noItemsText}>
+              No items scheduled for this meal
+            </Text>
+          ) : (
+            <View>
+              {item.meal?.map((mealItem, i) => (
+                <View key={`meal-${i}`} style={styles.detailItem}>
+                  <Text style={styles.detailText}>{mealItem?.displayName}</Text>
+                </View>
+              ))}
+              {item.Appetizer?.map((item, i) => (
+                <View key={`appetizer-${i}`} style={styles.detailItem}>
+                  <Text style={styles.detailText}>{item?.displayName}</Text>
+                </View>
+              ))}
+              {item.Beverage?.map((item, i) => (
+                <View key={`beverage-${i}`} style={styles.detailItem}>
+                  <Text style={styles.detailText}>{item?.displayName}</Text>
+                </View>
+              ))}
+              {item.Dessert?.map((item, i) => (
+                <View key={`dessert-${i}`} style={styles.detailItem}>
+                  <Text style={styles.detailText}>{item?.displayName}</Text>
+                </View>
+              ))}
+              {item.Dish?.map((item, i) => (
+                <View key={`dish-${i}`} style={styles.detailItem}>
+                  <Text style={styles.detailText}>{item?.displayName}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+          <TouchableOpacity
+            style={styles.infoContainer}
+            onPress={() => handleOpenBottomSheet(item)}>
+            <AntDesign
+              name="infocirlce"
+              size={verticalScale(12)}
+              color={Color.primaryColor}
+            />
+            <Text style={styles.infoText}>Nutritional info</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+    </Animated.View>
+  );
+};
+
+const formatDays = days => {
+  if (!days || !Array.isArray(days)) return '';
+  return days
+    .map(day => {
+      if (typeof day !== 'string') return '';
+      return (
+        day.substring(0, 3).charAt(0).toUpperCase() +
+        day.substring(1, 3).toLowerCase()
+      );
+    })
+    .filter(day => day)
+    .join(', ');
+};
+
+const DayTab = ({template, index, isSelected, handleSelectDay}) => {
+  const translateX = useSharedValue(50);
+  const scaleValue = useSharedValue(0.9);
+
+  useEffect(() => {
+    translateX.value = withSpring(0, {damping: 15, stiffness: 100});
+    scaleValue.value = withSpring(1, {damping: 15, stiffness: 100});
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{translateX: translateX.value}, {scale: scaleValue.value}],
+  }));
+
+  const handlePressIn = () => {
+    scaleValue.value = withSpring(0.97, {stiffness: 200});
+  };
+
+  const handlePressOut = () => {
+    scaleValue.value = withSpring(1, {stiffness: 200});
+  };
+
+  const daysText =
+    template.days === 'Everyday' ? 'Everyday' : formatDays(template.days);
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onPress={() => handleSelectDay(template)}
+        style={[
+          styles.dayContainer,
+          isSelected && styles.dayContainerSelected,
+        ]}>
+        <Text style={[styles.day, isSelected && styles.daySelected]}>
+          {daysText}
+        </Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
 
 const MealScreen = () => {
   const [mealPlan, setMealPlan] = useState([]);
@@ -39,10 +243,8 @@ const MealScreen = () => {
     setLoading(true);
     try {
       const response = await FetchMealPlanApi(id);
-
       if (response?.template?.length > 0) {
         setMealPlan(response.template[0].mealTemplate);
-
         const daysOfWeek = [
           'Sunday',
           'Monday',
@@ -54,11 +256,9 @@ const MealScreen = () => {
         ];
         const today = new Date().getDay();
         const currentDay = daysOfWeek[today];
-
         const todayTemplate = response.template[0].mealTemplate.find(template =>
           template.days.includes(currentDay),
         );
-
         setSelectedDays(
           todayTemplate
             ? todayTemplate.days
@@ -74,18 +274,14 @@ const MealScreen = () => {
 
   const getMealsForSelectedDays = () => {
     if (!mealPlan || !selectedDays || !Array.isArray(mealPlan)) return [];
-
     const selectedTemplate = mealPlan.find(template => {
       const templateDays = template?.days;
-
       if (templateDays === 'Everyday') return true;
-
       return (
         Array.isArray(templateDays) &&
         selectedDays.some(day => templateDays.includes(day))
       );
     });
-
     return selectedTemplate?.mealSchedule || [];
   };
 
@@ -94,42 +290,11 @@ const MealScreen = () => {
     bottomSheetRef.current?.open();
   };
 
-  const formatDays = days => {
-    if (!days || !Array.isArray(days)) return '';
-
-    return days
-      .map(day => {
-        if (typeof day !== 'string') return '';
-        return (
-          day.substring(0, 3).charAt(0).toUpperCase() +
-          day.substring(1, 3).toLowerCase()
-        );
-      })
-      .filter(day => day)
-      .join(', ');
-  };
-
   const bottomSheetData = [
-    {
-      id: 0,
-      title: 'Energy',
-      value: '902 kcal',
-    },
-    {
-      id: 1,
-      title: 'Proteins',
-      value: '32 g',
-    },
-    {
-      id: 2,
-      title: 'Carbohydrates',
-      value: '18 g',
-    },
-    {
-      id: 3,
-      title: 'Fats',
-      value: '82 g',
-    },
+    {id: 0, title: 'Energy', value: '902 kcal'},
+    {id: 1, title: 'Proteins', value: '32 g'},
+    {id: 2, title: 'Carbohydrates', value: '18 g'},
+    {id: 3, title: 'Fats', value: '82 g'},
   ];
 
   const handleSelectDay = template => {
@@ -149,111 +314,11 @@ const MealScreen = () => {
     setOpenItemId(openItemId === id ? null : id);
   };
 
-  const renderMealItem = ({item, index}) => {
-    const hasMealItems =
-      (item.meal && item.meal.length > 0) ||
-      (item.Appetizer && item.Appetizer.length > 0) ||
-      (item.Beverage && item.Beverage.length > 0) ||
-      (item.Dessert && item.Dessert.length > 0) ||
-      (item.Dish && item.Dish.length > 0);
-
-    return (
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View>
-            <Text style={styles.mealType}>{item?.mealType || 'Meal'}</Text>
-            <View style={styles.timeContainer}>
-              <AntDesign
-                name="clockcircleo"
-                color={Color.black}
-                size={scale(16)}
-              />
-              <Text style={styles.timeText}>
-                {item?.time || 'No time specified'}
-              </Text>
-            </View>
-          </View>
-          {/* <TouchableOpacity onPress={() => toggleItem(index)}>
-            <AntDesign
-              name={openItemId === index ? 'up' : 'down'}
-              size={verticalScale(12)}
-              color={Color.gray}
-            />
-          </TouchableOpacity> */}
-          <TouchableOpacity onPress={() => toggleItem(index)}>
-            <AntDesign
-              name={openItemId === index ? 'up' : 'down'}
-              size={verticalScale(12)}
-              color={Color.gray}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {openItemId === index && (
-          <View style={styles.detailsContainer}>
-            {/* Show empty state if no meal items */}
-            {!hasMealItems ? (
-              <Text style={{paddingLeft: 10, color: Color?.black}}>
-                No items scheduled for this meal
-              </Text>
-            ) : (
-              <View>
-                {/* Render meal items from all possible properties */}
-                {item.meal?.map((mealItem, i) => (
-                  <View key={`meal-${i}`} style={styles.detailItem}>
-                    <Text style={styles.detailText}>
-                      {mealItem?.displayName}
-                    </Text>
-                  </View>
-                ))}
-
-                {item.Appetizer?.map((item, i) => (
-                  <View key={`appetizer-${i}`} style={styles.detailItem}>
-                    <Text style={styles.detailText}>{item?.displayName}</Text>
-                  </View>
-                ))}
-
-                {item.Beverage?.map((item, i) => (
-                  <View key={`beverage-${i}`} style={styles.detailItem}>
-                    <Text style={styles.detailText}>{item?.displayName}</Text>
-                  </View>
-                ))}
-
-                {item.Dessert?.map((item, i) => (
-                  <View key={`dessert-${i}`} style={styles.detailItem}>
-                    <Text style={styles.detailText}>{item?.displayName}</Text>
-                  </View>
-                ))}
-
-                {item.Dish?.map((item, i) => (
-                  <View key={`dish-${i}`} style={styles.detailItem}>
-                    <Text style={styles.detailText}>{item?.displayName}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            <TouchableOpacity
-              style={styles.infoContainer}
-              onPress={() => handleOpenBottomSheet(item)}>
-              <AntDesign
-                name="infocirlce"
-                size={verticalScale(12)}
-                color={Color.secondary}
-              />
-              <Text style={styles.infoText}>Nutritional info</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-    );
-  };
-
   const renderEmptyState = () => (
-    <View style={[styles.contentContainer, {justifyContent: 'center'}]}>
-      <View style={{alignItems: 'center'}}>
-        <Cook height={scale(120)} width={scale(120)} />
-      </View>
+    <Animated.View
+      entering={FadeIn.duration(500)}
+      style={styles.emptyStateContainer}>
+      <Cook height={scale(120)} width={scale(120)} />
       <View style={styles.textContainer}>
         <Text style={styles.title}>Cooking up your meal plan...</Text>
         <Text style={styles.description}>
@@ -265,7 +330,7 @@ const MealScreen = () => {
           might be taking a bit to wrap up some details.
         </Text>
       </View>
-    </View>
+    </Animated.View>
   );
 
   return (
@@ -273,85 +338,55 @@ const MealScreen = () => {
       <Header logoHeader={true} />
 
       {mealPlan?.length > 0 && (
-        <View style={styles.daysScrollContainer}>
+        <Animated.View
+          entering={FadeIn.duration(300)}
+          style={styles.daysScrollContainer}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.daysScrollContent}>
-            {/* {mealPlan.map((template, index) => (
-              <TouchableOpacity
+            {mealPlan.map((template, index) => (
+              <DayTab
                 key={`day-${index}`}
-                onPress={() => handleSelectDay(template)}
-                style={[
-                  styles.dayContainer,
-                  {
-                    borderBottomWidth: isDaySelected(template?.days) ? 2 : 0,
-                  },
-                ]}>
-                <Text
-                  style={[
-                    styles.day,
-                    {
-                      color: isDaySelected(template?.days)
-                        ? Color.primaryColor
-                        : Color.black,
-                    },
-                  ]}>
-                  {formatDays(template?.days)}
-                </Text>
-              </TouchableOpacity>
-            ))} */}
-            {mealPlan.map((template, index) => {
-              const daysText =
-                template.days === 'Everyday'
-                  ? 'Everyday'
-                  : formatDays(template.days);
-
-              const isSelected =
-                template.days === 'Everyday' || isDaySelected(template.days);
-
-              return (
-                <TouchableOpacity
-                  key={`day-${index}`}
-                  onPress={() => handleSelectDay(template)}
-                  style={[
-                    styles.dayContainer,
-                    {borderBottomWidth: isSelected ? 2 : 0},
-                  ]}>
-                  <Text
-                    style={[
-                      styles.day,
-                      {color: isSelected ? Color.primaryColor : Color.black},
-                    ]}>
-                    {daysText}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+                template={template}
+                index={index}
+                isSelected={
+                  template.days === 'Everyday' || isDaySelected(template.days)
+                }
+                handleSelectDay={handleSelectDay}
+              />
+            ))}
           </ScrollView>
-        </View>
+        </Animated.View>
       )}
 
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <CustomLoader style={{}} />
-        </View>
+        <CustomLoader style={{marginTop: verticalScale(25)}} />
       ) : mealPlan?.length > 0 ? (
-        <ScrollView
-          style={styles.contentContainer}
-          showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {getMealsForSelectedDays()?.length > 0 ? (
             <FlatList
               keyExtractor={(item, index) => `meal-${index}`}
               data={getMealsForSelectedDays()}
-              renderItem={renderMealItem}
+              renderItem={({item, index}) => (
+                <MealItem
+                  item={item}
+                  index={index}
+                  openItemId={openItemId}
+                  toggleItem={toggleItem}
+                  handleOpenBottomSheet={handleOpenBottomSheet}
+                />
+              )}
+              contentContainerStyle={styles.flatListContent}
             />
           ) : (
-            <View style={styles.noRecordsContainer}>
+            <Animated.View
+              entering={FadeIn.duration(300)}
+              style={styles.noRecordsContainer}>
               <Text style={styles.noRecordsText}>
                 There are no records of meal plan
               </Text>
-            </View>
+            </Animated.View>
           )}
         </ScrollView>
       ) : (
@@ -362,13 +397,14 @@ const MealScreen = () => {
         ref={bottomSheetRef}
         closeOnPressMask={true}
         closeOnPressBack={true}
-        height={500}
+        height={450}
+        animationType="slide"
         customStyles={{
-          wrapper: styles.wrapper,
+          container: styles.bottomContainer,
           draggableIcon: styles.draggableIcon,
         }}>
-        <View style={styles.bottomContainer}>
-          <View style={styles.headerContainer}>
+        <Animated.View entering={FadeIn.duration(300)}>
+          <View style={styles.bottomHeaderContainer}>
             <Text style={styles.headerText}>
               {selectedMeal?.mealType || 'Meal'}
             </Text>
@@ -377,42 +413,28 @@ const MealScreen = () => {
             </Text>
           </View>
 
-          <View style={styles.bottomContentContainer}>
-            <FlatList
-              keyExtractor={item => `bottomSheet-${item.id}`}
-              data={bottomSheetData}
-              renderItem={({item}) => (
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listItemBoxLeft}>
-                    <Text style={styles.listItemText}>{item.title}</Text>
-                  </View>
-                  <View style={styles.listItemBoxRight}>
-                    <Text style={styles.listItemText}>{item.value}</Text>
-                  </View>
+          <ScrollView>
+            {bottomSheetData.map((item, index) => (
+              <Animated.View
+                key={index}
+                entering={FadeIn.duration(300)}
+                style={styles.listItemContainer}>
+                <View style={styles.listItemBoxLeft}>
+                  <Text style={styles.listItemText}>{item.title}</Text>
                 </View>
-              )}
-            />
-
-            <View style={styles.divider}></View>
-            <Text style={styles.recipesText}>Recipes</Text>
-
-            <View style={styles.recipeContainer}>
-              <View>
-                <Text style={{color: Color?.black}}>Keto 90....</Text>
-                <View style={styles.recipeRow}>
-                  <AntDesign name="tool" color={Color.black} size={scale(14)} />
-                  <Text>1</Text>
+                <View style={styles.listItemBoxRight}>
+                  <Text style={styles.listItemText}>{item.value}</Text>
                 </View>
-              </View>
-              <AntDesign name="right" color={Color.black} size={scale(14)} />
-            </View>
-          </View>
-        </View>
+              </Animated.View>
+            ))}
+
+            <View style={styles.divider} />
+          </ScrollView>
+        </Animated.View>
       </RBSheet>
     </SafeAreaView>
   );
 };
-
 export default MealScreen;
 
 const styles = StyleSheet.create({
@@ -420,167 +442,231 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.white,
   },
-  contentContainer: {
-    marginHorizontal: scale(16),
-    flex: 1,
-  },
-  bottomContentContainer: {
-    marginHorizontal: scale(16),
-    marginVertical: verticalScale(5),
-  },
   card: {
-    marginTop: verticalScale(8),
-    marginBottom: verticalScale(4),
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: scale(10),
+    marginVertical: verticalScale(5),
+    borderRadius: scale(16),
     backgroundColor: Color.white,
   },
   cardHeader: {
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(10),
-    backgroundColor: Color.common,
+    padding: scale(10),
+    backgroundColor: Color.white,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: scale(10),
+    marginHorizontal: scale(8),
+    borderRadius: scale(8),
   },
   mealType: {
-    color: Color.black,
-    fontSize: scale(14),
-    fontWeight: '500',
+    color: Color.primaryColor,
+    fontSize: scale(16),
+    fontFamily: Font.PoppinsMedium,
   },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Color.white,
-    marginTop: verticalScale(5),
-    padding: scale(5),
-    borderRadius: scale(10),
+    marginTop: verticalScale(4),
+    padding: scale(4),
+    borderRadius: scale(6),
+    width: 100,
   },
   timeText: {
-    marginLeft: scale(8),
-    color: Color.black,
+    marginLeft: scale(6),
+    color: Color.textColor,
+    fontSize: scale(12),
+    fontFamily: Font.Poppins,
+    marginTop: 2,
   },
   detailsContainer: {
-    borderRadius: scale(10),
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(5),
     backgroundColor: Color.white,
-    paddingVertical: scale(20),
+    borderBottomLeftRadius: scale(16),
+    borderBottomRightRadius: scale(16),
+    marginTop: verticalScale(5),
+    borderColor: Color.primaryColor,
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    marginHorizontal: scale(5),
   },
   detailItem: {
-    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(2),
   },
   detailText: {
-    paddingVertical: verticalScale(5),
-    color: Color.black,
+    color: Color.textColor,
+    fontSize: scale(14),
+    fontFamily: Font.Poppins,
+  },
+  noItemsText: {
+    color: Color.txt,
+    fontSize: scale(14),
+    fontFamily: Font.Poppins,
   },
   infoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: scale(16),
-    marginTop: verticalScale(15),
+    marginTop: verticalScale(12),
     alignSelf: 'flex-end',
   },
   infoText: {
-    color: Color.secondary,
+    color: Color.primaryColor,
     fontWeight: '600',
-    marginStart: scale(5),
+    marginLeft: scale(6),
+    fontSize: scale(12),
+    fontFamily: Font.Poppins,
+  },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: scale(16),
   },
   textContainer: {
     alignItems: 'center',
+    marginTop: verticalScale(20),
   },
   title: {
-    fontSize: scale(18),
-    fontWeight: '700',
-    color: Color.black,
+    fontSize: scale(20),
+    fontFamily: Font.PoppinsMedium,
+    color: Color.textColor,
   },
   description: {
-    marginVertical: verticalScale(20),
+    marginVertical: verticalScale(12),
     textAlign: 'center',
     fontSize: scale(14),
-    fontWeight: '500',
-    color: Color.gray,
+    color: Color.txt,
+    lineHeight: verticalScale(22),
+    fontFamily: Font.Poppins,
   },
-  noDetailText: {
-    color: Color.gray,
-    paddingHorizontal: scale(10),
-    paddingVertical: verticalScale(5),
+  daysScrollContainer: {
+    marginVertical: verticalScale(12),
+  },
+  daysScrollContent: {
+    paddingHorizontal: scale(16),
   },
   dayContainer: {
     paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(30),
+    paddingHorizontal: scale(20),
+    marginRight: scale(8),
+    borderRadius: scale(12),
+    backgroundColor: Color.white,
+  },
+  dayContainerSelected: {
+    borderBottomWidth: 3,
     borderBottomColor: Color.primaryColor,
+    backgroundColor: Color.primaryLight,
   },
   day: {
-    fontSize: scale(13),
-    fontWeight: '500',
-    color: Color.black,
+    fontSize: scale(14),
+    fontFamily: Font.PoppinsMedium,
+    color: Color.textColor,
   },
-  wrapper: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+  daySelected: {
+    color: Color.primaryColor,
+    fontWeight: '600',
   },
-  draggableIcon: {
-    backgroundColor: 'transparent',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noRecordsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: verticalScale(20),
+  },
+  noRecordsText: {
+    fontSize: scale(16),
+    color: Color.txt,
+    fontFamily: Font.Poppins,
+  },
+  flatListContent: {
+    paddingBottom: verticalScale(100),
   },
   bottomContainer: {
-    backgroundColor: Color.common,
-    flex: 1,
+    backgroundColor: Color.white,
+    borderTopLeftRadius: scale(20),
+    borderTopRightRadius: scale(20),
   },
-  headerContainer: {
+  draggableIcon: {
+    backgroundColor: 'red',
+    width: scale(40),
+    height: verticalScale(4),
+  },
+  bottomHeaderContainer: {
     backgroundColor: Color.primaryColor,
-    paddingVertical: verticalScale(15),
-    justifyContent: 'center',
+    paddingVertical: verticalScale(8),
+    paddingHorizontal: scale(16),
+    borderTopLeftRadius: scale(20),
+    borderTopRightRadius: scale(20),
   },
   headerText: {
     color: Color.white,
-    marginHorizontal: scale(16),
-    fontWeight: '500',
+    fontSize: scale(16),
+    fontFamily: Font.PoppinsMedium,
   },
   listItemContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: verticalScale(5),
     justifyContent: 'space-between',
+    marginVertical: verticalScale(4),
+    borderRadius: scale(12),
+    overflow: 'hidden',
   },
   listItemBoxLeft: {
-    padding: scale(10),
-    backgroundColor: '#EEE',
-    width: '49%',
+    padding: scale(12),
+    backgroundColor: Color.primaryLight,
+    width: '48%',
   },
   listItemBoxRight: {
-    padding: scale(10),
+    padding: scale(12),
     backgroundColor: Color.white,
-    width: '49%',
+    width: '48%',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   listItemText: {
-    color: Color.black,
-    fontSize: scale(11),
+    color: Color.textColor,
+    fontSize: scale(12),
+    fontFamily: Font.PoppinsMedium,
   },
   divider: {
-    width: scale(50),
+    width: scale(60),
     backgroundColor: Color.primaryColor,
-    height: verticalScale(2),
+    height: verticalScale(3),
     alignSelf: 'center',
-    marginTop: verticalScale(15),
-    marginBottom: verticalScale(8),
+    marginVertical: verticalScale(12),
   },
   recipesText: {
     textAlign: 'center',
-    fontSize: scale(12),
-    color: Color?.black,
+    fontSize: scale(14),
+    color: Color.textColor,
+    fontFamily: Font.PoppinsMedium,
   },
   recipeContainer: {
-    backgroundColor: Color.white,
+    backgroundColor: '#F5F7FA',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: verticalScale(8),
-    borderRadius: scale(6),
-    paddingHorizontal: scale(8),
-    marginTop: verticalScale(15),
+    padding: scale(12),
+    borderRadius: scale(12),
+    marginTop: verticalScale(12),
+  },
+  recipeTitle: {
+    color: Color.textColor,
+    fontSize: scale(14),
+    fontFamily: Font.PoppinsMedium,
   },
   recipeRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: verticalScale(4),
+  },
+  recipeCount: {
+    marginLeft: scale(6),
+    color: Color.textColor,
+    fontSize: scale(12),
+    fontFamily: Font.Poppins,
   },
 });

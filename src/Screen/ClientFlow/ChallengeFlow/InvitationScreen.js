@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   detail: {
     fontSize: moderateScale(14),
     color: Color.gray,
-    fontFamily: Font.PoppinsRegular,
+    fontFamily: Font.Poppins,
   },
   buttonRow: {
     flexDirection: 'row',

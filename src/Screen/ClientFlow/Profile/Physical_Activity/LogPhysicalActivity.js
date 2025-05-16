@@ -129,7 +129,7 @@ const LogPhysicalActivity = ({route}) => {
       </View>
 
       {loading ? (
-        <CustomLoader />
+        <CustomLoader style={{marginTop: verticalScale(15)}} size={'small'} />
       ) : filteredData?.length > 0 ? (
         <FlatList
           data={filteredData}

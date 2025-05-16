@@ -38,20 +38,11 @@ const HomeScreen = () => {
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
+  console.log('token, id', token, id);
 
   const dispatch = useDispatch();
 
   const [refreshing, setRefreshing] = useState(false);
-
-  const GetUserApiData = async () => {
-    try {
-      const response = await GetUserApi(token);
-      dispatch(profileData(response?.data));
-    } catch (error) {
-      console.error('Error fetching user data', error);
-    }
-  };
-
   const GetProfileImage = async () => {
     try {
       const response = await GetClientData(token, id);
@@ -96,7 +87,6 @@ const HomeScreen = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    GetUserApiData();
     GetProfileImage();
     FetchAppointmentData()
       .then(() => {
@@ -105,10 +95,6 @@ const HomeScreen = () => {
       .catch(() => {
         setRefreshing(false);
       });
-  }, []);
-
-  useEffect(() => {
-    tokenId && GetUserApiData();
   }, []);
 
   const handleGoToChallenge = () => {
@@ -144,7 +130,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
 
           <ScrollView
-            contentContainerStyle={{paddingBottom: 90}}
+            contentContainerStyle={{paddingBottom: 100}}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

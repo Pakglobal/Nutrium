@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: scale(16),
+    paddingHorizontal: scale(8),
     paddingBottom: verticalScale(15),
     paddingTop: verticalScale(10),
     backgroundColor: Color.white,

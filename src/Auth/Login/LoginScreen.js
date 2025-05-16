@@ -28,8 +28,6 @@ import CustomShadow from '../../Components/CustomShadow';
 import CustomLoader from '../../Components/CustomLoader';
 import CustomAlertBox from '../../Components/CustomAlertBox';
 
-const height = Dimensions.get('screen').height;
-
 const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -125,14 +123,7 @@ const LoginScreen = () => {
       setLoading(true);
       const response = await Login(body);
 
-      setLoginAlert(response?.message);
-      setAlertType('success');
-      setAlertVisible(true);
-
-      if (
-        response?.message === 'User not found.' ||
-        response?.message === 'Invalid Credentials'
-      ) {
+      if (response?.message) {
         setLoginAlert(response?.message);
         setAlertType('error');
         setAlertVisible(true);
@@ -270,7 +261,7 @@ const LoginScreen = () => {
               style={{alignSelf: 'center', marginTop: verticalScale(50)}}
             />
 
-            <View style={{paddingHorizontal: scale(16)}}>
+            <View style={{paddingHorizontal: scale(8)}}>
               <NutriumLogo
                 width={'100%'}
                 height={scale(30)}
@@ -493,7 +484,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: scale(16),
+    paddingHorizontal: scale(8),
     paddingBottom: verticalScale(15),
     paddingTop: verticalScale(10),
     backgroundColor: Color.white,

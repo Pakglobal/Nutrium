@@ -1,19 +1,18 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Modal,
   FlatList,
   SafeAreaView,
+  AppState,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import CalenderHeader from '../../../../Components/CalenderHeader';
 import {Color} from '../../../../assets/styles/Colors';
 import PhysicalActivity from '../../../../Components/PhysicalActivity';
-import {useStepTracking} from '../../../../Components/StepTrackingService';
 import {
   DeletePhysicalActivity,
   GetPhysicalActivityDetails,
@@ -22,7 +21,6 @@ import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import OnOffFunctionality from '../../../../Components/OnOffFunctionality';
 import Header from '../../../../Components/Header';
-import {ShadowValues} from '../../../../assets/styles/Shadow';
 import {Font} from '../../../../assets/styles/Fonts';
 import ModalComponent from '../../../../Components/ModalComponent';
 import CustomShadow from '../../../../Components/CustomShadow';
@@ -30,7 +28,6 @@ import CustomLoader from '../../../../Components/CustomLoader';
 
 const PhysicalActivityScreen = () => {
   const navigation = useNavigation();
-  const {steps, calories, workouts, currentDay} = useStepTracking();
 
   const [dayOffset, setDayOffset] = useState(0);
   const [physicalActivity, setPhysicalActivity] = useState({
@@ -39,8 +36,13 @@ const PhysicalActivityScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
+  const [highlightEdit, setHighlightEdit] = useState(false);
+  const [highlightCancel, setHighlightCancel] = useState(false);
+
+  const appState = useRef(AppState.currentState);
+  const shouldRefresh = useRef(false);
+  const refreshTimerRef = useRef(null);
 
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
@@ -67,30 +69,82 @@ const PhysicalActivityScreen = () => {
     })}`;
   };
 
-  const fetchPhysicalActivityData = useCallback(async () => {
-    if (!token || !id) return;
+  const fetchPhysicalActivityData = useCallback(
+    async (showLoading = false) => {
+      if (!token || !id) return;
 
-    setLoading(true);
-    try {
-      const response = await GetPhysicalActivityDetails(token, id);
-      if (response?.success === true) {
-        setPhysicalActivity(response?.data);
-      } else {
-        console.log(response?.message || 'Failed to fetch activity data');
+      if (showLoading) {
+        setLoading(true);
       }
-    } catch (error) {
-      console.error('Error fetching physical activity data:', error);
-      console.log('An error occurred while fetching activity data');
-    } finally {
-      setLoading(false);
-    }
-  }, [token, id]);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchPhysicalActivityData();
-    }, [fetchPhysicalActivityData]),
+      try {
+        const response = await GetPhysicalActivityDetails(token, id);
+        if (response?.success === true) {
+          setPhysicalActivity(response?.data);
+        } else {
+          console.log(response?.message || 'Failed to fetch activity data');
+        }
+      } catch (error) {
+        console.error('Error fetching physical activity data:', error);
+        console.log('An error occurred while fetching activity data');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token, id],
   );
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        fetchPhysicalActivityData();
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      fetchPhysicalActivityData();
+
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+      }
+
+      refreshTimerRef.current = setTimeout(() => {
+        fetchPhysicalActivityData();
+      }, 300);
+    });
+
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      shouldRefresh.current = true;
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+      }
+    });
+
+    return () => {
+      unsubscribeFocus();
+      unsubscribeBlur();
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+      }
+    };
+  }, [navigation, fetchPhysicalActivityData]);
+
+  useEffect(() => {
+    fetchPhysicalActivityData(true);
+  }, [dayOffset]);
 
   const formatDate = date => {
     const activityDate = new Date(date);
@@ -113,7 +167,12 @@ const PhysicalActivityScreen = () => {
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
+    setHighlightEdit(true);
+    setTimeout(() => {
+      setHighlightEdit(false);
+    }, 2000);
+
     if (!selectedEntry) {
       console.log('No entry selected for editing');
       return;
@@ -128,14 +187,22 @@ const PhysicalActivityScreen = () => {
   };
 
   const handleDelete = async () => {
-    setModalVisible(false);
-
     if (!selectedEntry?.id) {
       console.log('No entry selected for deletion');
+      setModalVisible(false);
       return;
     }
 
-    setLoading(true);
+    const updatedActivities = physicalActivity.physicalActivity.filter(
+      activity => activity._id !== selectedEntry.id,
+    );
+
+    setPhysicalActivity(prevState => ({
+      ...prevState,
+      physicalActivity: updatedActivities,
+    }));
+
+    setModalVisible(false);
 
     try {
       const payload = {
@@ -146,16 +213,15 @@ const PhysicalActivityScreen = () => {
       const response = await DeletePhysicalActivity(payload);
 
       if (response?.success === true) {
-        await fetchPhysicalActivityData();
         console.log('Activity deleted successfully');
       } else {
         console.log(response?.message || 'Failed to delete activity');
+        await fetchPhysicalActivityData(true);
       }
     } catch (error) {
       console.error('Error deleting activity:', error);
       console.log('An error occurred while deleting the activity');
-    } finally {
-      setLoading(false);
+      await fetchPhysicalActivityData(true);
     }
   };
 
@@ -212,10 +278,10 @@ const PhysicalActivityScreen = () => {
   };
 
   const renderActivityItem = ({item}) => (
-    <View style={{marginTop: scale(15), marginHorizontal: scale(16)}}>
+    <View style={{marginTop: scale(10), paddingHorizontal: scale(8)}}>
       <CustomShadow color={Color.lightgray}>
         <View style={styles.entryItem}>
-          <View style={{width: '60%'}}>
+          <View style={{width: '60%', paddingRight: scale(2)}}>
             <Text style={styles.upFont}>{item?.activity}</Text>
             <Text style={styles.downFont}>{formatDate(item?.date)}</Text>
           </View>
@@ -245,20 +311,13 @@ const PhysicalActivityScreen = () => {
     </View>
   );
 
-  const renderActionModal = () => (
-    <ModalComponent
-      visible={modalVisible}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      deleteLoading={deleteLoading}
-      setModalVisible={() => setModalVisible(false)}
-      modalstyle={{
-        position: 'absolute',
-        right: 20,
-        top: menuPosition.y - 80,
-      }}
-    />
-  );
+  const handleCancel = async () => {
+    setHighlightCancel(true);
+    setTimeout(() => {
+      setHighlightCancel(false);
+    }, 2000);
+    setModalVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -308,7 +367,7 @@ const PhysicalActivityScreen = () => {
 
       {loading ? (
         <View style={styles.entriesContainer}>
-          <CustomLoader style={{marginTop: verticalScale(25)}} />
+          <CustomLoader style={{marginTop: verticalScale(25)}} size={'small'} />
         </View>
       ) : (
         <View style={styles.entriesContainer}>
@@ -323,7 +382,23 @@ const PhysicalActivityScreen = () => {
         </View>
       )}
 
-      {renderActionModal()}
+      <ModalComponent
+        visible={modalVisible}
+        highlightEdit={highlightEdit}
+        highlightCancel={highlightCancel}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        modalstyle={{
+          top: menuPosition.y,
+          left: menuPosition.x - 140,
+        }}
+        cancelmodalstyle={{
+          top: menuPosition.y,
+          left: menuPosition.x - 195,
+        }}
+        handleCancel={handleCancel}
+        setModalVisible={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -334,7 +409,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   contentContainer: {
-    paddingHorizontal: scale(16),
+    paddingHorizontal: scale(10),
   },
   shadow: {
     borderRadius: scale(10),
@@ -345,7 +420,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(5),
   },
   flatListContent: {
-    paddingBottom: scale(20),
+    paddingBottom: scale(10),
   },
   shadowContainer: {
     width: '100%',
@@ -368,7 +443,7 @@ const styles = StyleSheet.create({
   emptyStateText: {
     textAlign: 'center',
     color: Color.textColor,
-    fontSize: scale(12),
+    fontSize: scale(13),
     fontFamily: Font?.PoppinsMedium,
   },
   modalOptionContainer: {

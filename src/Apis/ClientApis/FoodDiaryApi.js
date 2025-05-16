@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
 import {
   ADD_MEAL_IN_FOOD,
   DELETE_MEAL_IN_FOOD,

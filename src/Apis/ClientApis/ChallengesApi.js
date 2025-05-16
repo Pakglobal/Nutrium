@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
 import {
   CHALLENGE_ACCEPT_REJECT,
   CREATE_CHALLENGE,

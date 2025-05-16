@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
 import {
   DELETE_PHYSICAL_ACTIVITY,
   GET_PHYSICAL_ACTIVITY_DETAILS,

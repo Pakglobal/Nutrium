@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
 import {GET_MEASUREMENT_DATA} from '../AllAPI/API';
 
 export const GetMeasurementData = async (token, id) => {

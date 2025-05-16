@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
 import {GET_ALL_CLIENT_DATA, GET_CLIENT_DATA} from '../AllAPI/API';
 
 export const GetAllClientData = async token => {

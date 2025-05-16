@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {BASE_URL} from '../Base_Url/Baseurl';
 import {
   DELETE_WATER_INTAKE,
   GET_WATER_INTAKE_DETAILS,

@@ -337,6 +337,7 @@ const LogMeal = () => {
               <Image
                 source={{ uri: filePath.assets[0].uri }}
                 style={styles.img}
+                resizeMode='stretch'
               />
             ) : null}
           </View>
@@ -438,9 +439,7 @@ export default LogMeal;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    borderRadius: scale(10),
-    borderTopLeftRadius: scale(20),
-    borderTopRightRadius: scale(20),
+    borderRadius: scale(8),
     borderColor: '#EEE',
     borderWidth: 1,
     backgroundColor: Color?.white,
@@ -453,9 +452,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(15),
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: scale(8),
     justifyContent: 'space-between',
-    borderTopLeftRadius: scale(10),
-    borderTopRightRadius: scale(10),
   },
   time: {
     marginLeft: scale(8),
@@ -477,7 +475,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   commentContainer: {
-    borderRadius: scale(10),
+    borderRadius: scale(8),
     backgroundColor: Color.white,
     padding: scale(10),
     marginTop: verticalScale(15),
@@ -488,7 +486,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     paddingHorizontal: scale(20),
     paddingVertical: verticalScale(40),
-    borderRadius: scale(10),
+    borderRadius: scale(8),
   },
 
 

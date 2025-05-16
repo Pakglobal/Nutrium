@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scale(20),
-    borderRadius: scale(10),
+    borderRadius: scale(8),
     marginVertical: verticalScale(5),
   },
   cardContent: {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { cloneElement, useEffect, useState } from 'react';
 import {
   Image,
   Text,
@@ -17,13 +17,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
-  chatList,
   guestLoginData,
   loginData,
   setGuestToken,
   setToken,
 } from '../redux/user';
-import { setImage, updateUserInfo } from '../redux/client';
+import { setImage } from '../redux/client';
 import { GetMeasurementData } from '../Apis/ClientApis/MeasurementApi';
 import {
   GetPhysicalActivities,
@@ -35,15 +34,17 @@ import {
   GetGoalsApiData,
   GetRecommendationApiData,
 } from '../Apis/ClientApis/RecommendationApi';
-import IconStyle, { IconBg, IconPadding } from '../assets/styles/Icon';
 import { Font } from '../assets/styles/Fonts';
 import CustomLoader from '../Components/CustomLoader';
+import { GetUserApi } from '../Apis/ClientApis/ProfileApi';
 
 const ClientDrawerContent = props => {
   const { navigation } = props;
   const dispatch = useDispatch();
 
   const [asyncLoading, setAsyncLoading] = useState(false);
+  const [activeScreen, setActiveScreen] = useState('');
+  const [profileInfo, setProfileInfo] = useState([]);
 
   const userInfo = useSelector(state => state.user?.userInfo);
   const guestInfo = useSelector(state => state.user?.guestUserData);
@@ -61,7 +62,6 @@ const ClientDrawerContent = props => {
     userInfo?.userData?.image ||
     guestInfo?.userData?.image;
 
-  const profileInfo = useSelector(state => state?.user?.profileInfo);
   const profileName = profileInfo?.fullName;
   const profileImage = profileInfo?.image
     ? { uri: profileInfo?.image }
@@ -78,67 +78,198 @@ const ClientDrawerContent = props => {
     userImgSource = { uri: userImage };
   } else {
     userImgSource =
-      userInfo?.gender === 'Female'
+      user?.gender === 'Female'
         ? require('../assets/Images/woman.png')
         : require('../assets/Images/man.png');
   }
 
+  const mainMenuItems = [
+    {
+      screenName: 'foodDiary',
+      label: 'Food diary',
+      icon: <Octicons name="note" size={scale(22)} />,
+    },
+    {
+      screenName: 'waterIntake',
+      label: 'Water intake',
+      icon: <Ionicons name="water-sharp" size={scale(22)} />,
+    },
+    {
+      screenName: 'physicalActivity',
+      label: 'Physical activity',
+      icon: <FontAwesome5 name="running" size={scale(22)} />,
+    },
+    {
+      screenName: 'measurements',
+      label: 'Measurements',
+      icon: <MaterialCommunityIcons name="calendar-text" size={scale(22)} />,
+    },
+    {
+      screenName: 'shoppingLists',
+      label: 'Shopping lists',
+      icon: <MaterialIcons name="shopping-cart" size={scale(22)} />,
+    },
+  ];
+
+  console.log('user', profileInfo)
+
+  const AdminInfo = { image: profileInfo?.image, name: profileInfo?.fullName, otherUserId: profileInfo?._id }
+
+  const practitionerMenuItems = profileInfo
+    ? [
+      {
+        screenName: 'practitioner',
+        label: profileName,
+        icon: <Image source={profileImage} style={styles.avatar} />,
+        params: { data: profileInfo },
+      },
+      {
+        screenName: 'messages',
+        label: 'Messages',
+        icon: <MaterialCommunityIcons name="email" size={scale(22)} />,
+        params: { data: AdminInfo },
+      },
+    ]
+    : [];
+
+  const handleNavigation = (screenName, params = {}) => {
+    setActiveScreen(screenName);
+    setTimeout(() => {
+      navigation.navigate(screenName, params);
+      setTimeout(() => {
+        props.navigation.closeDrawer();
+        setActiveScreen('');
+      }, 300);
+    }, 100);
+  };
+
+  const renderMenuItem = ({ screenName, label, icon, onPress, params }) => (
+    <TouchableOpacity
+      key={screenName}
+      style={getMenuItemStyle(screenName)}
+      onPress={onPress ? onPress : () => handleNavigation(screenName, params)}>
+      <View style={IconBg}>
+        {cloneElement(icon, { color: getIconColor(screenName) })}
+      </View>
+      <Text style={getTextStyle(screenName)}>{label}</Text>
+      {screenName === 'syncInfo' && asyncLoading && (
+        <View style={{ position: 'absolute', right: 0 }}>
+          <CustomLoader size={'small'} />
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+
   const handleSignOut = async () => {
+    // First close the drawer
     props.navigation.closeDrawer();
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Sign Out',
-        style: 'destructive',
-        onPress: async () => {
-          let success = false;
 
-          try {
-            if (guestInfo) {
-              dispatch(setGuestToken());
-              dispatch(guestLoginData());
-              success = true;
-            } else {
-              dispatch(loginData());
-              dispatch(setImage(''));
-              dispatch(setToken());
-              // dispatch(chatList([]));
-              success = true;
-            }
-
-
-          } catch (error) {
-            console.error('Sign out error:', error);
-            Alert.alert('Error', 'Something went wrong. Please try again.', [
-              { text: 'OK' },
-            ]);
-          }
+    // Add a slight delay before showing the alert to ensure drawer is closed
+    setTimeout(() => {
+      Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
         },
-      },
-    ]);
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (guestInfo) {
+                dispatch(setGuestToken());
+                dispatch(guestLoginData());
+              } else {
+                dispatch(loginData());
+                dispatch(setImage(''));
+                dispatch(setToken());
+              }
+            } catch (error) {
+              console.error('Sign out error:', error);
+              Alert.alert('Error', 'Something went wrong. Please try again.', [
+                { text: 'OK' },
+              ]);
+            }
+          },
+        },
+      ]);
+    }, 300);
   };
 
   const handleSyncInfo = async () => {
+    if (!token || !id) {
+      Alert.alert('Error', 'Missing user information. Please log in again.');
+      return;
+    }
     setAsyncLoading(true);
     try {
-      await GetMeasurementData(token, id),
-        await GetPhysicalActivityDetails(token, id);
+      await GetMeasurementData(token, id);
+      await GetPhysicalActivityDetails(token, id);
       await GetPhysicalActivities();
       await GetQuickAccess(token, id);
       await GetRecommendationApiData(token, id);
       await GetFoodAvoidApiData(token, id);
       await GetGoalsApiData(token, id);
-      setAsyncLoading(false);
     } catch (error) {
       console.error('Sync Error:', error);
+      Alert.alert('Sync Error', 'Failed to sync data. Please try again later.');
+    } finally {
       setAsyncLoading(false);
     }
-
-    setAsyncLoading(false);
   };
+
+  const GetUserApiData = async () => {
+    try {
+      const response = await GetUserApi(token);
+      setProfileInfo(response?.data);
+    } catch (error) {
+      console.error('Error fetching user data', error);
+    }
+  };
+
+  useEffect(() => {
+    GetUserApiData();
+  }, []);
+
+  const getMenuItemStyle = screenName =>
+    activeScreen === screenName
+      ? [styles.drawerItem, styles.activeDrawerItem]
+      : styles.drawerItem;
+
+  const getTextStyle = screenName =>
+    activeScreen === screenName
+      ? [styles.drawerItemText, styles.activeDrawerItemText]
+      : styles.drawerItemText;
+
+  const getIconColor = screenName =>
+    activeScreen === screenName ? Color.primaryColor : Color.textColor;
+
+  const IconBg = {
+    height: scale(25),
+    width: scale(25),
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const IconPadding = {
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(7),
+  };
+
+  const otherMenuItems = [
+    {
+      screenName: 'syncInfo',
+      label: 'Sync all info',
+      icon: <Octicons name="sync" size={scale(22)} />,
+      onPress: handleSyncInfo,
+    },
+    {
+      screenName: 'signOut',
+      label: 'Sign out',
+      icon: <MaterialIcons name="logout" size={scale(22)} />,
+      onPress: handleSignOut,
+    },
+  ];
 
   return (
     <View style={styles.drawerContainer}>
@@ -157,19 +288,11 @@ const ClientDrawerContent = props => {
       <View style={styles.drawerHeader}>
         <TouchableOpacity
           style={{ flexDirection: 'row', alignItems: 'center' }}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('mainProfile', { data: user });
-          }}>
+          onPress={() => handleNavigation('mainProfile', { data: user })}>
           <Image source={userImgSource} style={styles.avatar} />
           <Text style={styles.drawerItemText}>{userName}</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('settings');
-          }}>
+        <TouchableOpacity onPress={() => handleNavigation('settings')}>
           <Ionicons
             style={IconPadding}
             name="settings-sharp"
@@ -180,147 +303,22 @@ const ClientDrawerContent = props => {
       </View>
 
       <View style={{ marginTop: verticalScale(8) }}>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('foodDiary');
-          }}>
-          <View style={IconBg}>
-            <Octicons
-              name="note"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
-            />
-          </View>
-          <Text style={styles.drawerItemText}>Food diary</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('waterIntake');
-          }}>
-          <View style={IconBg}>
-            <Ionicons
-              name="water-sharp"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
-            />
-          </View>
-          <Text style={styles.drawerItemText}>Water intake</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('physicalActivity');
-          }}>
-          <View style={IconBg}>
-            <FontAwesome5
-              name="running"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
-            />
-          </View>
-          <Text style={styles.drawerItemText}>Physical activity</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('measurements');
-          }}>
-          <View style={IconBg}>
-            <MaterialCommunityIcons
-              name="calendar-text"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
-            />
-          </View>
-          <Text style={styles.drawerItemText}>Measurements</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            props.navigation.closeDrawer();
-            navigation.navigate('shoppingLists');
-          }}>
-          <View style={IconBg}>
-            <MaterialIcons
-              name="shopping-cart"
-              size={IconStyle.drawerIconSize}
-              color={IconStyle.drawerIconColor}
-            />
-          </View>
-          <Text style={styles.drawerItemText}>Shopping lists</Text>
-        </TouchableOpacity>
+        {mainMenuItems.map(renderMenuItem)}
       </View>
 
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Practitioner</Text>
-      </View>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => {
-          props.navigation.closeDrawer();
-          navigation.navigate('practitioner', { data: profileInfo });
-        }}>
-        <Image source={profileImage} style={styles.avatar} />
-        <Text style={styles.drawerItemText}>{profileName}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => {
-          props.navigation.closeDrawer();
-          navigation.navigate('messages', { data: user });
-        }}>
-        <View style={IconBg}>
-          <MaterialCommunityIcons
-            name="email"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
+      {profileInfo && (
+        <View>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Practitioner</Text>
+          </View>
+          {practitionerMenuItems.map(renderMenuItem)}
         </View>
-        <Text style={styles.drawerItemText}>Messages</Text>
-      </TouchableOpacity>
+      )}
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Other</Text>
       </View>
-
-      <TouchableOpacity style={styles.drawerItem} onPress={handleSyncInfo}>
-        <View style={IconBg}>
-          <Octicons
-            name="sync"
-            size={IconStyle.drawerIconSize}
-            color={IconStyle.drawerIconColor}
-          />
-        </View>
-        <Text style={styles.drawerItemText}>Sync all info</Text>
-        {asyncLoading && (
-          <View style={{ position: 'absolute', right: 0 }}>
-            <CustomLoader size={'small'} />
-          </View>
-        )}
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.drawerItem} onPress={handleSignOut}>
-        <View style={IconBg}>
-          <MaterialIcons
-            name="logout"
-            color={IconStyle.drawerIconColor}
-            size={IconStyle.drawerIconSize}
-          />
-        </View>
-        <Text style={styles.drawerItemText}>Sign out</Text>
-      </TouchableOpacity>
+      {otherMenuItems.map(renderMenuItem)}
     </View>
   );
 };
@@ -349,21 +347,24 @@ const styles = StyleSheet.create({
     height: scale(37),
     borderRadius: scale(20),
   },
-  settingsButton: {
-    padding: scale(5),
-  },
   drawerItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: verticalScale(8),
     paddingHorizontal: scale(10),
   },
+  activeDrawerItem: {
+    backgroundColor: Color.primaryLight,
+    borderRadius: scale(8),
+  },
   drawerItemText: {
-    marginLeft: 15,
-    fontSize: scale(14),
+    marginLeft: scale(15),
+    fontSize: scale(13),
     color: Color.textColor,
-    fontWeight: '500',
     fontFamily: Font.PoppinsMedium,
+  },
+  activeDrawerItemText: {
+    color: Color.primaryColor,
   },
   sectionHeader: {
     paddingTop: verticalScale(14),
@@ -371,9 +372,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: scale(18),
-    fontWeight: '500',
     color: Color.textColor,
-    fontFamily: Font.Poppins,
+    fontFamily: Font.PoppinsMedium,
   },
 });
 

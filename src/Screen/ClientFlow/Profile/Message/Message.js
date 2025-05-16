@@ -8,13 +8,12 @@ const Message = ({ route }) => {
   const navigation = useNavigation();
   const getId = useSelector(state => state?.user?.token);
   const userId = getId?.id;
-  // const otherUserId = route?.params?.data?._id;
-  const userName = route?.params?.data?.fullName;
-  const userImage = route?.params?.data?.image;
-  const profileInfo = useSelector(state => state?.user?.profileInfo);
-  const otherUserId = profileInfo?._id;
+  const adminData = route?.params?.data
+  const userName = adminData?.name;
+  const userImage = adminData?.image;
+  const otherUserId = adminData?.otherUserId
 
-  console.log('Client===================', getId, "userId", userId, userName, otherUserId)
+  console.log('Client===================', userId, otherUserId)
 
 
   return (
@@ -28,7 +27,7 @@ const Message = ({ route }) => {
       containerStyle={{ backgroundColor: '#f9f9f9' }}
     />
 
-    
+
   );
 };
 

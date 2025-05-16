@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,18 +9,18 @@ import {
   FlatList,
   RefreshControl,
 } from 'react-native';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Color} from '../../../assets/styles/Colors';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { Color } from '../../../assets/styles/Colors';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {
   GetAllClientData,
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
-import {clientInfoData} from '../../../redux/admin';
-import {connectSocket} from '../../../Components/SocketService';
+import { clientInfoData } from '../../../redux/admin';
+import { connectSocket } from '../../../Components/SocketService';
 import CustomLoader from '../../../Components/CustomLoader';
 
 const MessageScreen = () => {
@@ -63,7 +63,8 @@ const MessageScreen = () => {
   const handleClientNavigate = async item => {
     try {
       const response = await GetClientData(token, item?._id);
-      navigation.navigate('Messages', {response});
+      const clientData = { image: response[0]?.image, name: response[0]?.fullName, otherUserId: response[0]?._id, userId: response[0]?.userId }
+      navigation.navigate('Messages', { clientData });
     } catch (error) {
       console.error('Error navigating to client messages:', error);
     }
@@ -77,7 +78,7 @@ const MessageScreen = () => {
   return (
     <SafeAreaView>
       {loading ? (
-        <CustomLoader style={{marginTop: verticalScale(10)}} />
+        <CustomLoader style={{ marginTop: verticalScale(10) }} />
       ) : (
         <View
           style={{
@@ -89,14 +90,14 @@ const MessageScreen = () => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             data={clientData}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.messageCard}
                 onPress={() => handleClientNavigate(item)}
                 key={item?._id}>
                 <View style={styles.messageCardContainer}>
                   {item?.image ? (
-                    <Image source={{uri: item?.image}} style={styles.avatar} />
+                    <Image source={{ uri: item?.image }} style={styles.avatar} />
                   ) : (
                     <Image
                       source={

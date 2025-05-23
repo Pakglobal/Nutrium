@@ -8,12 +8,13 @@ import admin from './admin';
 import client from './client';
 import stepTracker from './stepTracker';
 import unit from './unit';
+import chat from './chat';
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitleList: ['user', 'stepTracker'],
-  // timeout: 0,
+  whitleList: ['user', 'stepTracker', 'chat'],
+  timeout: 0,
 };
 
 const rootReducer = combineReducers({
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   client: client,
   stepTracker: stepTracker,
   unit: unit,
+  chat: chat,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -6,36 +6,32 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
-  ScrollView,
   FlatList,
   RefreshControl,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../assets/styles/Colors';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {GetAppointmentData} from '../../../Apis/AdminScreenApi/AppointmentApi';
-import {appointmentData} from '../../../redux/admin';
 import moment from 'moment';
 import CustomLoader from '../../../Components/CustomLoader';
 
-const AppointmentScreen = ({selected, setSelected}) => {
+const AppointmentScreen = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [selected, setSelected] = useState(0);
+  const [appointmentData, setAppointmentData] = useState([]);
 
   const token = useSelector(state => state?.user?.userInfo?.token);
-  const getAllAppointmentData = useSelector(
-    state => state?.admin?.appointmentInfo,
-  );
 
   const fetchData = async () => {
     if (!token) return;
     try {
       setLoading(true);
       const response = await GetAppointmentData(token);
-      dispatch(appointmentData(response || {}));
+      setAppointmentData(response || {});
       setLoading(false);
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -74,13 +70,13 @@ const AppointmentScreen = ({selected, setSelected}) => {
 
   const groupedAppointments = useMemo(() => {
     const filteredAppointments =
-      getAllAppointmentData?.getallappointments?.filter(item =>
+      appointmentData?.getallappointments?.filter(item =>
         selected === 0
           ? new Date(item?.start) < currentDate
           : new Date(item?.start) >= currentDate,
       ) || [];
     return groupAppointmentsByDate(filteredAppointments);
-  }, [getAllAppointmentData, selected, currentDate, groupAppointmentsByDate]);
+  }, [appointmentData, selected, currentDate, groupAppointmentsByDate]);
 
   const handleSelectedOption = useCallback(
     id => setSelected(id),
@@ -130,7 +126,6 @@ const AppointmentScreen = ({selected, setSelected}) => {
       ) : (
         <View
           style={{
-            height: '89%',
             marginTop: verticalScale(10),
           }}>
           {groupedAppointments &&

@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {debounce} from 'lodash';
 import InviteFriendsModal from './InviteFriendsModal';
 import {useSelector} from 'react-redux';
 import {

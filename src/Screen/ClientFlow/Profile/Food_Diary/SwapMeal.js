@@ -67,7 +67,6 @@ const SwapMeal = ({route}) => {
       <Header
         screenheader={true}
         screenName={'Log your meal'}
-        // screenName={'Swap a food'}
         plus={false}
         handleSave={() => handleSave()}
       />

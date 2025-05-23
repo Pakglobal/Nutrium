@@ -208,7 +208,6 @@ const styles = StyleSheet.create({
     color: Color.textColor,
     width: '85%',
     marginHorizontal: scale(8),
-    // fontFamily:Font?.PoppinsMedium,
     marginTop: verticalScale(2),
     height: scale(35),
   },

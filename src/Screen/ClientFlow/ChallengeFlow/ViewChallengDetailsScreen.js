@@ -44,7 +44,6 @@ const ViewChallengDetailsScreen = ({route}) => {
         challenge?._id,
         period,
       );
-      console.log('API Response:', response);
       if (response?.leaderboard && Array.isArray(response.leaderboard)) {
         setLeaderbordData(
           response.leaderboard.map(item => ({

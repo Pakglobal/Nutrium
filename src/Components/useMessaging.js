@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
   AppState,
   BackHandler,
+  Alert,
 } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {
@@ -29,20 +30,15 @@ import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import {
-  scale,
-  scale as scaleSize,
-  verticalScale,
-} from 'react-native-size-matters';
+import {scale} from 'react-native-size-matters';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
 import {Color} from '../assets/styles/Colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {chatList} from '../redux/user';
-import useAndroidBack from '../Navigation/useAndroidBack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Font} from '../assets/styles/Fonts';
-import { BASE_URL } from '../Apis/AllAPI/API';
+import {BASE_URL} from '../Apis/AllAPI/API';
+import {useDispatch} from 'react-redux';
+import Clipboard from '@react-native-clipboard/clipboard';
+import PushNotification, {Importance} from 'react-native-push-notification';
 
 const MessageComponent = ({
   userId,
@@ -50,12 +46,11 @@ const MessageComponent = ({
   showHeader = true,
   containerStyle,
   image,
-  gender,
   userName,
 }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const lastMSG = useSelector(state => state?.user?.chat);
+
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -66,20 +61,16 @@ const MessageComponent = ({
   const [uploadingFiles, setUploadingFiles] = useState({});
   const [appState, setAppState] = useState(AppState.currentState);
   const [expandedMessages, setExpandedMessages] = useState({});
-  const profileInfo = useSelector(state => state?.user?.profileInfo);
-  const profileName = userName;
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   const scale = useRef(new Animated.Value(1)).current;
   const lastScale = useRef(1);
   const offsetX = useRef(new Animated.Value(0)).current;
   const offsetY = useRef(new Animated.Value(0)).current;
   const lastX = useRef(0);
   const lastY = useRef(0);
-
-  const userImage = image
-    ? {uri: image}
-    : gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
 
   const panResponder = useRef(
     PanResponder.create({
@@ -124,6 +115,12 @@ const MessageComponent = ({
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
+        if (selectedMessage || isEditing) {
+          setSelectedMessage(null);
+          setIsEditing(false);
+          setText('');
+          return true;
+        }
         if (navigation.canGoBack()) {
           navigation.goBack();
         }
@@ -131,7 +128,7 @@ const MessageComponent = ({
       },
     );
     return () => backHandler.remove();
-  }, [navigation, dispatch]);
+  }, [navigation, dispatch, selectedMessage, isEditing]);
 
   const fetchChatHistory = () => {
     setLoading(true);
@@ -145,6 +142,7 @@ const MessageComponent = ({
         ...msg,
         seen: msg.seen || false,
         tempId: msg.tempId || null,
+        isEdited: msg.isEdited || false,
       }));
       setMessages(prevMessages => {
         const mergedMessages = [...updatedHistory];
@@ -154,6 +152,7 @@ const MessageComponent = ({
           );
           if (existingMsg) {
             existingMsg.seen = msg.seen;
+            existingMsg.isEdited = msg.isEdited;
           } else {
             mergedMessages.push(msg);
           }
@@ -182,24 +181,68 @@ const MessageComponent = ({
     }
   };
 
+  const displayNotification = async remoteMessage => {
+    try {
+      const title =
+        remoteMessage.notification?.title ||
+        remoteMessage.data?.title ||
+        'New Message';
+      const body =
+        remoteMessage.notification?.body ||
+        remoteMessage.data?.body ||
+        'You have a new message';
+
+      PushNotification.localNotification({
+        channelId: 'default',
+        title,
+        message: body,
+        userInfo: remoteMessage.data || {},
+        playSound: true,
+        soundName: 'default',
+        importance: Importance.HIGH,
+        vibrate: true,
+      });
+    } catch (error) {
+      console.error('Display notification error:', error);
+    }
+  };
+
   const messageHandler = newMessage => {
     if (!newMessage?._id || !newMessage?.senderId || !newMessage?.receiverId) {
       console.error('Invalid message received:', newMessage);
       return;
     }
+
+    if (newMessage.senderId !== userId && newMessage.receiverId === userId) {
+      displayNotification({
+        notification: {
+          title: `New Message from ${userName || 'User'}`,
+          body: newMessage.message || 'You have a new message',
+        },
+        data: {
+          messageId: newMessage._id,
+          senderId: newMessage.senderId,
+          receiverId: newMessage.receiverId,
+        },
+      });
+    }
+
     setMessages(prevMessages => {
       const safeNewMessage = {
         ...newMessage,
         tempId: newMessage.tempId || null,
         seen: newMessage.seen || false,
+        isEdited: newMessage.isEdited || false,
       };
-      const messageExists = prevMessages.some(
+
+      const messageExists = prevMessages.find(
         msg =>
           (msg._id && msg._id === safeNewMessage._id) ||
           (msg.tempId &&
             safeNewMessage.tempId &&
             msg.tempId === safeNewMessage.tempId),
       );
+
       if (messageExists) {
         return prevMessages.map(msg =>
           (msg._id && msg._id === safeNewMessage._id) ||
@@ -210,12 +253,15 @@ const MessageComponent = ({
                 ...safeNewMessage,
                 tempId: msg.tempId || safeNewMessage.tempId,
                 seen: msg.seen,
+                isEdited: msg.isEdited,
               }
             : msg,
         );
       }
+
       return [safeNewMessage, ...prevMessages];
     });
+
     if (
       newMessage?.senderId !== userId &&
       newMessage?.receiverId === userId &&
@@ -254,6 +300,23 @@ const MessageComponent = ({
     socket.on('receiveMessage', messageHandler);
     socket.on('messagesSeen', messagesSeenHandler);
 
+    //   socket.on('messageEdited', ({ messageId, newMessage, updatedAt }) => {
+    //   setMessages(prevMessages =>
+    //     prevMessages.map(msg =>
+    //       msg._id === messageId
+    //         ? { ...msg, message: newMessage, updatedAt, isEdited: true }
+    //         : msg,
+    //     ),
+    //   );
+    // });
+
+    // // Listener for deleted messages
+    // socket.on('messageDeleted', ({ messageId }) => {
+    //   setMessages(prevMessages =>
+    //     prevMessages.filter(msg => msg._id !== messageId),
+    //   );
+    // });
+
     const handleAppStateChange = nextAppState => {
       setAppState(nextAppState);
       if (nextAppState === 'active') {
@@ -288,7 +351,96 @@ const MessageComponent = ({
 
   const formatTime = isoString => moment(isoString).format('h:mm A');
 
+  // MessageComponent.js
+  // const handleEditMessage = async () => {
+  //   if (!selectedMessage || !text?.trim()) {
+  //     Alert.alert('Error', 'Message cannot be empty');
+  //     return;
+  //   }
+
+  //   try {
+  //     // Update locally first for optimistic UI update
+  //     setMessages(prevMessages =>
+  //       prevMessages.map(msg =>
+  //         msg._id === selectedMessage._id
+  //           ? {
+  //               ...msg,
+  //               message: text.trim(),
+  //               updatedAt: new Date().toISOString(),
+  //               isEdited: true,
+  //             }
+  //           : msg,
+  //       ),
+  //     );
+
+  //     // Send edit request to server
+  //     await editMessage(selectedMessage._id, text.trim(), userId, otherUserId);
+
+  //     setSelectedMessage(null);
+  //     setIsEditing(false);
+  //     setText('');
+  //   } catch (error) {
+  //     console.error('Error editing message:', error);
+  //     Alert.alert('Error', 'Failed to edit message');
+  //     // Revert optimistic update if server request fails
+  //     setMessages(prevMessages =>
+  //       prevMessages.map(msg =>
+  //         msg._id === selectedMessage._id
+  //           ? { ...msg, message: selectedMessage.message, isEdited: selectedMessage.isEdited }
+  //           : msg,
+  //       ),
+  //     );
+  //   }
+  // };
+
+  // const handleDeleteMessage = async () => {
+  //   if (!selectedMessage) return;
+
+  //   try {
+  //     // Update locally first for optimistic UI update
+  //     const messageId = selectedMessage._id;
+  //     setMessages(prevMessages =>
+  //       prevMessages.filter(msg => msg._id !== messageId),
+  //     );
+
+  //     // Send delete request to server
+  //     await deleteMessage(messageId, userId, otherUserId);
+
+  //     setSelectedMessage(null);
+  //     setIsEditing(false);
+  //     setText('');
+  //   } catch (error) {
+  //     console.error('Error deleting message:', error);
+  //     Alert.alert('Error', 'Failed to delete message');
+  //     // Revert optimistic update if server request fails
+  //     fetchChatHistory(); // Re-fetch messages to restore state
+  //   }
+  // };
+
   const handleSendMessage = async (isFilePicker = false) => {
+    if (isEditing && selectedMessage) {
+      if (!text?.trim()) {
+        Alert.alert('Error', 'Message cannot be empty');
+        return;
+      }
+      setMessages(prevMessages =>
+        prevMessages.map(msg =>
+          msg._id === selectedMessage._id
+            ? {
+                ...msg,
+                message: text.trim(),
+                updatedAt: new Date().toISOString(),
+                isEdited: true,
+              }
+            : msg,
+        ),
+      );
+      setSelectedMessage(null);
+      setIsEditing(false);
+      setText('');
+      return;
+    }
+
     removeSelectedFile('');
     setText('');
     if (isFilePicker) {
@@ -342,6 +494,7 @@ const MessageComponent = ({
             createdAt: now,
             isTemp: true,
             seen: false,
+            isEdited: false,
           },
           ...prevMessages,
         ]);
@@ -371,6 +524,7 @@ const MessageComponent = ({
           file: null,
           createdAt: now,
           seen: false,
+          isEdited: false,
         };
         setMessages(prevMessages => [tempMessage, ...prevMessages]);
       }
@@ -420,8 +574,32 @@ const MessageComponent = ({
       throw new Error('Upload failed');
     }
     const json = await response.json();
-    console.log('Upload response:', json);
     return json;
+  };
+
+  const handleEditMessage = () => {
+    if (!selectedMessage || !selectedMessage.message) return;
+    setText(selectedMessage.message);
+    setIsEditing(true);
+  };
+
+  const handleDeleteMessage = () => {
+    if (!selectedMessage) return;
+
+    setMessages(prevMessages =>
+      prevMessages.filter(msg => msg._id !== selectedMessage._id),
+    );
+    setSelectedMessage(null);
+    setIsEditing(false);
+    setText('');
+  };
+
+  const handleCopyMessage = () => {
+    if (!selectedMessage || !selectedMessage.message) return;
+    Clipboard.setString(selectedMessage.message);
+    setSelectedMessage(null);
+    setIsEditing(false);
+    setText('');
   };
 
   const groupMessagesByDate = messages => {
@@ -508,6 +686,7 @@ const MessageComponent = ({
     const isTemp = item._id?.startsWith('temp-');
     const isLongMessage = item?.message?.length > CHARACTER_LIMIT;
     const isExpanded = expandedMessages[item._id] || false;
+    const isSelected = selectedMessage && selectedMessage._id === item._id;
 
     const toggleReadMore = () => {
       setExpandedMessages(prev => ({
@@ -522,10 +701,21 @@ const MessageComponent = ({
         : item?.message;
 
     return (
-      <View
+      <TouchableOpacity
+        onPress={() => {
+          if (isSender) {
+            setSelectedMessage(isSelected ? null : item);
+            if (!isSelected) {
+              setText('');
+              setIsEditing(false);
+            }
+          }
+        }}
+        disabled={!isSender}
         style={[
           styles.messageContainer,
           isSender ? styles.sent : styles.received,
+          isSelected && styles.selectedMessage,
         ]}>
         <View style={styles.messageWrapper}>
           {fileUrl && (
@@ -542,6 +732,7 @@ const MessageComponent = ({
           {item?.message && (
             <View style={styles.textContainer}>
               <Text style={styles.messageText}>{displayedText}</Text>
+              {item.isEdited && <Text style={styles.editedText}>Edited</Text>}
               {isLongMessage && (
                 <TouchableOpacity onPress={toggleReadMore}>
                   <Text style={styles.readMoreText}>
@@ -574,7 +765,7 @@ const MessageComponent = ({
             )}
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -591,6 +782,16 @@ const MessageComponent = ({
     return renderMessage({item});
   };
 
+  const defaultImage = require('../assets/Images/man.png');
+
+  const imageSource =
+    image &&
+    (typeof image === 'string' ||
+      typeof image === 'object' ||
+      typeof image === 'number')
+      ? image
+      : defaultImage;
+
   const renderHeader = () => {
     if (!showHeader) return null;
     return (
@@ -599,13 +800,103 @@ const MessageComponent = ({
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="arrowleft" color={Color.black} size={18} />
           </TouchableOpacity>
-          <Image style={styles.profileImage} source={userImage} />
-          <Text style={styles.backTxt}>{profileName}</Text>
+          <Image
+            style={styles.profileImage}
+            source={
+              typeof imageSource === 'string' ? {uri: imageSource} : imageSource
+            }
+          />
+          <Text style={styles.backTxt}>{userName}</Text>
         </View>
-        <TouchableOpacity style={{marginHorizontal: 16}}>
-          <Feather name="info" color={Color.primaryColor} size={22} />
-        </TouchableOpacity>
+        <View style={styles.headerRight}>
+          <TouchableOpacity
+            disabled={!selectedMessage}
+            onPress={handleCopyMessage}>
+            <Feather
+              name="copy"
+              color={Color.primaryColor}
+              size={22}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            disabled={!selectedMessage}
+            onPress={handleEditMessage}>
+            <Feather
+              name="edit"
+              color={Color.primaryColor}
+              size={22}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            disabled={!selectedMessage}
+            onPress={handleDeleteMessage}>
+            <Feather
+              name="trash-2"
+              color={Color.primaryColor}
+              size={22}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            disabled={!selectedMessage}
+            onPress={() => setInfoModalVisible(true)}>
+            <Feather
+              name="info"
+              color={Color.primaryColor}
+              size={22}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
+    );
+  };
+
+  const renderInfoModal = () => {
+    if (!selectedMessage) return null;
+    return (
+      <Modal
+        visible={infoModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setInfoModalVisible(false)}>
+        <View style={styles.infoModalContainer}>
+          <View style={styles.infoModalContent}>
+            <Text style={styles.infoModalTitle}>Message Details</Text>
+            <Text style={styles.infoModalText}>
+              Sent:{' '}
+              {moment(selectedMessage.createdAt).format('MMM D, YYYY h:mm A')}
+            </Text>
+            <Text style={styles.infoModalText}>
+              Seen:{' '}
+              {selectedMessage.seen
+                ? moment(
+                    selectedMessage.updatedAt || selectedMessage.createdAt,
+                  ).format('MMM D, YYYY h:mm A')
+                : 'Not seen'}
+            </Text>
+            <Text style={styles.infoModalText}>
+              Sender: {selectedMessage.senderId === userId ? 'You' : userName}
+            </Text>
+            {selectedMessage.isEdited && (
+              <Text style={styles.infoModalText}>
+                Edited:{' '}
+                {moment(selectedMessage.updatedAt).format('MMM D, YYYY h:mm A')}
+              </Text>
+            )}
+            <TouchableOpacity
+              style={styles.infoModalButton}
+              onPress={() => {
+                setInfoModalVisible(false);
+                setSelectedMessage(null);
+              }}>
+              <Text style={styles.infoModalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     );
   };
 
@@ -646,30 +937,36 @@ const MessageComponent = ({
             <TouchableOpacity
               style={styles.attachButton}
               onPress={() => handleSendMessage(true)}
-              disabled={fileUploading}>
+              disabled={fileUploading || isEditing}>
               <Ionicons
                 name="attach"
                 size={24}
-                color={fileUploading ? Color.lightgray : Color.gray}
+                color={
+                  fileUploading || isEditing ? Color.lightgray : Color.gray
+                }
               />
             </TouchableOpacity>
             <TextInput
               style={styles.input}
               value={text}
               onChangeText={setText}
-              placeholder="Type a message..."
+              placeholder={
+                isEditing ? 'Edit your message...' : 'Type a message...'
+              }
               multiline
               placeholderTextColor={Color.black}
             />
             <TouchableOpacity
               style={styles.sendButton}
               onPress={() => handleSendMessage(false)}
-              disabled={(!text.trim() && !selectedFile) || fileUploading}>
+              disabled={
+                (!text.trim() && !selectedFile && !isEditing) || fileUploading
+              }>
               <Ionicons
                 name="send"
                 size={20}
                 color={
-                  text.trim() || (selectedFile && !fileUploading)
+                  (text.trim() || selectedFile || isEditing) && !fileUploading
                     ? Color.primaryColor
                     : Color.gray
                 }
@@ -678,6 +975,7 @@ const MessageComponent = ({
           </View>
         </View>
       </ImageBackground>
+      {renderInfoModal()}
       <Modal
         visible={imageViewerVisible}
         transparent={true}
@@ -749,6 +1047,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIcon: {
+    marginHorizontal: 8,
+  },
   backTxt: {
     fontSize: 18,
     color: Color.black,
@@ -812,6 +1117,9 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: Color?.white,
   },
+  selectedMessage: {
+    backgroundColor: '#d1e7ff',
+  },
   messageWrapper: {},
   textContainer: {
     paddingVertical: 4,
@@ -820,6 +1128,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Color.black,
     fontFamily: Font?.Poppins,
+  },
+  editedText: {
+    fontSize: 12,
+    color: Color.gray,
+    marginTop: 2,
+    fontStyle: 'italic',
   },
   readMoreText: {
     fontSize: 14,
@@ -899,8 +1213,43 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     borderRadius: 20,
-    backgroundColor: Color.white,
+    backgroundColor: Color.primaryLight,
     marginHorizontal: 7,
+  },
+  infoModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  infoModalContent: {
+    backgroundColor: Color.white,
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  infoModalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Color.black,
+    marginBottom: 10,
+  },
+  infoModalText: {
+    fontSize: 16,
+    color: Color.black,
+    marginVertical: 5,
+  },
+  infoModalButton: {
+    marginTop: 20,
+    backgroundColor: Color.primaryColor,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  infoModalButtonText: {
+    color: Color.white,
+    fontSize: 16,
   },
 });
 

@@ -2,14 +2,12 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
   TouchableOpacity,
   FlatList,
-  Modal,
   ScrollView,
   SafeAreaView,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, createRef} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   DeleteWaterIntake,
@@ -29,6 +27,7 @@ import ModalComponent from '../../../../Components/ModalComponent';
 import CustomShadow from '../../../../Components/CustomShadow';
 import {getWaterIntake} from '../../../../redux/client';
 import CustomLoader from '../../../../Components/CustomLoader';
+import LottieView from 'lottie-react-native';
 
 const WaterIntake = () => {
   const navigation = useNavigation();
@@ -46,11 +45,17 @@ const WaterIntake = () => {
   const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
   const [highlightEdit, setHighlightEdit] = useState(false);
   const [highlightCancel, setHighlightCancel] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [confettiDisplayed, setConfettiDisplayed] = useState(false);
+
+  const scrollRef = createRef();
 
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
+
+  const dailyGoal = limit * 1000 || 2000;
 
   const handleDate = selectedDate => {
     try {
@@ -96,6 +101,12 @@ const WaterIntake = () => {
 
       setSelectedDate(formattedDate);
       setSelectedIntake(matchingRecords);
+
+      const dailyIntake = calculateDailyIntake(
+        formattedDate,
+        waterIntake?.waterIntakeData?.waterIntakeRecords,
+      );
+      checkGoalAndShowConfetti(dailyIntake, formattedDate);
     } catch (error) {
       console.error('Error in handleDate:', error);
     }
@@ -177,6 +188,15 @@ const WaterIntake = () => {
       }
       setDataFetched(true);
       setLoading(false);
+
+      if (selectedDate) {
+        const dailyIntake = calculateDailyIntake(
+          selectedDate,
+          response?.waterIntakeData?.waterIntakeRecords,
+        );
+
+        checkGoalAndShowConfetti(dailyIntake, selectedDate);
+      }
     } catch (error) {
       console.error('Error in getWaterIntakeData:', error);
       setDataFetched(true);
@@ -193,27 +213,6 @@ const WaterIntake = () => {
     }
   };
 
-  const handleDataRefresh = () => {
-    setDataFetched(false);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!dataFetched) {
-        getWaterIntakeData();
-        getWaterLimit();
-      }
-    }, [token, id, dataFetched]),
-  );
-
-  useEffect(() => {
-    if (dataFetched && selectedDate) {
-      handleDate({fullDate: new Date(selectedDate)});
-    }
-  }, [selectedDate, dataFetched]);
-
-  const dailyGoal = limit * 1000 || 2000;
-
   const calculateDailyIntake = (date, records) => {
     if (!records || !date) return 0;
     try {
@@ -229,6 +228,31 @@ const WaterIntake = () => {
     } catch (error) {
       console.error('Error in calculateDailyIntake:', error);
       return 0;
+    }
+  };
+
+  const isToday = someDate => {
+    if (!someDate) return false;
+    try {
+      const today = new Date();
+      const compareDate = new Date(someDate);
+      return (
+        compareDate.getDate() === today.getDate() &&
+        compareDate.getMonth() === today.getMonth() &&
+        compareDate.getFullYear() === today.getFullYear()
+      );
+    } catch (error) {
+      console.error('Error checking if date is today:', error);
+      return false;
+    }
+  };
+
+  const checkGoalAndShowConfetti = (intake, date) => {
+    if (isToday(date) && intake >= dailyGoal) {
+      if (!confettiDisplayed) {
+        setConfettiDisplayed(true);
+        setShowConfetti(true);
+      }
     }
   };
 
@@ -254,19 +278,6 @@ const WaterIntake = () => {
       return [];
     }
   }, [waterIntake, dateLabels, selectedDate]);
-
-  useEffect(() => {
-    try {
-      const dates = getLast10Days();
-      setDateLabels(dates);
-      if (dates.length > 0) {
-        const today = dates[dates.length - 1];
-        handleDate(today);
-      }
-    } catch (error) {
-      console.error('Error in initial date setup:', error);
-    }
-  }, []);
 
   const handleEdit = async () => {
     if (selectedEntry) {
@@ -372,36 +383,6 @@ const WaterIntake = () => {
     }
   };
 
-  const scrollRef = React.createRef();
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollToEnd({animated: true});
-      }
-    }, 100);
-  }, []);
-
-  const selectedDateIntake = selectedDate
-    ? calculateDailyIntake(
-        selectedDate,
-        waterIntake?.waterIntakeData?.waterIntakeRecords,
-      )
-    : 0;
-
-  useEffect(() => {
-    if (selectedDateIntake) {
-      dispatch(getWaterIntake(selectedDateIntake));
-    }
-  }, [selectedDateIntake, dispatch]);
-
-  const plusData = {
-    clientId: id,
-    token: token,
-    date: selectedDate,
-    press: 'plus',
-  };
-
   const formatTime = timeString => {
     if (!timeString) return '';
     try {
@@ -430,10 +411,138 @@ const WaterIntake = () => {
     setModalVisible(true);
   };
 
+  const handleDataRefresh = async () => {
+    try {
+      setDataFetched(false);
+      await getWaterIntakeData();
+
+      if (selectedDate && isToday(selectedDate)) {
+        const newIntake = calculateDailyIntake(
+          selectedDate,
+          waterIntake?.waterIntakeData?.waterIntakeRecords,
+        );
+        checkGoalAndShowConfetti(newIntake, selectedDate);
+      }
+    } catch (error) {
+      console.error('Error in handleDataRefresh:', error);
+    }
+  };
+
+  const selectedDateIntake = selectedDate
+    ? calculateDailyIntake(
+        selectedDate,
+        waterIntake?.waterIntakeData?.waterIntakeRecords,
+      )
+    : 0;
+
+  const plusData = {
+    clientId: id,
+    token: token,
+    date: selectedDate,
+    press: 'plus',
+  };
+
   const hasData =
     selectedIntake &&
     selectedIntake.length > 0 &&
     selectedIntake[0]?.waterIntakeAmount?.length > 0;
+
+  useFocusEffect(
+    useCallback(() => {
+      setConfettiDisplayed(false);
+
+      const focusInit = async () => {
+        if (!dataFetched) {
+          await getWaterIntakeData();
+          await getWaterLimit();
+        } else {
+          if (selectedDate && isToday(selectedDate)) {
+            const intake = calculateDailyIntake(
+              selectedDate,
+              waterIntake?.waterIntakeData?.waterIntakeRecords,
+            );
+
+            if (intake >= dailyGoal) {
+              setTimeout(() => {
+                setShowConfetti(true);
+                setConfettiDisplayed(true);
+              }, 500);
+            }
+          }
+        }
+      };
+
+      focusInit();
+
+      return () => {
+        if (showConfetti) {
+          setShowConfetti(false);
+        }
+      };
+    }, [token, id, dataFetched, selectedDate, dailyGoal]),
+  );
+
+  useEffect(() => {
+    if (
+      selectedDate &&
+      isToday(selectedDate) &&
+      selectedDateIntake >= dailyGoal
+    ) {
+      if (!confettiDisplayed) {
+        setTimeout(() => {
+          setShowConfetti(true);
+          setConfettiDisplayed(true);
+        }, 500);
+      }
+    }
+  }, [selectedDate, selectedDateIntake, dailyGoal]);
+
+  useEffect(() => {
+    if (dataFetched && selectedDate) {
+      handleDate({fullDate: new Date(selectedDate)});
+    }
+  }, [selectedDate, dataFetched]);
+
+  useEffect(() => {
+    try {
+      const dates = getLast10Days();
+      setDateLabels(dates);
+      if (dates.length > 0) {
+        const today = dates[dates.length - 1];
+        handleDate(today);
+      }
+    } catch (error) {
+      console.error('Error in initial date setup:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollToEnd({animated: true});
+      }
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    if (selectedDateIntake) {
+      dispatch(getWaterIntake(selectedDateIntake));
+    }
+  }, [selectedDateIntake, dispatch]);
+
+  useEffect(() => {
+    if (limit && selectedDate && isToday(selectedDate)) {
+      const intake = selectedDateIntake;
+      if (intake >= dailyGoal) {
+        if (!confettiDisplayed) {
+          setTimeout(() => {
+            setShowConfetti(true);
+            setConfettiDisplayed(true);
+          }, 500);
+        }
+      }
+    }
+  }, [limit, dailyGoal]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -469,7 +578,14 @@ const WaterIntake = () => {
                   style={styles.singleDateChart}
                   onPress={() => handleDate(date)}>
                   <BarChart
-                    data={[{value: formatChartData()[index]?.value || 0}]}
+                    data={[
+                      {
+                        value: Math.min(
+                          formatChartData()[index]?.value || 0,
+                          dailyGoal,
+                        ),
+                      },
+                    ]}
                     width={50}
                     height={150}
                     barWidth={35}
@@ -480,10 +596,7 @@ const WaterIntake = () => {
                     yAxisThickness={0}
                     barBorderRadius={6}
                     hideYAxisText
-                    maxValue={Math.max(
-                      dailyGoal,
-                      ...formatChartData().map(item => item.value || 0),
-                    )}
+                    maxValue={dailyGoal}
                     frontColor={
                       isSelected ? Color?.primaryColor : Color.primaryLight
                     }
@@ -592,6 +705,23 @@ const WaterIntake = () => {
         )}
       </View>
 
+      {showConfetti && (
+        <LottieView
+          source={require('../../../../assets/animations/confetti.json')}
+          autoPlay
+          loop={false}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 1000,
+          }}
+          onAnimationFinish={() => setShowConfetti(false)}
+        />
+      )}
+
       <ModalComponent
         visible={modalVisible}
         highlightEdit={highlightEdit}
@@ -602,16 +732,13 @@ const WaterIntake = () => {
           top: menuPosition.y,
           left: menuPosition.x - 140,
         }}
-        cancelmodalstyle={{
-          top: menuPosition.y,
-          left: menuPosition.x - 195,
-        }}
         handleCancel={handleCancel}
         setModalVisible={() => setModalVisible(false)}
       />
     </SafeAreaView>
   );
 };
+
 export default WaterIntake;
 
 const styles = StyleSheet.create({

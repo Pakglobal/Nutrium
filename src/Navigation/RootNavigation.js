@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import LoginScreen from '../Auth/Login/LoginScreen';
@@ -36,10 +36,6 @@ import MessageClient from '../Screen/AdminFlow/Message/MessageClient';
 import ClientDrawerContent from './ClientDrawer';
 import LoginChoiceScreen from '../Auth/Login/LoginChoiceScreen';
 import OnboardingScreen from './OnboardingScreen';
-import SelectCountry from '../Screen/GuestFlow/login/SelectCountry';
-import GuestLogin from '../Screen/GuestFlow/login/GuestLogin';
-import SelectGender from '../Screen/GuestFlow/login/SelectGender';
-import SelectProfession from '../Screen/GuestFlow/login/SelectProfession';
 import linking from './linking';
 import ChallengesScreen from '../Screen/ClientFlow/ChallengeFlow/ChallengesScreen';
 import CreateChallenge from '../Screen/ClientFlow/ChallengeFlow/CreateChallenge';
@@ -50,10 +46,14 @@ import ForgotPasswordScreen from '../Auth/Login/ForgotPasswordScreen';
 import CardioNutritionDetailsScreen from '../Screen/ClientFlow/ChallengeFlow/CardioNutritionDetailsScreen';
 import AllPrivateChallengeScreen from '../Screen/ClientFlow/ChallengeFlow/AllPrivateChallengeScreen';
 import PhysicalActivityScreen from '../Screen/ClientFlow/Profile/Physical_Activity/PhysicalActivityy';
+import NotificationScreen from '../Screen/ClientFlow/Home/NotificationScreen';
+import AwardScreen from '../Screen/ClientFlow/Home/AwardScreen';
+import GuestLoginScreen from '../Auth/Login/GuestLoginScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const ClientDrawer = createDrawerNavigator();
+const navigationRef = createRef();
 
 const ClientDrawerNavigator = () => {
   return (
@@ -127,7 +127,7 @@ const AuthStack = ({route}) => {
         <Stack.Screen name="onBoarding" component={OnboardingScreen} />
       ) : null}
       <Stack.Screen name="loginChoice" component={LoginChoiceScreen} />
-      <Stack.Screen name="GuestFlow" component={GuestStack} />
+      <Stack.Screen name="GuestLogin" component={GuestLoginScreen} />
       <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen name="loginScreen" component={LoginScreen} />
       <Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} />
@@ -160,6 +160,8 @@ const UserFlowStack = () => (
     />
     <Stack.Screen name="JoinRequestScreen" component={JoinRequestScreen} />
     <Stack.Screen name="settings" component={Settings} />
+    <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+    <Stack.Screen name="AwardScreen" component={AwardScreen} />
     <Stack.Screen name="foodDiary" component={FoodDiary} />
     <Stack.Screen name="addMeal" component={AddMeal} />
     <Stack.Screen name="logMeal" component={LogMeal} />
@@ -180,17 +182,6 @@ const UserFlowStack = () => (
     <Stack.Screen name="myLists" component={MyList} />
   </Stack.Navigator>
 );
-
-const GuestStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="SelectGender" component={SelectGender} />
-      <Stack.Screen name="SelectProfession" component={SelectProfession} />
-      <Stack.Screen name="SelectCountry" component={SelectCountry} />
-      <Stack.Screen name="GuestLogin" component={GuestLogin} />
-    </Stack.Navigator>
-  );
-};
 
 const MainStack = () => {
   const userInfo = useSelector(state => state.user?.userInfo);
@@ -222,7 +213,7 @@ const MainStack = () => {
 const RootNavigation = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <NavigationContainer linking={linking}>
+      <NavigationContainer linking={linking} ref={navigationRef}>
         <MainStack />
       </NavigationContainer>
     </PersistGate>

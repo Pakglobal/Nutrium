@@ -3,14 +3,18 @@ import {FORGOT_PASSWORD, GOOGLE_LOGIN, GUEST_LOGIN, LOGIN} from '../AllAPI/API';
 
 export const Login = async data => {
   try {
+    console.log('opiko');
     const body = {
       email: data?.email,
       password: data?.password,
       deviceToken: data?.deviceToken,
     };
+    console.log('body', body);
 
     const url = LOGIN;
+    console.log('url', url);
     const response = await axios.post(url, body);
+    console.log('response0000o-poij', response);
 
     return response?.data;
   } catch (error) {
@@ -33,7 +37,7 @@ export const GoogleLogin = async data => {
   }
 };
 
-export const HandleGuestLOGIN = async data => {
+export const guestLogin = async data => {
   try {
     const body = {
       firstName: data?.firstName,

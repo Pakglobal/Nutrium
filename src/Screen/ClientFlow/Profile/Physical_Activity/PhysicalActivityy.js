@@ -392,10 +392,6 @@ const PhysicalActivityScreen = () => {
           top: menuPosition.y,
           left: menuPosition.x - 140,
         }}
-        cancelmodalstyle={{
-          top: menuPosition.y,
-          left: menuPosition.x - 195,
-        }}
         handleCancel={handleCancel}
         setModalVisible={() => setModalVisible(false)}
       />

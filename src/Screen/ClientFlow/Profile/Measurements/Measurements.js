@@ -139,9 +139,8 @@ const Measurements = () => {
       return 'Not measured yet';
     }
 
-    // Check if the latest measurement date is today
     const latestDate = measurementData.currentDate;
-    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0];
     const measurementDate = new Date(latestDate).toISOString().split('T')[0];
 
     return measurementDate === today
@@ -272,7 +271,7 @@ const Measurements = () => {
 
           <View style={styles.valueContainer}>
             <Text style={styles.value}>{getLatestValue(item?.key)}</Text>
-            <AntDesign name="edit" size={20} color={Color?.textColor} />
+            {/* <AntDesign name="edit" size={20} color={Color?.textColor} /> */}
           </View>
         </Pressable>
       </CustomShadow>
@@ -311,31 +310,29 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   contentContainer: {
-    marginHorizontal: scale(10),
+    marginHorizontal: scale(4),
     flex: 1,
   },
   loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // marginTop: verticalScale(50),
+    marginTop: verticalScale(25),
   },
   title: {
     fontSize: scale(14),
     color: Color.textColor,
     fontFamily: Font?.PoppinsMedium,
-    marginVertical: scale(8),
-    marginLeft: scale(10),
+    marginTop: verticalScale(20),
+    marginBottom: verticalScale(10),
   },
   cardcontainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Color?.white,
-    marginVertical: scale(5),
-    width: '98%',
+    marginVertical: scale(6),
+    marginHorizontal: scale(4),
     alignSelf: 'center',
     borderRadius: scale(8),
-    padding: scale(5),
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(5),
   },
   iconContainer: {
     width: scale(40),
@@ -348,11 +345,10 @@ const styles = StyleSheet.create({
   },
   details: {
     flex: 1,
-    // flexDirection: 'column',
   },
   label: {
     color: Color?.textColor,
-    fontSize: scale(14),
+    fontSize: scale(12),
     fontFamily: Font?.PoppinsMedium,
   },
   subtext: {

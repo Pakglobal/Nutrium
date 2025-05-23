@@ -14,13 +14,11 @@ import Header from '../../../Components/Header';
 import AppointmentCard from '../../../Components/AppointmentCard';
 import MealsLikeInHome from '../../../Components/MealsLikeInHome';
 import MoreForYou from '../../../Components/MoreForYou';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {GetUserApi} from '../../../Apis/ClientApis/ProfileApi';
 import {GetAppointmentByClientId} from '../../../Apis/ClientApis/ClientAppointmentApi';
 import OnOffFunctionality from '../../../Components/OnOffFunctionality';
 import HydratedStay from '../../../Components/HydratedStay';
-import {profileData} from '../../../redux/user';
 import {setImage} from '../../../redux/client';
 import {TouchableOpacity} from 'react-native';
 import CustomLoader from '../../../Components/CustomLoader';
@@ -38,7 +36,6 @@ const HomeScreen = () => {
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
-  console.log('token, id', token, id);
 
   const dispatch = useDispatch();
 
@@ -97,6 +94,11 @@ const HomeScreen = () => {
       });
   }, []);
 
+  useEffect(() => {
+    tokenId && GetProfileImage();
+    FetchAppointmentData();
+  }, []);
+
   const handleGoToChallenge = () => {
     navigation.navigate('ChallengesScreen');
   };
@@ -148,11 +150,13 @@ const HomeScreen = () => {
               <OnOffFunctionality />
               <HydratedStay />
               <OnOffFunctionality />
-              <PhysicalActivity
-                header={true}
-                subHeader={true}
-                bottomButton={true}
-              />
+              {tokenId ? (
+                <PhysicalActivity
+                  header={true}
+                  subHeader={true}
+                  bottomButton={true}
+                />
+              ) : null}
             </View>
           </ScrollView>
         </View>

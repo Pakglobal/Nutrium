@@ -7,6 +7,7 @@
 #import <GoogleSignIn/GoogleSignIn.h>
 #import <RNSplashScreen.h>
 #import <UserNotifications/UserNotifications.h>
+#import <PushNotificationIOS/PushNotificationManager.h>
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 @end
@@ -72,6 +73,18 @@
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
   completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+  [PushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+  [PushNotificationManager didFailToRegisterForRemoteNotificationsWithError:error];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  [PushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 
 @end

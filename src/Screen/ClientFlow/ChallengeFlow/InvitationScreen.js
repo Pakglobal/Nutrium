@@ -77,7 +77,6 @@ const InvitationScreen = ({challenges, setRequests}) => {
       setAlertType('error');
       setAlertMessage(message);
       setAlertVisible(true);
-      console.log(message);
     }
   };
 

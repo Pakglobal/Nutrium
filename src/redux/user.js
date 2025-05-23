@@ -2,7 +2,6 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   userInfo: {},
-  profileInfo: {},
   fcmToken: {},
   token: {},
   guestToken: {},
@@ -33,7 +32,7 @@ const userSlice = createSlice({
     completeOnboarding(state) {
       state.isCompleted = true;
     },
-    chatList(state, action) {
+    chatList: (state, action) => {
       state.chat = action.payload;
     },
   },

@@ -19,7 +19,7 @@ import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {updateUnits} from '../../../redux/unit';
 import {useDispatch} from 'react-redux';
 import Glass from '../../../assets/Images/glass.svg';
-import Bottle from '../../../assets/Images/bottel.svg';
+import Bottle from '../../../assets/Images/bottle.svg';
 import Header from '../../../Components/Header';
 
 const SettingsScreen = () => {

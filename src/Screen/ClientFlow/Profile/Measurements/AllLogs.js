@@ -6,6 +6,7 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../../assets/styles/Colors';
 import Header from '../../../../Components/Header';
 import {Font} from '../../../../assets/styles/Fonts';
+import CustomShadow from '../../../../Components/CustomShadow';
 
 const AllLogs = () => {
   const route = useRoute();
@@ -26,31 +27,51 @@ const AllLogs = () => {
 
   const renderItem = ({item}) => {
     return (
-      <View style={styles.logContainer}>
-        <View>
-          <Text style={{color: Color.lightGrayText, fontFamily: Font?.Poppins}}>
-            You
-          </Text>
-        </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text
+      <CustomShadow color={Color.lightgray}>
+        <View
+          style={{
+            backgroundColor: Color.white,
+            marginVertical: verticalScale(6),
+            marginHorizontal: scale(4),
+            borderRadius: scale(6),
+          }}>
+          <View
             style={{
-              color: Color.textColor,
-              fontSize: scale(13),
-              fontFamily: Font?.Poppins,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: scale(10),
+              paddingVertical: verticalScale(5),
             }}>
-            {item?.value || 'N/A'} {item?.unit || 'N/A'}
-          </Text>
-          <Text
-            style={{
-              color: Color.textColor,
-              fontSize: scale(12),
-              fontFamily: Font?.Poppins,
-            }}>
-            {item?.date ? format(new Date(item?.date), 'MMMM dd, yyyy') : 'N/A'}
-          </Text>
+            <View>
+              <Text
+                style={{color: Color.gray, fontFamily: Font?.PoppinsMedium}}>
+                You
+              </Text>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontSize: scale(13),
+                  fontFamily: Font?.PoppinsMedium,
+                }}>
+                {item?.value || 'N/A'} {item?.unit || 'N/A'}
+              </Text>
+            </View>
+            <View>
+              <Text
+                style={{
+                  color: Color.textColor,
+                  fontSize: scale(12),
+                  fontFamily: Font?.PoppinsMedium,
+                }}>
+                {item?.date
+                  ? format(new Date(item?.date), 'MMMM dd, yyyy')
+                  : 'N/A'}
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
+      </CustomShadow>
     );
   };
 
@@ -66,7 +87,7 @@ const AllLogs = () => {
     <View style={{flex: 1, backgroundColor: Color.white}}>
       <Header screenheader={true} screenName={measurementType} />
 
-      <View style={{marginHorizontal: scale(16)}}>
+      <View style={{paddingHorizontal: scale(4)}}>
         <Text style={styles.lebal}>{'All logs'}</Text>
         <FlatList
           data={sortedEntries}
@@ -91,6 +112,7 @@ const styles = StyleSheet.create({
     color: Color.gray,
     fontSize: scale(14),
     padding: verticalScale(20),
+    fontFamily: Font.Poppins,
   },
   logContainer: {
     borderBottomColor: '#DDD',
@@ -100,8 +122,7 @@ const styles = StyleSheet.create({
   lebal: {
     color: Color?.textColor,
     fontFamily: Font?.Poppins,
-    fontWeight: '500',
     fontSize: scale(18),
-    marginTop: scale(8),
+    marginTop: scale(15),
   },
 });

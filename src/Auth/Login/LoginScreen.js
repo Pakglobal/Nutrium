@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
-  Dimensions,
   Keyboard,
   SafeAreaView,
   ScrollView,
@@ -9,7 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Platform,
+  Animated,
+  Easing,
 } from 'react-native';
 import {scale, verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -18,7 +18,12 @@ import {Color} from '../../assets/styles/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {ForgotPasswordApi, GoogleLogin, Login} from '../../Apis/Login/AuthApis';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {loginData, setToken} from '../../redux/user';
+import {
+  guestLoginData,
+  loginData,
+  setGuestToken,
+  setToken,
+} from '../../redux/user';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import LoginHeader from '../../assets/Images/loginHeader.svg';
@@ -27,10 +32,20 @@ import {Font} from '../../assets/styles/Fonts';
 import CustomShadow from '../../Components/CustomShadow';
 import CustomLoader from '../../Components/CustomLoader';
 import CustomAlertBox from '../../Components/CustomAlertBox';
+import useKeyboardHandler from '../../Components/useKeyboardHandler';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  useKeyboardHandler();
+
+  const headerImageAnim = useRef(new Animated.Value(-200)).current;
+  const logoAnim = useRef(new Animated.Value(0)).current;
+  const formAnim = useRef(new Animated.Value(50)).current;
+  const formOpacity = useRef(new Animated.Value(0)).current;
+  const buttonAnim = useRef(new Animated.Value(100)).current;
+  const buttonOpacity = useRef(new Animated.Value(0)).current;
 
   const [loading, setLoading] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
@@ -42,6 +57,73 @@ const LoginScreen = () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [loginAlert, setLoginAlert] = useState([]);
   const [alertType, setAlertType] = useState('');
+
+  useEffect(() => {
+    const animationSequence = Animated.sequence([
+      Animated.timing(headerImageAnim, {
+        toValue: 0,
+        duration: 800,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.spring(logoAnim, {
+        toValue: 1,
+        tension: 100,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+      Animated.parallel([
+        Animated.timing(formAnim, {
+          toValue: 0,
+          duration: 600,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(formOpacity, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(buttonAnim, {
+          toValue: 0,
+          duration: 500,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(buttonOpacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]);
+
+    // Start animation after a short delay
+    setTimeout(() => {
+      animationSequence.start();
+    }, 100);
+  }, []);
+
+  const animateButtonPress = callback => {
+    const scale = new Animated.Value(1);
+
+    Animated.sequence([
+      Animated.timing(scale, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    setTimeout(callback, 150);
+  };
 
   const handlePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -72,80 +154,84 @@ const LoginScreen = () => {
     }
   };
 
+  const showAlert = (message, type = 'warning') => {
+    setLoginAlert(message);
+    setAlertType(type);
+    setAlertVisible(true);
+  };
+
   const handleLogin = async () => {
     const emailRegex = /^\w+([\.+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
-    if (!email) {
-      setLoginAlert('Email is required');
-      setAlertType('warning');
-      setAlertVisible(true);
-      return;
+    if (!email && !password) {
+      return showAlert('Both fields are required');
     }
-
+    if (!email) {
+      return showAlert('Email is required');
+    }
     if (!emailRegex.test(email)) {
-      setLoginAlert('Enter a valid email');
-      setAlertType('warning');
-      setAlertVisible(true);
-      return;
+      return showAlert('Enter a valid email');
     }
 
     if (!password) {
-      setLoginAlert('Password is required');
-      setAlertType('warning');
-      setAlertVisible(true);
-      return;
+      return showAlert('Password is required');
     }
-
     if (password.length < 8) {
-      setLoginAlert('Password must be at least 8 characters');
-      setAlertType('warning');
-      setAlertVisible(true);
-      return;
+      return showAlert('Password must be at least 8 characters');
     }
 
     if (!isAgree) {
-      setLoginAlert('Please agree to the terms and conditions');
-      setAlertType('warning');
-      setAlertVisible(true);
-      return;
+      return showAlert('Please agree to the terms and conditions');
     }
 
     setEmailError('');
     setPasswordError('');
 
     const body = {
-      email: email,
-      password: password,
+      email,
+      password,
       deviceToken: FCMtoken,
     };
 
     try {
       setLoading(true);
       const response = await Login(body);
+      console.log('response', response);
 
-      if (response?.message) {
-        setLoginAlert(response?.message);
-        setAlertType('error');
-        setAlertVisible(true);
-      }
-
-      const storeTokenId = {
-        token: response?.token,
-        id: response?.userData?._id,
-      };
-
-      if (response) {
+      if (response?.message && !response?.status === 200) {
+        showAlert(response.message, 'error');
+        setLoading(false);
+        return;
+      } else if (
+        response?.message === 'User not found.' ||
+        response?.message === 'Invalid Credentials'
+      ) {
+        showAlert(response.message, 'error');
+        setLoading(false);
+        return;
+      } else if (response?.message === 'Login successful') {
+        const storeTokenId = {
+          token: response.token,
+          id: response.userData?._id,
+        };
         dispatch(loginData(response));
         dispatch(setToken(storeTokenId));
+      } else if (response?.message === 'Demo client login successful') {
+        const storeTokenId = {
+          token: response?.token,
+          id: response?.userData?._id,
+          demoClient: response?.userData?.isDemoClient,
+        };
+        dispatch(setGuestToken(storeTokenId));
+        dispatch(guestLoginData(response));
       } else {
-        setAlertVisible(true);
+        showAlert('something went wrong, please try again.', 'error');
         setLoading(false);
       }
+
       setLoading(false);
     } catch (error) {
-      setAlertType('error');
-      setLoginAlert('Something went wrong. Please try again.');
-      setAlertVisible(true);
+      showAlert('Something went wrong. Please try again.', 'error');
       setLoading(false);
     }
   };
@@ -200,14 +286,6 @@ const LoginScreen = () => {
     }
   };
 
-  const alertMessage = () => {
-    if (loginAlert === undefined) {
-      return 'Network Error';
-    } else {
-      return loginAlert;
-    }
-  };
-
   const handleForgetPassword = async () => {
     navigation.navigate('forgotPassword', {data: email});
     const body = {
@@ -225,7 +303,7 @@ const LoginScreen = () => {
       <CustomAlertBox
         visible={alertVisible}
         type={alertType}
-        message={alertMessage()}
+        message={loginAlert}
         closeAlert={() => setAlertVisible(false)}
         onClose={() => {
           setAlertVisible(false);
@@ -242,7 +320,6 @@ const LoginScreen = () => {
         style={{
           justifyContent: 'center',
           padding: scale(8),
-          margin: scale(8),
           alignSelf: 'flex-start',
           position: 'absolute',
           zIndex: 1,
@@ -256,124 +333,175 @@ const LoginScreen = () => {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
           <View style={styles.contentContainer}>
-            <LoginHeader
-              width={'100%'}
-              style={{alignSelf: 'center', marginTop: verticalScale(50)}}
-            />
+            <Animated.View
+              style={[
+                styles.headerImageContainer,
+                {
+                  transform: [{translateY: headerImageAnim}],
+                },
+              ]}>
+              <LoginHeader
+                width={'100%'}
+                style={{alignSelf: 'center', marginTop: verticalScale(50)}}
+              />
+            </Animated.View>
 
             <View style={{paddingHorizontal: scale(8)}}>
-              <NutriumLogo
-                width={'100%'}
-                height={scale(30)}
-                style={{
-                  alignSelf: 'center',
-                  marginVertical: verticalScale(25),
-                }}
-              />
-              <CustomShadow
-                color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
-                <View
+              <Animated.View
+                style={[
+                  styles.logoContainer,
+                  {
+                    transform: [
+                      {
+                        scale: logoAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.8, 1],
+                        }),
+                      },
+                    ],
+                    opacity: logoAnim,
+                  },
+                ]}>
+                <NutriumLogo
+                  width={'100%'}
+                  height={scale(30)}
                   style={{
-                    height: verticalScale(37),
-                    justifyContent: 'center',
-                    paddingHorizontal: scale(5),
-                    backgroundColor: Color.white,
-                    borderRadius: scale(6),
-                  }}>
-                  <TextInput
-                    value={email}
-                    placeholder="Email"
-                    onChangeText={val => {
-                      setEmail(val);
-                      validateEmail(val);
-                    }}
-                    fontFamily={Font?.Poppins}
-                    placeholderTextColor={Color.textColor}
-                    style={styles.titleText}
-                    multiline={false}
-                  />
-                </View>
-              </CustomShadow>
+                    alignSelf: 'center',
+                    marginVertical: verticalScale(25),
+                  }}
+                />
+              </Animated.View>
 
-              <CustomShadow
-                color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    backgroundColor: Color.white,
-                    marginVertical: verticalScale(13),
-                    borderRadius: scale(6),
-                  }}>
+              <Animated.View
+                style={[
+                  styles.formContainer,
+                  {
+                    transform: [{translateY: formAnim}],
+                    opacity: formOpacity,
+                  },
+                ]}>
+                <CustomShadow
+                  color={emailError ? 'rgba(255,0,0,0.3)' : undefined}>
                   <View
                     style={{
-                      height: verticalScale(38),
+                      height: verticalScale(37),
                       justifyContent: 'center',
-                      width: '87%',
                       paddingHorizontal: scale(5),
+                      backgroundColor: Color.white,
+                      borderRadius: scale(6),
                     }}>
                     <TextInput
-                      value={password}
-                      placeholder="Password"
+                      value={email}
+                      placeholder="Email"
                       onChangeText={val => {
-                        setPassword(val);
-                        validatePassword(val);
+                        setEmail(val);
+                        validateEmail(val);
                       }}
                       fontFamily={Font?.Poppins}
                       placeholderTextColor={Color.textColor}
                       style={styles.titleText}
                       multiline={false}
-                      secureTextEntry={!passwordVisible}
                     />
                   </View>
-                  <TouchableOpacity
-                    onPress={handlePassword}
+                </CustomShadow>
+
+                <CustomShadow
+                  color={passwordError ? 'rgba(255,0,0,0.3)' : undefined}>
+                  <View
                     style={{
-                      paddingHorizontal: scale(10),
-                      paddingVertical: scale(5),
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      backgroundColor: Color.white,
+                      marginVertical: verticalScale(13),
+                      borderRadius: scale(6),
                     }}>
-                    <Ionicons
-                      name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
-                      color={Color?.primaryColor}
-                      size={24}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </CustomShadow>
-
-              <TouchableOpacity onPress={() => handleForgetPassword()}>
-                <Text style={styles.forgotText}>Forgot Password ?</Text>
-              </TouchableOpacity>
-
-              <View style={styles.termsContainer}>
-                <TouchableOpacity
-                  style={[
-                    styles.checkbox,
-                    {
-                      backgroundColor: isAgree
-                        ? Color.primaryColor
-                        : Color.white,
-                    },
-                  ]}
-                  onPress={() => setIsAgree(!isAgree)}>
-                  {isAgree && (
-                    <View style={styles.checkedBox}>
-                      <AntDesign name="check" color={Color.white} size={16} />
+                    <View
+                      style={{
+                        height: verticalScale(38),
+                        justifyContent: 'center',
+                        width: '87%',
+                        paddingHorizontal: scale(5),
+                      }}>
+                      <TextInput
+                        value={password}
+                        placeholder="Password"
+                        onChangeText={val => {
+                          setPassword(val);
+                          validatePassword(val);
+                        }}
+                        fontFamily={Font?.Poppins}
+                        placeholderTextColor={Color.textColor}
+                        style={styles.titleText}
+                        multiline={false}
+                        secureTextEntry={!passwordVisible}
+                      />
                     </View>
-                  )}
+                    <TouchableOpacity
+                      onPress={handlePassword}
+                      style={{
+                        paddingHorizontal: scale(10),
+                        paddingVertical: scale(5),
+                      }}>
+                      <Ionicons
+                        name={
+                          passwordVisible ? 'eye-off-outline' : 'eye-outline'
+                        }
+                        color={Color?.primaryColor}
+                        size={24}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </CustomShadow>
+
+                <TouchableOpacity
+                  style={{alignSelf: 'flex-end'}}
+                  onPress={() => handleForgetPassword()}>
+                  <Text style={styles.forgotText}>Forgot Password ?</Text>
                 </TouchableOpacity>
-                <Text style={styles.termsText}>
-                  I agree to the terms and conditions
-                </Text>
-              </View>
+
+                <View style={styles.termsContainer}>
+                  <TouchableOpacity
+                    style={[
+                      styles.checkbox,
+                      {
+                        backgroundColor: isAgree
+                          ? Color.primaryColor
+                          : Color.white,
+                      },
+                    ]}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setTimeout(() => {
+                        setIsAgree(!isAgree);
+                      }, 200);
+                    }}>
+                    {isAgree && (
+                      <View style={styles.checkedBox}>
+                        <AntDesign name="check" color={Color.white} size={16} />
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                  <Text style={styles.termsText}>
+                    I agree to the terms and conditions
+                  </Text>
+                </View>
+              </Animated.View>
 
               <View style={{height: verticalScale(100)}} />
             </View>
           </View>
-          <View style={styles.fixedButtonContainer}>
+
+          <Animated.View
+            style={[
+              styles.fixedButtonContainer,
+              {
+                transform: [{translateY: buttonAnim}],
+                opacity: buttonOpacity,
+              },
+            ]}>
             <TouchableOpacity
-              onPress={handleLogin}
+              onPress={() => animateButtonPress(handleLogin)}
               style={[styles.button, {backgroundColor: Color.primaryColor}]}>
               {loading ? (
                 <CustomLoader color={Color.white} size={'small'} />
@@ -385,7 +513,7 @@ const LoginScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={signInWithGoogle}
+              onPress={() => animateButtonPress(signInWithGoogle)}
               style={[
                 styles.button,
                 {
@@ -405,7 +533,7 @@ const LoginScreen = () => {
                 Continue With Google
               </Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -427,10 +555,18 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: '5%',
   },
+  headerImageContainer: {
+    overflow: 'hidden',
+  },
+  logoContainer: {
+    alignItems: 'center',
+  },
+  formContainer: {
+    flex: 1,
+  },
   forgotText: {
     color: Color?.textColor,
     fontSize: scale(12),
-    alignSelf: 'flex-end',
     letterSpacing: 1,
     fontFamily: Font.PoppinsMedium,
   },

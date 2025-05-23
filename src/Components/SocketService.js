@@ -168,3 +168,43 @@ export const leaveRoom = (userId, otherUserId) => {
     return false;
   }
 };
+
+export const editMessage = (messageId, newMessage, senderId, receiverId) => {
+  return new Promise((resolve, reject) => {
+    if (!socket || !socket.connected) {
+      reject(new Error('Socket is not connected'));
+      return;
+    }
+    socket.emit(
+      'editMessage',
+      {messageId, newMessage, senderId, receiverId},
+      response => {
+        if (response.error) {
+          reject(new Error(response.error));
+        } else {
+          resolve(response);
+        }
+      },
+    );
+  });
+};
+
+export const deleteMessage = (messageId, senderId, receiverId) => {
+  return new Promise((resolve, reject) => {
+    if (!socket || !socket.connected) {
+      reject(new Error('Socket is not connected'));
+      return;
+    }
+    socket.emit(
+      'deleteMessage',
+      {messageId, senderId, receiverId},
+      response => {
+        if (response.error) {
+          reject(new Error(response.error));
+        } else {
+          resolve(response);
+        }
+      },
+    );
+  });
+};

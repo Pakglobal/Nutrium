@@ -1,261 +1,257 @@
-import {
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  StyleSheet,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import RootNavigation from './src/Navigation/RootNavigation';
-import messaging from '@react-native-firebase/messaging';
-import {firebaseApp} from './src/firebaseConfig';
-import {Provider, useDispatch} from 'react-redux';
-import {setFcmToken} from './src/redux/user';
+import React, {createRef, useEffect, useState} from 'react';
+import {Alert, AppState, PermissionsAndroid, Platform} from 'react-native';
+import {Provider, useDispatch, useSelector} from 'react-redux';
 import {store} from './src/redux/Store';
+import RootNavigation from './src/Navigation/RootNavigation';
 import SplashScreen from 'react-native-splash-screen';
 import NetInfo from '@react-native-community/netinfo';
 import RNRestart from 'react-native-restart';
-import notifee from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import PushNotification, {Importance} from 'react-native-push-notification';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import {setFcmToken} from './src/redux/user';
 
 const AppContent = () => {
   const dispatch = useDispatch();
+  const user = useSelector(state => state.user.userInfo);
+  const userId = user?.userData?._id;
+  const userName = user?.userData?.fullName;
+  const otherUserId = user?.userData?.userId;
+  const navigationRef = createRef();
+
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [messages, setMessages] = useState([]);
+
+  const requestUserPermission = async () => {
+    if (Platform.OS === 'ios') {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      if (enabled) {
+        console.log('iOS notification permission granted');
+      }
+    } else {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Android notification permission granted');
+      }
+    }
+  };
 
   const fetchToken = async () => {
     try {
-      if (!firebaseApp) {
-        console.error('Firebase is not initialized. Retrying...');
-        return;
-      }
       await messaging().registerDeviceForRemoteMessages();
-      console.log('Device registered for remote messages');
-
-      const fcmToken = await messaging().getToken();
-      console.log('FCM Token:', fcmToken);
-      if (fcmToken) {
-        dispatch(setFcmToken(fcmToken));
+      const token = await messaging().getToken();
+      if (token) {
+        console.log('FCM Token:', token);
+        dispatch(setFcmToken(token));
       }
     } catch (error) {
-      console.error('Error getting FCM Token:', error);
-    }
-  };
-
-  const requestUserPermissionIos = async () => {
-    try {
-      const authStatusIOS = await messaging().requestPermission();
-      const enabled =
-        authStatusIOS === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatusIOS === messaging.AuthorizationStatus.PROVISIONAL;
-
-      if (enabled) {
-        console.log('iOS notification permission granted');
-        fetchToken();
-      } else {
-        console.log('iOS notification permission denied');
-        Alert.alert(
-          'Notification Permission Required',
-          'Please enable notification permissions to receive important updates.',
-          [
-            {text: 'Cancel', style: 'cancel'},
-            {
-              text: 'Open Settings',
-              onPress: () => Linking.openSettings(),
-            },
-          ],
-        );
-      }
-    } catch (error) {
-      console.error('Error requesting iOS permission:', error);
-    }
-  };
-
-  const requestUserPermissionAndroid = async () => {
-    try {
-      if (Platform.Version >= 33) {
-        const authStatusAndroid = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-        );
-        console.log('authStatusAndroid', authStatusAndroid);
-
-        if (authStatusAndroid === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Android notification permission granted');
-          fetchToken();
-        } else if (authStatusAndroid === PermissionsAndroid.RESULTS.DENIED) {
-          console.log(
-            'Android notification permission denied but can ask again',
-          );
-          Alert.alert(
-            'Notification Permission Required',
-            'Notifications help you stay updated with important information.',
-            [
-              {text: 'Not Now', style: 'cancel'},
-              {
-                text: 'Try Again',
-                onPress: () => requestUserPermissionAndroid(),
-              },
-            ],
-          );
-        } else if (
-          authStatusAndroid === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
-        ) {
-          console.log('Android notification permission denied permanently');
-          Alert.alert(
-            'Notification Permission Required',
-            'Please enable notification permissions from settings.',
-            [
-              {text: 'Cancel', style: 'cancel'},
-              {
-                text: 'Open Settings',
-                onPress: () => Linking.openSettings(),
-              },
-            ],
-          );
-        }
-      } else {
-        console.log('Android < 13, no explicit permission needed');
-        fetchToken();
-      }
-    } catch (error) {
-      console.error('Error requesting Android permission:', error);
-      fetchToken();
+      console.error('FCM token fetch error:', error);
     }
   };
 
   const setupNetworkListener = () => {
-    return NetInfo.addEventListener(state => {
-      try {
-        if (state.isConnected === false) {
-          Alert.alert('No Internet', 'Please Connect!', [
-            {
-              text: 'Reload app',
-              onPress: () => {
-                try {
-                  RNRestart.restart();
-                } catch (restartError) {
-                  console.error('Error restarting app:', restartError);
-                }
-              },
-            },
-          ]);
-        }
-      } catch (netInfoError) {
-        console.error('Error in NetInfo callback:', netInfoError);
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        Alert.alert('No Internet', 'Please connect to the internet.', [
+          {
+            text: 'Reload App',
+            onPress: () => RNRestart.restart(),
+          },
+        ]);
       }
     });
+    return unsubscribe;
   };
 
-  // const onDisplayNotification = async remoteMessage => {
-  //   try {
-  //     const channelId = await notifee.createChannel({
-  //       id: 'default',
-  //       name: 'Default Channel',
-  //     });
-
-  //     await notifee.displayNotification({
-  //       title: remoteMessage.notification?.title || 'New Notification',
-  //       body: remoteMessage.notification?.body || 'You have a new notification',
-  //       android: {
-  //         channelId,
-  //         pressAction: {
-  //           id: 'default',
-  //         },
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.error('Error displaying notification:', error);
-  //   }
-  // };
-
-  const onDisplayNotification = async remoteMessage => {
+  const displayNotification = async remoteMessage => {
     try {
-      if (!remoteMessage || !remoteMessage.notification) {
-        console.warn('Invalid or missing notification data:', remoteMessage);
-        return;
-      }
+      const title =
+        remoteMessage.notification?.title ||
+        remoteMessage.data?.title ||
+        'New Message';
+      const body =
+        remoteMessage.notification?.body ||
+        remoteMessage.data?.body ||
+        'You have a new message';
 
-      const channelId = await notifee.createChannel({
-        id: 'default',
-        name: 'Default Channel',
-      });
-
-      await notifee.displayNotification({
-        title: remoteMessage.notification.title || 'New Notification',
-        body: remoteMessage.notification.body || 'You have a new notification',
-        android: {
-          channelId,
-          pressAction: {
-            id: 'default',
-          },
-        },
-        ios: {
-          // Add iOS-specific configuration if needed
-        },
+      PushNotification.localNotification({
+        channelId: 'default',
+        title,
+        message: body,
+        userInfo: remoteMessage.data || {},
+        playSound: true,
+        soundName: 'default',
+        importance: Importance.HIGH,
+        vibrate: true,
       });
     } catch (error) {
-      console.error('Error displaying notification:', error);
+      console.error('Display notification error:', error);
     }
   };
 
-  useEffect(() => {
-    const initializeNotifee = async () => {
-      try {
-        await notifee.requestPermission();
-        console.log('Notifee initialized');
-      } catch (error) {
-        console.error('Error initializing Notifee:', error);
-      }
-    };
-    initializeNotifee();
+  const storeNotification = async notification => {
+    try {
+      const existing = await AsyncStorage.getItem('notifications');
+      const notifications = existing ? JSON.parse(existing) : [];
 
-    if (Platform.OS === 'android') {
-      requestUserPermissionAndroid();
-    } else if (Platform.OS === 'ios') {
-      requestUserPermissionIos();
+      const newNotif = {
+        id:
+          notification.id ||
+          notification.data?.messageId ||
+          Date.now().toString(),
+        title: notification.title || notification.data?.title || 'New Message',
+        body:
+          notification.message ||
+          notification.data?.body ||
+          'You have a new message',
+        senderId: notification.data?.senderId,
+        receiverId: notification.data?.receiverId,
+        timestamp: new Date().toISOString(),
+        seen: false,
+      };
+
+      notifications.push(newNotif);
+      await AsyncStorage.setItem(
+        'notifications',
+        JSON.stringify(notifications),
+      );
+    } catch (error) {
+      console.error('Store notification error:', error);
+    }
+  };
+
+  const messageHandler = async (newMessage, isPush = false) => {
+    if (!newMessage?._id || !newMessage?.senderId || !newMessage?.receiverId)
+      return;
+
+    if (
+      newMessage.senderId !== userId &&
+      newMessage.receiverId === userId &&
+      appState === 'active' &&
+      isPush
+    ) {
+      await displayNotification({
+        notification: {
+          title: `New Message from ${userName || 'User'}`,
+          body: newMessage.message || 'You have a new message',
+        },
+        data: {
+          messageId: newMessage._id,
+          senderId: newMessage.senderId,
+          receiverId: newMessage.receiverId,
+        },
+      });
     }
 
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      if (remoteMessage) {
-        console.log('Foreground message received:', remoteMessage);
-        await onDisplayNotification(remoteMessage);
-      } else {
-        console.warn('Received empty foreground message');
-      }
-    });
+    setMessages(prev => [newMessage, ...prev]);
 
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      if (remoteMessage) {
-        console.log('Background message received:', remoteMessage);
-        await onDisplayNotification(remoteMessage);
-      } else {
-        console.warn('Received empty background message');
-      }
-    });
+    // mark seen messages (pseudo-function)
+    if (
+      newMessage.senderId !== userId &&
+      newMessage.receiverId === userId &&
+      !newMessage.seen &&
+      appState === 'active'
+    ) {
+      // Replace with your markMessagesAsSeen logic
+      console.log('Marking message as seen:', newMessage._id);
+    }
+  };
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  const initNotifications = () => {
+    PushNotification.createChannel(
+      {
+        channelId: 'default',
+        channelName: 'Default Channel',
+        soundName: 'default',
+        importance: Importance.HIGH,
+        vibrate: true,
+      },
+      created => console.log(`Notification channel created: ${created}`),
+    );
+
+    PushNotification.configure({
+      onNotification: async notification => {
+        console.log('Notification received:', notification);
+        await storeNotification(notification);
+
+        if (notification.foreground) {
+          const newMsg = {
+            _id: notification.id || notification.data?.messageId,
+            senderId: notification.data?.senderId,
+            receiverId: notification.data?.receiverId,
+            message: notification.message || notification.data?.body,
+            seen: false,
+            tempId: notification.data?.tempId || null,
+          };
+          await messageHandler(newMsg, true);
+        }
+
+        if (Platform.OS === 'ios') {
+          notification.finish(PushNotificationIOS.FetchResult.NoData);
+        }
+      },
+      onAction: notification => {
+        console.log('Notification action:', notification);
+        if (
+          notification.data?.receiverId &&
+          notification.data?.senderId &&
+          navigationRef.isReady()
+        ) {
+          navigationRef.navigate('MessageScreen', {
+            userId: notification.data.receiverId,
+            otherUserId: notification.data.senderId,
+            userName: notification.data.userName || 'User',
+          });
+        }
+      },
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+      },
+      popInitialNotification: true,
+      requestPermissions: false,
+    });
+  };
 
   useEffect(() => {
     SplashScreen.hide();
-    const unsubscribeNetInfo = setupNetworkListener();
+    requestUserPermission();
+    fetchToken();
+    const unsubscribeNet = setupNetworkListener();
+    initNotifications();
+
+    const unsubscribeApp = AppState.addEventListener('change', setAppState);
+
+    const unsubscribeMessage = messaging().onMessage(async remoteMessage => {
+      console.log('Foreground message:', remoteMessage);
+      await displayNotification(remoteMessage);
+    });
+
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Background FCM message:', remoteMessage);
+    });
 
     return () => {
-      unsubscribeNetInfo && unsubscribeNetInfo();
+      unsubscribeNet();
+      unsubscribeApp.remove();
+      unsubscribeMessage();
     };
   }, []);
-
-
 
   return <RootNavigation />;
 };
 
-const App = () => {
-  return (
-    <Provider store={store}>
-      <AppContent />
-    </Provider>
-  );
-};
+const App = () => (
+  <Provider store={store}>
+    <AppContent />
+  </Provider>
+);
 
 export default App;
-

@@ -1,46 +1,77 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Color} from '../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginData} from '../redux/user';
+import {loginData, setToken} from '../redux/user';
 import CustomLoader from '../Components/CustomLoader';
+import {GetUserApi} from '../Apis/ClientApis/ProfileApi';
+import {GetAppointmentData} from '../Apis/AdminScreenApi/AppointmentApi';
+import {Font} from '../assets/styles/Fonts';
 
 const SideBar = ({onSelectScreen}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const [asyncLoading, setAsyncLoading] = useState(false);
+  const [profileInfo, setProfileInfo] = useState([]);
 
-  const getUserInfo = useSelector(state => state?.user?.profileInfo);
-  const imageUrl = getUserInfo?.image
-    ? {uri: getUserInfo?.image}
-    : getUserInfo?.gender === 'Female'
+  const userInfo = useSelector(state => state.user?.userInfo);
+  const token = userInfo?.token;
+  const id = userInfo?.userData?._id;
+
+  const imageUrl = profileInfo?.image
+    ? {uri: profileInfo?.image}
+    : profileInfo?.gender === 'Female'
     ? require('../assets/Images/woman.png')
     : require('../assets/Images/man.png');
 
+  const GetUserApiData = async () => {
+    try {
+      const response = await GetUserApi(token);
+      setProfileInfo(response?.data);
+    } catch (error) {
+      console.error('Error fetching user data', error);
+    }
+  };
+
+  useEffect(() => {
+    GetUserApiData();
+  }, []);
+
   const handleLogOut = async () => {
     dispatch(loginData());
+    dispatch(setToken());
   };
 
   const handleSettingNavigate = () => {
     navigation.navigate('Settings');
   };
 
-  const handelRefresh = async () => {
+  const handleSyncInfo = async () => {
+    if (!token || !id) {
+      Alert.alert('Error', 'Missing user information. Please log in again.');
+      return;
+    }
     setAsyncLoading(true);
-
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setAsyncLoading(false);
+      await GetAppointmentData(token);
     } catch (error) {
-      console.error('Error syncing info:', error);
+      console.error('Sync Error:', error);
+      Alert.alert('Sync Error', 'Failed to sync data. Please try again later.');
+    } finally {
       setAsyncLoading(false);
     }
-    navigation.goBack();
   };
 
   const listArrayItem = [
@@ -55,7 +86,7 @@ const SideBar = ({onSelectScreen}) => {
 
   const bottomListItems = [
     {icon: 'settings-outline', name: 'Settings', action: handleSettingNavigate},
-    {icon: 'people-outline', name: 'Sync all info', action: handelRefresh},
+    {icon: 'people-outline', name: 'Sync all info', action: handleSyncInfo},
     {icon: 'log-out-outline', name: 'Sign out', action: handleLogOut},
   ];
 
@@ -73,37 +104,36 @@ const SideBar = ({onSelectScreen}) => {
       <Ionicons name={item?.icon} color={Color.gray} size={scale(22)} />
       <Text style={styles.title}>{item?.name}</Text>
       {item?.name === 'Sync all info' && asyncLoading && (
-        <View style={{alignItems: 'flex-end', flex: 1}}>
-          <CustomLoader />
+        <View style={{position: 'absolute', right: 0}}>
+          <CustomLoader size={'small'} />
         </View>
       )}
     </TouchableOpacity>
   );
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: Color.white}}>
       <View
         style={{
           backgroundColor: Color.primaryColor,
           paddingVertical: verticalScale(20),
         }}>
-        <View style={{marginHorizontal: scale(8)}}>
+        <View style={{paddingHorizontal: scale(8)}}>
           <Image
             source={imageUrl}
             style={{
-              width: 70,
-              height: 70,
-              borderRadius: 50,
-              marginTop: verticalScale(20),
-              marginBottom: verticalScale(10),
+              width: scale(70),
+              height: scale(70),
+              borderRadius: scale(50),
+              marginVertical: verticalScale(20),
             }}
           />
-          <Text style={styles.text}>{getUserInfo?.fullName}</Text>
-          <Text style={styles.text}>{getUserInfo?.email}</Text>
+          <Text style={styles.text}>{profileInfo?.fullName}</Text>
+          <Text style={styles.text}>{profileInfo?.email}</Text>
         </View>
       </View>
 
-      <View style={{marginVertical: verticalScale(8)}}>
+      {/* <View style={{marginVertical: verticalScale(8)}}>
         <Text
           style={{
             marginHorizontal: scale(8),
@@ -113,7 +143,7 @@ const SideBar = ({onSelectScreen}) => {
           Recent
         </Text>
         <FlatList data={listArrayItem} renderItem={renderItem} />
-      </View>
+      </View> */}
 
       <View style={{marginVertical: verticalScale(8)}}>
         <Text
@@ -143,11 +173,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: scale(14),
     marginLeft: scale(20),
-    fontWeight: '600',
     color: Color.gray,
   },
   text: {
     color: Color.white,
-    fontSize: scale(14),
+    fontSize: scale(13),
+    fontFamily: Font.Poppins,
   },
 });

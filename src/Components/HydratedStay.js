@@ -10,8 +10,6 @@ import React, {useEffect, useState, useRef, useCallback, useMemo} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../assets/styles/Colors';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-
-import HydratedView from './HydratedView';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   GetWaterIntakeDetails,
@@ -20,18 +18,29 @@ import {
 } from '../Apis/ClientApis/WaterIntakeApi';
 import Feather from 'react-native-vector-icons/Feather';
 import Drop from '../assets/Images/drop.svg';
-import Bottle from '../assets/Images/bottel.svg';
+import Bottle from '../assets/Images/bottle.svg';
 import Glass from '../assets/Images/glass.svg';
 import {Font} from '../assets/styles/Fonts';
-import {shadowStyle, ShadowValues} from '../assets/styles/Shadow';
+import {shadowStyle} from '../assets/styles/Shadow';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getWaterIntake} from '../redux/client';
 import CustomShadow from './CustomShadow';
 import CustomHomeButtonNavigation from './CustomHomeButtonNavigation';
 
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
 const HydratedStay = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const waterData = useSelector(state => state?.client?.waterData);
+  const intake = useSelector(state => state?.client?.waterIntake);
 
   const [sevenL, setSevenL] = useState(0);
   const [seventeenL, setSeventeenL] = useState(0);
@@ -39,22 +48,21 @@ const HydratedStay = ({route}) => {
   const [currentProgress, setCurrentProgress] = useState(0);
   const [limit, setLimit] = useState('');
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [localIntake, setLocalIntake] = useState(intake || 0);
+  const [error, setError] = useState(null);
+  const latestUpdateRef = useRef(null);
+  const pendingUpdatesRef = useRef(0);
 
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
   const id = tokenId?.id || guestTokenId?.id;
 
-  const waterData = useSelector(state => state?.client?.waterData);
-  const intake = useSelector(state => state?.client?.waterIntake);
-  const [localIntake, setLocalIntake] = useState(intake || 0);
-
+  const totalGoal = waterIntake?.waterIntakeData?.waterIntakeLimit || 2;
   const widthAnimation = useRef(new Animated.Value(0)).current;
   const prevUserIdRef = useRef(null);
 
   const getStorageKey = useCallback(key => `${key}_${id}`, [id]);
-
-  const totalGoal = waterIntake?.waterIntakeData?.waterIntakeLimit || 2;
 
   const resetLocalWaterData = useCallback(async () => {
     await AsyncStorage.multiSet([
@@ -65,6 +73,7 @@ const HydratedStay = ({route}) => {
     setSevenL(0);
     setSeventeenL(0);
     setCurrentProgress(0);
+    setLocalIntake(0);
     widthAnimation.setValue(0);
   }, [getStorageKey, widthAnimation]);
 
@@ -73,64 +82,19 @@ const HydratedStay = ({route}) => {
     try {
       const response = await GetWaterIntakeDetails(token, id);
       setWaterIntake(response);
+      setError(null);
       return response;
     } catch (error) {
       console.error('Error fetching water intake:', error);
+      setError('Failed to fetch water intake data. Please try again.');
       return null;
     } finally {
       setHasLoaded(true);
     }
   }, [token, id]);
 
-  const handleAddWater = async amount => {
-    const mlAmount = amount * 1000;
-    const currentIntake = intake || 0;
-    const newIntake = currentIntake + mlAmount;
-
-    dispatch(getWaterIntake(newIntake));
-
-    if (amount === 0.2) {
-      setSevenL(prev => prev + amount);
-    } else if (amount === 0.3) {
-      setSeventeenL(prev => prev + amount);
-    }
-
-    setLocalIntake(prev => prev + mlAmount);
-
-    const currentDate = new Date();
-    const time = `${currentDate
-      .getHours()
-      .toString()
-      .padStart(2, '0')}:${currentDate
-      .getMinutes()
-      .toString()
-      .padStart(2, '0')}`;
-
-    const payload = {
-      waterIntakeId: waterIntake?.waterIntakeData?._id,
-      clientId: waterIntake?.waterIntakeData?.clientId,
-      token,
-      date: currentDate,
-      amount: mlAmount,
-      time,
-    };
-
-    try {
-      await SetWaterIntakeDetails(payload); // ⏳ Wait to complete
-      const updatedData = await GetWaterIntakeDetails(token, id); // ✅ Fresh data
-      setWaterIntake(updatedData);
-      await getData(); // ensure UI and redux state are synced
-    } catch (error) {
-      console.error('Water update error:', error);
-    }
-  };
-
-  const getWaterLimit = useCallback(async () => {
-    const data = await GetWaterintakeLimitData(token, id);
-    setLimit(data?.waterIntakeLimit?.waterIntakeLimit);
-  }, [token, id]);
-
   const getData = useCallback(async () => {
+    if (!token || !id) return;
     try {
       const data = await GetWaterIntakeDetails(token, id);
       const allRecords = data?.waterIntakeData?.waterIntakeRecords || [];
@@ -146,31 +110,132 @@ const HydratedStay = ({route}) => {
           return sum + ml;
         }, 0) || 0;
 
-      setLocalIntake(total);
-      dispatch(getWaterIntake(total));
+      if (
+        !latestUpdateRef.current ||
+        (todayRecord?.date &&
+          new Date(todayRecord.date) >= new Date(latestUpdateRef.current))
+      ) {
+        setLocalIntake(total);
+        dispatch(getWaterIntake(total));
+        latestUpdateRef.current = todayRecord?.date || new Date().toISOString();
+      }
+      setError(null);
       return data;
     } catch (error) {
       console.error('Error fetching water data:', error);
+      setError('Failed to fetch water data. Please try again.');
       return null;
     }
   }, [token, id, dispatch]);
 
+  const handleAddWater = useCallback(
+    async amount => {
+      if (!token || !id) return;
+
+      const mlAmount = amount * 1000;
+      const currentDate = new Date();
+      const time = `${currentDate
+        .getHours()
+        .toString()
+        .padStart(2, '0')}:${currentDate
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}`;
+
+      const newIntake = (localIntake || 0) + mlAmount;
+      setLocalIntake(prevIntake => prevIntake + mlAmount);
+      dispatch(getWaterIntake(newIntake));
+
+      if (amount === 0.2) {
+        setSevenL(prev => prev + amount);
+      } else if (amount === 0.3) {
+        setSeventeenL(prev => prev + amount);
+      }
+
+      pendingUpdatesRef.current += 1;
+
+      const payload = {
+        waterIntakeId: waterIntake?.waterIntakeData?._id || '',
+        clientId: waterIntake?.waterIntakeData?.clientId || id,
+        token,
+        date: currentDate,
+        amount: mlAmount,
+        time,
+      };
+
+      try {
+        await SetWaterIntakeDetails(payload);
+
+        if (pendingUpdatesRef.current === 1) {
+          const updatedData = await GetWaterIntakeDetails(token, id);
+          setWaterIntake(updatedData);
+        }
+
+        latestUpdateRef.current = currentDate.toISOString();
+        setError(null);
+      } catch (error) {
+        console.error('Water update error:', error);
+        setError('Failed to update water intake. Please try again.');
+
+        setLocalIntake(prevIntake => prevIntake - mlAmount);
+        dispatch(getWaterIntake(localIntake || 0));
+
+        if (amount === 0.2) {
+          setSevenL(prev => prev - amount);
+        } else if (amount === 0.3) {
+          setSeventeenL(prev => prev - amount);
+        }
+      } finally {
+        pendingUpdatesRef.current -= 1;
+      }
+    },
+    [token, id, dispatch, localIntake, waterIntake],
+  );
+
+  const debouncedHandleAddWater = useMemo(
+    () => debounce(handleAddWater, 500),
+    [handleAddWater],
+  );
+
+  const getWaterLimit = useCallback(async () => {
+    try {
+      const data = await GetWaterintakeLimitData(token, id);
+      setLimit(data?.waterIntakeLimit?.waterIntakeLimit || '2 L');
+    } catch (error) {
+      console.error('Error fetching water limit:', error);
+      setLimit('2 L');
+    }
+  }, [token, id]);
+
   useFocusEffect(
     useCallback(() => {
-      if (token && id) getData();
+      if (token && id && pendingUpdatesRef.current === 0) getData();
     }, [token, id, getData]),
   );
 
   useEffect(() => {
-    if (token && id) {
-      fetchWaterIntake().then(getData);
-
-      if (id && prevUserIdRef.current && prevUserIdRef.current !== id) {
-        resetLocalWaterData();
+    const initializeData = async () => {
+      const lastHydrationDate = await AsyncStorage.getItem(
+        getStorageKey('lastHydrationDate'),
+      );
+      const today = new Date().toDateString();
+      if (lastHydrationDate !== today) {
+        await resetLocalWaterData();
       }
-      prevUserIdRef.current = id;
-    }
-    getWaterLimit();
+
+      if (token && id) {
+        const data = await fetchWaterIntake();
+        if (data) await getData();
+
+        if (id && prevUserIdRef.current && prevUserIdRef.current !== id) {
+          await resetLocalWaterData();
+        }
+        prevUserIdRef.current = id;
+      }
+      await getWaterLimit();
+    };
+
+    initializeData();
   }, [
     token,
     id,
@@ -199,20 +264,26 @@ const HydratedStay = ({route}) => {
   }, [waterData, sevenL, seventeenL]);
 
   useEffect(() => {
-    if (!hasLoaded || totalGoal === 0) return;
+    if (!hasLoaded || totalGoal === 0 || !localIntake) return;
     const progress = localIntake / (totalGoal * 1000);
     const progressPercentage = Math.min(progress * 100, 100);
 
     Animated.timing(widthAnimation, {
-      toValue: progressPercentage,
-      duration: 800,
+      toValue: isNaN(progressPercentage) ? 0 : progressPercentage,
+      duration: 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
   }, [localIntake, totalGoal, hasLoaded, widthAnimation]);
 
+  useEffect(() => {
+    return () => {
+      debouncedHandleAddWater.cancel && debouncedHandleAddWater.cancel();
+    };
+  }, [debouncedHandleAddWater]);
+
   const plusData = {
-    clientId: waterIntake?.waterIntakeData?.clientId,
+    clientId: waterIntake?.waterIntakeData?.clientId || id,
     token,
     date: new Date(),
     press: 'plus',
@@ -223,87 +294,84 @@ const HydratedStay = ({route}) => {
       <CustomShadow radius={3}>
         <View style={shadowStyle}>
           <View style={styles.waterContainer}>
-            <View style={styles.topContainer}>
-              <View>
-                <Text style={styles.mainTitle}>Are you staying hydrated?</Text>
-                <Text style={styles.subTitle}>
-                  Keep going to reach your daily goal!
+            {error && <Text style={styles.errorText}>{error}</Text>}
+            <View>
+              <Text style={styles.mainTitle}>Are you staying hydrated?</Text>
+              <Text style={styles.subTitle}>
+                Keep going to reach your daily goal!
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.showIntake}>
+                <Text style={styles.intakeTxt}>Current intake</Text>
+                <Text style={styles.intakeTxt}>
+                  {localIntake >= 1000
+                    ? `${(localIntake / 1000).toFixed(1)} L`
+                    : `${localIntake} ml`}
+                  / {limit || '2 L'}
                 </Text>
               </View>
 
-              <View>
-                <View style={styles.showIntake}>
-                  <Text style={styles.intakeTxt}>Current intake</Text>
-                  <Text style={styles.intakeTxt}>
-                    {localIntake >= 1000
-                      ? `${(localIntake / 1000).toFixed(1)} L`
-                      : `${localIntake} ml`}
-                    /{limit}
-                  </Text>
-                </View>
-
-                <View style={styles.hydrateContainer}>
-                  <Animated.View
-                    style={[
-                      styles.hydrateView,
-                      {
-                        width: widthAnimation.interpolate({
-                          inputRange: [0, 100],
-                          outputRange: ['0%', '100%'],
-                        }),
-                        position: 'absolute',
-                      },
-                    ]}
-                  />
-                </View>
+              <View style={styles.hydrateContainer}>
+                <Animated.View
+                  style={[
+                    styles.hydrateView,
+                    {
+                      width: widthAnimation.interpolate({
+                        inputRange: [0, 100],
+                        outputRange: ['0%', '100%'],
+                      }),
+                      position: 'absolute',
+                    },
+                  ]}
+                />
               </View>
             </View>
 
-            <View style={styles.bottomContainer}>
-              <View style={styles.hydrationButtons}>
-                {[
-                  {
-                    label: '200mL',
-                    Icon: Glass,
-                    onPress: () => handleAddWater(0.2),
-                  },
-                  {
-                    label: '300mL',
-                    Icon: Bottle,
-                    onPress: () => handleAddWater(0.3),
-                  },
-                  {
-                    label: 'Custom',
-                    Icon: Drop,
-                    onPress: () =>
-                      navigation.navigate('waterIntakeLog', {plusData}),
-                  },
-                ].map(({label, Icon, onPress}, idx) => (
-                  <View style={{width: '30%'}} key={label + idx}>
-                    <CustomShadow color={Color.lightgray}>
-                      <View>
-                        <TouchableOpacity
-                          style={styles.waterCardView}
-                          onPress={onPress}>
-                          <Icon
-                            height={verticalScale(40)}
-                            width={scale(45)}
-                            style={styles.waterIcon}
+            <View style={styles.hydrationButtons}>
+              {[
+                {
+                  label: '200mL',
+                  Icon: Glass,
+                  onPress: () => debouncedHandleAddWater(0.2),
+                },
+                {
+                  label: '300mL',
+                  Icon: Bottle,
+                  onPress: () => debouncedHandleAddWater(0.3),
+                },
+                {
+                  label: 'Custom',
+                  Icon: Drop,
+                  onPress: () =>
+                    navigation.navigate('waterIntakeLog', {plusData}),
+                },
+              ].map(({label, Icon, onPress}, idx) => (
+                <View style={{width: '30%'}} key={label + idx}>
+                  <CustomShadow color={Color.lightgray}>
+                    <View>
+                      <TouchableOpacity
+                        style={[styles.waterCardView]}
+                        onPress={onPress}>
+                        <Icon
+                          height={verticalScale(40)}
+                          width={scale(45)}
+                          style={styles.waterIcon}
+                        />
+                        <View style={styles.plusIcon}>
+                          <Feather
+                            name="plus"
+                            color={Color.primaryColor}
+                            size={verticalScale(15)}
                           />
-                          <View style={styles.plusIcon}>
-                            <Feather
-                              name="plus"
-                              color={Color.primaryColor}
-                              size={verticalScale(15)}
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-                    </CustomShadow>
-                    <Text style={styles.waterTxt}>{label}</Text>
-                  </View>
-                ))}
-              </View>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </CustomShadow>
+                  <Text style={styles.waterTxt}>{label}</Text>
+                </View>
+              ))}
             </View>
 
             <CustomHomeButtonNavigation
@@ -335,7 +403,6 @@ const styles = StyleSheet.create({
   },
   intakeTxt: {
     color: Color?.primaryColor,
-    fontWeight: '500',
     fontSize: scale(14),
     fontFamily: Font?.Poppins,
     marginTop: verticalScale(2),
@@ -352,12 +419,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: scale(14),
-    fontWeight: '500',
     color: Color.txt,
   },
   mainTitle: {
     fontSize: scale(16),
-    fontWeight: '500',
     color: Color.textColor,
     fontFamily: Font?.PoppinsMedium,
   },
@@ -370,12 +435,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Color.primaryColor,
-    fontWeight: '600',
     marginStart: scale(5),
   },
   subTitle: {
     fontSize: scale(14),
-    fontWeight: '400',
     color: Color.subText,
     fontFamily: Font?.Poppins,
   },
@@ -398,7 +461,6 @@ const styles = StyleSheet.create({
   },
   hydrationText: {
     color: Color.txt,
-    fontWeight: '700',
     zIndex: 1,
   },
   hydrationButtons: {
@@ -415,7 +477,6 @@ const styles = StyleSheet.create({
   logText: {
     fontSize: scale(12),
     color: Color.txt,
-    fontWeight: '500',
     marginRight: scale(10),
   },
   waterCardView: {
@@ -434,7 +495,6 @@ const styles = StyleSheet.create({
   },
   waterTxt: {
     color: Color.primaryColor,
-    fontWeight: '400',
     marginTop: verticalScale(5),
     textAlign: 'center',
     fontFamily: Font?.Poppins,
@@ -443,9 +503,15 @@ const styles = StyleSheet.create({
   waterText: {
     fontSize: scale(12),
     color: Color.primaryColor,
-    fontWeight: '500',
     fontFamily: Font?.Poppins,
     marginTop: verticalScale(2),
     marginLeft: scale(5),
+  },
+  errorText: {
+    color: Color.red,
+    fontSize: scale(12),
+    fontFamily: Font?.Poppins,
+    textAlign: 'center',
+    marginBottom: verticalScale(10),
   },
 });

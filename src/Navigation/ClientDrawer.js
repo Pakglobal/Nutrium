@@ -24,7 +24,6 @@ import {
 } from '../redux/user';
 import {setImage} from '../redux/client';
 import {GetMeasurementData} from '../Apis/ClientApis/MeasurementApi';
-
 import {
   GetPhysicalActivities,
   GetPhysicalActivityDetails,
@@ -49,6 +48,7 @@ const ClientDrawerContent = props => {
 
   const userInfo = useSelector(state => state.user?.userInfo);
   const guestInfo = useSelector(state => state.user?.guestUserData);
+  const updateProfileImage = useSelector(state => state?.client?.imageInfo);
 
   const token = userInfo?.token || guestInfo?.token;
   const id =
@@ -62,15 +62,6 @@ const ClientDrawerContent = props => {
     userInfo?.user?.image ||
     userInfo?.userData?.image ||
     guestInfo?.userData?.image;
-
-  const profileName = profileInfo?.fullName;
-  const profileImage = profileInfo?.image
-    ? {uri: profileInfo?.image}
-    : profileInfo?.gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
-
-  const updateProfileImage = useSelector(state => state?.client?.imageInfo);
 
   let userImgSource;
   if (updateProfileImage && typeof updateProfileImage === 'string') {
@@ -112,12 +103,21 @@ const ClientDrawerContent = props => {
     },
   ];
 
-  console.log('user', profileInfo);
+  const profileName = profileInfo?.fullName || 'Unknown';
+  const profileImage =
+    profileInfo?.image &&
+    typeof profileInfo.image === 'string' &&
+    profileInfo.image.startsWith('http')
+      ? {uri: profileInfo.image}
+      : profileInfo?.gender === 'Female'
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
 
   const AdminInfo = {
-    image: profileInfo?.image,
-    name: profileInfo?.fullName,
+    image: profileImage,
+    name: profileName,
     otherUserId: profileInfo?._id,
+    gender: profileInfo?.gender,
   };
 
   const practitionerMenuItems = profileInfo
@@ -166,38 +166,16 @@ const ClientDrawerContent = props => {
   );
 
   const handleSignOut = async () => {
-    // First close the drawer
     props.navigation.closeDrawer();
 
-    setTimeout(() => {
-      Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Sign Out',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              if (guestInfo) {
-                dispatch(setGuestToken());
-                dispatch(guestLoginData());
-              } else {
-                dispatch(loginData());
-                dispatch(setImage(''));
-                dispatch(setToken());
-              }
-            } catch (error) {
-              console.error('Sign out error:', error);
-              Alert.alert('Error', 'Something went wrong. Please try again.', [
-                {text: 'OK'},
-              ]);
-            }
-          },
-        },
-      ]);
-    }, 300);
+    if (guestInfo) {
+      dispatch(setGuestToken());
+      dispatch(guestLoginData());
+    } else {
+      dispatch(loginData());
+      dispatch(setImage(''));
+      dispatch(setToken());
+    }
   };
 
   const handleSyncInfo = async () => {
@@ -232,8 +210,10 @@ const ClientDrawerContent = props => {
   };
 
   useEffect(() => {
-    GetUserApiData();
-  }, []);
+    if (userInfo) {
+      GetUserApiData();
+    }
+  }, [userInfo]);
 
   const getMenuItemStyle = screenName =>
     activeScreen === screenName
@@ -309,14 +289,14 @@ const ClientDrawerContent = props => {
         {mainMenuItems.map(renderMenuItem)}
       </View>
 
-      {profileInfo && (
+      {profileInfo && userInfo ? (
         <View>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Practitioner</Text>
           </View>
           {practitionerMenuItems.map(renderMenuItem)}
         </View>
-      )}
+      ) : null}
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Other</Text>

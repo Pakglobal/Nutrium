@@ -1,175 +1,203 @@
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Image,
-  Platform,
-  RefreshControl,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Color} from '../../../assets/styles/Colors';
 import {scale, verticalScale} from 'react-native-size-matters';
+import {Color} from '../../../assets/styles/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {
   GetAllClientData,
   GetClientData,
 } from '../../../Apis/AdminScreenApi/ClientApi';
-import {clientInfoData} from '../../../redux/admin';
 import CustomLoader from '../../../Components/CustomLoader';
+import Animated, {FadeInDown} from 'react-native-reanimated';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
-const ClientScreen = () => {
-  const [search, setSearch] = useState('');
-  const [filteredClients, setFilteredClients] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [clientData, setClientData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+const ClientScreen = ({
+  clientData = [],
+  loading,
+  refreshing,
+  onRefresh,
+  setError,
+  error,
+}) => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-
+  const insets = useSafeAreaInsets();
   const tokenId = useSelector(state => state?.user?.token);
   const guestTokenId = useSelector(state => state?.user?.guestToken);
   const token = tokenId?.token || guestTokenId?.token;
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [search, setSearch] = useState('');
+  const [filteredClients, setFilteredClients] = useState(clientData);
 
   useEffect(() => {
     if (!search.trim()) {
       setFilteredClients(clientData);
     } else {
-      const filteredData = clientData?.filter(
-        client =>
-          client?.fullName?.toLowerCase().includes(search.toLowerCase()) ||
-          client?.workplace?.toLowerCase().includes(search.toLowerCase()),
-      );
+      const filteredData =
+        clientData?.filter(
+          client =>
+            client?.fullName?.toLowerCase()?.includes(search.toLowerCase()) ||
+            client?.workplace?.toLowerCase()?.includes(search.toLowerCase()),
+        ) || [];
       setFilteredClients(filteredData);
     }
   }, [search, clientData]);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await GetAllClientData(token);
-      setClientData(response || []);
-      setFilteredClients(response || []);
-      dispatch(clientInfoData(response || []));
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching clients:', error);
-      setLoading(false);
-    }
-  };
+  const handleClientNavigate = useCallback(
+    async item => {
+      if (!token || !item?._id) {
+        setError('Invalid token or client data');
+        return;
+      }
+      try {
+        setError(null);
+        const response = await GetClientData(token, item._id);
+        if (!response) {
+          throw new Error('No client data found');
+        }
+        navigation.navigate('ClientProfile', {response: response});
+      } catch (error) {
+        console.error('Error navigating to client profile:', error);
+        setError('Failed to load client profile. Please try again.');
+      }
+    },
+    [token, navigation],
+  );
 
-  const handleClientNavigate = async item => {
-    try {
-      const response = await GetClientData(token, item?._id);
-      navigation.navigate('ClientProfile', {response});
-    } catch (error) {
-      console.error('Error navigating to client profile:', error);
-    }
-  };
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchData().finally(() => setRefreshing(false));
-  }, []);
+  const renderClient = ({item, index}) => (
+    <Animated.View
+      entering={FadeInDown.delay(Math.min(index * 100, 500))}
+      style={styles.messageCard}>
+      <TouchableOpacity
+        onPress={() => handleClientNavigate(item)}
+        style={styles.messageCardContainer}
+        accessibilityLabel={`View profile of ${item?.fullName || 'client'}`}
+        accessibilityRole="button">
+        {item?.image ? (
+          <Image source={{uri: item.image}} style={styles.avatar} />
+        ) : (
+          <Image
+            source={
+              item?.gender === 'Female'
+                ? require('../../../assets/Images/woman.png')
+                : require('../../../assets/Images/man.png')
+            }
+            style={styles.avatar}
+          />
+        )}
+        <View>
+          <Text style={styles.clientName}>{item?.fullName || 'Unknown'}</Text>
+          <View style={styles.locationContainer}>
+            <View style={styles.locationIcon}>
+              <Entypo
+                name="location"
+                color={Color.primaryColor}
+                size={scale(12)}
+              />
+            </View>
+            <Text style={styles.type}>{item?.workplace || 'N/A'}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
+  );
 
   return (
-    <SafeAreaView>
-      <View style={styles.searchContainer}>
-        <View style={styles.inputContainer}>
-          <Ionicons name="search" color={Color.gray} size={scale(18)} />
-          <TextInput
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Search clients"
-            style={{marginLeft: scale(10), color: Color.black}}
-            placeholderTextColor={Color.black}
-          />
+    <SafeAreaProvider>
+      <SafeAreaView style={[styles.container, {paddingTop: insets.top}]}>
+        <View style={styles.searchContainer}>
+          <View style={styles.inputContainer}>
+            <Ionicons name="search" color={Color.gray} size={scale(18)} />
+            <TextInput
+              value={search}
+              onChangeText={setSearch}
+              placeholder="Search clients"
+              style={styles.searchInput}
+              placeholderTextColor={Color.gray}
+              keyboardType="default"
+              accessibilityLabel="Search clients by name or workplace"
+              accessibilityRole="search"
+            />
+          </View>
         </View>
-      </View>
 
-      {loading ? (
-        <CustomLoader style={{marginTop: verticalScale(10)}} />
-      ) : (
-        <View
-          style={{
-            height: '89%',
-            marginTop: verticalScale(10),
-          }}>
-          <ScrollView
+        {error && <Text style={styles.errorText}>{error}</Text>}
+
+        {loading ? (
+          <CustomLoader style={styles.loader} />
+        ) : (
+          <FlatList
+            data={filteredClients}
+            renderItem={renderClient}
+            keyExtractor={item => item?._id || `client-${Math.random()}`}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }>
-            {filteredClients && filteredClients.length > 0 ? (
-              filteredClients.map(item => (
-                <TouchableOpacity
-                  style={styles.messageCard}
-                  onPress={() => handleClientNavigate(item)}
-                  key={item?._id}>
-                  <View style={styles.messageCardContainer}>
-                    {item?.image ? (
-                      <Image
-                        source={{uri: item?.image}}
-                        style={styles.avatar}
-                      />
-                    ) : (
-                      <Image
-                        source={
-                          item?.gender === 'Female'
-                            ? require('../../../assets/Images/woman.png')
-                            : require('../../../assets/Images/man.png')
-                        }
-                        style={styles.avatar}
-                      />
-                    )}
-                    <View>
-                      <Text style={styles.clientName}>{item?.fullName}</Text>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          marginTop: verticalScale(3),
-                        }}>
-                        <View style={styles.locationIcon}>
-                          <Entypo name="location" color={Color.primaryColor} />
-                        </View>
-                        <Text style={styles.type}> {item?.workplace}</Text>
-                      </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <Text style={styles.noDataText}>No client found</Text>
-            )}
-          </ScrollView>
-        </View>
-      )}
-    </SafeAreaView>
+            }
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <Text style={styles.noDataText}>No clients found</Text>
+            }
+            contentContainerStyle={styles.flatListContent}
+          />
+        )}
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
-export default ClientScreen;
-
 const styles = StyleSheet.create({
-  inputContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingHorizontal: scale(8),
+  container: {
+    flex: 1,
+    backgroundColor: Color.white,
   },
   searchContainer: {
-    width: '100%',
     backgroundColor: Color.white,
-    borderRadius: 5,
+    borderRadius: scale(5),
+    borderWidth: 1,
+    borderColor: Color.gray,
+    marginVertical: verticalScale(10),
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(5),
+    marginHorizontal: scale(8),
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: scale(10),
+    color: Color.black,
+    fontSize: scale(14),
+  },
+  flatListContent: {
+    paddingHorizontal: scale(10),
+    paddingBottom: verticalScale(20),
+  },
+  messageCard: {
+    backgroundColor: Color.white,
+    marginBottom: verticalScale(10),
+    borderRadius: scale(5),
+    elevation: 2,
+    shadowColor: Color.black,
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: scale(2),
   },
   messageCardContainer: {
     flexDirection: 'row',
@@ -177,28 +205,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(8),
   },
-  messageCard: {
-    backgroundColor: Color.white,
-    marginBottom: scale(10),
-    borderRadius: scale(5),
-  },
   avatar: {
     width: scale(40),
     height: scale(40),
-    borderRadius: 25,
-    marginRight: 10,
+    borderRadius: scale(20),
+    marginRight: scale(10),
     backgroundColor: Color.primaryColor,
   },
   clientName: {
     fontWeight: '500',
-    fontSize: 16,
+    fontSize: scale(16),
     color: Color.black,
   },
-  noDataText: {
-    textAlign: 'center',
-    marginTop: scale(30),
-    fontSize: scale(14),
-    color: Color.gray,
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: verticalScale(3),
   },
   locationIcon: {
     backgroundColor: Color.lightGreen,
@@ -210,5 +232,23 @@ const styles = StyleSheet.create({
   },
   type: {
     color: Color.gray,
+    fontSize: scale(12),
+  },
+  noDataText: {
+    textAlign: 'center',
+    marginTop: verticalScale(30),
+    fontSize: scale(14),
+    color: Color.gray,
+  },
+  errorText: {
+    textAlign: 'center',
+    marginVertical: verticalScale(10),
+    fontSize: scale(14),
+    color: Color.red,
+  },
+  loader: {
+    marginTop: verticalScale(20),
   },
 });
+
+export default ClientScreen;

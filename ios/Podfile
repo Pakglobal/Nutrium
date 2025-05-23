@@ -112,7 +112,6 @@ target 'Nutrium' do
   # pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec', :modular_headers => true
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'  
   pod 'Firebase/Messaging'
-  pod 'Notifee', :modular_headers => true
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
   post_install do |installer|

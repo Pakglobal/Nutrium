@@ -22,7 +22,6 @@ const SPACING = (width - CARD_WIDTH) / 2;
 
 const AllPrivateChallengeScreen = ({route}) => {
   const {challenges = [], onJoin} = route.params || {};
-  console.log(challenges.length);
 
   return (
     <View style={styles.container}>

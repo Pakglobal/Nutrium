@@ -16,8 +16,6 @@ import {completeOnboarding} from '../redux/user';
 import {useDispatch} from 'react-redux';
 import {Font} from '../assets/styles/Fonts';
 
-const {width, height} = Dimensions.get('window');
-
 const onboardingData = [
   {
     title: 'Eat Healthy',

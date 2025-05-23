@@ -3,7 +3,6 @@ import React, {useState} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Font} from '../assets/styles/Fonts';
 import {Color} from '../assets/styles/Colors';
-import CustomShadow from './CustomShadow';
 
 const ModalComponent = ({
   visible,
@@ -14,16 +13,20 @@ const ModalComponent = ({
   highlightEdit,
   highlightCancel,
   handleCancel,
-  cancelmodalstyle,
 }) => {
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
 
-  const handleDeletePress = () => setConfirmDeleteVisible(true);
+  const handleDeletePress = () => {
+    setConfirmDeleteVisible(true);
+    setModalVisible();
+  };
+
   const confirmDelete = () => {
     handleDelete();
     setConfirmDeleteVisible(false);
     setModalVisible();
   };
+
   const cancelDelete = () => {
     setConfirmDeleteVisible(false);
     setModalVisible();
@@ -92,14 +95,24 @@ const ModalComponent = ({
         animationType="fade"
         onRequestClose={cancelDelete}>
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
           activeOpacity={1}
           onPress={cancelDelete}>
           <View
             style={[
-              styles.modalContent,
-              cancelmodalstyle,
-              {width: scale(170)},
+              {
+                backgroundColor: Color.white,
+                borderRadius: scale(10),
+                width: '50%',
+                alignSelf: 'center',
+                justifyContent: 'center',
+                padding: scale(5),
+              },
             ]}>
             <Text
               style={[styles.modalText, {marginVertical: verticalScale(10)}]}>
@@ -146,7 +159,7 @@ const styles = StyleSheet.create({
     width: scale(120),
     overflow: 'hidden',
     position: 'absolute',
-    right: 5,
+    right: 10,
   },
   modalOption: {
     paddingVertical: verticalScale(5),

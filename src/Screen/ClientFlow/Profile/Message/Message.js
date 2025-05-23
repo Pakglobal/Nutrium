@@ -12,9 +12,6 @@ const Message = ({route}) => {
   const userName = adminData?.name;
   const userImage = adminData?.image;
   const otherUserId = adminData?.otherUserId;
-  
-
-  console.log('Client===================', userId, otherUserId, adminData);
 
   return (
     <MessageComponent

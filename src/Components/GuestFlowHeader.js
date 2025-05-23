@@ -13,7 +13,7 @@ const GuestFlowHeader = ({currentStep}) => {
 
   const currentIndex = steps.indexOf(currentStep);
   const progressPercent =
-    currentIndex === -1 ? 0 : ((currentIndex + 1) / steps.length) * 100;
+    currentIndex === -1 ? 0 : ((currentIndex + 1) / steps.length) * 101;
 
   const animatedWidth = useRef(new Animated.Value(0)).current;
 
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: verticalScale(10),
     backgroundColor: Color.primaryLight,
-    borderRadius: 10,
     overflow: 'hidden',
   },
   progressBar: {

@@ -66,7 +66,7 @@ const Header = ({
 
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <TouchableOpacity
-                      onPress={() => navigation.goBack()}
+                      onPress={() => navigation.navigate('AwardScreen')}
                       style={{}}>
                       <FontAwesome5
                         style={IconPadding}
@@ -76,7 +76,9 @@ const Header = ({
                       />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={handleNotification} style={{}}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('NotificationScreen')}
+                      style={{}}>
                       <Ionicons
                         style={IconPadding}
                         name="notifications"

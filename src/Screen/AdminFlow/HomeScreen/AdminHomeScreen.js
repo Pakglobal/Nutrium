@@ -1,109 +1,181 @@
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Dimensions,
+  Platform,
+  SafeAreaView,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import {Color} from '../../../assets/styles/Colors';
-import NutriumLogo from '../../../assets/Images/logoWhite.svg';
+import NutriumLogo from '../../../assets/Icon/logo.svg';
 import MessageScreen from '../Message/MessageScreen';
 import ClientScreen from '../Clients/ClientScreen';
 import AppointmentScreen from '../Appointments/AppointmentScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
+import {Font} from '../../../assets/styles/Fonts';
+import {GetAllClientData} from '../../../Apis/AdminScreenApi/ClientApi';
+import {useSelector} from 'react-redux';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
-const AdminHomeScreen = ({selectedScreen, onSelectScreen}) => {
+const initialLayout = {width: Dimensions.get('window').width};
+
+const AdminHomeScreen = () => {
   const navigation = useNavigation();
-  const [selectedTab, setSelectedTab] = useState(0);
+  const insets = useSafeAreaInsets();
+  const tokenId = useSelector(state => state?.user?.token);
+  const token = tokenId?.token;
+  const id = tokenId?.id;
 
-  const token = useSelector(state => state?.user?.userInfo?.token);
+  const [clientData, setClientData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    {key: 'messages', title: 'Messages'},
+    {key: 'clients', title: 'Clients'},
+    {key: 'appointments', title: 'Appointments'},
+  ]);
 
-  const options = [
-    {id: 0, label: 'MESSAGES'},
-    {id: 1, label: 'CLIENTS'},
-    {id: 2, label: 'APPOINTMENTS'},
-  ];
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
+  }, []);
 
-  const handleSelectedOption = useCallback(
-    label => {
-      if (!token) {
-        console.error('Token is missing');
+  const fetchClientData = useCallback(async () => {
+    if (!token) {
+      setError('No authentication token available');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await GetAllClientData(token);
+      setClientData(response || []);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+      setError('Failed to load client data. Please try again.');
+      setLoading(false);
+    }
+  }, [token]);
+
+  const handleClientNavigate = useCallback(
+    async item => {
+      if (!token || !item?._id) {
+        setError('Invalid token or client data');
         return;
       }
-
-      setSelectedTab(0);
-      onSelectScreen(label);
-
-      requestAnimationFrame(() => {
-        navigation.navigate(label, {label});
-      });
+      try {
+        setError(null);
+        const response = await GetClientData(token, item._id);
+        if (!response) {
+          throw new Error('No client data found');
+        }
+        navigation.navigate('ClientProfile', {response: response});
+      } catch (error) {
+        console.error('Error navigating to client profile:', error);
+        setError('Failed to load client profile. Please try again.');
+      }
     },
-    [token, navigation, onSelectScreen],
+    [token, navigation],
   );
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchClientData();
+    }, [fetchClientData]),
+  );
+
+  const renderScene = SceneMap({
+    messages: () => (
+      <MessageScreen
+        clientData={clientData}
+        loading={loading}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        error={error}
+        setError={setError}
+      />
+    ),
+    clients: () => (
+      <ClientScreen
+        clientData={clientData}
+        loading={loading}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        error={error}
+        setError={setError}
+      />
+    ),
+    appointments: AppointmentScreen,
+  });
 
   const handleDrawerNavigation = useCallback(() => {
     navigation.openDrawer();
   }, [navigation]);
 
+  const renderTabBar = props => (
+    <TabBar
+      {...props}
+      indicatorStyle={styles.indicator}
+      style={styles.tabBar}
+      renderLabel={({route, focused}) => (
+        <Text
+          style={[
+            styles.tabText,
+            {
+              borderBottomWidth: focused ? 2 : 0,
+              borderBottomColor: focused ? Color.white : 'transparent',
+            },
+          ]}>
+          {route.title}
+        </Text>
+      )}
+    />
+  );
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.header}>
+    <SafeAreaProvider>
+      <SafeAreaView style={[styles.container, {paddingTop: insets.top}]}>
+        <View style={styles.headerContainer}>
           <TouchableOpacity
-            style={{marginTop: scale(10)}}
-            onPress={handleDrawerNavigation}>
+            style={styles.menuButton}
+            onPress={handleDrawerNavigation}
+            accessibilityLabel="Open menu"
+            accessibilityRole="button">
             <Ionicons name="menu" size={scale(24)} color={Color.white} />
           </TouchableOpacity>
 
           <View style={styles.logoContainer}>
-            <NutriumLogo height={scale(45)} width={scale(45)} />
-          </View>
-
-          <View style={styles.optionContainer}>
-            {options.map(item => (
-              <TouchableOpacity
-                key={item?.id}
-                onPress={() => handleSelectedOption(item?.label)}>
-                <Text
-                  style={[
-                    styles.text,
-                    {
-                      borderBottomColor:
-                        item?.label === selectedScreen
-                          ? Color.white
-                          : 'transparent',
-                      borderBottomWidth: item?.label === selectedScreen ? 2 : 0,
-                    },
-                  ]}>
-                  {item?.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            <NutriumLogo height={scale(38)} width={scale(38)} />
           </View>
         </View>
-      </View>
 
-      <View style={styles.bodyContainer}>
-        <View style={{marginTop: scale(10), marginHorizontal: scale(16)}}>
-          {selectedScreen === 'MESSAGES' && <MessageScreen />}
-          {selectedScreen === 'CLIENTS' && <ClientScreen />}
-          {selectedScreen === 'APPOINTMENTS' && (
-            <AppointmentScreen
-              selected={selectedTab}
-              setSelected={setSelectedTab}
-            />
-          )}
-        </View>
-      </View>
-    </SafeAreaView>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+
+        <TabView
+          navigationState={{index, routes}}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={initialLayout}
+          renderTabBar={renderTabBar}
+          lazy
+          style={styles.bodyContainer}
+        />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
-
-export default React.memo(AdminHomeScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -112,15 +184,12 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: Color.primaryColor,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(10),
   },
-  header: {
-    marginHorizontal: scale(16),
-  },
-  optionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: verticalScale(15),
+  menuButton: {
+    padding: scale(5),
+    alignSelf: 'flex-start',
   },
   logoContainer: {
     justifyContent: 'center',
@@ -128,16 +197,32 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     alignSelf: 'center',
     borderRadius: scale(50),
-    marginVertical: verticalScale(20),
+    padding: scale(5),
+    margin: scale(20),
   },
   bodyContainer: {
-    backgroundColor: '#f5f5f5',
     flex: 1,
+    backgroundColor: Color.white,
   },
-  text: {
+  tabBar: {
+    backgroundColor: Color.primaryColor,
+    height: verticalScale(48),
+  },
+  indicator: {
+    backgroundColor: Color.white,
+  },
+  tabText: {
     color: Color.white,
-    height: scale(25),
-    letterSpacing: 1,
     fontSize: scale(13),
+    textAlign: 'center',
+    fontFamily: Font.PoppinsMedium,
+  },
+  errorText: {
+    textAlign: 'center',
+    marginVertical: verticalScale(10),
+    fontSize: scale(14),
+    color: Color.red,
   },
 });
+
+export default AdminHomeScreen;

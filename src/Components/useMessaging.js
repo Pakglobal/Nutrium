@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,6 @@ import {
   ImageBackground,
   ActivityIndicator,
   AppState,
-  BackHandler,
 } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {
@@ -25,24 +24,21 @@ import {
   markMessagesAsSeen,
   leaveRoom,
 } from '../Components/SocketService';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {
   scale,
-  scale as scaleSize,
-  verticalScale,
 } from 'react-native-size-matters';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-import {Color} from '../assets/styles/Colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {chatList} from '../redux/user';
-import useAndroidBack from '../Navigation/useAndroidBack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Font} from '../assets/styles/Fonts';
+import { Color } from '../assets/styles/Colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { Font } from '../assets/styles/Fonts';
 import { BASE_URL } from '../Apis/AllAPI/API';
+import { chatList } from '../redux/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MessageComponent = ({
   userId,
@@ -55,8 +51,11 @@ const MessageComponent = ({
 }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const lastMSG = useSelector(state => state?.user?.chat);
-  const [messages, setMessages] = useState([]);
+  const chatId = [userId, otherUserId].sort().join('_');
+  const lastMSG = useSelector((state) => state?.user?.chat[chatId]) || [];
+  const profileInfo = useSelector((state) => state?.user?.profileInfo);
+  const profileName = userName || profileInfo?.fullName;
+  const [messages, setMessages] = useState(lastMSG);
   const [text, setText] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -66,8 +65,7 @@ const MessageComponent = ({
   const [uploadingFiles, setUploadingFiles] = useState({});
   const [appState, setAppState] = useState(AppState.currentState);
   const [expandedMessages, setExpandedMessages] = useState({});
-  const profileInfo = useSelector(state => state?.user?.profileInfo);
-  const profileName = userName;
+
   const scale = useRef(new Animated.Value(1)).current;
   const lastScale = useRef(1);
   const offsetX = useRef(new Animated.Value(0)).current;
@@ -76,10 +74,10 @@ const MessageComponent = ({
   const lastY = useRef(0);
 
   const userImage = image
-    ? {uri: image}
+    ? { uri: image }
     : gender === 'Female'
-    ? require('../assets/Images/woman.png')
-    : require('../assets/Images/man.png');
+      ? require('../assets/Images/woman.png')
+      : require('../assets/Images/man.png');
 
   const panResponder = useRef(
     PanResponder.create({
@@ -95,7 +93,7 @@ const MessageComponent = ({
           const touch2 = event.nativeEvent.changedTouches[1];
           const distance = Math.sqrt(
             Math.pow(touch2.pageX - touch1.pageX, 2) +
-              Math.pow(touch2.pageY - touch1.pageY, 2),
+            Math.pow(touch2.pageY - touch1.pageY, 2),
           );
           const newScale = Math.max(1, Math.min(5, distance / 100));
           scale.setValue(newScale);
@@ -108,9 +106,9 @@ const MessageComponent = ({
         lastScale.current = scale._value;
         if (scale._value <= 1) {
           Animated.parallel([
-            Animated.spring(scale, {toValue: 1, useNativeDriver: true}),
-            Animated.spring(offsetX, {toValue: 0, useNativeDriver: true}),
-            Animated.spring(offsetY, {toValue: 0, useNativeDriver: true}),
+            Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+            Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+            Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
           ]).start();
           lastScale.current = 1;
           lastX.current = 0;
@@ -121,100 +119,110 @@ const MessageComponent = ({
   ).current;
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
+    const loadMessages = async () => {
+      try {
+        const storedMessages = await AsyncStorage.getItem(`chat_${chatId}`);
+        if (storedMessages) {
+          setMessages(JSON.parse(storedMessages));
         }
-        return true;
-      },
-    );
-    return () => backHandler.remove();
-  }, [navigation, dispatch]);
+      } catch (error) {
+        console.error('Error loading messages from storage:', error);
+      }
+    };
+    loadMessages();
+  }, [chatId]);
 
-  const fetchChatHistory = () => {
-    setLoading(true);
-    getChatHistory(userId, otherUserId, history => {
+  const saveMessages = useCallback(async (updatedMessages) => {
+    try {
+      await AsyncStorage.setItem(`chat_${chatId}`, JSON.stringify(updatedMessages));
+      dispatch(chatList({ chatId, messages: updatedMessages.slice(0, 10) }));
+    } catch (error) {
+      console.error('Error saving messages to storage:', error);
+    }
+  }, [chatId, dispatch]);
+
+  const fetchChatHistory = useCallback((isManualRefresh = false) => {
+    if (isManualRefresh) setLoading(true);
+    getChatHistory(userId, otherUserId, (history) => {
       if (!history) {
         setMessages([]);
-        setLoading(false);
+        saveMessages([]);
+        if (isManualRefresh) setLoading(false);
         return;
       }
-      const updatedHistory = history.reverse().map(msg => ({
+      const updatedHistory = history.reverse().map((msg) => ({
         ...msg,
         seen: msg.seen || false,
         tempId: msg.tempId || null,
       }));
-      setMessages(prevMessages => {
+      setMessages((prevMessages) => {
         const mergedMessages = [...updatedHistory];
-        prevMessages.forEach(msg => {
+        prevMessages.forEach((msg) => {
           const existingMsg = mergedMessages.find(
-            m => m._id === msg._id || (m.tempId && m.tempId === msg.tempId),
+            (m) => m._id === msg._id || (m.tempId && m.tempId === msg.tempId),
           );
-          if (existingMsg) {
-            existingMsg.seen = msg.seen;
-          } else {
+          if (!existingMsg) {
             mergedMessages.push(msg);
+          } else {
+            existingMsg.seen = msg.seen;
           }
         });
-        return mergedMessages.sort(
+        const sortedMessages = mergedMessages.sort(
           (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
         );
+        saveMessages(sortedMessages);
+        return sortedMessages;
       });
-      setLoading(false);
-      markUnseenMessages();
+      if (isManualRefresh) setLoading(false);
     });
-  };
+  }, [userId, otherUserId, saveMessages]);
 
-  const markUnseenMessages = () => {
+  const markUnseenMessages = useCallback(() => {
     if (appState !== 'active') return;
     const unseenMessages = messages.filter(
-      msg =>
+      (msg) =>
         !msg?.seen &&
         msg.senderId !== userId &&
         msg.receiverId === userId &&
         msg._id,
     );
     if (unseenMessages.length > 0) {
-      const messageIds = unseenMessages.map(msg => msg._id).filter(Boolean);
+      const messageIds = unseenMessages.map((msg) => msg._id).filter(Boolean);
       markMessagesAsSeen(messageIds, otherUserId, userId);
     }
-  };
+  }, [messages, userId, otherUserId, appState]);
 
-  const messageHandler = newMessage => {
+  const messageHandler = useCallback((newMessage) => {
     if (!newMessage?._id || !newMessage?.senderId || !newMessage?.receiverId) {
       console.error('Invalid message received:', newMessage);
       return;
     }
-    setMessages(prevMessages => {
+    setMessages((prevMessages) => {
       const safeNewMessage = {
         ...newMessage,
         tempId: newMessage.tempId || null,
         seen: newMessage.seen || false,
       };
       const messageExists = prevMessages.some(
-        msg =>
+        (msg) =>
           (msg._id && msg._id === safeNewMessage._id) ||
           (msg.tempId &&
             safeNewMessage.tempId &&
             msg.tempId === safeNewMessage.tempId),
       );
       if (messageExists) {
-        return prevMessages.map(msg =>
+        return prevMessages.map((msg) =>
           (msg._id && msg._id === safeNewMessage._id) ||
-          (msg.tempId &&
-            safeNewMessage.tempId &&
-            msg.tempId === safeNewMessage.tempId)
-            ? {
-                ...safeNewMessage,
-                tempId: msg.tempId || safeNewMessage.tempId,
-                seen: msg.seen,
-              }
+            (msg.tempId &&
+              safeNewMessage.tempId &&
+              msg.tempId === safeNewMessage.tempId)
+            ? { ...safeNewMessage, tempId: msg.tempId || safeNewMessage.tempId, seen: msg.seen }
             : msg,
         );
       }
-      return [safeNewMessage, ...prevMessages];
+      const updatedMessages = [safeNewMessage, ...prevMessages];
+      saveMessages(updatedMessages);
+      return updatedMessages;
     });
     if (
       newMessage?.senderId !== userId &&
@@ -224,73 +232,78 @@ const MessageComponent = ({
     ) {
       markMessagesAsSeen([newMessage._id], otherUserId, userId);
     }
-  };
+  }, [userId, otherUserId, appState, saveMessages]);
 
-  const messagesSeenHandler = data => {
+  const messagesSeenHandler = useCallback((data) => {
     if (
       data?.messageIds &&
       data?.senderId === userId &&
       data?.receiverId === otherUserId
     ) {
-      setMessages(prevMessages =>
-        prevMessages.map(msg =>
-          data.messageIds.includes(msg._id) ? {...msg, seen: true} : msg,
-        ),
-      );
+      setMessages((prevMessages) => {
+        const updatedMessages = prevMessages.map((msg) =>
+          data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
+        );
+        saveMessages(updatedMessages);
+        return updatedMessages;
+      });
     }
-  };
+  }, [userId, otherUserId, saveMessages]);
 
   useEffect(() => {
     const socket = connectSocket();
-    if (socket.connected) {
+    const initializeSocket = () => {
       joinRoom(userId, otherUserId);
-      fetchChatHistory();
+      fetchChatHistory(false);
+    };
+
+    if (socket.connected) {
+      initializeSocket();
     } else {
-      socket.on('connect', () => {
-        joinRoom(userId, otherUserId);
-        fetchChatHistory();
-      });
+      socket.on('connect', initializeSocket);
     }
+
     socket.on('receiveMessage', messageHandler);
     socket.on('messagesSeen', messagesSeenHandler);
 
-    const handleAppStateChange = nextAppState => {
+    const handleAppStateChange = (nextAppState) => {
       setAppState(nextAppState);
       if (nextAppState === 'active') {
         if (socket.connected) {
           joinRoom(userId, otherUserId);
-          fetchChatHistory();
+          fetchChatHistory(false);
           markUnseenMessages();
         } else {
           socket.on('connect', () => {
             joinRoom(userId, otherUserId);
-            fetchChatHistory();
+            fetchChatHistory(false);
             markUnseenMessages();
           });
         }
       } else if (nextAppState === 'background') {
         leaveRoom(userId, otherUserId);
+        saveMessages(messages);
       }
     };
 
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
     return () => {
       socket.off('receiveMessage', messageHandler);
       socket.off('messagesSeen', messagesSeenHandler);
       socket.off('connect');
       leaveRoom(userId, otherUserId);
+      saveMessages(messages);
       subscription.remove();
     };
-  }, [userId, otherUserId]);
+  }, [userId, otherUserId, fetchChatHistory, messageHandler, messagesSeenHandler, saveMessages, markUnseenMessages]);
 
-  const formatTime = isoString => moment(isoString).format('h:mm A');
+  const formatTime = (isoString) => moment(isoString).format('h:mm A');
 
   const handleSendMessage = async (isFilePicker = false) => {
+
     removeSelectedFile('');
     setText('');
+
     if (isFilePicker) {
       try {
         setFileUploading(true);
@@ -329,10 +342,10 @@ const MessageComponent = ({
     try {
       if (selectedFile) {
         setFileUploading(true);
-        setUploadingFiles(prev => ({...prev, [tempId]: true}));
+        setUploadingFiles((prev) => ({ ...prev, [tempId]: true }));
 
-        setMessages(prevMessages => [
-          {
+        setMessages((prevMessages) => {
+          const newMessage = {
             _id: tempId,
             tempId,
             senderId: userId,
@@ -342,25 +355,24 @@ const MessageComponent = ({
             createdAt: now,
             isTemp: true,
             seen: false,
-          },
-          ...prevMessages,
-        ]);
+          };
+          const updatedMessages = [newMessage, ...prevMessages];
+          saveMessages(updatedMessages);
+          return updatedMessages;
+        });
 
         const uploadedFile = await uploadFileAndGetUrl(selectedFile);
         fileUrl = uploadedFile.url;
 
-        setMessages(prevMessages =>
-          prevMessages.map(msg =>
+        setMessages((prevMessages) => {
+          const updatedMessages = prevMessages.map((msg) =>
             msg._id === tempId
-              ? {
-                  ...msg,
-                  file: fileUrl,
-                  message: text?.trim() || '',
-                  isTemp: false,
-                }
+              ? { ...msg, file: fileUrl, message: text?.trim() || '', isTemp: false }
               : msg,
-          ),
-        );
+          );
+          saveMessages(updatedMessages);
+          return updatedMessages;
+        });
       } else {
         const tempMessage = {
           _id: tempId,
@@ -372,27 +384,27 @@ const MessageComponent = ({
           createdAt: now,
           seen: false,
         };
-        setMessages(prevMessages => [tempMessage, ...prevMessages]);
+        setMessages((prevMessages) => {
+          const updatedMessages = [tempMessage, ...prevMessages];
+          saveMessages(updatedMessages);
+          return updatedMessages;
+        });
       }
 
-      await sendMessage(
-        userId,
-        otherUserId,
-        text?.trim() || '',
-        fileUrl || null,
-        tempId,
-      );
+      await sendMessage(userId, otherUserId, text?.trim() || '', fileUrl || null, tempId);
     } catch (err) {
       console.error('Error in handleSendMessage:', err);
-      setMessages(prevMessages =>
-        prevMessages.filter(msg => msg._id !== tempId),
-      );
+      setMessages((prevMessages) => {
+        const updatedMessages = prevMessages.filter((msg) => msg._id !== tempId);
+        saveMessages(updatedMessages);
+        return updatedMessages;
+      });
     } finally {
       setText('');
       setSelectedFile(null);
       setFileUploading(false);
-      setUploadingFiles(prev => {
-        const newState = {...prev};
+      setUploadingFiles((prev) => {
+        const newState = { ...prev };
         delete newState[tempId];
         return newState;
       });
@@ -403,7 +415,7 @@ const MessageComponent = ({
     setSelectedFile(null);
   };
 
-  const uploadFileAndGetUrl = async file => {
+  const uploadFileAndGetUrl = async (file) => {
     const formData = new FormData();
     formData.append('file', {
       uri: file?.uri,
@@ -413,48 +425,44 @@ const MessageComponent = ({
     const response = await fetch(`${BASE_URL}/upload`, {
       method: 'POST',
       body: formData,
-      headers: {'Content-Type': 'multipart/form-data'},
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     if (!response.ok) {
       console.error('Upload failed with status:', response.status);
       throw new Error('Upload failed');
     }
-    const json = await response.json();
-    console.log('Upload response:', json);
-    return json;
+    return await response.json();
   };
 
-  const groupMessagesByDate = messages => {
+  const groupMessagesByDate = useCallback((messages) => {
     const groups = {};
-    messages?.forEach(message => {
+    messages?.forEach((message) => {
       const date = moment(message?.createdAt)?.format('YYYY-MM-DD');
-      if (!groups[date]) {
-        groups[date] = [];
-      }
+      if (!groups[date]) groups[date] = [];
       groups[date]?.push(message);
     });
     return groups;
-  };
+  }, []);
 
-  const createFlatListData = messages => {
+  const createFlatListData = useCallback((messages) => {
     if (!messages?.length) return [];
     const groupedMessages = groupMessagesByDate(messages);
     const flatListData = [];
     Object.keys(groupedMessages)
       .sort((a, b) => new Date(b) - new Date(a))
-      .forEach(date => {
+      .forEach((date) => {
         const messagesForDate = groupedMessages[date].sort(
           (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
         );
-        messagesForDate.forEach(message => {
-          flatListData.push({...message, type: 'message'});
+        messagesForDate.forEach((message) => {
+          flatListData.push({ ...message, type: 'message' });
         });
-        flatListData.push({id: `date-${date}`, type: 'date', date});
+        flatListData.push({ id: `date-${date}`, type: 'date', date });
       });
     return flatListData;
-  };
+  }, [groupMessagesByDate]);
 
-  const formatDateForSeparator = dateString => {
+  const formatDateForSeparator = (dateString) => {
     const messageDate = moment(dateString);
     const today = moment().startOf('day');
     const yesterday = moment().subtract(1, 'day').startOf('day');
@@ -465,12 +473,14 @@ const MessageComponent = ({
     return messageDate?.format('MMM D');
   };
 
-  const sortedMessages = [...messages].sort(
-    (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
-  );
-  const flatListData = createFlatListData(sortedMessages);
+  const flatListData = useMemo(() => {
+    const sortedMessages = [...messages].sort(
+      (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
+    );
+    return createFlatListData(sortedMessages);
+  }, [messages, createFlatListData]);
 
-  const openImageViewer = fileUrl => {
+  const openImageViewer = (fileUrl) => {
     setSelectedImage(fileUrl);
     setImageViewerVisible(true);
     scale.setValue(1);
@@ -488,9 +498,9 @@ const MessageComponent = ({
 
   const resetImageZoom = () => {
     Animated.parallel([
-      Animated.spring(scale, {toValue: 1, useNativeDriver: true}),
-      Animated.spring(offsetX, {toValue: 0, useNativeDriver: true}),
-      Animated.spring(offsetY, {toValue: 0, useNativeDriver: true}),
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+      Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+      Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
     ]).start();
     lastScale.current = 1;
     lastX.current = 0;
@@ -499,99 +509,97 @@ const MessageComponent = ({
 
   const CHARACTER_LIMIT = 200;
 
-  const renderMessage = ({item}) => {
-    const isSender = item?.senderId === userId;
-    const fileUrl = item?.file || item?.fileUrl;
-    const time = formatTime(item?.createdAt || item?.timestamp);
-    const isUploading = item.isTemp || uploadingFiles[item._id];
-    const isSeen = item?.seen;
-    const isTemp = item._id?.startsWith('temp-');
-    const isLongMessage = item?.message?.length > CHARACTER_LIMIT;
-    const isExpanded = expandedMessages[item._id] || false;
+  const renderMessage = useCallback(
+    ({ item }) => {
+      const isSender = item?.senderId === userId;
+      const fileUrl = item?.file || item?.fileUrl;
+      const time = formatTime(item?.createdAt || item?.timestamp);
+      const isUploading = item.isTemp || uploadingFiles[item._id];
+      const isSeen = item?.seen;
+      const isTemp = item._id?.startsWith('temp-');
+      const isLongMessage = item?.message?.length > CHARACTER_LIMIT;
+      const isExpanded = expandedMessages[item._id] || false;
 
-    const toggleReadMore = () => {
-      setExpandedMessages(prev => ({
-        ...prev,
-        [item._id]: !isExpanded,
-      }));
-    };
+      const toggleReadMore = () => {
+        setExpandedMessages((prev) => ({
+          ...prev,
+          [item._id]: !isExpanded,
+        }));
+      };
 
-    const displayedText =
-      isLongMessage && !isExpanded
-        ? `${item?.message.substring(0, CHARACTER_LIMIT)}...`
-        : item?.message;
+      const displayedText =
+        isLongMessage && !isExpanded
+          ? `${item?.message.substring(0, CHARACTER_LIMIT)}...`
+          : item?.message;
 
-    return (
-      <View
-        style={[
-          styles.messageContainer,
-          isSender ? styles.sent : styles.received,
-        ]}>
-        <View style={styles.messageWrapper}>
+      return (
+        <View style={[styles.messageContainer, isSender ? styles.sent : styles.received]}>
           {fileUrl && (
             <View style={styles.imageContainer}>
               {isUploading ? (
-                <ActivityIndicator color={Color.primaryColor} />
+                <ActivityIndicator size="large" color={Color.primaryColor} />
               ) : (
                 <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                  <Image source={{uri: fileUrl}} style={styles.image} />
+                  <Image source={{ uri: fileUrl }} style={styles.image} />
                 </TouchableOpacity>
               )}
             </View>
           )}
           {item?.message && (
-            <View style={styles.textContainer}>
-              <Text style={styles.messageText}>{displayedText}</Text>
-              {isLongMessage && (
-                <TouchableOpacity onPress={toggleReadMore}>
-                  <Text style={styles.readMoreText}>
-                    {isExpanded ? 'Read Less' : 'Read More'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-          <View style={styles.messageContent}>
-            <Text style={styles.timestampText}>{time}</Text>
-            {isSender && (
-              <View style={styles.messageFooter}>
-                {isTemp ? (
-                  <Ionicons
-                    name="time-outline"
-                    size={16}
-                    color={Color.gray}
-                    style={styles.readStatus}
-                  />
-                ) : (
-                  <Ionicons
-                    name={isSeen ? 'checkmark-done' : 'checkmark'}
-                    size={16}
-                    color={isSeen ? Color.primaryColor : Color.gray}
-                    style={styles.readStatus}
-                  />
+            <View style={styles.messageWrapper}>
+              <View style={styles.messageContentWithTime}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.messageText}>{displayedText}</Text>
+                  <View style={styles.timeAndStatusContainer}>
+                    <Text style={styles.timestampText}>{time}</Text>
+                    {isSender && (
+                      <View style={styles.statusContainer}>
+                        {isTemp ? (
+                          <ActivityIndicator size="small" color={Color.gray} />
+                        ) : (
+                          <Ionicons
+                            name={isSeen ? 'checkmark-done' : 'checkmark'}
+                            size={16}
+                            color={isSeen ? Color?.primaryColor : Color?.gray}
+                          />
+                        )}
+                      </View>
+                    )}
+                  </View>
+                </View>
+                {isLongMessage && (
+                  <TouchableOpacity onPress={toggleReadMore}>
+                    <Text style={styles.readMoreText}>
+                      {isExpanded ? 'Read Less' : 'Read More'}
+                    </Text>
+                  </TouchableOpacity>
                 )}
               </View>
-            )}
-          </View>
-        </View>
-      </View>
-    );
-  };
-
-  const renderItem = ({item}) => {
-    if (item.type === 'date') {
-      return (
-        <View style={styles.dateSeparator}>
-          <Text style={styles.dateSeparatorText}>
-            {formatDateForSeparator(item?.date)}
-          </Text>
+            </View>
+          )}
         </View>
       );
-    }
-    return renderMessage({item});
-  };
+    },
+    [userId, uploadingFiles, expandedMessages]
+  );
 
-  const renderHeader = () => {
+  const renderItem = useCallback(
+    ({ item }) => {
+      if (item.type === 'date') {
+        return (
+          <View style={styles.dateSeparator}>
+            <Text style={styles.dateSeparatorText}>
+              {formatDateForSeparator(item?.date)}
+            </Text>
+          </View>
+        );
+      }
+      return renderMessage({ item });
+    },
+    [renderMessage],
+  );
+
+  const renderHeader = useCallback(() => {
     if (!showHeader) return null;
     return (
       <View style={styles.headerContainer}>
@@ -602,36 +610,40 @@ const MessageComponent = ({
           <Image style={styles.profileImage} source={userImage} />
           <Text style={styles.backTxt}>{profileName}</Text>
         </View>
-        <TouchableOpacity style={{marginHorizontal: 16}}>
+        <TouchableOpacity style={{ marginHorizontal: 16 }}>
           <Feather name="info" color={Color.primaryColor} size={22} />
         </TouchableOpacity>
       </View>
     );
-  };
+  }, [navigation, userImage, profileName, showHeader]);
 
   return (
     <SafeAreaView style={[styles.container, containerStyle]}>
       {renderHeader()}
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../assets/Images/chatBackground.jpg')}>
-        {loading ? (
-          <ActivityIndicator
-            color={Color.primaryColor}
-            size="large"
-            style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
-          />
-        ) : (
-          <FlatList
-            data={flatListData}
-            keyExtractor={item =>
-              item?.type === 'date'
-                ? item?.id
-                : item?._id?.toString() || `msg-${item?.tempId}`
-            }
-            renderItem={renderItem}
-            inverted
-          />
+        <FlatList
+          data={flatListData}
+          keyExtractor={(item) =>
+            item?.type === 'date'
+              ? item?.id
+              : item?._id?.toString() || `msg-${item?.tempId}`
+          }
+          renderItem={renderItem}
+          inverted
+          initialNumToRender={20}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+        />
+        {loading && (
+          <View style={styles.loaderOverlay}>
+            <ActivityIndicator
+              color={Color.primaryColor}
+              size="large"
+              style={{ justifyContent: 'center', alignSelf: 'center' }}
+            />
+          </View>
         )}
         <View style={styles.inputContainer}>
           {selectedFile && (
@@ -703,22 +715,22 @@ const MessageComponent = ({
                 styles.imageViewerWrapper,
                 {
                   transform: [
-                    {scale: scale},
-                    {translateX: offsetX},
-                    {translateY: offsetY},
+                    { scale: scale },
+                    { translateX: offsetX },
+                    { translateY: offsetY },
                   ],
                 },
               ]}>
               <TouchableOpacity
                 activeOpacity={1}
-                onPress={e => e.stopPropagation()}
-                onLongPress={e => {
+                onPress={(e) => e.stopPropagation()}
+                onLongPress={(e) => {
                   e.stopPropagation();
                   resetImageZoom();
                 }}
                 delayLongPress={200}>
                 <Animated.Image
-                  source={{uri: selectedImage}}
+                  source={{ uri: selectedImage }}
                   style={styles.fullScreenImage}
                   resizeMode="contain"
                 />
@@ -795,6 +807,8 @@ const styles = StyleSheet.create({
     padding: 8,
     alignSelf: 'flex-end',
   },
+
+
   messageContainer: {
     marginVertical: 4,
     marginHorizontal: 10,
@@ -813,19 +827,45 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.white,
   },
   messageWrapper: {},
+  messageContentWithTime: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-end',
+    minWidth: 80,
+  },
   textContainer: {
-    paddingVertical: 4,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    flexWrap: 'wrap',
   },
   messageText: {
     fontSize: 16,
-    color: Color.black,
-    fontFamily: Font?.Poppins,
+    color: '#000',
+    lineHeight: 20,
+    flexShrink: 1,
+  },
+  timeAndStatusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  timestampText: {
+    fontSize: 12,
+    color: '#8696A0',
+    marginRight: 4,
+  },
+  statusContainer: {
+    marginLeft: 2,
   },
   readMoreText: {
     fontSize: 14,
     color: Color.primaryColor,
-    marginTop: 4,
     fontFamily: Font?.Poppins,
+    marginTop: 4,
+  },
+
+  statusContainer: {
+    marginLeft: 2,
   },
   imageContainer: {
     marginBottom: 4,
@@ -839,12 +879,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginTop: 4,
+    backgroundColor: "red",
+    width: "30%"
   },
   timestampText: {
     fontSize: 12,
     color: Color.gray,
-    marginRight: 4,
   },
   messageFooter: {
     flexDirection: 'row',
@@ -902,6 +942,12 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     marginHorizontal: 7,
   },
+  messageContentWithTime: {
+    position: 'relative',
+    minWidth: 80,
+  },
 });
 
 export default MessageComponent;
+
+

@@ -253,14 +253,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: '20%',
   },
-  // icnPrimaryView: {
-  //   height: verticalScale(22),
-  //   width: verticalScale(22),
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   backgroundColor: Color.primaryColor,
-  //   borderRadius: scale(50),
-  // },
   profileName: {
     fontSize: scale(18),
     color: Color.txt,

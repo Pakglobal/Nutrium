@@ -168,8 +168,7 @@ const styles = StyleSheet.create({
     fontSize: scale(13),
     fontWeight: '500',
     color: Color.black,
-    fontFamily: Font?.Poppins,
-    // width:'50%'
+    fontFamily: Font?.Poppins
   },
   border: {
     borderBottomColor: Color.borderColor,

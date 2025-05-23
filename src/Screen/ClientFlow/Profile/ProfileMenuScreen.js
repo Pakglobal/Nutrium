@@ -48,7 +48,6 @@ const ProfileMenuScreen = () => {
   const handleLogout = async () => {
     dispatch(guestLoginData());
     dispatch(setGuestToken());
-    // navigation.navigate('loginChoice')
   };
 
   return (
@@ -75,7 +74,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   scrollView: {
-    // flex: 1,
     paddingHorizontal: scale(16),
   },
   profileTopContainer: {

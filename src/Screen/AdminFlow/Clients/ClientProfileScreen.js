@@ -364,7 +364,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     backgroundColor: Color?.primaryColor,
-    // position:'absolute'
   },
   avatar: {
     width: scaleSize(40),

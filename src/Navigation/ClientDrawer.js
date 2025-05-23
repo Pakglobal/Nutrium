@@ -166,7 +166,6 @@ const ClientDrawerContent = props => {
   );
 
   const handleSignOut = async () => {
-    // First close the drawer
     props.navigation.closeDrawer();
 
     setTimeout(() => {

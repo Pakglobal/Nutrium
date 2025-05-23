@@ -139,9 +139,8 @@ const Measurements = () => {
       return 'Not measured yet';
     }
 
-    // Check if the latest measurement date is today
     const latestDate = measurementData.currentDate;
-    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0]; 
     const measurementDate = new Date(latestDate).toISOString().split('T')[0];
 
     return measurementDate === today
@@ -318,7 +317,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // marginTop: verticalScale(50),
   },
   title: {
     fontSize: scale(14),
@@ -348,7 +346,6 @@ const styles = StyleSheet.create({
   },
   details: {
     flex: 1,
-    // flexDirection: 'column',
   },
   label: {
     color: Color?.textColor,

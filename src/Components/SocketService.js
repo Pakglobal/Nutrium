@@ -26,7 +26,7 @@ export const connectSocket = () => {
     });
 
     socket.on('connect_error', error => {
-      console.error('❌ Socket connection error:', error);
+      console.error('❌ Socket connection error:', error.message);
     });
 
     socket.on('disconnect', reason => {
@@ -45,12 +45,12 @@ export const disconnectSocket = () => {
 
 export const joinRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
-    socket.emit('join', {userId, otherUserId});
+    socket.emit('join', { userId, otherUserId });
   } else {
     console.error('Cannot join room: Socket not connected');
     const newSocket = connectSocket();
     newSocket.on('connect', () => {
-      socket.emit('join', {userId, otherUserId});
+      socket.emit('join', { userId, otherUserId });
     });
   }
 };
@@ -66,7 +66,7 @@ export const markMessagesAsSeen = (messageIds, senderId, receiverId) => {
     return false;
   }
 
-  socket.emit('messagesSeen', {messageIds, senderId, receiverId});
+  socket.emit('messagesSeen', { messageIds, senderId, receiverId });
   return true;
 };
 
@@ -128,7 +128,7 @@ export const sendMessage = async (
       throw new Error('Socket is not connected');
     }
   } catch (error) {
-    console.error('❌ Error sending message:', error);
+    console.error('❌ Error sending message:', error.message);
     throw error;
   }
 };
@@ -144,7 +144,7 @@ export const getChatHistory = (userId, otherUserId, callback) => {
     callback(history);
   });
 
-  socket.emit('getHistory', {userId, otherUserId});
+  socket.emit('getHistory', { userId, otherUserId });
 };
 
 export const onReceiveMessage = callback => {
@@ -161,11 +161,88 @@ export const onReceiveMessage = callback => {
 
 export const leaveRoom = (userId, otherUserId) => {
   if (socket && socket.connected) {
-    socket.emit('leave', {userId, otherUserId});
+    socket.emit('leave', { userId, otherUserId });
     return true;
   } else {
     console.error('❌ Cannot leave room: Socket not connected');
     return false;
   }
 };
+
+export const editMessage = (messageId, newMessage, userId, otherUserId) => {
+  return new Promise((resolve, reject) => {
+    const socket = connectSocket();
+    if (!socket || !socket.connected) {
+      reject(new Error('Socket is not connected'));
+      return;
+    }
+    socket.emit(
+      'editMessage',
+      { messageId, newMessage, userId, otherUserId },
+      (response) => {
+        if (response?.error) {
+          reject(new Error(response.error));
+        } else {
+          resolve(response);
+        }
+      },
+    );
+  });
+};
+
+export const deleteMessage = (messageId, userId, otherUserId) => {
+  return new Promise((resolve, reject) => {
+    if (!socket || !socket.connected) {
+      reject(new Error('Socket is not connected'));
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      reject(new Error('Delete message request timed out'));
+    }, 5000);
+
+    socket.emit(
+      'deleteMessage',
+      { messageId, userId, otherUserId },
+      response => {
+        clearTimeout(timeout);
+        if (response && response.error) {
+          reject(new Error(response.error));
+        } else {
+          resolve(response || { success: true });
+        }
+      },
+    );
+  });
+};
+
+
+export const likeMessage = (messageId, userId, otherUserId) => {
+  console.log('messageId, userId, otherUserId', messageId, userId, otherUserId)
+  return new Promise((resolve, reject) => {
+    if (!socket || !socket.connected) {
+      console.error('❌ likeMessage failed: Socket not connected');
+      reject(new Error('Socket is not connected'));
+      return;
+    }
+
+    console.log(`Sending likeMessage event: ${messageId} from user ${userId}`);
+
+    socket.emit(
+      'likeMessage',
+      { messageId, userId, otherUserId },
+      response => {
+        clearTimeout(timeout);
+        if (response && response.error) {
+          console.error(`❌ likeMessage failed: ${response.error}`);
+          reject(new Error(response.error));
+        } else {
+          console.log(`✅ likeMessage successful for message ${messageId}`);
+          resolve(response || { success: true });
+        }
+      },
+    );
+  });
+};
+
 

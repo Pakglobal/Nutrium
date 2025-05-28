@@ -112,7 +112,6 @@ const ClientDrawerContent = props => {
     },
   ];
 
-  console.log('user', profileInfo);
 
   const AdminInfo = {
     image: profileInfo?.image,

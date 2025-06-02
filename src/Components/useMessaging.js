@@ -40,6 +40,7 @@ import { Color } from '../assets/styles/Colors';
 import { Font } from '../assets/styles/Fonts';
 import { BASE_URL } from '../Apis/AllAPI/API';
 import { useDispatch } from 'react-redux';
+import Clipboard from '@react-native-clipboard/clipboard';
 import PushNotification, { Importance } from 'react-native-push-notification';
 
 
@@ -431,6 +432,9 @@ const MessageComponent = ({
     return await response.json();
   };
   const handleSendMessage = async (isFilePicker = false) => {
+    removeSelectedFile('');
+    setText('');
+
     if (isEditing && selectedMessage) {
       if (!text?.trim()) {
         Alert.alert('Error', 'Message cannot be empty');
@@ -617,8 +621,11 @@ const MessageComponent = ({
     }
   };
 
+
+
   const handleCopyMessage = () => {
     if (!selectedMessage || !selectedMessage.message) return;
+    Clipboard.setString(selectedMessage.message);
     setSelectedMessage(null);
     setIsEditing(false);
     setText('');
@@ -845,33 +852,12 @@ const MessageComponent = ({
                 )}
               </View>
             )}
-            {/* <View style={styles.messageContent}>
-              <Text style={styles.timestampText}>{time}</Text>
-              {isSender && !item.isDeleted && (
-                <View style={styles.messageFooter}>
-                  {isTemp ? (
-                    <Ionicons
-                      name="time-outline"
-                      size={16}
-                      color={Color.gray}
-                      style={styles.readStatus}
-                    />
-                  ) : (
-                    <Ionicons
-                      name={isSeen ? 'checkmark-done' : 'checkmark'}
-                      size={16}
-                      color={isSeen ? Color.primaryColor : Color.gray}
-                      style={styles.readStatus}
-                    />
-                  )}
-                </View>
-              )}
-            </View> */}
+
             {hasLikes && !item.isDeleted && (
               <View style={styles.likeContainer}>
                 <Ionicons name="heart" size={20} color={Color.red} />
                 {item.likes.length > 1 && (
-                  <Text style={{ color: Color?.textColor, fontFamily: Font?.Poppins }}>{item.likes.length}</Text>
+                  <Text style={{ color: Color?.textColor, }}>{item.likes.length}</Text>
                 )}
               </View>
             )}
@@ -1394,9 +1380,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   likeContainer: {
-    alignSelf: 'center',
+    alignSelf: 'flex-end',
     marginTop: 5,
-    flexDirection: "row"
+    flexDirection: "row",
+    backgroundColor: "pink",
+    position: 'absolute',
+    backgroundColor: Color?.white,
+    bottom: scale(-17),
+    padding: scale(2),
+    borderRadius: scale(10)
   },
 });
 

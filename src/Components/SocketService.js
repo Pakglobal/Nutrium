@@ -26,7 +26,7 @@ export const connectSocket = () => {
     });
 
     socket.on('connect_error', error => {
-      console.error('❌ Socket connection error:', error.message);
+      console.error('❌ Socket connection error:', error);
     });
 
     socket.on('disconnect', reason => {
@@ -128,7 +128,7 @@ export const sendMessage = async (
       throw new Error('Socket is not connected');
     }
   } catch (error) {
-    console.error('❌ Error sending message:', error.message);
+    console.error('❌ Error sending message:', error);
     throw error;
   }
 };
@@ -197,9 +197,6 @@ export const deleteMessage = (messageId, userId, otherUserId) => {
       return;
     }
 
-    const timeout = setTimeout(() => {
-      reject(new Error('Delete message request timed out'));
-    }, 5000);
 
     socket.emit(
       'deleteMessage',
@@ -215,6 +212,7 @@ export const deleteMessage = (messageId, userId, otherUserId) => {
     );
   });
 };
+
 
 
 export const likeMessage = (messageId, userId, otherUserId) => {

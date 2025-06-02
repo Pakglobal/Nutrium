@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
   commentContent: {
     backgroundColor: Color.white,
     paddingHorizontal: scale(20),
-    paddingVertical: verticalScale(40),
+    paddingVertical: verticalScale(10),
     borderRadius: scale(8),
   },
 

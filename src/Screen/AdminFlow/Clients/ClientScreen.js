@@ -216,6 +216,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: scale(16),
     color: Color.black,
+    fontFamily: Font?.Poppins
   },
   locationContainer: {
     flexDirection: 'row',

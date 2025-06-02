@@ -19,7 +19,7 @@ import {GetUserApi} from '../Apis/ClientApis/ProfileApi';
 import {GetAppointmentData} from '../Apis/AdminScreenApi/AppointmentApi';
 import {Font} from '../assets/styles/Fonts';
 
-const SideBar = ({onSelectScreen}) => {
+const SideBar = ({ onSelectScreen }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -75,8 +75,8 @@ const SideBar = ({onSelectScreen}) => {
   };
 
   const listArrayItem = [
-    {icon: 'mail-outline', label: 'MESSAGES', name: 'Messages'},
-    {icon: 'people-outline', label: 'CLIENTS', name: 'Clients'},
+    { icon: 'mail-outline', label: 'MESSAGES', name: 'Messages' },
+    { icon: 'people-outline', label: 'CLIENTS', name: 'Clients' },
     {
       icon: 'calendar-outline',
       label: 'APPOINTMENTS',
@@ -90,18 +90,18 @@ const SideBar = ({onSelectScreen}) => {
     {icon: 'log-out-outline', name: 'Sign out', action: handleLogOut},
   ];
 
-  const renderItem = ({item}) => (
+  const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
         if (item?.action) {
           item?.action();
         } else {
           onSelectScreen(item?.label);
-          navigation.navigate(item?.label, {label: item?.label});
+          navigation.navigate(item?.label, { label: item?.label });
         }
       }}
       style={styles.item}>
-      <Ionicons name={item?.icon} color={Color.gray} size={scale(22)} />
+      <Ionicons name={item?.icon} color={Color.black} size={scale(22)} />
       <Text style={styles.title}>{item?.name}</Text>
       {item?.name === 'Sync all info' && asyncLoading && (
         <View style={{position: 'absolute', right: 0}}>
@@ -139,18 +139,20 @@ const SideBar = ({onSelectScreen}) => {
             marginHorizontal: scale(8),
             marginVertical: verticalScale(8),
             color: Color.black,
+            fontFamily: Font?.Poppins
           }}>
           Recent
         </Text>
         <FlatList data={listArrayItem} renderItem={renderItem} />
       </View> */}
 
-      <View style={{marginVertical: verticalScale(8)}}>
+      <View style={{ marginVertical: verticalScale(8) }}>
         <Text
           style={{
             marginHorizontal: scale(8),
             marginVertical: verticalScale(8),
             color: Color.black,
+            fontFamily: Font?.Poppins
           }}>
           Settings and support
         </Text>

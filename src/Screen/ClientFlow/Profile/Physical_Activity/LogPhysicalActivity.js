@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
   },
   inputView: {
     fontSize: scale(12),
-    fontWeight: '600',
     color: Color.textColor,
     width: '85%',
     marginHorizontal: scale(8),

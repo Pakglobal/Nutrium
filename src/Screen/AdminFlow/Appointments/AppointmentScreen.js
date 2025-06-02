@@ -16,6 +16,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {GetAppointmentData} from '../../../Apis/AdminScreenApi/AppointmentApi';
 import moment from 'moment';
 import CustomLoader from '../../../Components/CustomLoader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const AppointmentScreen = () => {
   const navigation = useNavigation();
@@ -190,7 +191,7 @@ const AppointmentScreen = () => {
             />
           ) : (
             <View>
-              <Text style={{color: Color.gray, textAlign: 'center'}}>
+              <Text style={{color: Color.gray, textAlign: 'center',fontFamily:Font?.Poppins}}>
                 No Appointments Available
               </Text>
             </View>

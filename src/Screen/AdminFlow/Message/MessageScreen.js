@@ -20,6 +20,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import CustomLoader from '../../../Components/CustomLoader';
+import { Font } from '../../../assets/styles/Fonts';
 
 const MessageScreen = ({
   clientData = [],
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: scale(16),
     color: Color.black,
+    fontFamily:Font?.PoppinsMedium
   },
   noDataText: {
     textAlign: 'center',

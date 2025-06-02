@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {scale, verticalScale} from 'react-native-size-matters';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Color} from '../../../assets/styles/Colors';
+import { Color } from '../../../assets/styles/Colors';
+import { Font } from '../../../assets/styles/Fonts';
 
-const Practitioner = ({route}) => {
+const Practitioner = ({ route }) => {
   const data = route?.params?.data;
   const image = data?.image
-    ? {uri: data?.image}
+    ? { uri: data?.image }
     : data?.gender === 'Female'
-    ? require('../../../assets/Images/woman.png')
-    : require('../../../assets/Images/man.png');
+      ? require('../../../assets/Images/woman.png')
+      : require('../../../assets/Images/man.png');
 
   const navigation = useNavigation();
 
@@ -29,17 +30,17 @@ const Practitioner = ({route}) => {
       label: 'Phone number',
       value: data?.phoneNumber || '--',
     },
-    {id: 2, icon: 'mail', label: 'E-mail', value: data?.email || '--'},
+    { id: 2, icon: 'mail', label: 'E-mail', value: data?.email || '--' },
   ];
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.white}}>
+    <View style={{ flex: 1, backgroundColor: Color.white }}>
       <View
-        style={{backgroundColor: Color.headerBG, height: verticalScale(150)}}>
-        <View style={{marginHorizontal: scale(16)}}>
+        style={{ backgroundColor: Color.headerBG, height: verticalScale(150) }}>
+        <View style={{ marginHorizontal: scale(16) }}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            style={{marginTop: verticalScale(20)}}>
+            style={{ marginTop: verticalScale(20) }}>
             <AntDesign
               name="arrowleft"
               size={verticalScale(20)}
@@ -53,7 +54,7 @@ const Practitioner = ({route}) => {
         </View>
       </View>
 
-      <View style={{marginTop: verticalScale(40)}}>
+      <View style={{ marginTop: verticalScale(40) }}>
         {information?.map(item => (
           <View style={styles.container} key={item?.id}>
             <View style={styles.iconContainer}>
@@ -63,7 +64,7 @@ const Practitioner = ({route}) => {
                 color={Color.primaryColor}
               />
             </View>
-            <View style={{marginLeft: scale(20)}}>
+            <View style={{ marginLeft: scale(20) }}>
               <Text style={styles.label}>{item?.label}</Text>
               <Text style={styles.value}>{item?.value}</Text>
             </View>
@@ -107,20 +108,22 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: scale(18),
-    fontWeight: '700',
     color: Color.txt,
     marginLeft: scale(20),
     marginTop: verticalScale(20),
+    fontFamily: Font?.PoppinsMedium
   },
   value: {
     fontSize: scale(13),
-    fontWeight: '700',
     color: Color.black,
+    fontFamily: Font?.PoppinsMedium
+
   },
   label: {
     color: Color.gray,
-    fontWeight: '600',
     fontSize: scale(12),
+    fontFamily: Font?.PoppinsMedium
+
   },
   container: {
     flexDirection: 'row',

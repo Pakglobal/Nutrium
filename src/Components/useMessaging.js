@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -25,20 +25,24 @@ import {
   sendMessage,
   markMessagesAsSeen,
   leaveRoom,
+  deleteMessage,
+  likeMessage,
+  editMessage,
 } from '../Components/SocketService';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import {scale} from 'react-native-size-matters';
+import { scale } from 'react-native-size-matters';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-import {Color} from '../assets/styles/Colors';
-import {Font} from '../assets/styles/Fonts';
-import {BASE_URL} from '../Apis/AllAPI/API';
-import {useDispatch} from 'react-redux';
+import { Color } from '../assets/styles/Colors';
+import { Font } from '../assets/styles/Fonts';
+import { BASE_URL } from '../Apis/AllAPI/API';
+import { useDispatch } from 'react-redux';
 import Clipboard from '@react-native-clipboard/clipboard';
-import PushNotification, {Importance} from 'react-native-push-notification';
+import PushNotification, { Importance } from 'react-native-push-notification';
+
 
 const MessageComponent = ({
   userId,
@@ -86,7 +90,7 @@ const MessageComponent = ({
           const touch2 = event.nativeEvent.changedTouches[1];
           const distance = Math.sqrt(
             Math.pow(touch2.pageX - touch1.pageX, 2) +
-              Math.pow(touch2.pageY - touch1.pageY, 2),
+            Math.pow(touch2.pageY - touch1.pageY, 2),
           );
           const newScale = Math.max(1, Math.min(5, distance / 100));
           scale.setValue(newScale);
@@ -99,9 +103,9 @@ const MessageComponent = ({
         lastScale.current = scale._value;
         if (scale._value <= 1) {
           Animated.parallel([
-            Animated.spring(scale, {toValue: 1, useNativeDriver: true}),
-            Animated.spring(offsetX, {toValue: 0, useNativeDriver: true}),
-            Animated.spring(offsetY, {toValue: 0, useNativeDriver: true}),
+            Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+            Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+            Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
           ]).start();
           lastScale.current = 1;
           lastX.current = 0;
@@ -128,39 +132,32 @@ const MessageComponent = ({
       },
     );
     return () => backHandler.remove();
-  }, [navigation, dispatch, selectedMessage, isEditing]);
+  }, [navigation, selectedMessage, isEditing]);
 
   const fetchChatHistory = () => {
     setLoading(true);
-    getChatHistory(userId, otherUserId, history => {
+    getChatHistory(userId, otherUserId, (history) => {
       if (!history) {
         setMessages([]);
         setLoading(false);
         return;
       }
-      const updatedHistory = history.reverse().map(msg => ({
+
+      const updatedHistory = history.reverse().map((msg) => ({
         ...msg,
         seen: msg.seen || false,
         tempId: msg.tempId || null,
-        isEdited: msg.isEdited || false,
+        isEdited: msg.isEdited || msg.edited || false,
+        isDeleted: msg.isDeleted || false,
+        likes: msg.likes || [],
       }));
-      setMessages(prevMessages => {
-        const mergedMessages = [...updatedHistory];
-        prevMessages.forEach(msg => {
-          const existingMsg = mergedMessages.find(
-            m => m._id === msg._id || (m.tempId && m.tempId === msg.tempId),
-          );
-          if (existingMsg) {
-            existingMsg.seen = msg.seen;
-            existingMsg.isEdited = msg.isEdited;
-          } else {
-            mergedMessages.push(msg);
-          }
-        });
-        return mergedMessages.sort(
+
+      setMessages(
+        updatedHistory.sort(
           (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
-        );
-      });
+        ),
+      );
+
       setLoading(false);
       markUnseenMessages();
     });
@@ -169,19 +166,19 @@ const MessageComponent = ({
   const markUnseenMessages = () => {
     if (appState !== 'active') return;
     const unseenMessages = messages.filter(
-      msg =>
+      (msg) =>
         !msg?.seen &&
         msg.senderId !== userId &&
         msg.receiverId === userId &&
         msg._id,
     );
     if (unseenMessages.length > 0) {
-      const messageIds = unseenMessages.map(msg => msg._id).filter(Boolean);
+      const messageIds = unseenMessages.map((msg) => msg._id).filter(Boolean);
       markMessagesAsSeen(messageIds, otherUserId, userId);
     }
   };
 
-  const displayNotification = async remoteMessage => {
+  const displayNotification = async (remoteMessage) => {
     try {
       const title =
         remoteMessage.notification?.title ||
@@ -207,7 +204,7 @@ const MessageComponent = ({
     }
   };
 
-  const messageHandler = newMessage => {
+  const messageHandler = (newMessage) => {
     if (!newMessage?._id || !newMessage?.senderId || !newMessage?.receiverId) {
       console.error('Invalid message received:', newMessage);
       return;
@@ -227,36 +224,33 @@ const MessageComponent = ({
       });
     }
 
-    setMessages(prevMessages => {
+    setMessages((prevMessages) => {
       const safeNewMessage = {
         ...newMessage,
         tempId: newMessage.tempId || null,
         seen: newMessage.seen || false,
-        isEdited: newMessage.isEdited || false,
+        isEdited: newMessage.isEdited || newMessage.edited || false,
+        likes: newMessage.likes || [],
       };
 
-      const messageExists = prevMessages.find(
-        msg =>
+      const messageIndex = prevMessages.findIndex(
+        (msg) =>
           (msg._id && msg._id === safeNewMessage._id) ||
           (msg.tempId &&
             safeNewMessage.tempId &&
             msg.tempId === safeNewMessage.tempId),
       );
 
-      if (messageExists) {
-        return prevMessages.map(msg =>
-          (msg._id && msg._id === safeNewMessage._id) ||
-          (msg.tempId &&
-            safeNewMessage.tempId &&
-            msg.tempId === safeNewMessage.tempId)
-            ? {
-                ...safeNewMessage,
-                tempId: msg.tempId || safeNewMessage.tempId,
-                seen: msg.seen,
-                isEdited: msg.isEdited,
-              }
-            : msg,
-        );
+      if (messageIndex !== -1) {
+        const updatedMessages = [...prevMessages];
+        updatedMessages[messageIndex] = {
+          ...safeNewMessage,
+          tempId: prevMessages[messageIndex].tempId || safeNewMessage.tempId,
+          seen: prevMessages[messageIndex].seen,
+          isEdited: prevMessages[messageIndex].isEdited || safeNewMessage.edited,
+          likes: safeNewMessage.likes || prevMessages[messageIndex].likes || [],
+        };
+        return updatedMessages;
       }
 
       return [safeNewMessage, ...prevMessages];
@@ -272,18 +266,80 @@ const MessageComponent = ({
     }
   };
 
-  const messagesSeenHandler = data => {
+  const messagesSeenHandler = (data) => {
     if (
       data?.messageIds &&
       data?.senderId === userId &&
       data?.receiverId === otherUserId
     ) {
-      setMessages(prevMessages =>
-        prevMessages.map(msg =>
-          data.messageIds.includes(msg._id) ? {...msg, seen: true} : msg,
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          data.messageIds.includes(msg._id) ? { ...msg, seen: true } : msg,
         ),
       );
     }
+  };
+
+  const messageLikedHandler = ({ messageId, liked, userId: likerId }) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) => {
+        if (msg._id === messageId) {
+          const updatedLikes = [...(msg.likes || [])];
+          if (liked && !updatedLikes.includes(likerId)) {
+            updatedLikes.push(likerId);
+          } else if (!liked && updatedLikes.includes(likerId)) {
+            updatedLikes.splice(updatedLikes.indexOf(likerId), 1);
+          }
+          return { ...msg, likes: updatedLikes };
+        }
+        return msg;
+      }),
+    );
+  };
+
+  const likeMessageErrorHandler = ({ error }) => {
+    console.error('Like message error:', error);
+    Alert.alert('Error', error || 'Failed to like message');
+  };
+
+  const messageEditedHandler = (message) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg._id === message._id
+          ? {
+            ...msg,
+            message: message.message,
+            updatedAt: message.updatedAt || new Date().toISOString(),
+            isEdited: message.edited || true,
+          }
+          : msg,
+      ),
+    );
+    setSelectedMessage(null);
+    setIsEditing(false);
+    setText('');
+  };
+
+  const editMessageErrorHandler = ({ error }) => {
+    console.error('Edit message error:', error);
+    Alert.alert('Error', error || 'Failed to edit message');
+    if (selectedMessage) {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === selectedMessage._id
+            ? {
+              ...msg,
+              message: selectedMessage.message,
+              updatedAt: selectedMessage.updatedAt,
+              isEdited: selectedMessage.isEdited,
+            }
+            : msg,
+        ),
+      );
+    }
+    setSelectedMessage(null);
+    setIsEditing(false);
+    setText('');
   };
 
   useEffect(() => {
@@ -299,25 +355,29 @@ const MessageComponent = ({
     }
     socket.on('receiveMessage', messageHandler);
     socket.on('messagesSeen', messagesSeenHandler);
+    socket.on('messageDeleted', ({ messageId }) => {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === messageId
+            ? {
+              ...msg,
+              message: 'This message was deleted',
+              file: null,
+              isDeleted: true,
+              isEdited: false,
+              likes: [],
+            }
+            : msg,
+        ),
+      );
+      setSelectedMessage(null);
+    });
+    socket.on('messageLiked', messageLikedHandler);
+    socket.on('likeMessageError', likeMessageErrorHandler);
+    socket.on('messageEdited', messageEditedHandler);
+    socket.on('editMessageError', editMessageErrorHandler);
 
-    //   socket.on('messageEdited', ({ messageId, newMessage, updatedAt }) => {
-    //   setMessages(prevMessages =>
-    //     prevMessages.map(msg =>
-    //       msg._id === messageId
-    //         ? { ...msg, message: newMessage, updatedAt, isEdited: true }
-    //         : msg,
-    //     ),
-    //   );
-    // });
-
-    // // Listener for deleted messages
-    // socket.on('messageDeleted', ({ messageId }) => {
-    //   setMessages(prevMessages =>
-    //     prevMessages.filter(msg => msg._id !== messageId),
-    //   );
-    // });
-
-    const handleAppStateChange = nextAppState => {
+    const handleAppStateChange = (nextAppState) => {
       setAppState(nextAppState);
       if (nextAppState === 'active') {
         if (socket.connected) {
@@ -336,87 +396,41 @@ const MessageComponent = ({
       }
     };
 
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
     return () => {
       socket.off('receiveMessage', messageHandler);
       socket.off('messagesSeen', messagesSeenHandler);
+      socket.off('messageDeleted');
+      socket.off('messageLiked', messageLikedHandler);
+      socket.off('likeMessageError', likeMessageErrorHandler);
+      socket.off('messageEdited', messageEditedHandler);
+      socket.off('editMessageError', editMessageErrorHandler);
       socket.off('connect');
       leaveRoom(userId, otherUserId);
       subscription.remove();
     };
   }, [userId, otherUserId]);
 
-  const formatTime = isoString => moment(isoString).format('h:mm A');
-
-  // MessageComponent.js
-  // const handleEditMessage = async () => {
-  //   if (!selectedMessage || !text?.trim()) {
-  //     Alert.alert('Error', 'Message cannot be empty');
-  //     return;
-  //   }
-
-  //   try {
-  //     // Update locally first for optimistic UI update
-  //     setMessages(prevMessages =>
-  //       prevMessages.map(msg =>
-  //         msg._id === selectedMessage._id
-  //           ? {
-  //               ...msg,
-  //               message: text.trim(),
-  //               updatedAt: new Date().toISOString(),
-  //               isEdited: true,
-  //             }
-  //           : msg,
-  //       ),
-  //     );
-
-  //     // Send edit request to server
-  //     await editMessage(selectedMessage._id, text.trim(), userId, otherUserId);
-
-  //     setSelectedMessage(null);
-  //     setIsEditing(false);
-  //     setText('');
-  //   } catch (error) {
-  //     console.error('Error editing message:', error);
-  //     Alert.alert('Error', 'Failed to edit message');
-  //     // Revert optimistic update if server request fails
-  //     setMessages(prevMessages =>
-  //       prevMessages.map(msg =>
-  //         msg._id === selectedMessage._id
-  //           ? { ...msg, message: selectedMessage.message, isEdited: selectedMessage.isEdited }
-  //           : msg,
-  //       ),
-  //     );
-  //   }
-  // };
-
-  // const handleDeleteMessage = async () => {
-  //   if (!selectedMessage) return;
-
-  //   try {
-  //     // Update locally first for optimistic UI update
-  //     const messageId = selectedMessage._id;
-  //     setMessages(prevMessages =>
-  //       prevMessages.filter(msg => msg._id !== messageId),
-  //     );
-
-  //     // Send delete request to server
-  //     await deleteMessage(messageId, userId, otherUserId);
-
-  //     setSelectedMessage(null);
-  //     setIsEditing(false);
-  //     setText('');
-  //   } catch (error) {
-  //     console.error('Error deleting message:', error);
-  //     Alert.alert('Error', 'Failed to delete message');
-  //     // Revert optimistic update if server request fails
-  //     fetchChatHistory(); // Re-fetch messages to restore state
-  //   }
-  // };
-
+  const formatTime = (isoString) => moment(isoString).format('h:mm A');
+  const uploadFileAndGetUrl = async (file) => {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: file?.uri,
+      name: file?.name,
+      type: file?.type,
+    });
+    const response = await fetch(`${BASE_URL}/upload`, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    if (!response.ok) {
+      console.error('Upload failed with status:', response.status);
+      throw new Error('Upload failed');
+    }
+    return await response.json();
+  };
   const handleSendMessage = async (isFilePicker = false) => {
     if (isEditing && selectedMessage) {
       if (!text?.trim()) {
@@ -443,6 +457,42 @@ const MessageComponent = ({
 
     removeSelectedFile('');
     setText('');
+
+    if (isEditing && selectedMessage) {
+      if (!text?.trim()) {
+        Alert.alert('Error', 'Message cannot be empty');
+        return;
+      }
+
+      if (selectedMessage.isTemp) {
+        Alert.alert('Please wait', 'Message is still being sent. Try again shortly.');
+        return;
+      }
+
+      const messageId = selectedMessage._id;
+      const originalMessage = selectedMessage.message;
+
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === messageId
+            ? {
+              ...msg,
+              message: text.trim(),
+              updatedAt: new Date().toISOString(),
+              isEdited: true,
+            }
+            : msg,
+        ),
+      );
+
+      try {
+        await editMessage(messageId, text.trim(), userId, otherUserId);
+      } catch (error) {
+        console.error('Error editing message:', error);
+      }
+      return;
+    }
+
     if (isFilePicker) {
       try {
         setFileUploading(true);
@@ -481,9 +531,9 @@ const MessageComponent = ({
     try {
       if (selectedFile) {
         setFileUploading(true);
-        setUploadingFiles(prev => ({...prev, [tempId]: true}));
+        setUploadingFiles((prev) => ({ ...prev, [tempId]: true }));
 
-        setMessages(prevMessages => [
+        setMessages((prevMessages) => [
           {
             _id: tempId,
             tempId,
@@ -495,6 +545,7 @@ const MessageComponent = ({
             isTemp: true,
             seen: false,
             isEdited: false,
+            likes: [],
           },
           ...prevMessages,
         ]);
@@ -502,15 +553,15 @@ const MessageComponent = ({
         const uploadedFile = await uploadFileAndGetUrl(selectedFile);
         fileUrl = uploadedFile.url;
 
-        setMessages(prevMessages =>
-          prevMessages.map(msg =>
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
             msg._id === tempId
               ? {
-                  ...msg,
-                  file: fileUrl,
-                  message: text?.trim() || '',
-                  isTemp: false,
-                }
+                ...msg,
+                file: fileUrl,
+                message: text?.trim() || '',
+                isTemp: false,
+              }
               : msg,
           ),
         );
@@ -525,8 +576,9 @@ const MessageComponent = ({
           createdAt: now,
           seen: false,
           isEdited: false,
+          likes: [],
         };
-        setMessages(prevMessages => [tempMessage, ...prevMessages]);
+        setMessages((prevMessages) => [tempMessage, ...prevMessages]);
       }
 
       await sendMessage(
@@ -538,15 +590,15 @@ const MessageComponent = ({
       );
     } catch (err) {
       console.error('Error in handleSendMessage:', err);
-      setMessages(prevMessages =>
-        prevMessages.filter(msg => msg._id !== tempId),
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg._id !== tempId),
       );
     } finally {
       setText('');
       setSelectedFile(null);
       setFileUploading(false);
-      setUploadingFiles(prev => {
-        const newState = {...prev};
+      setUploadingFiles((prev) => {
+        const newState = { ...prev };
         delete newState[tempId];
         return newState;
       });
@@ -557,42 +609,42 @@ const MessageComponent = ({
     setSelectedFile(null);
   };
 
-  const uploadFileAndGetUrl = async file => {
-    const formData = new FormData();
-    formData.append('file', {
-      uri: file?.uri,
-      name: file?.name,
-      type: file?.type,
-    });
-    const response = await fetch(`${BASE_URL}/upload`, {
-      method: 'POST',
-      body: formData,
-      headers: {'Content-Type': 'multipart/form-data'},
-    });
-    if (!response.ok) {
-      console.error('Upload failed with status:', response.status);
-      throw new Error('Upload failed');
-    }
-    const json = await response.json();
-    return json;
-  };
-
   const handleEditMessage = () => {
     if (!selectedMessage || !selectedMessage.message) return;
     setText(selectedMessage.message);
     setIsEditing(true);
   };
 
-  const handleDeleteMessage = () => {
+  const handleDeleteMessage = async () => {
     if (!selectedMessage) return;
 
-    setMessages(prevMessages =>
-      prevMessages.filter(msg => msg._id !== selectedMessage._id),
-    );
-    setSelectedMessage(null);
-    setIsEditing(false);
-    setText('');
+    try {
+      const messageId = selectedMessage._id;
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === messageId
+            ? {
+              ...msg,
+              message: 'This message was deleted',
+              file: null,
+              isDeleted: true,
+              isEdited: false,
+              likes: [],
+            }
+            : msg,
+        ),
+      );
+      await deleteMessage(messageId, userId, otherUserId);
+      setSelectedMessage(null);
+      setIsEditing(false);
+      setText('');
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      fetchChatHistory();
+    }
   };
+
+
 
   const handleCopyMessage = () => {
     if (!selectedMessage || !selectedMessage.message) return;
@@ -602,9 +654,43 @@ const MessageComponent = ({
     setText('');
   };
 
-  const groupMessagesByDate = messages => {
+  const handleLikeMessage = async (messageId) => {
+    const message = messages.find((msg) => msg._id === messageId);
+    if (!message || message.isTemp) {
+      Alert.alert('Please wait', 'Message is still being sent. Try again shortly.');
+      return;
+    }
+
+    setSelectedMessage(null);
+
+    const isLiked = (message.likes || []).includes(userId);
+    const optimisticLikes = isLiked
+      ? (message.likes || []).filter((id) => id !== userId)
+      : [...(message.likes || []), userId];
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg._id === messageId ? { ...msg, likes: optimisticLikes } : msg,
+      ),
+    );
+
+    try {
+      await likeMessage(messageId, userId, otherUserId);
+    } catch (error) {
+      console.error('Error liking message:', error);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === messageId
+            ? { ...msg, likes: message.likes || [] }
+            : msg,
+        ),
+      );
+      Alert.alert('Error', 'Failed to like message');
+    }
+  };
+
+  const groupMessagesByDate = (messages) => {
     const groups = {};
-    messages?.forEach(message => {
+    messages?.forEach((message) => {
       const date = moment(message?.createdAt)?.format('YYYY-MM-DD');
       if (!groups[date]) {
         groups[date] = [];
@@ -614,25 +700,25 @@ const MessageComponent = ({
     return groups;
   };
 
-  const createFlatListData = messages => {
+  const createFlatListData = (messages) => {
     if (!messages?.length) return [];
     const groupedMessages = groupMessagesByDate(messages);
     const flatListData = [];
     Object.keys(groupedMessages)
       .sort((a, b) => new Date(b) - new Date(a))
-      .forEach(date => {
+      .forEach((date) => {
         const messagesForDate = groupedMessages[date].sort(
           (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt),
         );
-        messagesForDate.forEach(message => {
-          flatListData.push({...message, type: 'message'});
+        messagesForDate.forEach((message) => {
+          flatListData.push({ ...message, type: 'message' });
         });
-        flatListData.push({id: `date-${date}`, type: 'date', date});
+        flatListData.push({ id: `date-${date}`, type: 'date', date });
       });
     return flatListData;
   };
 
-  const formatDateForSeparator = dateString => {
+  const formatDateForSeparator = (dateString) => {
     const messageDate = moment(dateString);
     const today = moment().startOf('day');
     const yesterday = moment().subtract(1, 'day').startOf('day');
@@ -648,7 +734,7 @@ const MessageComponent = ({
   );
   const flatListData = createFlatListData(sortedMessages);
 
-  const openImageViewer = fileUrl => {
+  const openImageViewer = (fileUrl) => {
     setSelectedImage(fileUrl);
     setImageViewerVisible(true);
     scale.setValue(1);
@@ -666,9 +752,9 @@ const MessageComponent = ({
 
   const resetImageZoom = () => {
     Animated.parallel([
-      Animated.spring(scale, {toValue: 1, useNativeDriver: true}),
-      Animated.spring(offsetX, {toValue: 0, useNativeDriver: true}),
-      Animated.spring(offsetY, {toValue: 0, useNativeDriver: true}),
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+      Animated.spring(offsetX, { toValue: 0, useNativeDriver: true }),
+      Animated.spring(offsetY, { toValue: 0, useNativeDriver: true }),
     ]).start();
     lastScale.current = 1;
     lastX.current = 0;
@@ -677,99 +763,134 @@ const MessageComponent = ({
 
   const CHARACTER_LIMIT = 200;
 
-  const renderMessage = ({item}) => {
+  const renderMessage = ({ item }) => {
     const isSender = item?.senderId === userId;
     const fileUrl = item?.file || item?.fileUrl;
     const time = formatTime(item?.createdAt || item?.timestamp);
     const isUploading = item.isTemp || uploadingFiles[item._id];
     const isSeen = item?.seen;
-    const isTemp = item._id?.startsWith('temp-');
-    const isLongMessage = item?.message?.length > CHARACTER_LIMIT;
+    const isTemp = item.isTemp || item._id?.startsWith('temp-');
+    const isLongMessage = item?.message?.length > CHARACTER_LIMIT && !item.isDeleted;
     const isExpanded = expandedMessages[item._id] || false;
     const isSelected = selectedMessage && selectedMessage._id === item._id;
+    const hasLikes = (item.likes || []).length > 0;
 
     const toggleReadMore = () => {
-      setExpandedMessages(prev => ({
+      setExpandedMessages((prev) => ({
         ...prev,
         [item._id]: !isExpanded,
       }));
     };
 
     const displayedText =
-      isLongMessage && !isExpanded
-        ? `${item?.message.substring(0, CHARACTER_LIMIT)}...`
-        : item?.message;
+      item.isDeleted
+        ? 'This message was deleted'
+        : isLongMessage && !isExpanded
+          ? `${item?.message.substring(0, CHARACTER_LIMIT)}...`
+          : item?.message;
 
     return (
-      <TouchableOpacity
-        onPress={() => {
-          if (isSender) {
+      <View style={[styles.messageRow, isSender ? styles.sentRow : styles.receivedRow]}>
+        {isSelected && !item.isDeleted && (
+          <TouchableOpacity
+            style={styles.likeButtonContainer}
+            onPress={() => handleLikeMessage(item._id)}
+            disabled={isTemp}
+          >
+            <Ionicons
+              name={(item.likes || []).includes(userId) ? 'heart' : 'heart-outline'}
+              size={24}
+              color={isTemp ? Color.gray : Color.red}
+            />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          onPress={() => {
             setSelectedMessage(isSelected ? null : item);
             if (!isSelected) {
               setText('');
               setIsEditing(false);
             }
-          }
-        }}
-        disabled={!isSender}
-        style={[
-          styles.messageContainer,
-          isSender ? styles.sent : styles.received,
-          isSelected && styles.selectedMessage,
-        ]}>
-        <View style={styles.messageWrapper}>
-          {fileUrl && (
-            <View style={styles.imageContainer}>
-              {isUploading ? (
-                <ActivityIndicator color={Color.primaryColor} />
-              ) : (
-                <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
-                  <Image source={{uri: fileUrl}} style={styles.image} />
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-          {item?.message && (
-            <View style={styles.textContainer}>
-              <Text style={styles.messageText}>{displayedText}</Text>
-              {item.isEdited && <Text style={styles.editedText}>Edited</Text>}
-              {isLongMessage && (
-                <TouchableOpacity onPress={toggleReadMore}>
-                  <Text style={styles.readMoreText}>
-                    {isExpanded ? 'Read Less' : 'Read More'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-          <View style={styles.messageContent}>
-            <Text style={styles.timestampText}>{time}</Text>
-            {isSender && (
-              <View style={styles.messageFooter}>
-                {isTemp ? (
-                  <Ionicons
-                    name="time-outline"
-                    size={16}
-                    color={Color.gray}
-                    style={styles.readStatus}
-                  />
+          }}
+          disabled={item.isDeleted}
+          style={[
+            styles.messageContainer,
+            isSender ? styles.sent : styles.received,
+            isSelected && styles.selectedMessage,
+            item.isDeleted && styles.deletedMessage,
+          ]}>
+          <View style={styles.messageWrapper}>
+            {fileUrl && !item.isDeleted && (
+              <View style={styles.imageContainer}>
+                {isUploading ? (
+                  <ActivityIndicator color={Color.primaryColor} />
                 ) : (
-                  <Ionicons
-                    name={isSeen ? 'checkmark-done' : 'checkmark'}
-                    size={16}
-                    color={isSeen ? Color.primaryColor : Color.gray}
-                    style={styles.readStatus}
-                  />
+                  <TouchableOpacity onPress={() => openImageViewer(fileUrl)}>
+                    <Image source={{ uri: fileUrl }} style={styles.image} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+            {item?.message && (
+              <View style={styles.textContainer}>
+                <Text
+                  style={[
+                    styles.messageText,
+                    item.isDeleted && styles.deletedMessageText,
+                  ]}>
+                  {displayedText}
+                </Text>
+                {item.isEdited && !item.isDeleted && (
+                  <Text style={styles.editedText}>Edited</Text>
+
+                )}
+                <View style={styles.messageContent}>
+                  <Text style={styles.timestampText}>{time}</Text>
+                  {isSender && !item.isDeleted && (
+                    <View style={styles.messageFooter}>
+                      {isTemp ? (
+                        <Ionicons
+                          name="time-outline"
+                          size={16}
+                          color={Color.gray}
+                          style={styles.readStatus}
+                        />
+                      ) : (
+                        <Ionicons
+                          name={isSeen ? 'checkmark-done' : 'checkmark'}
+                          size={16}
+                          color={isSeen ? Color.primaryColor : Color.gray}
+                          style={styles.readStatus}
+                        />
+                      )}
+                    </View>
+                  )}
+                </View>
+                {isLongMessage && !item.isDeleted && (
+                  <TouchableOpacity onPress={toggleReadMore}>
+                    <Text style={styles.readMoreText}>
+                      {isExpanded ? 'Read Less' : 'Read More'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+
+            {hasLikes && !item.isDeleted && (
+              <View style={styles.likeContainer}>
+                <Ionicons name="heart" size={20} color={Color.red} />
+                {item.likes.length > 1 && (
+                  <Text style={{ color: Color?.textColor, }}>{item.likes.length}</Text>
                 )}
               </View>
             )}
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     );
   };
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     if (item.type === 'date') {
       return (
         <View style={styles.dateSeparator}>
@@ -779,21 +900,23 @@ const MessageComponent = ({
         </View>
       );
     }
-    return renderMessage({item});
+    return renderMessage({ item });
   };
 
   const defaultImage = require('../assets/Images/man.png');
 
   const imageSource =
     image &&
-    (typeof image === 'string' ||
-      typeof image === 'object' ||
-      typeof image === 'number')
+      (typeof image === 'string' ||
+        typeof image === 'object' ||
+        typeof image === 'number')
       ? image
       : defaultImage;
 
   const renderHeader = () => {
     if (!showHeader) return null;
+    const isSenderMessage = selectedMessage?.senderId === userId;
+
     return (
       <View style={styles.headerContainer}>
         <View style={styles.headerLeft}>
@@ -803,7 +926,7 @@ const MessageComponent = ({
           <Image
             style={styles.profileImage}
             source={
-              typeof imageSource === 'string' ? {uri: imageSource} : imageSource
+              typeof imageSource === 'string' ? { uri: imageSource } : imageSource
             }
           />
           <Text style={styles.backTxt}>{userName}</Text>
@@ -820,7 +943,7 @@ const MessageComponent = ({
             />
           </TouchableOpacity>
           <TouchableOpacity
-            disabled={!selectedMessage}
+            disabled={!selectedMessage || !isSenderMessage}
             onPress={handleEditMessage}>
             <Feather
               name="edit"
@@ -830,7 +953,7 @@ const MessageComponent = ({
             />
           </TouchableOpacity>
           <TouchableOpacity
-            disabled={!selectedMessage}
+            disabled={!selectedMessage || !isSenderMessage}
             onPress={handleDeleteMessage}>
             <Feather
               name="trash-2"
@@ -856,6 +979,7 @@ const MessageComponent = ({
 
   const renderInfoModal = () => {
     if (!selectedMessage) return null;
+    const hasLikes = (selectedMessage.likes || []).length > 0;
     return (
       <Modal
         visible={infoModalVisible}
@@ -873,8 +997,8 @@ const MessageComponent = ({
               Seen:{' '}
               {selectedMessage.seen
                 ? moment(
-                    selectedMessage.updatedAt || selectedMessage.createdAt,
-                  ).format('MMM D, YYYY h:mm A')
+                  selectedMessage.updatedAt || selectedMessage.createdAt,
+                ).format('MMM D, YYYY h:mm A')
                 : 'Not seen'}
             </Text>
             <Text style={styles.infoModalText}>
@@ -886,6 +1010,9 @@ const MessageComponent = ({
                 {moment(selectedMessage.updatedAt).format('MMM D, YYYY h:mm A')}
               </Text>
             )}
+            <Text style={styles.infoModalText}>
+              Liked: {hasLikes ? `Yes (${selectedMessage.likes.length})` : 'No'}
+            </Text>
             <TouchableOpacity
               style={styles.infoModalButton}
               onPress={() => {
@@ -904,18 +1031,18 @@ const MessageComponent = ({
     <SafeAreaView style={[styles.container, containerStyle]}>
       {renderHeader()}
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../assets/Images/chatBackground.jpg')}>
         {loading ? (
           <ActivityIndicator
             color={Color.primaryColor}
             size="large"
-            style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
+            style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}
           />
         ) : (
           <FlatList
             data={flatListData}
-            keyExtractor={item =>
+            keyExtractor={(item) =>
               item?.type === 'date'
                 ? item?.id
                 : item?._id?.toString() || `msg-${item?.tempId}`
@@ -1001,22 +1128,22 @@ const MessageComponent = ({
                 styles.imageViewerWrapper,
                 {
                   transform: [
-                    {scale: scale},
-                    {translateX: offsetX},
-                    {translateY: offsetY},
+                    { scale: scale },
+                    { translateX: offsetX },
+                    { translateY: offsetY },
                   ],
                 },
               ]}>
               <TouchableOpacity
                 activeOpacity={1}
-                onPress={e => e.stopPropagation()}
-                onLongPress={e => {
+                onPress={(e) => e.stopPropagation()}
+                onLongPress={(e) => {
                   e.stopPropagation();
                   resetImageZoom();
                 }}
                 delayLongPress={200}>
                 <Animated.Image
-                  source={{uri: selectedImage}}
+                  source={{ uri: selectedImage }}
                   style={styles.fullScreenImage}
                   resizeMode="contain"
                 />
@@ -1028,6 +1155,9 @@ const MessageComponent = ({
     </SafeAreaView>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -1123,6 +1253,8 @@ const styles = StyleSheet.create({
   messageWrapper: {},
   textContainer: {
     paddingVertical: 4,
+    flexDirection: "row",
+    gap: 5
   },
   messageText: {
     fontSize: 16,
@@ -1132,8 +1264,8 @@ const styles = StyleSheet.create({
   editedText: {
     fontSize: 12,
     color: Color.gray,
-    marginTop: 2,
     fontStyle: 'italic',
+    alignSelf: "center"
   },
   readMoreText: {
     fontSize: 14,
@@ -1250,6 +1382,36 @@ const styles = StyleSheet.create({
   infoModalButtonText: {
     color: Color.white,
     fontSize: 16,
+  },
+  messageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  sentRow: {
+    justifyContent: 'flex-end',
+  },
+  receivedRow: {
+    justifyContent: 'flex-start',
+  },
+  likeButtonContainer: {
+    marginRight: 10,
+    backgroundColor: Color?.white,
+    borderRadius: 20,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  likeContainer: {
+    alignSelf: 'flex-end',
+    marginTop: 5,
+    flexDirection: "row",
+    backgroundColor: "pink",
+    position: 'absolute',
+    backgroundColor: Color?.white,
+    bottom: scale(-17),
+    padding: scale(2),
+    borderRadius: scale(10)
   },
 });
 
